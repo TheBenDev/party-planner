@@ -1,0 +1,1 @@
+ALTER TABLE "non_player_character" ALTER COLUMN "last_name" DROP NOT NULL;

@@ -1,0 +1,361 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on",
+        "useSortedAttributes": "on",
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
+      }
+    },
+    "enabled": true,
+    "includes": [
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.d.ts",
+      "**/*.json",
+      "**/*.jsonc",
+      "!**/.open-next/**",
+      "!**/.nx/cache/**",
+      "!**/.nx/workspace-data/**",
+      "!**/coverage/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.next/**",
+      "!**/node_modules/**",
+      "!**/bun.lock",
+      "!**/worker-configuration.d.ts"
+    ]
+  },
+  "files": {
+    "experimentalScannerIgnores": [
+      "node_modules",
+      ".next",
+      ".open-next",
+      ".wrangler",
+      "dist",
+      "build",
+      "coverage"
+    ],
+    "ignoreUnknown": true,
+    "includes": [
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.d.ts",
+      "**/*.json",
+      "**/*.jsonc",
+      "!**/.open-next",
+      "!**/.nx/cache",
+      "!**/.nx/workspace-data",
+      "!**/coverage",
+      "!**/dist",
+      "!**/build",
+      "!**/.next",
+      "!**/node_modules",
+      "!**/bun.lock"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": true,
+    "indentStyle": "tab"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double"
+    }
+  },
+  "linter": {
+    "domains": {
+      "project": "all"
+    },
+    "enabled": true,
+    "includes": [
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.d.ts",
+      "**/*.json",
+      "**/*.jsonc",
+      "!**/.open-next/**",
+      "!**/.nx/cache/**",
+      "!**/.nx/workspace-data/**",
+      "!**/coverage/**",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/.next/**",
+      "!**/node_modules/**",
+      "!**/bun.lock",
+      "!**/worker-configuration.d.ts"
+    ],
+    "rules": {
+      "a11y": {
+        "useSemanticElements": "off"
+      },
+      "complexity": {
+        "noForEach": "error",
+        "noVoid": "error",
+        "useArrowFunction": "error",
+        "useOptionalChain": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useSimplifiedLogicExpression": "error",
+        "useWhile": "error"
+      },
+      "correctness": {
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "noUnusedVariables": {
+          "fix": "none",
+          "level": "error"
+        },
+        "useImportExtensions": "off",
+        "useParseIntRadix": {
+          "fix": "safe",
+          "level": "warn"
+        },
+        "useSingleJsDocAsterisk": "warn",
+        "useUniqueElementIds": "off"
+      },
+      "nursery": {
+        "noFloatingPromises": "off",
+        "noImportCycles": "error",
+        "noShadow": "error",
+        "noUnresolvedImports": "off"
+      },
+      "performance": {
+        "noAwaitInLoops": "error",
+        "noDelete": "error",
+        "noNamespaceImport": "error",
+        "noReExportAll": "error",
+        "useTopLevelRegex": "error"
+      },
+      "recommended": true,
+      "style": {
+        "noCommonJs": "error",
+        "noInferrableTypes": "error",
+        "noNamespace": "error",
+        "noNegationElse": "error",
+        "noNestedTernary": "error",
+        "noNonNullAssertion": "error",
+        "noParameterAssign": "error",
+        "noParameterProperties": "error",
+        "noProcessEnv": "error",
+        "noRestrictedGlobals": {
+          "level": "error",
+          "options": {
+            "deniedGlobals": {
+              "event": "Use the event parameter instead",
+              "length": "Use a more descriptive variable name",
+              "name": "Use a more descriptive variable name"
+            }
+          }
+        },
+        "noSubstr": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "useAsConstAssertion": "error",
+        "useAtIndex": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
+        "useConsistentArrayType": {
+          "fix": "safe",
+          "level": "error",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "useConsistentBuiltinInstantiation": "error",
+        "useConsistentCurlyBraces": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useConsistentMemberAccessibility": "error",
+        "useConsistentObjectDefinitions": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useExplicitLengthCheck": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useFilenamingConvention": "error",
+        "useForOf": "error",
+        "useFragmentSyntax": "error",
+        "useGroupedAccessorPairs": "error",
+        "useNamingConvention": "off",
+        "useNodeAssertStrict": "error",
+        "useNodejsImportProtocol": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useNumberNamespace": "error",
+        "useNumericSeparators": "error",
+        "useObjectSpread": "error",
+        "useSelfClosingElements": "error",
+        "useShorthandAssign": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useSingleVarDeclarator": "error",
+        "useSymbolDescription": "error",
+        "useTemplate": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "useThrowNewError": "error",
+        "useThrowOnlyError": "error",
+        "useTrimStartEnd": "error"
+      },
+      "suspicious": {
+        "noConsole": {
+          "fix": "none",
+          "level": "error"
+        },
+        "noConstantBinaryExpressions": "error",
+        "noEmptyBlockStatements": "error",
+        "noEvolvingTypes": "error",
+        "noExplicitAny": "error",
+        "noSkippedTests": "error",
+        "noTsIgnore": "error",
+        "useAwait": "error",
+        "useErrorMessage": "error",
+        "useGuardForIn": "error",
+        "useIterableCallbackReturn": "error",
+        "useNumberToFixedDigitsArgument": "error",
+        "useStaticResponseMethods": "error",
+        "useStrictMode": "error"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.test.js",
+        "**/*.test.jsx",
+        "**/__tests__/**",
+        "**/test/**"
+      ],
+      "linter": {
+        "domains": {
+          "test": "all"
+        },
+        "rules": {
+          "nursery": {
+            "noShadow": "off"
+          },
+          "performance": {
+            "noAwaitInLoops": "off",
+            "noDelete": "off",
+            "useTopLevelRegex": "off"
+          },
+          "style": {
+            "noNonNullAssertion": "off",
+            "noProcessEnv": "off",
+            "useNamingConvention": "off",
+            "useSymbolDescription": "off",
+            "useThrowOnlyError": "off"
+          },
+          "suspicious": {
+            "noAsyncPromiseExecutor": "off",
+            "noConsole": "off",
+            "noEmptyBlockStatements": "off",
+            "noExplicitAny": "off",
+            "noFocusedTests": "error",
+            "useAwait": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.js"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noCommonJs": "off"
+          },
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/*.config.ts",
+        "**/*.config.js",
+        "**/*.config.cjs",
+        "**/*.config.mjs"
+      ],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "assist": {
+        "actions": {
+          "source": {
+            "useSortedKeys": "off"
+          }
+        }
+      },
+      "includes": [
+        "**/bun.lock"
+      ]
+    },
+    {
+      "includes": [
+        "**/jsandy.ts",
+        "packages/constants/**/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/gen/rpc/**/*.ts"
+      ],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": [
+        "**/components/ui/**/*.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noNamespaceImport": "off"
+          }
+        }
+      }
+    }
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
+}

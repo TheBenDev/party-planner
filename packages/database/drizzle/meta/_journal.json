@@ -1,0 +1,48 @@
+{
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "breakpoints": true,
+      "idx": 0,
+      "tag": "0000_db_init",
+      "version": "7",
+      "when": 1764792937108
+    },
+    {
+      "breakpoints": true,
+      "idx": 1,
+      "tag": "0001_invitations_table",
+      "version": "7",
+      "when": 1767197409783
+    },
+    {
+      "breakpoints": true,
+      "idx": 2,
+      "tag": "0002_add_campaign_to_npc",
+      "version": "7",
+      "when": 1767564959808
+    },
+    {
+      "breakpoints": true,
+      "idx": 3,
+      "tag": "0003_add_updated_at_to_campaign_table",
+      "version": "7",
+      "when": 1767662039515
+    },
+    {
+      "breakpoints": true,
+      "idx": 4,
+      "tag": "0004_remove_npc_nullable_last_name",
+      "version": "7",
+      "when": 1767663998946
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1767664236815,
+      "tag": "0005_fix_npc_campaign_id",
+      "breakpoints": true
+    }
+  ],
+  "version": "7"
+}

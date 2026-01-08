@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "@planner/schemas": "workspace:*",
+    "jose": "catalog:"
+  },
+  "devDependencies": {
+    "@planner/enums": "workspace:*",
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
+  },
+  "exports": {
+    "./auth": {
+      "import": "./dist/auth.js",
+      "require": "./dist/auth.js"
+    }
+  },
+  "name": "@planner/security",
+  "private": true,
+  "scripts": {
+    "build": "bun run build.ts",
+    "format": "biome check --linter-enabled=false --write .",
+    "lint": "biome lint --write .",
+    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}

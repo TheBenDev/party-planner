@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "composite": true,
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["es2022"],
+    "lib": [
+      "es2022"
+    ],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "noEmitOnError": true,
@@ -13,9 +16,20 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
+    "paths": {
+      "@planner/database": [
+        "packages/database/src/index.ts"
+      ],
+      "@planner/enums": [
+        "packages/enums/src/index.ts"
+      ],
+      "@planner/schemas": [
+        "packages/schemas/src/index.ts"
+      ]
+    },
+    "rootDir": ".",
     "skipLibCheck": true,
     "strict": true,
-    "target": "es2022",
-    "customConditions": ["@org/source"]
+    "target": "es2024"
   }
 }

@@ -1,0 +1,36 @@
+{
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  },
+  "exports": {
+    "./character": {
+      "import": "./dist/character.js",
+      "require": "./dist/character.js"
+    },
+    "./common": {
+      "import": "./dist/common.js",
+      "require": "./dist/common.js"
+    },
+    "./quest": {
+      "import": "./dist/quest.js",
+      "require": "./dist/quest.js"
+    },
+    "./user": {
+      "import": "./dist/user.js",
+      "require": "./dist/user.js"
+    }
+  },
+  "module": "src/index.ts",
+  "name": "@planner/enums",
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "bun run build.ts",
+    "format": "biome check --linter-enabled=false --write .",
+    "lint": "biome lint --write .",
+    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
+}
