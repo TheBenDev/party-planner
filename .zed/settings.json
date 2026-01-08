@@ -1,0 +1,46 @@
+{
+  "code_actions_on_format": {
+    "source.action.useSortedKeys.biome": true,
+    "source.action.useSortedProperties.biome": true,
+    "source.fixAll.biome": true
+  },
+  "formatter": "language_server",
+  "languages": {
+    "TypeScript": {
+      "code_actions_on_format": {
+        "source.action.useSortedKeys.biome": true,
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      },
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    },
+    "JavaScript": {
+      "code_actions_on_format": {
+        "source.action.useSortedKeys.biome": true,
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      },
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    },
+    "TSX": {
+      "code_actions_on_format": {
+        "source.action.useSortedKeys.biome": true,
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      },
+      "formatter": {
+        "language_server": {
+          "name": "biome"
+        }
+      }
+    }
+  }
+}

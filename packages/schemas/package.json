@@ -1,0 +1,64 @@
+{
+  "dependencies": {
+    "@planner/enums": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:"
+  },
+  "exports": {
+    "./campaigns": {
+      "import": "./dist/campaign.js",
+      "require": "./dist/campaign.js"
+    },
+    "./character": {
+      "import": "./dist/character.js",
+      "require": "./dist/character.js"
+    },
+    "./discord": {
+      "import": "./dist/discord.js",
+      "require": "./dist/discord.js"
+    },
+    "./email": {
+      "import": "./dist/email.js",
+      "require": "./dist/email.js"
+    },
+    "./locations": {
+      "import": "./dist/location.js",
+      "require": "./dist/location.js"
+    },
+    "./member": {
+      "import": "./dist/member.js",
+      "require": "./dist/member.js"
+    },
+    "./nonPlayerCharacters": {
+      "import": "./dist/nonPlayerCharacter.js",
+      "require": "./dist/nonPlayerCharacter.js"
+    },
+    "./quests": {
+      "import": "./dist/quest.js",
+      "require": "./dist/quest.js"
+    },
+    "./sessions": {
+      "import": "./dist/session.js",
+      "require": "./dist/session.js"
+    },
+    "./user": {
+      "import": "./dist/user.js",
+      "require": "./dist/user.js"
+    }
+  },
+  "module": "src/index.ts",
+  "name": "@planner/schemas",
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "bun run build.ts",
+    "format": "biome check --linter-enabled=false --write .",
+    "lint": "biome lint --write .",
+    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
+}
