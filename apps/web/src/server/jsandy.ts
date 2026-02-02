@@ -3,6 +3,7 @@ import {
 	createClerkClient,
 	verifyToken,
 } from "@clerk/backend";
+import { type REST as DiscordRest, REST } from "@discordjs/rest";
 import { jsandy } from "@jsandy/rpc";
 import { type Client, createDb, schema } from "@planner/database";
 import type { UserRole } from "@planner/enums/user";
@@ -12,7 +13,6 @@ import {
 	decryptAuthCookie,
 	encryptAuthCookie,
 } from "@planner/security/auth";
-import { REST, type REST as DiscordRest } from "@discordjs/rest";
 import { eq } from "drizzle-orm";
 import { getCookie, setCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
@@ -24,8 +24,8 @@ export interface Env {
 	Variables: {
 		campaignId: string | null;
 		clerkClient: ClerkClient;
-    clerkUserId: string;
-    discord: DiscordRest;
+		clerkUserId?: string;
+		discord?: DiscordRest;
 		db: Client;
 		resend: ResendType;
 		role: UserRole | null;
@@ -36,24 +36,35 @@ export interface Env {
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
 export const j = jsandy.init<Env>();
 
-
 const drizzleMiddleware = j.middleware(({ c, next }) => {
 	const db = createDb();
 	c.set("db", db);
 	return next();
 });
 
-const discordMiddleware = j.middleware(async ({ next, c }) => {
-  const rest = new REST({ version: "10" }).setToken(serverConfig.DISCORD_TOKEN);
-  c.set("discord", rest);
-  return next();
+const discordMiddleware = j.middleware(({ next, c }) => {
+	const authHeader = c.req.header("Authorization");
+
+	if (!authHeader?.startsWith("Bot ")) {
+		throw new HTTPException(401, { message: "Missing bot authorization" });
+	}
+
+	const apiKey = authHeader.replace("Bot ", "");
+	if (apiKey !== serverConfig.DISCORD_API_KEY) {
+		throw new HTTPException(401, { message: "Invalid discord API key" });
+	}
+
+	const rest = new REST({ version: "10" }).setToken(serverConfig.DISCORD_TOKEN);
+	c.set("discord", rest);
+
+	return next();
 });
 
 const resend = new Resend(serverConfig.RESEND_API_KEY);
 export const AUTH_COOKIE_NAME = "planner_auth";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export const clerkClient = createClerkClient({
-  secretKey: serverConfig.CLERK_SECRET_KEY,
+	secretKey: serverConfig.CLERK_SECRET_KEY,
 });
 
 const authMiddleware = j.middleware(async ({ next, c }) => {
@@ -228,5 +239,4 @@ export const publicProcedure = j.procedure.use(drizzleMiddleware);
  */
 export const privateProcedure = publicProcedure.use(authMiddleware);
 
-
-export const discordProcedure = privateProcedure.use(discordMiddleware)
+export const discordProcedure = publicProcedure.use(discordMiddleware);

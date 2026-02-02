@@ -11,6 +11,14 @@
       "import": "./dist/common.js",
       "require": "./dist/common.js"
     },
+    "./event": {
+      "import": "./dist/event.js",
+      "require": "./dist/event.js"
+    },
+    "./integration": {
+      "import": "./dist/integration.js",
+      "require": "./dist/integration.js"
+    },
     "./quest": {
       "import": "./dist/quest.js",
       "require": "./dist/quest.js"

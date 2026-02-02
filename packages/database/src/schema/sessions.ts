@@ -15,11 +15,8 @@ export const sessionsTable = pgTable(
 	{
 		campaignId: uuid("campaign_id").notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-		deletedAt: timestamp("deleted_at", { mode: "date" }),
 		description: varchar("description"),
-		dmNotes: varchar("dm_notes"),
 		id: uuid("id").primaryKey().defaultRandom(),
-		notes: varchar("notes"),
 		startsAt: timestamp("starts_at", { mode: "date" }),
 		title: varchar("title").notNull(),
 	},

@@ -1,0 +1,18 @@
+name: Daily Session Notifications
+permissions:
+  pull-requests: write
+  contents: read
+on:
+  schedule:
+    - cron: "0 18 * * *" # Runs every day at 6 PM UTC (10 AM PST / 1 PM EST)
+  workflow_dispatch:
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cron endpoint
+        run: |
+          curl --fail -X POST ${{ secrets.API_URL }}/api/discord/checkReminders \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
+# TODO: Make a cron secret

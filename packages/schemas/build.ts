@@ -6,6 +6,7 @@ await build({
 		"src/character.ts",
 		"src/discord.ts",
 		"src/email.ts",
+		"src/integration.ts",
 		"src/location.ts",
 		"src/member.ts",
 		"src/nonPlayerCharacter.ts",

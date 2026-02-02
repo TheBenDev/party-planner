@@ -1,0 +1,1 @@
+ALTER TABLE "campaign_integrations" ADD COLUMN "external_id" varchar NOT NULL;
