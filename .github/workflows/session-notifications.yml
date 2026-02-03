@@ -12,7 +12,12 @@ jobs:
     steps:
       - name: Call cron endpoint
         run: |
+<<<<<<< feature/beny-bot
           curl --fail -X POST ${{ secrets.API_URL }}/api/discord/checkReminders \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
 
 # TODO: Make a cron secret
+=======
+          curl -X POST https://701e6ed1f1f3.ngrok-free.app/api/discord/checkReminders \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+>>>>>>> main
