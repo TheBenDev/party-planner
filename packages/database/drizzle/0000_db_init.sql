@@ -72,11 +72,8 @@ CREATE TABLE "quest" (
 CREATE TABLE "session" (
 	"campaign_id" uuid NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp,
 	"description" varchar,
-	"dm_notes" varchar,
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"notes" varchar,
 	"starts_at" timestamp,
 	"title" varchar NOT NULL
 );

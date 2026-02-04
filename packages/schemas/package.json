@@ -23,6 +23,10 @@
       "import": "./dist/email.js",
       "require": "./dist/email.js"
     },
+    "./integration": {
+      "import": "./dist/integration.js",
+      "require": "./dist/integration.js"
+    },
     "./locations": {
       "import": "./dist/location.js",
       "require": "./dist/location.js"

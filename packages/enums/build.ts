@@ -2,10 +2,12 @@ import { build, spawn } from "bun";
 
 await build({
 	entrypoints: [
+		"src/common.ts",
+		"src/event.ts",
+		"src/character.ts",
+		"src/integration.ts",
 		"src/quest.ts",
 		"src/user.ts",
-		"src/common.ts",
-		"src/character.ts",
 	],
 	external: [],
 	format: "esm",

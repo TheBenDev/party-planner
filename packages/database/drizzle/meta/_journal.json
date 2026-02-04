@@ -37,10 +37,38 @@
       "when": 1767663998946
     },
     {
+      "breakpoints": true,
       "idx": 5,
-      "version": "7",
-      "when": 1767664236815,
       "tag": "0005_fix_npc_campaign_id",
+      "version": "7",
+      "when": 1767664236815
+    },
+    {
+      "breakpoints": true,
+      "idx": 6,
+      "tag": "0006_add_campaign_integration_table",
+      "version": "7",
+      "when": 1767995376643
+    },
+    {
+      "breakpoints": true,
+      "idx": 7,
+      "tag": "0007_add external id to integrations table",
+      "version": "7",
+      "when": 1768429616863
+    },
+    {
+      "breakpoints": true,
+      "idx": 8,
+      "tag": "0008_user_availability",
+      "version": "7",
+      "when": 1769723350640
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770155001067,
+      "tag": "0009_user_integration",
       "breakpoints": true
     }
   ],

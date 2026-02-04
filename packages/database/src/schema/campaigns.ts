@@ -29,13 +29,13 @@ export const campaignsTable = pgTable(
 			.$onUpdate(() => new Date()),
 		userId: uuid("user_id").notNull(),
 	},
-	(table) => [
+	(t) => [
 		foreignKey({
-			columns: [table.userId],
+			columns: [t.userId],
 			foreignColumns: [usersTable.id],
 			name: "fk_campaign_user_id",
 		}).onDelete("cascade"),
-		index("idx_campaign_user_id").on(table.userId),
+		index("idx_campaign_user_id").on(t.userId),
 	],
 );
 
