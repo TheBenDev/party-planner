@@ -18,6 +18,7 @@ async function action(interaction: ChatInputCommandInteraction) {
 		});
 		return;
 	}
+	await interaction.deferReply();
 	const npcName = interaction.options.get("name")?.value;
 
 	try {
@@ -32,22 +33,20 @@ async function action(interaction: ChatInputCommandInteraction) {
 		const npcEmbed = new EmbedBuilder()
 			.setColor("#0099ff")
 			.setTitle(npc.firstName)
-			.setDescription(`Character ${npc.firstName} ${npc.lastName}`)
+			.setDescription(`Character: ${npc.firstName} ${npc.lastName ?? ""}`)
 			.setThumbnail(npc.avatar || null)
 			.setTimestamp();
-		await interaction.reply({ embeds: [npcEmbed] });
+		await interaction.editReply({ embeds: [npcEmbed] });
 	} catch (error) {
 		const details = extractErrorDetails({ error, operation: "beny-bot.npc" });
 		if (details.status === 404) {
-			await interaction.reply({
+			await interaction.editReply({
 				content: "I could not find that npc.",
-				flags: ["Ephemeral"],
 			});
 			return;
 		}
-		await interaction.reply({
+		await interaction.editReply({
 			content: "Something went wrong. Please try again later.",
-			flags: ["Ephemeral"],
 		});
 	}
 }

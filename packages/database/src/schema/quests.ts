@@ -29,6 +29,10 @@ export const questsTable = pgTable(
 		reward: jsonb("reward"),
 		status: questStatusEnum("status").notNull(),
 		title: varchar("title").notNull(),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.defaultNow()
+			.notNull()
+			.$onUpdate(() => new Date()),
 	},
 	(table) => [
 		foreignKey({

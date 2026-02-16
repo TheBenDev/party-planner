@@ -70,6 +70,13 @@
       "when": 1770155001067,
       "tag": "0009_user_integration",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1771275041721,
+      "tag": "0010_updated_at_added_to_tables",
+      "breakpoints": true
     }
   ],
   "version": "7"

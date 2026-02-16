@@ -1,5 +1,6 @@
 import axios, { type AxiosError } from "axios";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+import z, { type ZodError } from "zod";
 import logger from "../lib/logger";
 
 type ErrorHandler = {
@@ -18,6 +19,9 @@ export const extractErrorDetails = ({
 }: ErrorHandler): ErrorDetails => {
 	if (axios.isAxiosError(error)) {
 		return axiosErrorHandler({ error, operation });
+	}
+	if (error instanceof z.ZodError) {
+		return zodErrorHandler({ error, operation });
 	}
 	logger.error({ operation }, "Failed to recognize error");
 	return { message: "unknown error", status: 500 };
@@ -50,3 +54,22 @@ const axiosErrorHandler = ({
 	logger.error({ code, message, status }, `Axios error in ${operation}`);
 	return { cause: error.cause, message: error.message, status };
 };
+
+function zodErrorHandler({
+	error,
+	operation,
+}: {
+	error: ZodError;
+	operation: string;
+}): ErrorDetails {
+	const prettyError = z.prettifyError(error);
+	logger.error(
+		{ code: "Zod Error", message: prettyError, status: 400 },
+		`Zod error in ${operation}`,
+	);
+	return {
+		cause: "Zod Error",
+		message: prettyError,
+		status: 400,
+	};
+}

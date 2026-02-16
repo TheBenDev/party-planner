@@ -24,6 +24,10 @@ export const charactersTable = pgTable(
 		id: uuid("id").primaryKey().defaultRandom(),
 		lastName: varchar("last_name").notNull(),
 		originId: uuid("origin_id"),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.defaultNow()
+			.notNull()
+			.$onUpdate(() => new Date()),
 		userId: uuid("user_id").notNull(),
 	},
 	(table) => [

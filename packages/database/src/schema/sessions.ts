@@ -19,6 +19,10 @@ export const sessionsTable = pgTable(
 		id: uuid("id").primaryKey().defaultRandom(),
 		startsAt: timestamp("starts_at", { mode: "date" }),
 		title: varchar("title").notNull(),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.defaultNow()
+			.notNull()
+			.$onUpdate(() => new Date()),
 	},
 	(table) => [
 		foreignKey({

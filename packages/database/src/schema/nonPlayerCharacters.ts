@@ -26,6 +26,10 @@ export const nonPlayerCharactersTable = pgTable(
 		lastName: varchar("last_name"),
 		notes: varchar("notes"),
 		originId: uuid("origin_id"),
+		updatedAt: timestamp("updated_at", { mode: "date" })
+			.defaultNow()
+			.notNull()
+			.$onUpdate(() => new Date()),
 	},
 	(table) => [
 		foreignKey({
