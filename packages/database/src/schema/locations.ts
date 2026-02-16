@@ -13,6 +13,10 @@ export const locationsTable = pgTable("location", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	name: varchar("name").notNull(),
 	notes: varchar("notes"),
+	updatedAt: timestamp("updated_at", { mode: "date" })
+		.defaultNow()
+		.notNull()
+		.$onUpdate(() => new Date()),
 });
 
 export const locationsRelations = relations(

@@ -8,7 +8,7 @@ export const NonPlayerCharactersSchema = BaseEntitySchema.extend({
 	deletedAt: z.date().nullable().optional(),
 	dmNotes: z.string().nullable().optional(),
 	firstName: z.string(),
-	lastName: z.string(),
+	lastName: z.string().nullable().optional(),
 	notes: z.string().nullable().optional(),
 	originId: z.uuid().nullable().optional(),
 });

@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const BaseEntitySchema = z.object({
-  createdAt: z.date(),
-  id: z.uuid(),
-  updatedAt: z.date(),
+	createdAt: z.coerce.date(),
+	id: z.uuid(),
+	updatedAt: z.coerce.date(),
 });
