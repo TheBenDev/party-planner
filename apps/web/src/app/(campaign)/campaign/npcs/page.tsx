@@ -8,6 +8,7 @@ export default function NPCSPage() {
 	const { campaign } = useAuth();
 
 	const { data: npcs, isLoading } = useQuery({
+		enabled: Boolean(campaign),
 		queryFn: async () => {
 			if (!campaign) return null;
 			const res = await client.npc.listNonPlayerCharacters.$get({
@@ -16,7 +17,6 @@ export default function NPCSPage() {
 
 			return await res.json();
 		},
-
 		queryKey: ["npcs"],
 	});
 	if (isLoading) return <div>loading...</div>;

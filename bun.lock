@@ -137,7 +137,7 @@
     },
   },
   "catalog": {
-    "@jsandy/rpc": "2.1.2",
+    "@jsandy/rpc": "2.2.0",
     "@types/bun": "1.3.0",
     "drizzle-orm": "0.44.7",
     "hono": "^4.10.7",
@@ -550,7 +550,7 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
-    "@jsandy/rpc": ["@jsandy/rpc@2.1.2", "", { "dependencies": { "superjson": "^2.2.2" }, "peerDependencies": { "hono": "^4.7.11", "zod": "^4.0.5" } }, "sha512-FrTGBq7XhpGHydHzX/d7c0tBdFsMxfmzZGUwYJSt159imb5sMa31RBSX+FqVMU2Iz1FRVGuskPDnUuP03BL5qw=="],
+    "@jsandy/rpc": ["@jsandy/rpc@2.2.0", "", { "dependencies": { "superjson": "^2.2.2" }, "peerDependencies": { "hono": "^4.7.11", "zod": "^4.0.5" } }, "sha512-Qshl4vwJe4jmCPf+/RdLGeJ1Y0vkOx58e3C1EMfFOdJQ+2xOHwqVhbOQc2G6giME+Vk49lw49yfWJML9CVkbmA=="],
 
     "@jsonjoy.com/base64": ["@jsonjoy.com/base64@1.1.2", "", { "peerDependencies": { "tslib": "2" } }, "sha512-q6XAnWQDIMA3+FTiOYajoYqySkO+JSat0ytXGSuRdq9uXE7o92gzuQwQM14xaCRlBLGq3v5miDGC4vkVTn54xA=="],
 

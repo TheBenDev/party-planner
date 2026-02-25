@@ -26,7 +26,7 @@ async function action(interaction: ChatInputCommandInteraction) {
 	}
 
 	const scheduleEventModal = new ModalBuilder()
-		.setCustomId("scheduleEventModal")
+		.setCustomId(CommandsEnum.SCHEDULE)
 		.setTitle("Schedule an event for your D&D game");
 
 	// Hour select
@@ -154,6 +154,7 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 		const scheduledStartTime = new Date(
 			`${date}T${hour?.padStart(2, "0")}:${minute?.padStart(2, "0")}:00`,
 		);
+
 		const scheduledEndTime = new Date(
 			scheduledStartTime.getTime() + 2 * 60 * 60 * 1000,
 		); // 2 hours later
@@ -183,26 +184,16 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 				scheduledStartTime,
 			});
 
-			const formattedDate = scheduledStartTime.toLocaleDateString("en-US", {
-				day: "numeric",
-				month: "short",
-				weekday: "short",
-				year: "numeric",
-			});
-			const formattedTime = scheduledStartTime.toLocaleTimeString("en-US", {
-				hour: "numeric",
-				hour12: true,
-				minute: "2-digit",
-			});
+			const unixTimestamp = Math.floor(scheduledStartTime.getTime() / 1000);
+			const discordTimestamp = `<t:${unixTimestamp}:F>`;
+
 			if (availableUsers.availableUsers.length > 0) {
 				await interaction.reply(
-					`Session scheduled for **${formattedDate}** at **${formattedTime}**. We have ${availableUsers.availableUsers.join(", ")} available to join!`,
+					`Session scheduled **${discordTimestamp}**. We have ${availableUsers.availableUsers.join(", ")} available to join!`,
 				);
 				return;
 			}
-			await interaction.reply(
-				`Session scheduled for **${formattedDate}** at **${formattedTime}**.`,
-			);
+			await interaction.reply(`Session scheduled ${discordTimestamp}.`);
 		}
 	} catch (error) {
 		extractErrorDetails({ error, operation: "beny-bot.schedule" });
@@ -217,9 +208,9 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 export const scheduleEventCommand = {
 	action,
 	command: CommandsEnum.SCHEDULE,
-	description: "Schedule an event such as a D&D session",
+	description: "Schedule an event such as a D&D session.",
 	modal: {
-		id: "scheduleEventModal",
+		id: CommandsEnum.SCHEDULE,
 		onSubmit: modalOnSubmit,
 	},
 };

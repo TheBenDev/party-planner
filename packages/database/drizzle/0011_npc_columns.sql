@@ -1,0 +1,1 @@
+ALTER TABLE "non_player_character" ADD COLUMN "bio" varchar;

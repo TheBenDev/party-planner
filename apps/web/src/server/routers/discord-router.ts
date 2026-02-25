@@ -111,7 +111,7 @@ export const discordRouter = j.router({
 					timeZoneName: "short",
 					weekday: "long",
 				});
-				return discord.post(Routes.channelMessages(channelId), {
+				return discord?.post(Routes.channelMessages(channelId), {
 					body: {
 						content: `Reminder: There is a D&D session starting on ${time}!`,
 					},
@@ -199,39 +199,31 @@ export const discordRouter = j.router({
 			throw new HTTPException(400, { message: "Npc Name required" });
 		}
 
-		const discordIntegrationRow = await db
-			.select()
-			.from(campaignIntegrationsTable)
+		const npcRow = await db
+			.select({ npc: nonPlayerCharactersTable })
+			.from(nonPlayerCharactersTable)
 			.innerJoin(
-				nonPlayerCharactersTable,
-				and(
-					eq(
-						nonPlayerCharactersTable.campaignId,
-						campaignIntegrationsTable.campaignId,
-					),
-					ilike(nonPlayerCharactersTable.firstName, npcName),
+				campaignIntegrationsTable,
+				eq(
+					campaignIntegrationsTable.campaignId,
+					nonPlayerCharactersTable.campaignId,
 				),
 			)
 			.where(
 				and(
 					eq(campaignIntegrationsTable.externalId, serverId),
 					eq(campaignIntegrationsTable.source, IntegrationSource.DISCORD),
+					ilike(nonPlayerCharactersTable.firstName, npcName),
 				),
 			);
 
-		if (discordIntegrationRow.length === 0) {
-			throw new HTTPException(404, {
-				message: "Campaign integration not found",
-			});
-		}
-
-		const npcRow = discordIntegrationRow[0].non_player_character;
-		if (npcRow === null) {
+		if (npcRow.length === 0) {
 			throw new HTTPException(404, {
 				message: "NPC not found",
 			});
 		}
-		return c.json({ npc: npcRow });
+
+		return c.json({ npc: npcRow[0].npc });
 	}),
 	registerCampaign: discordProcedure.mutation(async ({ c }) => {
 		const db = c.get("db");
@@ -390,7 +382,7 @@ export const discordRouter = j.router({
 			const { channelId, message } = input;
 			const discord = c.get("discord");
 			try {
-				await discord.post(Routes.channelMessages(channelId), {
+				await discord?.post(Routes.channelMessages(channelId), {
 					body: {
 						content: message,
 					},

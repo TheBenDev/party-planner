@@ -29,7 +29,7 @@ export const campaignIntegrationsTable = pgTable(
 		campaignId: uuid("campaign_id").notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		externalId: varchar("external_id").notNull(),
-		id: uuid("integration_id").primaryKey().defaultRandom(),
+		id: uuid("id").primaryKey().defaultRandom(),
 		metadata: jsonb("metadata").$type<IntegrationMetadata>(),
 		settings: jsonb("settings").$type<IntegrationSettings>(),
 		source: integrationSourceEnum("source").notNull(),
