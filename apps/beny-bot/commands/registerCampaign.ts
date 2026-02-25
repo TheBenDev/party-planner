@@ -22,7 +22,7 @@ async function action(interaction: ChatInputCommandInteraction) {
 		return;
 	}
 	const registerCampaignModal = new ModalBuilder()
-		.setCustomId("registerCampaignModal")
+		.setCustomId("campaignRegisterModal")
 		.setTitle("Register D&D Campaign to server");
 
 	const campaignIdInput = new TextInputBuilder()
@@ -80,7 +80,8 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 		switch (details.status) {
 			case 404: {
 				await interaction.reply({
-					content: "I could not find the campaign you were trying to integrate",
+					content:
+						"I could not find the campaign you were trying to integrate.",
 					flags: ["Ephemeral"],
 				});
 				break;
@@ -109,7 +110,7 @@ export const registerCampaignCommand = {
 	command: CommandsEnum.REGISTERCAMPAIGN,
 	description: "Allows you to register a discord server to a D&D campaign.",
 	modal: {
-		id: "registerCampaignModal",
+		id: "campaignRegisterModal",
 		onSubmit: modalOnSubmit,
 	},
 };

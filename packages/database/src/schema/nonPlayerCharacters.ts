@@ -16,6 +16,7 @@ export const nonPlayerCharactersTable = pgTable(
 	"non_player_character",
 	{
 		avatar: varchar("avatar"),
+		bio: varchar("bio"),
 		campaignId: uuid("campaign_id"),
 		characterSheet: jsonb("character_sheet"),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),

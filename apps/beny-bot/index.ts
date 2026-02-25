@@ -63,12 +63,33 @@ client.once(Events.ClientReady, (c) => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (interaction.isModalSubmit()) {
-		const command = commands.find(
-			(cmd) => cmd.modal?.id === interaction.customId,
-		);
+		const parts = interaction.customId.split(":");
 
-		if (command?.modal) {
-			await command.modal.onSubmit(interaction);
+		if (parts.length === 0) {
+			logger.error(
+				{ customId: interaction.customId },
+				"Failed to read customId for interaction modal submit.",
+			);
+			return;
+		}
+
+		const [commandName, subcommandName] = parts;
+		const command = commands.find((cmd) => cmd.command === commandName);
+
+		if (!command) {
+			logger.error(
+				{ customId: interaction.customId },
+				"Failed to find command from interaction modal submit customId.",
+			);
+			return;
+		}
+
+		const handler = subcommandName
+			? command.subcommands?.find((sc) => sc.name === subcommandName)
+			: command;
+
+		if (handler?.modal) {
+			await handler.modal.onSubmit(interaction);
 		}
 		return;
 	}
@@ -76,7 +97,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		const command = commands.find(
 			(cmd) => cmd.command === interaction.commandName,
 		);
-		if (!command) return;
+		if (!command) {
+			logger.error("Failed to find chat input command.");
+			return;
+		}
 		if (command.subcommands && command.subcommands.length > 0) {
 			const subcommandName = interaction.options.getSubcommand();
 

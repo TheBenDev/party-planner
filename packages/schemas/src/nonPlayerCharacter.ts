@@ -3,6 +3,7 @@ import { BaseEntitySchema } from "./common";
 
 export const NonPlayerCharactersSchema = BaseEntitySchema.extend({
 	avatar: z.string().nullable().optional(),
+	bio: z.string().nullable().optional(),
 	campaignId: z.uuid().optional(),
 	characterSheet: z.any(),
 	deletedAt: z.date().nullable().optional(),

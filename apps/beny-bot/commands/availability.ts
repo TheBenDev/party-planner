@@ -170,8 +170,12 @@ async function actionView(interaction: ChatInputCommandInteraction) {
 }
 
 async function actionSet(interaction: ChatInputCommandInteraction) {
+	logger.info(
+		{ operation: "beny-bot.available-set" },
+		"Setting an availability.",
+	);
 	const setAvailableModal = new ModalBuilder()
-		.setCustomId("setAvailableModal")
+		.setCustomId("available:set")
 		.setTitle("Set a time you are available");
 
 	const dayOfWeekSelect = new StringSelectMenuBuilder()
@@ -325,7 +329,7 @@ export const availabilitySubcommands = [
 	{
 		action: actionSet,
 		description: "Set your recurring availability",
-		modal: { id: "setAvailableModal", onSubmit: modalSetOnSubmit },
+		modal: { id: "available:set", onSubmit: modalSetOnSubmit },
 		name: "set",
 	},
 	{
@@ -360,9 +364,5 @@ export const availabilitySubcommands = [
 export const availabilityCommand = {
 	command: CommandsEnum.AVAILABLE,
 	description: "Manage your D&D availability",
-	modal: {
-		id: "setAvailableModal",
-		onSubmit: modalSetOnSubmit,
-	},
 	subcommands: availabilitySubcommands,
 };

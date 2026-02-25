@@ -77,6 +77,20 @@
       "when": 1771275041721,
       "tag": "0010_updated_at_added_to_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1771621529502,
+      "tag": "0011_npc_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1771623253356,
+      "tag": "0012_fix id name consistency",
+      "breakpoints": true
     }
   ],
   "version": "7"
