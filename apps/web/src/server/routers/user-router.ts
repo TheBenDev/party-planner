@@ -37,6 +37,9 @@ export const userRouter = j.router({
 	getUser: privateProcedure.query(async ({ c }) => {
 		const userId = c.get("clerkUserId");
 		const db = c.get("db");
+		if (!userId) {
+			throw new HTTPException(400, { message: "missing clerk id" });
+		}
 		const userRow = await db
 			.select()
 			.from(usersTable)

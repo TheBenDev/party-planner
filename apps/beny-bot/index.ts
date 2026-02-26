@@ -5,6 +5,7 @@ import {
 	SlashCommandBuilder,
 } from "discord.js";
 import { commands } from "./commands";
+import { config } from "./lib/config";
 import logger from "./lib/logger";
 
 const client = new Client({
@@ -120,4 +121,4 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	}
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(config.DISCORD_TOKEN);

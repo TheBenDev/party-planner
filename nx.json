@@ -3,6 +3,14 @@
   "cli": {
     "packageManager": "bun"
   },
+  "generators": {
+    "@nx/next": {
+      "application": {
+        "linter": "none",
+        "style": "tailwind"
+      }
+    }
+  },
   "namedInputs": {
     "default": [
       "{projectRoot}/**/*",
@@ -17,46 +25,58 @@
       "{workspaceRoot}/biome.json"
     ]
   },
+  "nxCloudId": "692b5f00814039d3841202f7",
   "plugins": [
     {
-      "plugin": "@nx/js/typescript",
       "options": {
+        "build": {
+          "buildDepsName": "build-deps",
+          "configName": "tsconfig.lib.json",
+          "targetName": "build",
+          "watchDepsName": "watch-deps"
+        },
         "typecheck": {
           "targetName": "typecheck"
-        },
-        "build": {
-          "targetName": "build",
-          "configName": "tsconfig.lib.json",
-          "buildDepsName": "build-deps",
-          "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "plugin": "@nx/js/typescript"
     },
     {
-      "plugin": "@nx/next/plugin",
       "options": {
-        "startTargetName": "start",
+        "buildDepsTargetName": "build-deps",
         "buildTargetName": "build",
         "devTargetName": "dev",
         "serveStaticTargetName": "serve-static",
-        "buildDepsTargetName": "build-deps",
+        "startTargetName": "start",
         "watchDepsTargetName": "watch-deps"
-      }
-    },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
+      },
+      "plugin": "@nx/next/plugin",
+      "targetDefaults": {
+        "build": {
+          "cache": true,
+          "dependsOn": [
+            "^build"
+          ],
+          "inputs": [
+            "production",
+            "^production"
+          ]
+        },
+        "lint": {
+          "cache": true,
+          "inputs": [
+            "default",
+            "{workspaceRoot}/biome.json"
+          ]
+        },
+        "typecheck": {
+          "cache": true,
+          "inputs": [
+            "default",
+            "^default"
+          ]
+        }
       }
     }
-  ],
-  "nxCloudId": "692b5f00814039d3841202f7",
-  "generators": {
-    "@nx/next": {
-      "application": {
-        "style": "tailwind",
-        "linter": "none"
-      }
-    }
-  }
+  ]
 }

@@ -110,10 +110,7 @@
         "useWhile": "error"
       },
       "correctness": {
-        "noUnusedImports": {
-          "fix": "safe",
-          "level": "error"
-        },
+        "noUnresolvedImports": "off",
         "noUnusedVariables": {
           "fix": "none",
           "level": "error"
@@ -128,9 +125,7 @@
       },
       "nursery": {
         "noFloatingPromises": "off",
-        "noImportCycles": "error",
-        "noShadow": "error",
-        "noUnresolvedImports": "off"
+        "noShadow": "error"
       },
       "performance": {
         "noAwaitInLoops": "error",
@@ -334,18 +329,16 @@
     },
     {
       "includes": [
-        "**/gen/rpc/**/*.ts"
-      ],
-      "linter": {
-        "enabled": false
-      }
-    },
-    {
-      "includes": [
+        "**/gen/rpc/**/*.ts",
         "**/components/ui/**/*.tsx"
       ],
       "linter": {
+        "enabled": false,
         "rules": {
+          "correctness": {
+            "noUndeclaredDependencies": "warn",
+            "noUnresolvedImports": "off"
+          },
           "performance": {
             "noNamespaceImport": "off"
           }

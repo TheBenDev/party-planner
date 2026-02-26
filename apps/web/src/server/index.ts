@@ -6,10 +6,10 @@ import { discordRouter } from "./routers/discord-router";
 import { emailRouter } from "./routers/email-router";
 import { locationRouter } from "./routers/location-router";
 import { memberRouter } from "./routers/member-router";
-import { nonPlayerCharacterRouter } from "./routers/nonPlayerCharacter-router";
+import { nonPlayerCharacterRouter } from "./routers/non-player-character-router";
 import { questRouter } from "./routers/quest-router";
 import { sessionRouter } from "./routers/session-router";
-import { userRouter } from "./routers/user-router";
+import { userRouter } from "./user-router";
 
 /**
  * This is your base API.

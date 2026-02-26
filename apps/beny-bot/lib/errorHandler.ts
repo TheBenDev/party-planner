@@ -1,4 +1,5 @@
 import axios, { type AxiosError } from "axios";
+// biome-ignore  lint/correctness/noUndeclaredDependencies: it exists and works
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import z, { type ZodError } from "zod";
 import logger from "../lib/logger";

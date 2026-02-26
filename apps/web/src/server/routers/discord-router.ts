@@ -388,6 +388,8 @@ export const discordRouter = j.router({
 					},
 				});
 			} catch (error) {
+				// TODO: better error logging in router
+				// biome-ignore lint/suspicious/noConsole: intentional error logging
 				console.error(error);
 				throw new HTTPException(500, {
 					message: "Failed to send message to discord channel",

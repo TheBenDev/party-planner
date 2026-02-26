@@ -1,14 +1,14 @@
-import {
-	LabelBuilder,
-	ModalBuilder,
-	StringSelectMenuBuilder,
-	StringSelectMenuOptionBuilder,
-} from "@discordjs/builders";
 import { ScheduleSessionResponseSchema } from "@planner/schemas/discord";
 import axios from "axios";
-import type {
-	ChatInputCommandInteraction,
-	ModalSubmitInteraction,
+import {
+	type ChatInputCommandInteraction,
+	LabelBuilder,
+	ModalBuilder,
+	type ModalSubmitInteraction,
+	StringSelectMenuBuilder,
+	StringSelectMenuOptionBuilder,
+	TextInputBuilder,
+	TextInputStyle,
 } from "discord.js";
 import { config } from "../lib/config";
 import { headers } from "../lib/constants";
@@ -27,7 +27,7 @@ async function action(interaction: ChatInputCommandInteraction) {
 
 	const scheduleEventModal = new ModalBuilder()
 		.setCustomId(CommandsEnum.SCHEDULE)
-		.setTitle("Schedule an event for your D&D game");
+		.setTitle("Schedule an event");
 
 	// Hour select
 	const hourOptions = Array.from({ length: 24 }, (_, i) => {
@@ -103,14 +103,25 @@ async function action(interaction: ChatInputCommandInteraction) {
 			.setLabel(displayLabel)
 			.setValue(dateValue);
 	});
+
+	const eventNameInput = new TextInputBuilder()
+		.setCustomId("eventName")
+		.setStyle(TextInputStyle.Short)
+		.setPlaceholder("The event you're creating")
+		.setRequired(true)
+		.setMaxLength(30);
+
 	const dateSelect = new StringSelectMenuBuilder()
 		.setCustomId("sessionDate")
 		.setPlaceholder("Select date")
 		.setRequired(true)
 		.addOptions(...dateOptions);
 
+	const eventLabel = new LabelBuilder()
+		.setLabel("Event Name")
+		.setTextInputComponent(eventNameInput);
 	const dateLabel = new LabelBuilder()
-		.setLabel("The day you'd like to schedule")
+		.setLabel("Event Date")
 		.setStringSelectMenuComponent(dateSelect);
 	const hourLabel = new LabelBuilder()
 		.setLabel("Hour")
@@ -120,8 +131,12 @@ async function action(interaction: ChatInputCommandInteraction) {
 		.setStringSelectMenuComponent(minuteSelect);
 
 	// Use in your interaction
-	scheduleEventModal.addLabelComponents(dateLabel, hourLabel, minuteLabel);
-
+	scheduleEventModal.addLabelComponents(
+		eventLabel,
+		dateLabel,
+		hourLabel,
+		minuteLabel,
+	);
 	await interaction.showModal(scheduleEventModal);
 }
 
@@ -138,6 +153,7 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 		return;
 	}
 
+	const eventName = interaction.fields.getTextInputValue("eventName");
 	const hour = interaction.fields.getStringSelectValues("sessionHour")?.[0];
 	const minute = interaction.fields.getStringSelectValues("sessionMinute")?.[0];
 	const date = interaction.fields.getStringSelectValues("sessionDate")?.[0];
@@ -173,12 +189,11 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 			);
 			const availableUsers = ScheduleSessionResponseSchema.parse(res.data);
 			await guild.scheduledEvents.create({
-				description: "Scheduled D&D session", // Customize this
 				entityMetadata: {
 					location: "Check the channel for details", // Required for EXTERNAL type
 				},
 				entityType: 3, // EXTERNAL
-				name: "D&D Session", // Customize this
+				name: eventName, // Customize this
 				privacyLevel: 2, // GUILD_ONLY
 				scheduledEndTime,
 				scheduledStartTime,
