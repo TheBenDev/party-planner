@@ -20,7 +20,9 @@
   },
   "private": true,
   "scripts": {
-    "dev": "bun run index.ts | npx pino-pretty"
+    "build": "echo 'no'",
+    "dev": "bun run index.ts | npx pino-pretty",
+    "lint": "biome lint --write ."
   },
   "type": "module"
 }

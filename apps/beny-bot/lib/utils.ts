@@ -113,7 +113,10 @@ export function formatTime(time: string): string {
 
 	// Convert to 12-hour format
 	const period = hour >= 12 ? "PM" : "AM";
-	const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+	let displayHour: number;
+	if (hour === 0) displayHour = 12;
+	else if (hour > 12) displayHour = hour - 12;
+	else displayHour = hour;
 
 	return `${displayHour}:${minute} ${period}`;
 }
