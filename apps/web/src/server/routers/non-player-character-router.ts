@@ -2,6 +2,8 @@ import { schema } from "@planner/database";
 import {
 	GetNonPlayerCharacterRequestSchema,
 	ListNonPlayerCharactersRequestSchema,
+	ListNonPlayerCharactersResponseSchema,
+	NonPlayerCharactersSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
@@ -40,7 +42,9 @@ export const nonPlayerCharacterRouter = j.router({
 				.select()
 				.from(nonPlayerCharactersTable)
 				.where(eq(nonPlayerCharactersTable.campaignId, campaignId));
-
-			return c.json(nonPlayerCharactersRow);
+			const npcs = ListNonPlayerCharactersResponseSchema.parse(
+				nonPlayerCharactersRow,
+			);
+			return c.json(npcs);
 		}),
 });

@@ -39,7 +39,7 @@
   "scripts": {
     "build": "next build",
     "dev": "bun run next dev --turbopack",
-    "lint": "biome lint --write ."
+    "lint": "bunx biome lint --write ."
   },
   "version": "0.0.1"
 }

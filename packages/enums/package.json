@@ -5,27 +5,33 @@
   "exports": {
     "./character": {
       "import": "./dist/character.js",
-      "require": "./dist/character.js"
+      "require": "./dist/character.js",
+      "types": "./dist/character.d.ts"
     },
     "./common": {
       "import": "./dist/common.js",
-      "require": "./dist/common.js"
+      "require": "./dist/common.js",
+      "types": "./dist/common.d.ts"
     },
     "./event": {
       "import": "./dist/event.js",
-      "require": "./dist/event.js"
+      "require": "./dist/event.js",
+      "types": "./dist/event.d.ts"
     },
     "./integration": {
       "import": "./dist/integration.js",
-      "require": "./dist/integration.js"
+      "require": "./dist/integration.js",
+      "types": "./dist/integration.d.ts"
     },
     "./quest": {
       "import": "./dist/quest.js",
-      "require": "./dist/quest.js"
+      "require": "./dist/quest.js",
+      "types": "./dist/quest.d.ts"
     },
     "./user": {
       "import": "./dist/user.js",
-      "require": "./dist/user.js"
+      "require": "./dist/user.js",
+      "types": "./dist/user.d.ts"
     }
   },
   "module": "src/index.ts",
@@ -35,8 +41,8 @@
   },
   "scripts": {
     "build": "bun run build.ts",
-    "format": "biome check --linter-enabled=false --write .",
-    "lint": "biome lint --write .",
+    "format": "bunx biome check --linter-enabled=false --write .",
+    "lint": "bunx biome lint --write .",
     "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit"
   },

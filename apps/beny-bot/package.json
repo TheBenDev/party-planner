@@ -14,7 +14,7 @@
     "@types/bun": "latest"
   },
   "module": "index.ts",
-  "name": "beny-bot",
+  "name": "@planner/beny-bot",
   "peerDependencies": {
     "typescript": "^5"
   },
@@ -22,7 +22,7 @@
   "scripts": {
     "build": "echo 'no'",
     "dev": "bun run index.ts | npx pino-pretty",
-    "lint": "biome lint --write ."
+    "lint": "bunx biome lint --write ."
   },
   "type": "module"
 }

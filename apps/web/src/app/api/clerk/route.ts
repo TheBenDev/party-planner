@@ -68,4 +68,5 @@ export async function POST(req: Request) {
 		default:
 			new HTTPException(501, { message: "Webhook Event Not Implemented" });
 	}
+	return;
 }
