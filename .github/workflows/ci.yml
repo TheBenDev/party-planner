@@ -28,3 +28,5 @@ jobs:
           cache: "bun"
       - run: bun install --frozen-lockfile
       - run: bun nx run-many -t lint test build
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
