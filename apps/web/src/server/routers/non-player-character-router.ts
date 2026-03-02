@@ -3,7 +3,6 @@ import {
 	GetNonPlayerCharacterRequestSchema,
 	ListNonPlayerCharactersRequestSchema,
 	ListNonPlayerCharactersResponseSchema,
-	NonPlayerCharactersSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";

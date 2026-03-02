@@ -17,6 +17,8 @@ await build({
 });
 
 // Generate declarations with TypeScript
-spawn(["bunx", "tsc", "--declaration", "--emitDeclarationOnly"], {
+const proc = spawn(["bunx", "tsc", "--declaration", "--emitDeclarationOnly"], {
 	stdio: ["inherit", "inherit", "inherit"],
 });
+
+await proc.exited;

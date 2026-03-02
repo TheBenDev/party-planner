@@ -10,6 +10,7 @@
   },
   "exports": {
     "./auth": {
+      "types": "./dist/auth.d.ts",
       "import": "./dist/auth.js",
       "require": "./dist/auth.js"
     }
