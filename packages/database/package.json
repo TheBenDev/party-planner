@@ -1,9 +1,12 @@
 {
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
     "@planner/enums": "workspace:*",
     "@planner/schemas": "workspace:*",
     "drizzle-orm": "catalog:",
-    "drizzle-zod": "^0.8.3"
+    "drizzle-zod": "^0.8.3",
+    "ws": "^8.19.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",

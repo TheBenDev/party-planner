@@ -1,3 +1,4 @@
+"use client";
 import { useAuth as useClerkAuth } from "@clerk/nextjs";
 import type { GetActiveCampaignResponse } from "@planner/schemas/campaigns";
 import type { GetUserResponse } from "@planner/schemas/user";

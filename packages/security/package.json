@@ -11,7 +11,8 @@
   "exports": {
     "./auth": {
       "import": "./dist/auth.js",
-      "require": "./dist/auth.js"
+      "require": "./dist/auth.js",
+      "types": "./dist/auth.d.ts"
     }
   },
   "name": "@planner/security",
@@ -21,7 +22,6 @@
     "format": "biome check --linter-enabled=false --write .",
     "lint": "biome lint --write .",
     "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
-    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

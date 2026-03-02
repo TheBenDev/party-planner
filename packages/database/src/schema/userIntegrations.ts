@@ -9,7 +9,7 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { enumToPgEnum } from "../utils/enums";
+import { enumToPgEnum } from "../lib/enums";
 import { campaignUsersTable } from "./campaignUsers";
 import { usersTable } from "./users";
 

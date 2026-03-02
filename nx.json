@@ -55,11 +55,17 @@
         "build": {
           "cache": true,
           "dependsOn": [
-            "^build"
+            "^build",
+            "build-deps"
           ],
           "inputs": [
             "production",
             "^production"
+          ]
+        },
+        "dev": {
+          "dependsOn": [
+            "^build"
           ]
         },
         "lint": {

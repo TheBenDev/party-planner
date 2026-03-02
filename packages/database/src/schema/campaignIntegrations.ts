@@ -15,7 +15,7 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { enumToPgEnum } from "../utils/enums";
+import { enumToPgEnum } from "../lib/enums";
 import { campaignsTable } from "./campaigns";
 
 export const integrationSourceEnum = pgEnum(
