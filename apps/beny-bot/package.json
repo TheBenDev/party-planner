@@ -22,7 +22,7 @@
   "scripts": {
     "build": "echo 'no'",
     "dev": "bun run index.ts | npx pino-pretty",
-    "lint": "bunx biome lint --write ."
+    "lint": "biome lint --write ."
   },
   "type": "module"
 }

@@ -31,8 +31,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "format": "bunx biome check --linter-enabled=false --write .",
-    "lint": "bunx biome lint --write .",
+    "format": "biome check --linter-enabled=false --write .",
+    "lint": "biome lint --write .",
     "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
     "studio": "drizzle-kit studio",
     "typecheck": "tsc --noEmit"

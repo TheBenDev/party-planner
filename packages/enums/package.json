@@ -41,8 +41,8 @@
   },
   "scripts": {
     "build": "bun run build.ts",
-    "format": "bunx biome check --linter-enabled=false --write .",
-    "lint": "bunx biome lint --write .",
+    "format": "biome check --linter-enabled=false --write .",
+    "lint": "biome lint --write .",
     "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit"
   },
