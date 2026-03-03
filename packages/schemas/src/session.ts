@@ -11,14 +11,16 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	title: z.string(),
 });
 
-export const GetSessionRequestSchema = z.object({ id: z.uuid() });
-export const GetSessionResponseSchema = SessionsSchema;
+export const GetSessionByIdRequestSchema = z.object({ id: z.uuid() });
+export const GetSessionByIdResponseSchema = SessionsSchema;
 
-export const ListSessionsRequestSchema = z.object({
+export const ListSessionsByCampaignIdRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 
-export const ListSessionsResponseSchema = z.array(SessionsSchema);
+export const ListSessionsByCampaignIdResponseSchema = z.array(SessionsSchema);
 
-export type ListSessionsResponse = z.infer<typeof ListSessionsResponseSchema>;
+export type ListSessionsByCampaignIdResponse = z.infer<
+	typeof ListSessionsByCampaignIdResponseSchema
+>;
 export type Sessions = z.infer<typeof SessionsSchema>;

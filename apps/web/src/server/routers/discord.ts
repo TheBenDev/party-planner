@@ -1,7 +1,16 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import { IntegrationSource } from "@planner/enums/integration";
 import {
+	CheckNextSessionRequestSchema,
+	CheckNextSessionResponseSchema,
 	ClearAvailabilityRequestSchema,
+	GetAvailabilitiesRequestSchema,
+	GetAvailabilitiesResponseSchema,
+	GetNpcRequestSchema,
+	GetNpcResponseSchema,
+	RegisterCampaignRequestSchema,
+	RegisterCampaignResponseSchema,
 	RemoveAvailabilityRequestSchema,
 	ScheduleSessionRequestSchema,
 	SendMessageRequestSchema,
@@ -9,8 +18,7 @@ import {
 } from "@planner/schemas/discord";
 import { Routes } from "discord-api-types/v10";
 import { and, asc, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
-import { discordProcedure, j } from "../jsandy";
+import { discordProcedure } from "../orpc";
 
 const {
 	campaignsTable,
@@ -21,14 +29,23 @@ const {
 	userAvailabilitiesTable,
 	userIntegrationsTable,
 } = schema;
-// TODO: Create a procedure for handling webhooks
-export const discordRouter = j.router({
-	checkNextSession: discordProcedure.query(async ({ c }) => {
-		const db = c.get("db");
-		const serverId = c.req.query("serverId");
+
+const checkNextSession = discordProcedure
+	.route({
+		method: "GET",
+		path: "/discord/next-session",
+		summary: "Check the next upcoming session for a Discord server",
+	})
+	.input(CheckNextSessionRequestSchema)
+	.output(CheckNextSessionResponseSchema)
+	.handler(async ({ context, input }) => {
+		const db = context.db;
+		const { serverId } = input;
 
 		if (!serverId) {
-			throw new HTTPException(400, { message: "Discord server id required" });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Discord server id required",
+			});
 		}
 
 		const discordIntegrationRow = await db
@@ -50,19 +67,19 @@ export const discordRouter = j.router({
 			.orderBy(asc(sessionsTable.startsAt));
 
 		if (discordIntegrationRow.length === 0) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message: "Campaign integration not found",
 			});
 		}
 
 		if (discordIntegrationRow[0].campaign_integrations.metadata == null) {
-			throw new HTTPException(500, {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Campaign integration metadata is missing",
 			});
 		}
 
 		if (discordIntegrationRow[0].session === null) {
-			return c.json({ message: "I don't see any sessions coming up." });
+			return { message: "I don't see any sessions coming up." };
 		}
 
 		const time = discordIntegrationRow[0].session.startsAt?.toLocaleString(
@@ -77,13 +94,21 @@ export const discordRouter = j.router({
 				year: "numeric",
 			},
 		);
-		return c.json({ message: `The next D&D session starts on ${time}!` });
-	}),
-	checkReminders: discordProcedure.mutation(async ({ c }) => {
-		const db = c.get("db");
-		const discord = c.get("discord");
-		const tomorrow = new Date(Date.now() + 1000 * 60 * 60 * 24); // one day in milliseconds
-		const twoDaysLater = new Date(Date.now() + 1000 * 60 * 60 * 48); // two days in milliseconds
+
+		return { message: `The next D&D session starts on ${time}!` };
+	});
+
+const checkReminders = discordProcedure
+	.route({
+		method: "POST",
+		path: "/discord/reminders",
+		summary: "Check and send session reminders",
+	})
+	.handler(async ({ context }) => {
+		const db = context.db;
+		const discord = context.discord;
+		const tomorrow = new Date(Date.now() + 1000 * 60 * 60 * 24);
+		const twoDaysLater = new Date(Date.now() + 1000 * 60 * 60 * 48);
 
 		const sessionsRow = await db
 			.select()
@@ -119,12 +144,18 @@ export const discordRouter = j.router({
 			}
 			return null;
 		});
-	}),
-	clearAvailability: discordProcedure.mutation(async ({ c }) => {
-		const db = c.get("db");
-		const { userExternalId } = ClearAvailabilityRequestSchema.parse(
-			await c.req.json(),
-		);
+	});
+
+const clearAvailability = discordProcedure
+	.route({
+		method: "DELETE",
+		path: "/discord/availability",
+		summary: "Clear all availability for a user",
+	})
+	.input(ClearAvailabilityRequestSchema)
+	.handler(async ({ input, context }) => {
+		const db = context.db;
+		const { userExternalId } = input;
 
 		const userIntegrationRow = await db
 			.select({
@@ -135,8 +166,11 @@ export const discordRouter = j.router({
 			.where(eq(userIntegrationsTable.externalId, userExternalId));
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User integration not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User integration not found.",
+			});
 		}
+
 		const { userId, campaignId } = userIntegrationRow[0];
 
 		await db
@@ -147,21 +181,34 @@ export const discordRouter = j.router({
 					eq(userAvailabilitiesTable.campaignId, campaignId),
 				),
 			);
-	}),
-	getAvailabilities: discordProcedure.query(async ({ c }) => {
-		const db = c.get("db");
-		const userExternalId = c.req.query("userExternalId");
+	});
+
+const getAvailabilities = discordProcedure
+	.route({
+		method: "GET",
+		path: "/discord/availability",
+		summary: "Get availabilities for a Discord user",
+	})
+	.input(GetAvailabilitiesRequestSchema)
+	.output(GetAvailabilitiesResponseSchema)
+	.handler(async ({ context, input }) => {
+		const db = context.db;
+		const { userExternalId } = input;
 
 		if (!userExternalId) {
-			throw new HTTPException(400, {
+			throw new ORPCError("BAD_REQUEST", {
 				message: "User Discord id missing from params",
 			});
 		}
 
 		const userIntegrationRow = await db
-			.select({ availabilities: userAvailabilitiesTable })
+			.select({
+				dayOfWeek: userAvailabilitiesTable.dayOfWeek,
+				endTime: userAvailabilitiesTable.endTime,
+				startTime: userAvailabilitiesTable.startTime,
+			})
 			.from(userIntegrationsTable)
-			.leftJoin(
+			.innerJoin(
 				userAvailabilitiesTable,
 				and(
 					eq(
@@ -174,29 +221,33 @@ export const discordRouter = j.router({
 			.where(eq(userIntegrationsTable.externalId, userExternalId));
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "user integration not found" });
+			throw new ORPCError("NOT_FOUND", {
+				message: "user integration not found",
+			});
 		}
-		const userAvailabilities = userIntegrationRow
-			.filter((row) => row.availabilities !== null)
-			.map((row) => ({
-				dayOfWeek: row.availabilities?.dayOfWeek,
-				endTime: row.availabilities?.endTime,
-				startTime: row.availabilities?.startTime,
-			}));
 
-		return c.json({
-			userAvailabilities,
-		});
-	}),
-	getNpc: discordProcedure.query(async ({ c }) => {
-		const db = c.get("db");
-		const serverId = c.req.query("serverId");
-		const npcName = c.req.query("npcName");
+		return { userAvailabilities: userIntegrationRow };
+	});
+
+const getNpc = discordProcedure
+	.route({
+		method: "GET",
+		path: "/discord/npc",
+		summary: "Get an NPC by name for a Discord server",
+	})
+	.input(GetNpcRequestSchema)
+	.output(GetNpcResponseSchema)
+	.handler(async ({ context, input }) => {
+		const db = context.db;
+		const { npcName, serverId } = input;
+
 		if (!serverId) {
-			throw new HTTPException(400, { message: "Discord server id required" });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Discord server id required",
+			});
 		}
 		if (!npcName) {
-			throw new HTTPException(400, { message: "Npc Name required" });
+			throw new ORPCError("BAD_REQUEST", { message: "Npc Name required" });
 		}
 
 		const npcRow = await db
@@ -218,20 +269,26 @@ export const discordRouter = j.router({
 			);
 
 		if (npcRow.length === 0) {
-			throw new HTTPException(404, {
-				message: "NPC not found",
-			});
+			throw new ORPCError("NOT_FOUND", { message: "NPC not found" });
 		}
 
-		return c.json({ npc: npcRow[0].npc });
-	}),
-	registerCampaign: discordProcedure.mutation(async ({ c }) => {
-		const db = c.get("db");
-		const body = await c.req.json();
-		const { serverId, campaignId, channelId } = body;
+		return { npc: npcRow[0].npc };
+	});
+
+const registerCampaign = discordProcedure
+	.route({
+		method: "POST",
+		path: "/discord/register",
+		summary: "Register a campaign with a Discord server",
+	})
+	.input(RegisterCampaignRequestSchema)
+	.output(RegisterCampaignResponseSchema)
+	.handler(async ({ input, context }) => {
+		const db = context.db;
+		const { serverId, campaignId, channelId } = input;
 
 		if (!(serverId && campaignId && channelId)) {
-			throw new HTTPException(400, {
+			throw new ORPCError("BAD_REQUEST", {
 				message: "missing params for register",
 			});
 		}
@@ -250,14 +307,15 @@ export const discordRouter = j.router({
 			.limit(1);
 
 		if (campaignRow.length === 0) {
-			throw new HTTPException(404, { message: "Campaign not found" });
+			throw new ORPCError("NOT_FOUND", { message: "Campaign not found" });
 		}
 
 		if (campaignRow[0].campaign_integrations !== null) {
-			throw new HTTPException(409, {
+			throw new ORPCError("CONFLICT", {
 				message: "Campaign is already integrated with discord server",
 			});
 		}
+
 		const values = {
 			campaignId,
 			externalId: serverId,
@@ -273,11 +331,18 @@ export const discordRouter = j.router({
 			.insert(campaignIntegrationsTable)
 			.values(values)
 			.onConflictDoNothing();
-	}),
-	removeAvailability: discordProcedure.mutation(async ({ c }) => {
-		const db = c.get("db");
-		const { dayOfWeek, startTime, userExternalId } =
-			RemoveAvailabilityRequestSchema.parse(await c.req.json());
+	});
+
+const removeAvailability = discordProcedure
+	.route({
+		method: "DELETE",
+		path: "/discord/availability/single",
+		summary: "Remove a specific availability slot for a user",
+	})
+	.input(RemoveAvailabilityRequestSchema)
+	.handler(async ({ input, context }) => {
+		const db = context.db;
+		const { dayOfWeek, startTime, userExternalId } = input;
 
 		const userIntegrationRow = await db
 			.select({
@@ -302,13 +367,17 @@ export const discordRouter = j.router({
 			.limit(1);
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User integration not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User integration not found.",
+			});
 		}
 
 		const { userId, campaignId, userAvailability } = userIntegrationRow[0];
 
 		if (userAvailability === null) {
-			throw new HTTPException(404, { message: "User Availability not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User Availability not found.",
+			});
 		}
 
 		await db
@@ -321,19 +390,24 @@ export const discordRouter = j.router({
 					eq(userAvailabilitiesTable.campaignId, campaignId),
 				),
 			);
-	}),
-	scheduleSession: discordProcedure.mutation(async ({ c }) => {
-		const db = c.get("db");
-		const body = ScheduleSessionRequestSchema.parse(await c.req.json());
-		const { serverId, time } = body;
+	});
+
+const scheduleSession = discordProcedure
+	.route({
+		method: "POST",
+		path: "/discord/session",
+		summary: "Schedule a D&D session",
+	})
+	.input(ScheduleSessionRequestSchema)
+	.handler(async ({ input, context }) => {
+		const db = context.db;
+		const { serverId, time } = input;
 		const { hour, minute, date } = time;
 		const sessionTime = `${hour}:${minute}:00`;
 		const dayOfWeek = new Date(date).getUTCDay();
 
 		const discordIntegrationRow = await db
-			.select({
-				campaignId: campaignIntegrationsTable.campaignId,
-			})
+			.select({ campaignId: campaignIntegrationsTable.campaignId })
 			.from(campaignIntegrationsTable)
 			.where(
 				and(
@@ -341,15 +415,18 @@ export const discordRouter = j.router({
 					eq(campaignIntegrationsTable.source, IntegrationSource.DISCORD),
 				),
 			);
+
 		if (discordIntegrationRow.length === 0) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message: "Discord integration not found.",
 			});
 		}
+
 		const campaignId = discordIntegrationRow[0].campaignId;
 		const sessionDate = new Date(
 			`${date}T${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`,
 		);
+
 		const userAvailabilitiesRow = await db
 			.select()
 			.from(userAvailabilitiesTable)
@@ -365,6 +442,7 @@ export const discordRouter = j.router({
 					gte(userAvailabilitiesTable.endTime, sessionTime),
 				),
 			);
+
 		const availableUsers = userAvailabilitiesRow.map(
 			(user) => `${user.users.firstName} ${user.users.lastName}`,
 		);
@@ -374,32 +452,45 @@ export const discordRouter = j.router({
 			startsAt: sessionDate,
 			title: "D&D Session",
 		});
-		return c.json({ availableUsers });
-	}),
-	sendMessage: discordProcedure
-		.input(SendMessageRequestSchema)
-		.mutation(async ({ c, input }) => {
-			const { channelId, message } = input;
-			const discord = c.get("discord");
-			try {
-				await discord?.post(Routes.channelMessages(channelId), {
-					body: {
-						content: message,
-					},
-				});
-			} catch (error) {
-				// TODO: better error logging in router
-				// biome-ignore lint/suspicious/noConsole: intentional error logging
-				console.error(error);
-				throw new HTTPException(500, {
-					message: "Failed to send message to discord channel",
-				});
-			}
-		}),
-	setAvailability: discordProcedure.mutation(async ({ c }) => {
-		const body = SetAvailabilityRequestSchema.parse(await c.req.json());
-		const db = c.get("db");
-		const { serverId, time, externalId } = body;
+
+		return { availableUsers };
+	});
+
+const sendMessage = discordProcedure
+	.route({
+		method: "POST",
+		path: "/discord/message",
+		summary: "Send a message to a Discord channel",
+	})
+	.input(SendMessageRequestSchema)
+	.handler(async ({ input, context }) => {
+		const { channelId, message } = input;
+		const discord = context.discord;
+
+		try {
+			await discord?.post(Routes.channelMessages(channelId), {
+				body: { content: message },
+			});
+		} catch (error) {
+			// TODO: better error logging in router
+			// biome-ignore lint/suspicious/noConsole: intentional error logging
+			console.error(error);
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to send message to discord channel",
+			});
+		}
+	});
+
+const setAvailability = discordProcedure
+	.route({
+		method: "POST",
+		path: "/discord/availability",
+		summary: "Set availability for a Discord user",
+	})
+	.input(SetAvailabilityRequestSchema)
+	.handler(async ({ input, context }) => {
+		const db = context.db;
+		const { serverId, time, externalId } = input;
 		const { dayOfWeek, endTime, startTime, frequency } = time;
 
 		const integrationRow = await db
@@ -429,12 +520,15 @@ export const discordRouter = j.router({
 			.limit(1);
 
 		if (integrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User Integration Not Found" });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User Integration Not Found",
+			});
 		}
+
 		const integration = integrationRow[0];
 
 		if (!integration.campaign_integrations) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message:
 					"Campaign integration not found. Please register this Discord server with a campaign first.",
 			});
@@ -444,18 +538,30 @@ export const discordRouter = j.router({
 		const campaignId = integration.campaign_integrations.campaignId;
 
 		if (existingAvailability) {
-			throw new HTTPException(409, {
+			throw new ORPCError("CONFLICT", {
 				message: "Availability already exists for this day and time",
 			});
 		}
 
 		await db.insert(userAvailabilitiesTable).values({
-			campaignId, // Or get from integration if campaign-specific
+			campaignId,
 			dayOfWeek,
 			endTime,
 			interval: frequency,
 			startTime,
 			userId: integration.user_integrations.userId,
 		});
-	}),
-});
+	});
+
+export const discordRouter = {
+	checkNextSession,
+	checkReminders,
+	clearAvailability,
+	getAvailabilities,
+	getNpc,
+	registerCampaign,
+	removeAvailability,
+	scheduleSession,
+	sendMessage,
+	setAvailability,
+};

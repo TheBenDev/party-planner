@@ -7,12 +7,20 @@ export const CheckNextSessionRequestSchema = z.object({
 	serverId: z.string(),
 });
 
+export const CheckNextSessionResponseSchema = z.object({
+	message: z.string(),
+});
+
 export const ClearAvailabilityRequestSchema = z.object({
 	userExternalId: z.string(),
 });
 export const RemoveAvailabilityRequestSchema = z.object({
 	dayOfWeek: z.enum(DayOfWeekEnum),
 	startTime: z.string(),
+	userExternalId: z.string(),
+});
+
+export const GetAvailabilitiesRequestSchema = z.object({
 	userExternalId: z.string(),
 });
 
@@ -26,10 +34,22 @@ export const GetAvailabilitiesResponseSchema = z.object({
 		.array(),
 });
 
-// TODO: need to make a better query for discord bot.
+export const GetNpcRequestSchema = z.object({
+	npcName: z.string(),
+	serverId: z.string(),
+});
+
 export const GetNpcResponseSchema = z.object({
 	npc: NonPlayerCharactersSchema,
 });
+
+export const RegisterCampaignRequestSchema = z.object({
+	campaignId: z.string(),
+	channelId: z.string(),
+	serverId: z.string(),
+});
+
+export const RegisterCampaignResponseSchema = z.void();
 
 export const ScheduleSessionRequestSchema = z.object({
 	serverId: z.string(),

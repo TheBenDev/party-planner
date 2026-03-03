@@ -1,10 +1,11 @@
-import { createClient } from "@jsandy/rpc";
+import { createORPCClient } from "@orpc/client";
+import { RPCLink } from "@orpc/client/fetch";
+import type { RouterClient } from "@orpc/server";
 import type { AppRouter } from "@/server";
-import { clientConfig } from "./config";
 
-/**
- * Your type-safe API client with Clerk authentication
- */
-export const client = createClient<AppRouter>({
-	baseUrl: `${clientConfig.NEXT_PUBLIC_APP_URL}/api`,
+const link = new RPCLink({
+	url: `${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/api`,
 });
+
+// Create a client for your router
+export const client: RouterClient<AppRouter> = createORPCClient(link);

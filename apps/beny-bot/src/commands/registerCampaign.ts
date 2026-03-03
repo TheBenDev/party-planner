@@ -7,7 +7,7 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 } from "discord.js";
-import { config } from "../lib/config";
+import { env } from "../env";
 import { headers } from "../lib/constants";
 import { extractErrorDetails } from "../lib/errorHandler";
 import logger from "../lib/logger";
@@ -60,7 +60,7 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 	const campaignId = interaction.fields.getTextInputValue("campaignId");
 	try {
 		await axios.post(
-			`${config.APP_URL}/api/discord/registerCampaign`,
+			`${env.APP_URL}/api/discord/registerCampaign`,
 			{
 				campaignId,
 				channelId,

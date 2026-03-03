@@ -7,27 +7,20 @@ import { client } from "@/lib/client";
 
 export default function CampaignPage() {
 	const { mutate: sendMessage } = useMutation({
-		mutationFn: async () => {
-			await client.discord.sendMessage.$post({
+		mutationFn: () =>
+			client.discord.sendMessage({
 				channelId: "1458533761422462999",
 				message: "testing to see if i can send message to channel as beny bot",
+			}),
+		onError: (error) => {
+			toast.error("message not sent", {
+				description: error.message,
 			});
-		},
-		onError: () => {
-			toast.error("message not sent");
 		},
 		onSuccess: () => {
 			toast.success("message sent");
 		},
 	});
 
-	function handleSendMessage() {
-		sendMessage();
-	}
-
-	return (
-		<div>
-			<Button onClick={handleSendMessage}>click</Button>
-		</div>
-	);
+	return <Button onClick={() => sendMessage}>click</Button>;
 }

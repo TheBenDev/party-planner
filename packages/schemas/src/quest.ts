@@ -13,13 +13,15 @@ export const QuestsSchema = BaseEntitySchema.extend({
 	title: z.string(),
 });
 
-export const GetQuestRequestSchema = z.object({ id: z.uuid() });
-export const GetQuestResponseSchema = QuestsSchema;
+export const GetQuestByIdResponseSchema = QuestsSchema;
+export const GetQuestByIdRequestSchema = z.object({ id: z.uuid() });
 
-export const ListQuestsRequestSchema = z.object({
+export const ListQuestsByCampaignIdRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
-export const ListQuestsResponseSchema = z.array(QuestsSchema);
+export const ListQuestsByCampaignIdResponseSchema = z.array(QuestsSchema);
 
-export type ListQuestsResponse = z.infer<typeof ListQuestsResponseSchema>;
+export type ListQuestsByCampaignIdResponse = z.infer<
+	typeof ListQuestsByCampaignIdResponseSchema
+>;
 export type Quests = z.infer<typeof QuestsSchema>;

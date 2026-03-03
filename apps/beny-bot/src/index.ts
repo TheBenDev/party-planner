@@ -4,8 +4,9 @@ import {
 	GatewayIntentBits,
 	SlashCommandBuilder,
 } from "discord.js";
+import { Hono } from "hono";
 import { commands } from "./commands";
-import { config } from "./lib/config";
+import { env } from "./env";
 import logger from "./lib/logger";
 
 const client = new Client({
@@ -121,4 +122,32 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	}
 });
 
-client.login(config.DISCORD_TOKEN);
+const app = new Hono();
+
+app.get("/health", (c) =>
+	c.json({
+		ok: true,
+		service: "beny-bot",
+		timestamp: new Date().toISOString(),
+	}),
+);
+
+app.get("/", (c) => c.text("beny-bot is running"));
+
+const PORT = Number(Bun.env.PORT ?? 3000);
+
+async function bootstrap() {
+	await client.login(env.DISCORD_TOKEN);
+
+	Bun.serve({
+		fetch: app.fetch,
+		port: PORT,
+	});
+
+	logger.info({ port: PORT }, "Hono server started.");
+}
+
+bootstrap().catch((error) => {
+	logger.error({ error }, "Failed to bootstrap app.");
+	process.exit(1);
+});

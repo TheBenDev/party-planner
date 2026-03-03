@@ -1,22 +1,25 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "emitDeclarationOnly": false,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "jsx": "preserve",
+    "isolatedModules": true,
+    "jsx": "react-jsx",
     "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
     ],
-    "module": "esnext",
+    "module": "ESNext",
+    /* Bundler mode */
     "moduleResolution": "bundler",
     "noEmit": true,
-    "outDir": "dist",
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "paths": {
       "@/*": [
         "./src/*"
@@ -28,23 +31,24 @@
       }
     ],
     "resolveJsonModule": true,
-    "rootDir": "src",
-    "tsBuildInfoFile": "dist/tsconfig.tsbuildinfo"
+    /* Linting */
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "types": [
+      "bun",
+      "react",
+      "react-dom"
+    ],
+    "verbatimModuleSyntax": false
   },
   "exclude": [
-    "out-tsc",
-    "node_modules",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    ".next"
+    "node_modules"
   ],
-  "extends": "../../tsconfig.base.json",
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/types/**/*.ts",
-    "next-env.d.ts"
+    ".next/dev/types/**/*.ts"
   ]
 }

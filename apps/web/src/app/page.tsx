@@ -21,12 +21,11 @@ export default function CreateCampaignForm() {
 	const { user } = useAuth();
 
 	const { mutate: createCampaign } = useMutation({
-		mutationFn: async (c: CreateCampaignRequest) => {
-			const res = await client.campaign.createCampaign.$post(c);
-			return res.json();
-		},
-		onError: () => {
-			toast("something went wrong creating campaign.");
+		mutationFn: (c: CreateCampaignRequest) => client.campaign.createCampaign(c),
+		onError: (error) => {
+			toast.error("something went wrong creating campaign.", {
+				description: error.message,
+			});
 		},
 		onSuccess: (res) => {
 			router.push(`campaign/${res.id}`);

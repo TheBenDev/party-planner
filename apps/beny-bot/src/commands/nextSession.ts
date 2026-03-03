@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { ChatInputCommandInteraction } from "discord.js";
-import { config } from "../lib/config";
+import { env } from "../env";
 import { headers } from "../lib/constants";
 import { extractErrorDetails } from "../lib/errorHandler";
 import logger from "../lib/logger";
@@ -22,7 +22,7 @@ async function action(interaction: ChatInputCommandInteraction) {
 	}
 	try {
 		const response = await axios.get(
-			`${config.APP_URL}/api/discord/checkNextSession`,
+			`${env.APP_URL}/api/discord/checkNextSession`,
 			{
 				headers,
 				params: {
