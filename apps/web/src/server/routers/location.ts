@@ -1,10 +1,10 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import {
 	GetLocationRequestSchema,
 	ListLocationsRequestSchema,
 } from "@planner/schemas/locations";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { locationsTable } = schema;
@@ -27,7 +27,7 @@ const getLocationById = privateProcedure
 			.limit(1);
 
 		if (locationRow.length === 0) {
-			throw new HTTPException(404, { message: "location not found" });
+			throw new ORPCError("NOT_FOUND", { message: "location not found" });
 		}
 
 		return locationRow[0];

@@ -10,7 +10,7 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 } from "discord.js";
-import { config } from "../lib/config";
+import { env } from "../env";
 import { headers } from "../lib/constants";
 import { extractErrorDetails } from "../lib/errorHandler";
 import logger from "../lib/logger";
@@ -57,7 +57,7 @@ async function actionRemove(interaction: ChatInputCommandInteraction) {
 
 	try {
 		await axios.post(
-			`${config.APP_URL}/api/discord/removeAvailability`,
+			`${env.APP_URL}/api/discord/removeAvailability`,
 			{
 				dayOfWeek: normalizedDay,
 				startTime: normalizedtime,
@@ -89,7 +89,7 @@ async function actionClear(interaction: ChatInputCommandInteraction) {
 	const userId = interaction.user.id;
 	try {
 		await axios.post(
-			`${config.APP_URL}/api/discord/clearAvailability`,
+			`${env.APP_URL}/api/discord/clearAvailability`,
 			{
 				userExternalId: userId,
 			},
@@ -118,7 +118,7 @@ async function actionView(interaction: ChatInputCommandInteraction) {
 	const userId = interaction.user.id;
 	try {
 		const res = await axios.get(
-			`${config.APP_URL}/api/discord/getAvailabilities`,
+			`${env.APP_URL}/api/discord/getAvailabilities`,
 			{
 				headers,
 				params: { userExternalId: userId },
@@ -282,7 +282,7 @@ async function modalSetOnSubmit(interaction: ModalSubmitInteraction) {
 	}
 	try {
 		await axios.post(
-			`${config.APP_URL}/api/discord/setAvailability`,
+			`${env.APP_URL}/api/discord/setAvailability`,
 			{
 				externalId: userId,
 				serverId,

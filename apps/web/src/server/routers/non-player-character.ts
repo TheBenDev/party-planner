@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import {
 	GetNonPlayerCharacterByIdRequestSchema,
@@ -6,7 +7,6 @@ import {
 	ListNonPlayerCharactersByCampaignIdResponseSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { nonPlayerCharactersTable } = schema;
@@ -30,7 +30,9 @@ const getNonPlayerCharacterById = privateProcedure
 			.limit(1);
 
 		if (nonPlayerCharacterRow.length === 0) {
-			throw new HTTPException(404, { message: "nonPlayerCharacter not found" });
+			throw new ORPCError("NOT_FOUND", {
+				message: "nonPlayerCharacter not found",
+			});
 		}
 
 		return nonPlayerCharacterRow[0];

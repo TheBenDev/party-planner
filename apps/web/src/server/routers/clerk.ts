@@ -1,13 +1,13 @@
 import type { WebhookEvent } from "@clerk/nextjs/server";
+import { ORPCError } from "@orpc/server";
 import { CreateUserRequestSchema } from "@planner/schemas/user";
-import { HTTPException } from "hono/http-exception";
 import { Webhook } from "svix";
 import { z } from "zod";
 import { client } from "@/lib/client";
-import { serverConfig } from "@/lib/serverConfig";
+import { env } from "@/env";
 import { publicProcedure } from "../orpc";
 
-const webhookSecret: string = serverConfig.CLERK_WEBHOOK_SECRET;
+const webhookSecret: string = env.CLERK_WEBHOOK_SECRET;
 
 const handleWebhook = publicProcedure
 	.route({
@@ -25,7 +25,7 @@ const handleWebhook = publicProcedure
 		const svixSignature = context.headers.get("svix-signature");
 
 		if (!(svixId && svixTimestamp && svixSignature)) {
-			throw new HTTPException(400, {
+			throw new ORPCError("BAD_REQUEST", {
 				message: "Error occured -- no svix headers",
 			});
 		}
@@ -40,7 +40,7 @@ const handleWebhook = publicProcedure
 				"svix-timestamp": svixTimestamp,
 			}) as WebhookEvent;
 		} catch (_) {
-			throw new HTTPException(400, { message: "Error occured" });
+			throw new ORPCError("BAD_REQUEST", { message: "Error occured" });
 		}
 
 		switch (evt.type) {
@@ -56,15 +56,16 @@ const handleWebhook = publicProcedure
 					await client.user.createUser(user);
 					return;
 				} catch (error) {
-					throw new HTTPException(500, {
+					throw new ORPCError("INTERNAL_SERVER_ERROR", {
 						cause: error,
 						message: "Failed to create user",
 					});
 				}
 			}
 			default:
-				throw new HTTPException(501, {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "Webhook Event Not Implemented",
+					status: 501,
 				});
 		}
 	});

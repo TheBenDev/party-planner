@@ -9,7 +9,7 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 } from "discord.js";
-import { config } from "../lib/config";
+import { env } from "../env";
 import { headers } from "../lib/constants";
 import { extractErrorDetails } from "../lib/errorHandler";
 import logger from "../lib/logger";
@@ -77,7 +77,7 @@ async function modalSetOnSubmit(interaction: ModalSubmitInteraction) {
 	await interaction.deferReply();
 	try {
 		await axios.post(
-			`${config.APP_URL}/api/discord/setAvailability`,
+			`${env.APP_URL}/api/discord/setAvailability`,
 			{
 				npc: {
 					bio,
@@ -123,7 +123,7 @@ async function actionView(interaction: ChatInputCommandInteraction) {
 	const npcName = interaction.options.get("name")?.value;
 
 	try {
-		const response = await axios.get(`${config.APP_URL}/api/discord/getNpc`, {
+		const response = await axios.get(`${env.APP_URL}/api/discord/getNpc`, {
 			headers,
 			params: {
 				npcName,

@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import {
 	GetQuestByIdRequestSchema,
@@ -6,7 +7,6 @@ import {
 	ListQuestsByCampaignIdResponseSchema,
 } from "@planner/schemas/quests";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { questsTable } = schema;
@@ -30,7 +30,7 @@ const getQuestById = privateProcedure
 			.limit(1);
 
 		if (questRow.length === 0) {
-			throw new HTTPException(404, { message: "quest not found" });
+			throw new ORPCError("NOT_FOUND", { message: "quest not found" });
 		}
 
 		return questRow[0];

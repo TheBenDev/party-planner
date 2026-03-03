@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import {
 	GetSessionByIdRequestSchema,
@@ -6,7 +7,6 @@ import {
 	ListSessionsByCampaignIdResponseSchema,
 } from "@planner/schemas/sessions";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { sessionsTable } = schema;
@@ -30,7 +30,7 @@ const getSessionById = privateProcedure
 			.limit(1);
 
 		if (sessionRow.length === 0) {
-			throw new HTTPException(404, { message: "session not found" });
+			throw new ORPCError("NOT_FOUND", { message: "session not found" });
 		}
 
 		return sessionRow[0];

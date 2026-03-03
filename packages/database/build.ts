@@ -2,7 +2,16 @@ import { build, spawn } from "bun";
 
 await build({
 	entrypoints: ["src/index.ts"],
-	external: ["@planner/enums"],
+	external: [
+		"@neondatabase/serverless",
+		"@planner/enums",
+		"@planner/schemas",
+		"@t3-oss/env-core",
+		"drizzle-orm",
+		"drizzle-zod",
+		"ws",
+		"zod",
+	],
 	format: "esm",
 	minify: true,
 	outdir: "dist",

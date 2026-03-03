@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import {
 	CreateUserRequestSchema,
@@ -5,7 +6,6 @@ import {
 	GetUserResponseSchema,
 } from "@planner/schemas/user";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure, publicProcedure } from "../orpc";
 
 const { usersTable } = schema;
@@ -29,7 +29,7 @@ const createUser = publicProcedure
 			.limit(1);
 
 		if (userRow.length > 0) {
-			throw new HTTPException(409, { message: "User already exists" });
+			throw new ORPCError("CONFLICT", { message: "User already exists" });
 		}
 
 		const values = {
@@ -55,7 +55,7 @@ const getUser = privateProcedure
 		const db = context.db;
 
 		if (!userId) {
-			throw new HTTPException(400, { message: "missing clerk id" });
+			throw new ORPCError("BAD_REQUEST", { message: "missing clerk id" });
 		}
 
 		const userRow = await db
@@ -65,7 +65,7 @@ const getUser = privateProcedure
 			.limit(1);
 
 		if (userRow.length <= 0) {
-			throw new HTTPException(404, { message: "user not found" });
+			throw new ORPCError("NOT_FOUND", { message: "user not found" });
 		}
 
 		return {

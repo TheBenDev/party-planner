@@ -10,7 +10,7 @@ import {
 	TextInputBuilder,
 	TextInputStyle,
 } from "discord.js";
-import { config } from "../lib/config";
+import { env } from "../env";
 import { headers } from "../lib/constants";
 import { extractErrorDetails } from "../lib/errorHandler";
 import logger from "../lib/logger";
@@ -179,7 +179,7 @@ async function modalOnSubmit(interaction: ModalSubmitInteraction) {
 		const guild = interaction.guild;
 		if (guild && channelId) {
 			const res = await axios.post(
-				`${config.APP_URL}/api/discord/scheduleSession`,
+				`${env.APP_URL}/api/discord/scheduleSession`,
 				{
 					channelId,
 					serverId,

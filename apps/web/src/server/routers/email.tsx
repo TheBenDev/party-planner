@@ -1,7 +1,7 @@
+import { ORPCError } from "@orpc/server";
 import { InviteToCampaignRequest } from "@planner/schemas/email";
-import { HTTPException } from "hono/http-exception";
 import { DndInviteEmail } from "@/components/email-invite-template";
-import { serverConfig } from "@/lib/serverConfig";
+import { env } from "@/env";
 import { privateProcedure } from "../orpc";
 
 const inviteToCampaign = privateProcedure
@@ -20,7 +20,7 @@ const inviteToCampaign = privateProcedure
 				from,
 				react: (
 					<DndInviteEmail
-						acceptLink={`${serverConfig.NEXT_PUBLIC_APP_URL}/accept?id=${campaignId}`}
+						acceptLink={`${env.NEXT_PUBLIC_APP_URL}/accept?id=${campaignId}`}
 						campaignName={campaignName}
 						dmName={dmName}
 					/>
@@ -30,12 +30,16 @@ const inviteToCampaign = privateProcedure
 			});
 
 			if (error) {
-				throw new HTTPException(500, { message: "Failed to invite" });
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "Failed to invite",
+				});
 			}
 
 			return { id: data.id };
 		} catch {
-			throw new HTTPException(500, { message: "Failed to invite" });
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "Failed to invite",
+			});
 		}
 	});
 

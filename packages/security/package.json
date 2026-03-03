@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@planner/schemas": "workspace:*",
-    "jose": "catalog:"
+    "jose": "6.1.0"
   },
   "devDependencies": {
     "@planner/enums": "workspace:*",

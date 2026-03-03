@@ -1,6 +1,6 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import { REST } from "@discordjs/rest";
-import { os } from "@orpc/server";
+import { ORPCError, os } from "@orpc/server";
 import { getCookie, setCookie } from "@orpc/server/helpers";
 import { type Client, createDb, schema } from "@planner/database";
 import type { GetAuthResponse } from "@planner/schemas/user";
@@ -10,9 +10,8 @@ import {
 	encryptAuthCookie,
 } from "@planner/security/auth";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { Resend } from "resend";
-import { serverConfig } from "@/lib/serverConfig";
+import { env } from "@/env";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
 type BaseContext = { headers: Headers };
@@ -29,30 +28,32 @@ const discordMiddleware = base.middleware(({ next, context: c }) => {
 	const authHeader = c.headers.get("Authorization");
 
 	if (!authHeader?.startsWith("Bot ")) {
-		throw new HTTPException(401, { message: "Missing bot authorization" });
+		throw new ORPCError("UNAUTHORIZED", {
+			message: "Missing bot authorization",
+		});
 	}
 
 	const apiKey = authHeader.replace("Bot ", "");
-	if (apiKey !== serverConfig.DISCORD_API_KEY) {
-		throw new HTTPException(401, { message: "Invalid discord API key" });
+	if (apiKey !== env.DISCORD_API_KEY) {
+		throw new ORPCError("UNAUTHORIZED", { message: "Invalid discord API key" });
 	}
 
-	const rest = new REST({ version: "10" }).setToken(serverConfig.DISCORD_TOKEN);
+	const rest = new REST({ version: "10" }).setToken(env.DISCORD_TOKEN);
 
 	return next({ context: { discord: rest } });
 });
 
-const resend = new Resend(serverConfig.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
 export const AUTH_COOKIE_NAME = "planner_auth";
 const ACTIVE_CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
 const CLERK_SESSION_COOKIE_NAMES = [
 	"__session",
-	`__session_${serverConfig.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
+	`__session_${env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
 	"__clerk_session",
 ] as const;
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export const clerkClient = createClerkClient({
-	secretKey: serverConfig.CLERK_SECRET_KEY,
+	secretKey: env.CLERK_SECRET_KEY,
 });
 
 function getSessionToken(headers: Headers): string | undefined {
@@ -73,22 +74,24 @@ export const authMiddleware = os
 		// Use clerk cookie to verify user and access clerk external id
 		const sessionToken = getSessionToken(c.headers);
 		if (!sessionToken) {
-			throw new HTTPException(401, { message: "Session token not found" });
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "Session token not found",
+			});
 		}
 		let clerkUserId: string;
 
 		try {
 			const payload = await verifyToken(sessionToken, {
-				secretKey: serverConfig.CLERK_SECRET_KEY,
+				secretKey: env.CLERK_SECRET_KEY,
 			});
 			clerkUserId = payload.sub;
 			if (!clerkUserId) {
-				throw new HTTPException(401, {
+				throw new ORPCError("UNAUTHORIZED", {
 					message: "Invalid session - no user ID",
 				});
 			}
 		} catch (error) {
-			throw new HTTPException(401, {
+			throw new ORPCError("UNAUTHORIZED", {
 				cause: error,
 				message: "Invalid Clerk session token",
 			});
@@ -108,7 +111,7 @@ export const authMiddleware = os
 				.limit(1);
 
 			if (!row) {
-				throw new HTTPException(404, { message: "User not found" });
+				throw new ORPCError("NOT_FOUND", { message: "User not found" });
 			}
 
 			const userCampaigns = await db
@@ -164,7 +167,7 @@ export const authMiddleware = os
 			try {
 				const rawCookie = await decryptAuthCookie(
 					encryptedAuthCookie,
-					serverConfig.AUTH_PRIVATE_KEY_PEM,
+					env.AUTH_PRIVATE_KEY_PEM,
 				);
 				const now = Math.floor(Date.now() / 1000);
 
@@ -185,10 +188,10 @@ export const authMiddleware = os
 
 		// if flag is set, create/update and encrypt cookie for auth information
 		if (shouldSetCookie) {
-			const publicKey = serverConfig.NEXT_PUBLIC_AUTH_PUBLIC_KEY_PEM;
+			const publicKey = env.NEXT_PUBLIC_AUTH_PUBLIC_KEY_PEM;
 
 			if (!publicKey) {
-				throw new HTTPException(500, {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "Auth public key not configured",
 				});
 			}
@@ -208,7 +211,7 @@ export const authMiddleware = os
 					maxAge: COOKIE_MAX_AGE,
 					path: "/",
 					sameSite: "lax",
-					secure: serverConfig.NODE_ENV === "production",
+					secure: env.NODE_ENV === "production",
 				});
 			} catch (error) {
 				// biome-ignore lint/suspicious/noConsole: Need this log in case something goes wrong

@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import { StatusEnum } from "@planner/enums/common";
 import {
@@ -5,7 +6,6 @@ import {
 	InviteMemberToCampaignRequest,
 } from "@planner/schemas/member";
 import { and, eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { campaignInvitationsTable, campaignUsersTable, usersTable } = schema;
@@ -42,7 +42,7 @@ const acceptCampaignInvitation = privateProcedure
 				);
 
 			if (invitationRow.length === 0) {
-				throw new HTTPException(404, {
+				throw new ORPCError("NOT_FOUND", {
 					message: "Campaign Invitation not found",
 				});
 			}
@@ -50,20 +50,20 @@ const acceptCampaignInvitation = privateProcedure
 			const invitation = invitationRow[0];
 
 			if (invitation.users?.email !== inviteeEmail) {
-				throw new HTTPException(403, {
+				throw new ORPCError("FORBIDDEN", {
 					message: "Email does not match invitation",
 				});
 			}
 
 			if (invitation.campaign_users === null) {
-				throw new HTTPException(403, {
+				throw new ORPCError("FORBIDDEN", {
 					message:
 						"Invitation is invalid - inviter is not a member of this campaign",
 				});
 			}
 
 			if (invitation.campaign_invitations.status === StatusEnum.ACCEPTED) {
-				throw new HTTPException(400, {
+				throw new ORPCError("BAD_REQUEST", {
 					message: "Invitation has already been accepted",
 				});
 			}
@@ -73,7 +73,7 @@ const acceptCampaignInvitation = privateProcedure
 				invitation.campaign_invitations.expiresAt &&
 				new Date(invitation.campaign_invitations.expiresAt) < currentTime
 			) {
-				throw new HTTPException(400, {
+				throw new ORPCError("BAD_REQUEST", {
 					message: "Invitation has expired",
 				});
 			}
@@ -150,13 +150,13 @@ const inviteMemberToCampaign = privateProcedure
 			]);
 
 			if (inviterRow.length === 0) {
-				throw new HTTPException(403, {
+				throw new ORPCError("FORBIDDEN", {
 					message: "Must be a member of the campaign to invite someone",
 				});
 			}
 
 			if (inviteeRow.length > 0 && inviteeRow[0].campaign_users !== null) {
-				throw new HTTPException(409, {
+				throw new ORPCError("CONFLICT", {
 					message: "User is already a member of the campaign",
 				});
 			}
@@ -174,7 +174,7 @@ const inviteMemberToCampaign = privateProcedure
 						);
 					return;
 				}
-				throw new HTTPException(409, {
+				throw new ORPCError("CONFLICT", {
 					message: "User is already invited to the campaign",
 				});
 			}

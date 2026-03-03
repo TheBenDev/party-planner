@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import { IntegrationSource } from "@planner/enums/integration";
 import {
@@ -17,7 +18,6 @@ import {
 } from "@planner/schemas/discord";
 import { Routes } from "discord-api-types/v10";
 import { and, asc, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { discordProcedure } from "../orpc";
 
 const {
@@ -43,7 +43,9 @@ const checkNextSession = discordProcedure
 		const { serverId } = input;
 
 		if (!serverId) {
-			throw new HTTPException(400, { message: "Discord server id required" });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Discord server id required",
+			});
 		}
 
 		const discordIntegrationRow = await db
@@ -65,13 +67,13 @@ const checkNextSession = discordProcedure
 			.orderBy(asc(sessionsTable.startsAt));
 
 		if (discordIntegrationRow.length === 0) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message: "Campaign integration not found",
 			});
 		}
 
 		if (discordIntegrationRow[0].campaign_integrations.metadata == null) {
-			throw new HTTPException(500, {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Campaign integration metadata is missing",
 			});
 		}
@@ -164,7 +166,9 @@ const clearAvailability = discordProcedure
 			.where(eq(userIntegrationsTable.externalId, userExternalId));
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User integration not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User integration not found.",
+			});
 		}
 
 		const { userId, campaignId } = userIntegrationRow[0];
@@ -192,7 +196,7 @@ const getAvailabilities = discordProcedure
 		const { userExternalId } = input;
 
 		if (!userExternalId) {
-			throw new HTTPException(400, {
+			throw new ORPCError("BAD_REQUEST", {
 				message: "User Discord id missing from params",
 			});
 		}
@@ -217,7 +221,9 @@ const getAvailabilities = discordProcedure
 			.where(eq(userIntegrationsTable.externalId, userExternalId));
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "user integration not found" });
+			throw new ORPCError("NOT_FOUND", {
+				message: "user integration not found",
+			});
 		}
 
 		return { userAvailabilities: userIntegrationRow };
@@ -236,10 +242,12 @@ const getNpc = discordProcedure
 		const { npcName, serverId } = input;
 
 		if (!serverId) {
-			throw new HTTPException(400, { message: "Discord server id required" });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "Discord server id required",
+			});
 		}
 		if (!npcName) {
-			throw new HTTPException(400, { message: "Npc Name required" });
+			throw new ORPCError("BAD_REQUEST", { message: "Npc Name required" });
 		}
 
 		const npcRow = await db
@@ -261,7 +269,7 @@ const getNpc = discordProcedure
 			);
 
 		if (npcRow.length === 0) {
-			throw new HTTPException(404, { message: "NPC not found" });
+			throw new ORPCError("NOT_FOUND", { message: "NPC not found" });
 		}
 
 		return { npc: npcRow[0].npc };
@@ -280,7 +288,9 @@ const registerCampaign = discordProcedure
 		const { serverId, campaignId, channelId } = input;
 
 		if (!(serverId && campaignId && channelId)) {
-			throw new HTTPException(400, { message: "missing params for register" });
+			throw new ORPCError("BAD_REQUEST", {
+				message: "missing params for register",
+			});
 		}
 
 		const campaignRow = await db
@@ -297,11 +307,11 @@ const registerCampaign = discordProcedure
 			.limit(1);
 
 		if (campaignRow.length === 0) {
-			throw new HTTPException(404, { message: "Campaign not found" });
+			throw new ORPCError("NOT_FOUND", { message: "Campaign not found" });
 		}
 
 		if (campaignRow[0].campaign_integrations !== null) {
-			throw new HTTPException(409, {
+			throw new ORPCError("CONFLICT", {
 				message: "Campaign is already integrated with discord server",
 			});
 		}
@@ -357,13 +367,17 @@ const removeAvailability = discordProcedure
 			.limit(1);
 
 		if (userIntegrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User integration not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User integration not found.",
+			});
 		}
 
 		const { userId, campaignId, userAvailability } = userIntegrationRow[0];
 
 		if (userAvailability === null) {
-			throw new HTTPException(404, { message: "User Availability not found." });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User Availability not found.",
+			});
 		}
 
 		await db
@@ -403,7 +417,7 @@ const scheduleSession = discordProcedure
 			);
 
 		if (discordIntegrationRow.length === 0) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message: "Discord integration not found.",
 			});
 		}
@@ -461,7 +475,7 @@ const sendMessage = discordProcedure
 			// TODO: better error logging in router
 			// biome-ignore lint/suspicious/noConsole: intentional error logging
 			console.error(error);
-			throw new HTTPException(500, {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "Failed to send message to discord channel",
 			});
 		}
@@ -506,13 +520,15 @@ const setAvailability = discordProcedure
 			.limit(1);
 
 		if (integrationRow.length === 0) {
-			throw new HTTPException(404, { message: "User Integration Not Found" });
+			throw new ORPCError("NOT_FOUND", {
+				message: "User Integration Not Found",
+			});
 		}
 
 		const integration = integrationRow[0];
 
 		if (!integration.campaign_integrations) {
-			throw new HTTPException(404, {
+			throw new ORPCError("NOT_FOUND", {
 				message:
 					"Campaign integration not found. Please register this Discord server with a campaign first.",
 			});
@@ -522,7 +538,7 @@ const setAvailability = discordProcedure
 		const campaignId = integration.campaign_integrations.campaignId;
 
 		if (existingAvailability) {
-			throw new HTTPException(409, {
+			throw new ORPCError("CONFLICT", {
 				message: "Availability already exists for this day and time",
 			});
 		}

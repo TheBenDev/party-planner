@@ -1,3 +1,4 @@
+import { ORPCError } from "@orpc/server";
 import { schema } from "@planner/database";
 import { UserRole } from "@planner/enums/user";
 import {
@@ -8,7 +9,6 @@ import {
 	GetInvitationResponseSchema,
 } from "@planner/schemas/campaigns";
 import { eq } from "drizzle-orm";
-import { HTTPException } from "hono/http-exception";
 import { privateProcedure } from "../orpc";
 
 const { campaignsTable, campaignUsersTable, campaignInvitationsTable } = schema;
@@ -40,7 +40,7 @@ const createCampaign = privateProcedure
 				.returning();
 
 			if (createdCampaignRow.length === 0) {
-				throw new HTTPException(500, {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to create campaign",
 				});
 			}
@@ -55,7 +55,7 @@ const createCampaign = privateProcedure
 				.returning();
 
 			if (createdMembershipRow.length === 0) {
-				throw new HTTPException(500, {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to create campaign membership",
 				});
 			}
@@ -77,7 +77,7 @@ const getActiveCampaign = privateProcedure
 		const campaignId = context.campaignId;
 		const db = context.db;
 		if (!campaignId)
-			throw new HTTPException(400, {
+			throw new ORPCError("BAD_REQUEST", {
 				message: "User must have an active campaign.",
 			});
 		const campaignRow = await db
@@ -87,7 +87,7 @@ const getActiveCampaign = privateProcedure
 			.limit(1);
 
 		if (campaignRow.length === 0) {
-			throw new HTTPException(404, { message: "campaign not found" });
+			throw new ORPCError("NOT_FOUND", { message: "campaign not found" });
 		}
 		return campaignRow[0];
 	});
@@ -114,7 +114,7 @@ const getInvitationById = privateProcedure
 			.where(eq(campaignInvitationsTable.id, invitationId));
 
 		if (invitationRow.length === 0) {
-			throw new HTTPException(404, { message: "Invitation not found" });
+			throw new ORPCError("NOT_FOUND", { message: "Invitation not found" });
 		}
 
 		return invitationRow[0];
