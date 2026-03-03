@@ -1,10 +1,10 @@
-import type { WebhookEvent } from "@clerk/nextjs/server";
+import type { WebhookEvent } from "@clerk/backend";
 import { ORPCError } from "@orpc/server";
 import { CreateUserRequestSchema } from "@planner/schemas/user";
 import { Webhook } from "svix";
 import { z } from "zod";
-import { client } from "@/lib/client";
 import { env } from "@/env";
+import { client } from "@/lib/client";
 import { publicProcedure } from "../orpc";
 
 const webhookSecret: string = env.CLERK_WEBHOOK_SECRET;

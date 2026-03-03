@@ -1,6 +1,5 @@
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Activity, Compass, Map as Location, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 interface LinkItem {
@@ -11,7 +10,9 @@ interface LinkItem {
 type LinkItems = LinkItem[];
 
 export default function SidebarComponent() {
-	const pathName = usePathname();
+	const pathName = useRouterState({
+		select: (state) => state.location.pathname,
+	});
 	const options: LinkItems = [
 		{
 			icon: User,
@@ -38,15 +39,18 @@ export default function SidebarComponent() {
 		<div className="flex flex-col pl-7 pt-5 space-y-3 w-3xs border-r-2 border-t-2">
 			{options.map((option) => (
 				<Link
+					activeOptions={{
+						exact: true,
+					}}
 					className={cn(
 						"flex hover:bg-accent mr-3 p-1 rounded-sm items-center",
 						option.url === pathName && "bg-accent cursor-default",
 					)}
-					href={option.url}
 					key={option.label}
 					onClick={(e) => {
 						if (option.url === pathName) e.preventDefault();
 					}}
+					to={option.url}
 				>
 					<option.icon className="mr-5" />
 					{option.label}
