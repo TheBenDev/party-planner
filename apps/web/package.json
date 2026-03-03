@@ -33,15 +33,18 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/bun": "catalog:",
     "baseline-browser-mapping": "^2.9.15",
-    "tailwindcss": "4.1.11"
+    "tailwindcss": "4.1.11",
+    "typescript": "catalog:"
   },
   "name": "@planner/web",
   "private": true,
   "scripts": {
     "build": "next build",
     "dev": "bun run next dev --turbopack",
-    "lint": "biome lint --write ."
+    "lint": "biome lint --write .",
+    "typecheck": "tsc --noEmit"
   },
   "version": "0.0.1"
 }

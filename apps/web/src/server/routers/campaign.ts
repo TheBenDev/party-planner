@@ -3,7 +3,6 @@ import { UserRole } from "@planner/enums/user";
 import {
 	CreateCamapaingResponseSchema,
 	CreateCampaignRequestSchema,
-	GetActiveCampaignRequestSchema,
 	GetActiveCampaignResponseSchema,
 	GetInvitationRequestSchema,
 	GetInvitationResponseSchema,
@@ -73,7 +72,6 @@ const getActiveCampaign = privateProcedure
 		path: "/campaign",
 		summary: "Get a web user's active campaign",
 	})
-	.input(GetActiveCampaignRequestSchema)
 	.output(GetActiveCampaignResponseSchema)
 	.handler(async ({ context }) => {
 		const campaignId = context.campaignId;
@@ -91,8 +89,7 @@ const getActiveCampaign = privateProcedure
 		if (campaignRow.length === 0) {
 			throw new HTTPException(404, { message: "campaign not found" });
 		}
-		const campaign = campaignRow[0];
-		return { campaign };
+		return campaignRow[0];
 	});
 
 const getInvitationById = privateProcedure

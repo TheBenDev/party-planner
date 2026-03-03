@@ -69,14 +69,12 @@ const getUser = privateProcedure
 		}
 
 		return {
-			user: {
-				avatar: userRow[0].avatar,
-				email: userRow[0].email,
-				externalId: userRow[0].externalId,
-				firstName: userRow[0].firstName,
-				id: userRow[0].id,
-				lastName: userRow[0].lastName,
-			},
+			avatar: userRow[0].avatar,
+			email: userRow[0].email,
+			externalId: userRow[0].externalId,
+			firstName: userRow[0].firstName,
+			id: userRow[0].id,
+			lastName: userRow[0].lastName,
 		};
 	});
 

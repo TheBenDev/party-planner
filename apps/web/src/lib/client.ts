@@ -4,7 +4,7 @@ import type { RouterClient } from "@orpc/server";
 import type { AppRouter } from "@/server";
 
 const link = new RPCLink({
-	url: `${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/rpc`,
+	url: `${typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/api`,
 });
 
 // Create a client for your router

@@ -29,20 +29,6 @@
   "plugins": [
     {
       "options": {
-        "build": {
-          "buildDepsName": "build-deps",
-          "configName": "tsconfig.lib.json",
-          "targetName": "build",
-          "watchDepsName": "watch-deps"
-        },
-        "typecheck": {
-          "targetName": "typecheck"
-        }
-      },
-      "plugin": "@nx/js/typescript"
-    },
-    {
-      "options": {
         "buildDepsTargetName": "build-deps",
         "buildTargetName": "build",
         "devTargetName": "dev",

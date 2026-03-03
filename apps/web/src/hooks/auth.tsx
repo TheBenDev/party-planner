@@ -1,4 +1,5 @@
 "use client";
+
 import { useAuth as useClerkAuth } from "@clerk/nextjs";
 import type { GetActiveCampaignResponse } from "@planner/schemas/campaigns";
 import type { GetUserResponse } from "@planner/schemas/user";
@@ -8,39 +9,25 @@ import { createContext, useContext, useMemo } from "react";
 import { client } from "@/lib/client";
 
 export type AuthContextValue = {
-	user: NonNullable<GetUserResponse>["user"] | null;
-	campaign: NonNullable<GetActiveCampaignResponse>["campaign"] | null;
+	user: GetUserResponse | null;
+	campaign: GetActiveCampaignResponse | null;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const clerkAuth = useClerkAuth();
-	const userQuery = useQuery({
+	const { data: user = null } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
-		queryFn: async () => {
-			return await client.user.getUser();
-		},
+		queryFn: client.user.getUser,
 		queryKey: ["auth", "user"],
 	});
-	const campaignQuery = useQuery({
+	const { data: campaign = null } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
-		queryFn: async () => {
-			return await client.campaign.getActiveCampaign();
-		},
+		queryFn: client.campaign.getActiveCampaign,
 		queryKey: ["auth", "campaign"],
 	});
-
-	const user = useMemo(() => {
-		if (!userQuery.data) return null;
-		return userQuery.data.user;
-	}, [userQuery.data]);
-
-	const campaign = useMemo(() => {
-		if (!campaignQuery.data) return null;
-		return campaignQuery.data.campaign;
-	}, [campaignQuery.data]);
 
 	const value = useMemo(() => {
 		return {

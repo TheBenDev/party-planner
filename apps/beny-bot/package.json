@@ -11,7 +11,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "catalog:",
+    "typescript": "catalog:"
   },
   "module": "index.ts",
   "name": "@planner/beny-bot",

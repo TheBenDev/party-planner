@@ -15,54 +15,63 @@ import { Resend } from "resend";
 import { serverConfig } from "@/lib/serverConfig";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
-const base = os.$context<{ headers: Headers }>().use(({ next }) => {
-	const db = createDb();
-	return next({
-		context: { db },
-	});
+type BaseContext = { headers: Headers };
+type DbContext = BaseContext & { db: Client };
+
+const base = os.$context<BaseContext>();
+
+const dbMiddleware = base.middleware(({ next }) => {
+	const db: Client = createDb();
+	return next({ context: { db } });
 });
 
-const discordMiddleware = os
-	.$context<{ headers: Headers }>()
-	.middleware(({ next, context: c }) => {
-		const authHeader = c.headers.get("Authorization");
+const discordMiddleware = base.middleware(({ next, context: c }) => {
+	const authHeader = c.headers.get("Authorization");
 
-		if (!authHeader?.startsWith("Bot ")) {
-			throw new HTTPException(401, { message: "Missing bot authorization" });
-		}
+	if (!authHeader?.startsWith("Bot ")) {
+		throw new HTTPException(401, { message: "Missing bot authorization" });
+	}
 
-		const apiKey = authHeader.replace("Bot ", "");
-		if (apiKey !== serverConfig.DISCORD_API_KEY) {
-			throw new HTTPException(401, { message: "Invalid discord API key" });
-		}
+	const apiKey = authHeader.replace("Bot ", "");
+	if (apiKey !== serverConfig.DISCORD_API_KEY) {
+		throw new HTTPException(401, { message: "Invalid discord API key" });
+	}
 
-		const rest = new REST({ version: "10" }).setToken(
-			serverConfig.DISCORD_TOKEN,
-		);
+	const rest = new REST({ version: "10" }).setToken(serverConfig.DISCORD_TOKEN);
 
-		return next({ context: { discord: rest } });
-	});
+	return next({ context: { discord: rest } });
+});
 
 const resend = new Resend(serverConfig.RESEND_API_KEY);
 export const AUTH_COOKIE_NAME = "planner_auth";
+const ACTIVE_CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
+const CLERK_SESSION_COOKIE_NAMES = [
+	"__session",
+	`__session_${serverConfig.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
+	"__clerk_session",
+] as const;
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export const clerkClient = createClerkClient({
 	secretKey: serverConfig.CLERK_SECRET_KEY,
 });
 
+function getSessionToken(headers: Headers): string | undefined {
+	for (const cookieName of CLERK_SESSION_COOKIE_NAMES) {
+		const token = getCookie(headers, cookieName);
+		if (token) {
+			return token;
+		}
+	}
+	return undefined;
+}
+
 export const authMiddleware = os
-	.$context<{ db: Client; headers: Headers }>()
+	.$context<DbContext>()
 	.middleware(async ({ next, context: c }) => {
 		const db = c.db;
 
 		// Use clerk cookie to verify user and access clerk external id
-		const sessionToken =
-			getCookie(c.headers, "__session") ||
-			getCookie(
-				c.headers,
-				`__session_${serverConfig.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
-			) ||
-			getCookie(c.headers, "__clerk_session");
+		const sessionToken = getSessionToken(c.headers);
 		if (!sessionToken) {
 			throw new HTTPException(401, { message: "Session token not found" });
 		}
@@ -85,14 +94,13 @@ export const authMiddleware = os
 			});
 		}
 
-		const CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
 		const activeCampaignIdCookie = getCookie(
 			c.headers,
-			CAMPAIGN_ID_COOKIE_NAME,
+			ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 		);
 
 		// Use clerk external id to fetch user information for cookie
-		async function GetAuth(): Promise<GetAuthResponse> {
+		async function getAuth(): Promise<GetAuthResponse> {
 			const [row] = await db
 				.select()
 				.from(usersTable)
@@ -119,7 +127,7 @@ export const authMiddleware = os
 			// set an active campaign for user if they don't have one and have a campaign available
 			if (!activeCampaignIdCookie && userCampaigns.length > 0) {
 				activeCampaignId = userCampaigns[0].campaign.id;
-				setCookie(c.headers, CAMPAIGN_ID_COOKIE_NAME, activeCampaignId, {
+				setCookie(c.headers, ACTIVE_CAMPAIGN_ID_COOKIE_NAME, activeCampaignId, {
 					httpOnly: true,
 					maxAge: COOKIE_MAX_AGE,
 					path: "/",
@@ -161,17 +169,17 @@ export const authMiddleware = os
 				const now = Math.floor(Date.now() / 1000);
 
 				if (rawCookie.exp < now) {
-					authPayload = await GetAuth();
+					authPayload = await getAuth();
 					shouldSetCookie = true;
 				} else {
 					authPayload = rawCookie;
 				}
 			} catch {
-				authPayload = await GetAuth();
+				authPayload = await getAuth();
 				shouldSetCookie = true;
 			}
 		} else {
-			authPayload = await GetAuth();
+			authPayload = await getAuth();
 			shouldSetCookie = true;
 		}
 
@@ -225,7 +233,7 @@ export const authMiddleware = os
  *
  * This is the base piece you use to build new queries and mutations on your API.
  */
-export const publicProcedure = base;
+export const publicProcedure = base.use(dbMiddleware);
 
 /**
  * Authenticated procedures - has token, userId, RPC clients
