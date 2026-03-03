@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 				lastName: evt.data.last_name,
 			});
 			try {
-				await client.user.createUser.$post(user);
+				await client.user.createUser(user);
 				return new Response("User Created", { status: 200 });
 			} catch (e) {
 				throw new HTTPException(500, {

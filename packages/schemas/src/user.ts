@@ -23,12 +23,14 @@ export const CreateUserResponseSchema = z.void();
 
 export const GetUserRequestSchema = z.object({ id: z.uuid() });
 export const GetUserResponseSchema = z.object({
-	avatar: z.string().nullable(),
-	email: z.email(),
-	externalId: z.string(),
-	firstName: z.string(),
-	id: z.uuid(),
-	lastName: z.string(),
+	user: z.object({
+		avatar: z.string().nullable(),
+		email: z.email(),
+		externalId: z.string(),
+		firstName: z.string(),
+		id: z.uuid(),
+		lastName: z.string(),
+	}),
 });
 
 export const GetAuthRequestSchema = z.object({

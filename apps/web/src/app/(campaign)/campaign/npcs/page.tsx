@@ -1,5 +1,4 @@
 "use client";
-import { ListNonPlayerCharactersResponseSchema } from "@planner/schemas/nonPlayerCharacters";
 import { useQuery } from "@tanstack/react-query";
 import { User2 } from "lucide-react";
 import { useAuth } from "@/hooks/auth";
@@ -12,13 +11,9 @@ export default function NPCSPage() {
 		enabled: Boolean(campaign),
 		queryFn: async () => {
 			if (!campaign) return null;
-			const res = await client.npc.listNonPlayerCharacters.$get({
+			return await client.npc.listNonPlayerCharactersByCampaignId({
 				campaignId: campaign.id,
 			});
-			const npcsData = ListNonPlayerCharactersResponseSchema.parse(
-				await res.json(),
-			);
-			return npcsData;
 		},
 		queryKey: ["npcs"],
 	});

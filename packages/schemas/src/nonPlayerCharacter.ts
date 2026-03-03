@@ -4,7 +4,7 @@ import { BaseEntitySchema } from "./common";
 export const NonPlayerCharactersSchema = BaseEntitySchema.extend({
 	avatar: z.string().nullable().optional(),
 	bio: z.string().nullable().optional(),
-	campaignId: z.uuid().optional(),
+	campaignId: z.uuid().nullable(),
 	characterSheet: z.any(),
 	deletedAt: z.date().nullable().optional(),
 	dmNotes: z.string().nullable().optional(),
@@ -14,19 +14,22 @@ export const NonPlayerCharactersSchema = BaseEntitySchema.extend({
 	originId: z.uuid().nullable().optional(),
 });
 
-export const GetNonPlayerCharacterRequestSchema = z.object({ id: z.uuid() });
-export const GetNonPlayerCharacterResponseSchema = NonPlayerCharactersSchema;
+export const GetNonPlayerCharacterByIdRequestSchema = z.object({
+	id: z.uuid(),
+});
+export const GetNonPlayerCharacterByIdResponseSchema =
+	NonPlayerCharactersSchema;
 
-export const ListNonPlayerCharactersRequestSchema = z.object({
+export const ListNonPlayerCharactersByCampaignIdRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 
-export const ListNonPlayerCharactersResponseSchema = z.array(
+export const ListNonPlayerCharactersByCampaignIdResponseSchema = z.array(
 	NonPlayerCharactersSchema,
 );
 
 export type ListCharactersResponse = z.infer<
-	typeof ListNonPlayerCharactersResponseSchema
+	typeof ListNonPlayerCharactersByCampaignIdResponseSchema
 >;
 
 export type NonPlayerCharacters = z.infer<typeof NonPlayerCharactersSchema>;

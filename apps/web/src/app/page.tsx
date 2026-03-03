@@ -22,8 +22,8 @@ export default function CreateCampaignForm() {
 
 	const { mutate: createCampaign } = useMutation({
 		mutationFn: async (c: CreateCampaignRequest) => {
-			const res = await client.campaign.createCampaign.$post(c);
-			return res.json();
+			const createdCampaign = await client.campaign.createCampaign(c);
+			return createdCampaign;
 		},
 		onError: () => {
 			toast("something went wrong creating campaign.");

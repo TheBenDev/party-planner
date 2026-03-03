@@ -8,8 +8,8 @@ import { createContext, useContext, useMemo } from "react";
 import { client } from "@/lib/client";
 
 export type AuthContextValue = {
-	user: GetUserResponse | null;
-	campaign: GetActiveCampaignResponse | null;
+	user: NonNullable<GetUserResponse>["user"] | null;
+	campaign: NonNullable<GetActiveCampaignResponse>["campaign"] | null;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -19,8 +19,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => {
-			const res = await client.user.getUser.$get();
-			return await res.json();
+			return await client.user.getUser();
 		},
 		queryKey: ["auth", "user"],
 	});
@@ -28,8 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => {
-			const res = await client.campaign.getActiveCampaign.$get();
-			return await res.json();
+			return await client.campaign.getActiveCampaign();
 		},
 		queryKey: ["auth", "campaign"],
 	});

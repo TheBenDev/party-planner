@@ -4,6 +4,8 @@
     "@clerk/nextjs": "^6.36.1",
     "@discordjs/rest": "^2.6.0",
     "@jsandy/rpc": "catalog:",
+    "@orpc/client": "^1.13.6",
+    "@orpc/server": "^1.13.6",
     "@planner/database": "workspace:*",
     "@planner/enums": "workspace:*",
     "@planner/schemas": "workspace:*",

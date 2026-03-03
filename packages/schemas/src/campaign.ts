@@ -11,7 +11,9 @@ export const CampaignsSchema = BaseEntitySchema.extend({
 });
 
 export const GetActiveCampaignRequestSchema = z.void();
-export const GetActiveCampaignResponseSchema = CampaignsSchema;
+export const GetActiveCampaignResponseSchema = z.object({
+	campaign: CampaignsSchema,
+});
 
 export const GetInvitationRequestSchema = z.object({
 	invitationId: z.uuid(),
@@ -30,7 +32,7 @@ export const CreateCampaignRequestSchema = z.object({
 	title: z.string(),
 });
 
-export const CreateCamapaingResponseSchema = z.null();
+export const CreateCamapaingResponseSchema = z.object({ id: z.uuid() });
 
 export type CreateCampaignRequest = z.infer<typeof CreateCampaignRequestSchema>;
 export type GetActiveCampaignResponse = z.infer<
