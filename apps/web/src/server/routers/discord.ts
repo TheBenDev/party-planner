@@ -251,7 +251,21 @@ const getNpc = discordProcedure
 		}
 
 		const npcRow = await db
-			.select({ npc: nonPlayerCharactersTable })
+			.select({
+				age: nonPlayerCharactersTable.age,
+				aliases: nonPlayerCharactersTable.aliases,
+				appearance: nonPlayerCharactersTable.appearance,
+				avatar: nonPlayerCharactersTable.avatar,
+				id: nonPlayerCharactersTable.id,
+				isKnownToParty: nonPlayerCharactersTable.isKnownToParty,
+				knownName: nonPlayerCharactersTable.knownName,
+				name: nonPlayerCharactersTable.name,
+				personality: nonPlayerCharactersTable.personality,
+				playerNotes: nonPlayerCharactersTable.playerNotes,
+				race: nonPlayerCharactersTable.race,
+				relationToParty: nonPlayerCharactersTable.relationToPartyStatus,
+				status: nonPlayerCharactersTable.status,
+			})
 			.from(nonPlayerCharactersTable)
 			.innerJoin(
 				campaignIntegrationsTable,
@@ -264,7 +278,7 @@ const getNpc = discordProcedure
 				and(
 					eq(campaignIntegrationsTable.externalId, serverId),
 					eq(campaignIntegrationsTable.source, IntegrationSource.DISCORD),
-					ilike(nonPlayerCharactersTable.firstName, npcName),
+					ilike(nonPlayerCharactersTable.name, npcName),
 				),
 			);
 
@@ -272,7 +286,7 @@ const getNpc = discordProcedure
 			throw new ORPCError("NOT_FOUND", { message: "NPC not found" });
 		}
 
-		return { npc: npcRow[0].npc };
+		return { npc: npcRow[0] };
 	});
 
 const registerCampaign = discordProcedure

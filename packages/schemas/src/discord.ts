@@ -1,7 +1,10 @@
+import {
+	CharacterStatusEnum,
+	RelationToPartyEnum,
+} from "@planner/enums/character";
 import { DayOfWeekEnum } from "@planner/enums/common";
 import { IntegrationSource } from "@planner/enums/integration";
 import { z } from "zod";
-import { NonPlayerCharactersSchema } from "./nonPlayerCharacter";
 
 export const CheckNextSessionRequestSchema = z.object({
 	serverId: z.string(),
@@ -40,7 +43,24 @@ export const GetNpcRequestSchema = z.object({
 });
 
 export const GetNpcResponseSchema = z.object({
-	npc: NonPlayerCharactersSchema,
+	npc: z.object({
+		age: z.string().nullable(),
+		aliases: z.array(z.string()).nullable(),
+		appearance: z.string().nullable(),
+		avatar: z.string().nullable(),
+		id: z.uuid(),
+		isKnownToParty: z.boolean(),
+		knownName: z.string().nullable(),
+
+		name: z.string(),
+		personality: z.string().nullable(),
+		playerNotes: z.string().nullable(),
+		race: z.string().nullable(),
+		relationToParty: z.enum(RelationToPartyEnum),
+
+		// Status the party is aware of
+		status: z.enum(CharacterStatusEnum),
+	}),
 });
 
 export const RegisterCampaignRequestSchema = z.object({
