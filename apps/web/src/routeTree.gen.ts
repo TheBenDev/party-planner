@@ -159,7 +159,7 @@ interface CampaignRouteChildren {
 }
 
 const CampaignRouteChildren: CampaignRouteChildren = {
-	CampaignNpcsRoute,
+	CampaignNpcsRoute: CampaignNpcsRoute,
 };
 
 const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
@@ -167,11 +167,11 @@ const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
 );
 
 const rootRouteChildren: RootRouteChildren = {
-	ApiSplatRoute,
+	ApiSplatRoute: ApiSplatRoute,
 	CampaignRoute: CampaignRouteWithChildren,
-	DashboardRoute,
-	IndexRoute,
-	SignInRoute,
+	DashboardRoute: DashboardRoute,
+	IndexRoute: IndexRoute,
+	SignInRoute: SignInRoute,
 };
 export const routeTree = rootRouteImport
 	._addFileChildren(rootRouteChildren)

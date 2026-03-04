@@ -4,7 +4,7 @@ import { z } from "zod";
 
 export const env = createEnv({
 	client: {
-		VITE_APP_URL: z.string().url().default("http://localhost:3000"),
+		VITE_APP_URL: z.url().default("http://localhost:3000"),
 		VITE_AUTH_PUBLIC_KEY_PEM: z.string().default(""),
 		VITE_CLERK_AFTER_SIGN_IN_URL: z.string().default("/"),
 		VITE_CLERK_AFTER_SIGN_UP_URL: z.string().default("/onboarding"),
@@ -16,7 +16,7 @@ export const env = createEnv({
 	},
 	clientPrefix: "VITE_",
 	emptyStringAsUndefined: true,
-	runtimeEnv: import.meta.env,
+	runtimeEnv: Bun.env,
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
