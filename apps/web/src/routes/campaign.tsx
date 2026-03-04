@@ -1,11 +1,15 @@
-"use client";
-
 import { useMutation } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
+import CampaignShell from "@/components/campaign-shell";
 import { Button } from "@/components/ui/button";
 import { client } from "@/lib/client";
 
-export default function CampaignPage() {
+export const Route = createFileRoute("/campaign")({
+	component: CampaignPage,
+});
+
+function CampaignPage() {
 	const { mutate: sendMessage } = useMutation({
 		mutationFn: () =>
 			client.discord.sendMessage({
@@ -22,5 +26,9 @@ export default function CampaignPage() {
 		},
 	});
 
-	return <Button onClick={() => sendMessage}>click</Button>;
+	return (
+		<CampaignShell>
+			<Button onClick={() => sendMessage()}>click</Button>
+		</CampaignShell>
+	);
 }

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "extends": "//",
+  "linter": {
+    "includes": [
+      "!src/routeTree.gen.ts"
+    ]
+  },
+  "overrides": [
+    {
+      "includes": [
+        "src/routes/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
+    }
+  ],
+  "root": false
+}

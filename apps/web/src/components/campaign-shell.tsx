@@ -1,11 +1,10 @@
-"use client";
 import SidebarComponent from "@/components/sidebar";
 
-export default function RootLayout({
+export default function CampaignShell({
 	children,
-}: Readonly<{
+}: {
 	children: React.ReactNode;
-}>) {
+}) {
 	return (
 		<div className="flex min-h-screen">
 			<SidebarComponent />

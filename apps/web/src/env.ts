@@ -4,19 +4,19 @@ import { z } from "zod";
 
 export const env = createEnv({
 	client: {
-		NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
-		NEXT_PUBLIC_AUTH_PUBLIC_KEY_PEM: z.string().default(""),
-		NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: z.string().default("/"),
-		NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: z.string().default("/onboarding"),
-		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z
+		VITE_APP_URL: z.url().default("http://localhost:3000"),
+		VITE_AUTH_PUBLIC_KEY_PEM: z.string().default(""),
+		VITE_CLERK_AFTER_SIGN_IN_URL: z.string().default("/"),
+		VITE_CLERK_AFTER_SIGN_UP_URL: z.string().default("/onboarding"),
+		VITE_CLERK_PUBLISHABLE_KEY: z
 			.string()
 			.default("pk_test_bGlrZWQtZmVsaW5lLTU5LmNsZXJrLmFjY291bnRzLmRldiQ"),
-		NEXT_PUBLIC_CLERK_SIGN_IN_URL: z.string().default("/sign-in"),
-		NEXT_PUBLIC_CLERK_SIGN_UP_URL: z.string().default("/sign-up"),
+		VITE_CLERK_SIGN_IN_URL: z.string().default("/sign-in"),
+		VITE_CLERK_SIGN_UP_URL: z.string().default("/sign-up"),
 	},
-	clientPrefix: "NEXT_PUBLIC_",
+	clientPrefix: "VITE_",
 	emptyStringAsUndefined: true,
-	runtimeEnv: process.env,
+	runtimeEnv: Bun.env,
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
@@ -28,7 +28,9 @@ export const env = createEnv({
 			),
 		DISCORD_API_KEY: z.string(),
 		DISCORD_TOKEN: z.string(),
-		NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+		NODE_ENV: z
+			.enum(["development", "test", "production"])
+			.default("development"),
 		RESEND_API_KEY: z.string().min(1, "RESEND_API_KEY is required"),
 	},
 });

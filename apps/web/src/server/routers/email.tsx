@@ -20,7 +20,7 @@ const inviteToCampaign = privateProcedure
 				from,
 				react: (
 					<DndInviteEmail
-						acceptLink={`${env.NEXT_PUBLIC_APP_URL}/accept?id=${campaignId}`}
+						acceptLink={`${env.VITE_APP_URL}/accept?id=${campaignId}`}
 						campaignName={campaignName}
 						dmName={dmName}
 					/>

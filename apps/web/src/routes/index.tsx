@@ -1,7 +1,6 @@
-"use client";
 import type { CreateCampaignRequest } from "@planner/schemas/campaigns";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -9,15 +8,19 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
+export const Route = createFileRoute("/")({
+	component: CreateCampaignForm,
+});
+
 export type CreateCampaignFormType = {
 	title: string;
 	description: string;
 };
 
-export default function CreateCampaignForm() {
+function CreateCampaignForm() {
 	const [tags, setTags] = useState<string[]>([]);
 	const [tagInput, setTagInput] = useState("");
-	const router = useRouter();
+	const navigate = useNavigate();
 	const { user } = useAuth();
 
 	const { mutate: createCampaign } = useMutation({
@@ -28,7 +31,7 @@ export default function CreateCampaignForm() {
 			});
 		},
 		onSuccess: (res) => {
-			router.push(`campaign/${res.id}`);
+			navigate({ to: `/campaign/${res.id}` });
 		},
 	});
 
@@ -72,7 +75,6 @@ export default function CreateCampaignForm() {
 		<div className="min-h-screen bg-background py-12 px-4">
 			<div className="max-w-2xl mx-auto">
 				<div className="bg-card rounded-2xl shadow-lg border border-border p-8">
-					{/* Header */}
 					<div className="mb-8">
 						<h1 className="text-4xl font-bold text-foreground mb-2">
 							Create Your Campaign
@@ -83,7 +85,6 @@ export default function CreateCampaignForm() {
 					</div>
 
 					<div className="space-y-6">
-						{/* Campaign Title */}
 						<div>
 							<label
 								className="block text-sm font-medium text-foreground mb-2"
@@ -111,7 +112,6 @@ export default function CreateCampaignForm() {
 							)}
 						</div>
 
-						{/* Campaign Description */}
 						<div>
 							<label
 								className="block text-sm font-medium text-foreground mb-2"
@@ -139,7 +139,6 @@ export default function CreateCampaignForm() {
 							)}
 						</div>
 
-						{/* Tags */}
 						<div>
 							<label
 								className="block text-sm font-medium text-foreground mb-2"
@@ -165,7 +164,6 @@ export default function CreateCampaignForm() {
 								</Button>
 							</div>
 
-							{/* Tag Display */}
 							{tags.length > 0 && (
 								<div className="flex flex-wrap gap-2">
 									{tags.map((tag, index) => (
@@ -187,7 +185,6 @@ export default function CreateCampaignForm() {
 							)}
 						</div>
 
-						{/* Submit Button */}
 						<button
 							className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg transition transform hover:scale-[1.02] active:scale-[0.98]"
 							onClick={handleSubmit(onSubmit)}

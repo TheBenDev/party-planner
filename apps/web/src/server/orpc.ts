@@ -48,7 +48,7 @@ export const AUTH_COOKIE_NAME = "planner_auth";
 const ACTIVE_CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
 const CLERK_SESSION_COOKIE_NAMES = [
 	"__session",
-	`__session_${env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
+	`__session_${env.VITE_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,
 	"__clerk_session",
 ] as const;
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -188,7 +188,7 @@ export const authMiddleware = os
 
 		// if flag is set, create/update and encrypt cookie for auth information
 		if (shouldSetCookie) {
-			const publicKey = env.NEXT_PUBLIC_AUTH_PUBLIC_KEY_PEM;
+			const publicKey = env.VITE_AUTH_PUBLIC_KEY_PEM;
 
 			if (!publicKey) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {

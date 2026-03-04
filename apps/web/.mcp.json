@@ -1,0 +1,13 @@
+{
+	"mcpServers": {
+		"context7": {
+			"args": ["-y", "@upstash/context7-mcp"],
+			"command": "bunx"
+		},
+		"nx-mcp": {
+			"args": ["nx", "mcp"],
+			"command": "npx",
+			"type": "stdio"
+		}
+	}
+}
