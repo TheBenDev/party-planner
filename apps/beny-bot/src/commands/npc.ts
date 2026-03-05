@@ -133,8 +133,8 @@ async function actionView(interaction: ChatInputCommandInteraction) {
 		const npc = GetNpcResponseSchema.parse(response.data).npc;
 		const npcEmbed = new EmbedBuilder()
 			.setColor("#0099ff")
-			.setTitle(npc.firstName)
-			.setDescription(`Character: ${npc.firstName} ${npc.lastName ?? ""}`)
+			.setTitle(npc.name)
+			.setDescription(`Character: ${npc.name}`)
 			.setThumbnail(npc.avatar || null)
 			.setTimestamp();
 		await interaction.editReply({ embeds: [npcEmbed] });

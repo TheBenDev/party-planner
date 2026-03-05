@@ -65,31 +65,38 @@
       "when": 1769723350640
     },
     {
+      "breakpoints": true,
       "idx": 9,
-      "version": "7",
-      "when": 1770155001067,
       "tag": "0009_user_integration",
-      "breakpoints": true
+      "version": "7",
+      "when": 1770155001067
     },
     {
+      "breakpoints": true,
       "idx": 10,
-      "version": "7",
-      "when": 1771275041721,
       "tag": "0010_updated_at_added_to_tables",
-      "breakpoints": true
+      "version": "7",
+      "when": 1771275041721
     },
     {
+      "breakpoints": true,
       "idx": 11,
-      "version": "7",
-      "when": 1771621529502,
       "tag": "0011_npc_columns",
-      "breakpoints": true
+      "version": "7",
+      "when": 1771621529502
     },
     {
+      "breakpoints": true,
       "idx": 12,
-      "version": "7",
-      "when": 1771623253356,
       "tag": "0012_fix id name consistency",
+      "version": "7",
+      "when": 1771623253356
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1772668893742,
+      "tag": "0013_update_npc_table",
       "breakpoints": true
     }
   ],
