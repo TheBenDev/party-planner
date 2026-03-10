@@ -76,10 +76,7 @@ const getActiveCampaign = privateProcedure
 	.handler(async ({ context }) => {
 		const campaignId = context.campaignId;
 		const db = context.db;
-		if (!campaignId)
-			throw new ORPCError("BAD_REQUEST", {
-				message: "User must have an active campaign.",
-			});
+		if (!campaignId) return null;
 		const campaignRow = await db
 			.select()
 			.from(campaignsTable)
