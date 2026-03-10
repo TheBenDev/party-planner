@@ -2,6 +2,7 @@ import { createClerkClient, verifyToken } from "@clerk/backend";
 import { REST } from "@discordjs/rest";
 import { ORPCError, os } from "@orpc/server";
 import { getCookie, setCookie } from "@orpc/server/helpers";
+import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
 import { type Client, createDb, schema } from "@planner/database";
 import type { GetAuthResponse } from "@planner/schemas/user";
 import {
@@ -14,10 +15,11 @@ import { Resend } from "resend";
 import { env } from "@/env";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
-type BaseContext = { headers: Headers };
-type DbContext = BaseContext & { db: Client };
-
-const base = os.$context<BaseContext>();
+interface ORPCContext extends RequestHeadersPluginContext {}
+interface Context extends ORPCContext {
+	db: Client;
+}
+const base = os.$context<ORPCContext>();
 
 const dbMiddleware = base.middleware(({ next }) => {
 	const db: Client = createDb();
@@ -25,7 +27,7 @@ const dbMiddleware = base.middleware(({ next }) => {
 });
 
 const discordMiddleware = base.middleware(({ next, context: c }) => {
-	const authHeader = c.headers.get("Authorization");
+	const authHeader = c.reqHeaders?.get("Authorization");
 
 	if (!authHeader?.startsWith("Bot ")) {
 		throw new ORPCError("UNAUTHORIZED", {
@@ -67,12 +69,16 @@ function getSessionToken(headers: Headers): string | undefined {
 }
 
 export const authMiddleware = os
-	.$context<DbContext>()
+	.$context<Context>()
 	.middleware(async ({ next, context: c }) => {
 		const db = c.db;
-
+		if (!c.reqHeaders) {
+			throw new ORPCError("UNAUTHORIZED", {
+				message: "Request headers not available",
+			});
+		}
 		// Use clerk cookie to verify user and access clerk external id
-		const sessionToken = getSessionToken(c.headers);
+		const sessionToken = getSessionToken(c.reqHeaders);
 		if (!sessionToken) {
 			throw new ORPCError("UNAUTHORIZED", {
 				message: "Session token not found",
@@ -98,7 +104,7 @@ export const authMiddleware = os
 		}
 
 		const activeCampaignIdCookie = getCookie(
-			c.headers,
+			c.reqHeaders,
 			ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 		);
 
@@ -130,12 +136,18 @@ export const authMiddleware = os
 			// set an active campaign for user if they don't have one and have a campaign available
 			if (!activeCampaignIdCookie && userCampaigns.length > 0) {
 				activeCampaignId = userCampaigns[0].campaign.id;
-				setCookie(c.headers, ACTIVE_CAMPAIGN_ID_COOKIE_NAME, activeCampaignId, {
-					httpOnly: true,
-					maxAge: COOKIE_MAX_AGE,
-					path: "/",
-					sameSite: "lax",
-				});
+				setCookie(
+					c.reqHeaders,
+					ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
+					activeCampaignId,
+					{
+						httpOnly: true,
+						maxAge: COOKIE_MAX_AGE,
+						path: "/",
+						sameSite: "lax",
+						secure: env.NODE_ENV === "production",
+					},
+				);
 			}
 
 			const activeCampaign = userCampaigns.find(
@@ -157,7 +169,7 @@ export const authMiddleware = os
 			};
 		}
 
-		const encryptedAuthCookie = getCookie(c.headers, AUTH_COOKIE_NAME);
+		const encryptedAuthCookie = getCookie(c.reqHeaders, AUTH_COOKIE_NAME);
 		let authPayload: Omit<AuthCookiePayload, "exp" | "iat">;
 		let shouldSetCookie = false;
 
@@ -206,7 +218,7 @@ export const authMiddleware = os
 					COOKIE_MAX_AGE,
 				);
 
-				setCookie(c.headers, AUTH_COOKIE_NAME, encryptedCookie, {
+				setCookie(c.reqHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
 					httpOnly: true,
 					maxAge: COOKIE_MAX_AGE,
 					path: "/",

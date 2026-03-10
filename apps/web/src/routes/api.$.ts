@@ -1,6 +1,6 @@
 import { onError } from "@orpc/server";
 import { RPCHandler } from "@orpc/server/fetch";
-import { CORSPlugin } from "@orpc/server/plugins";
+import { CORSPlugin, RequestHeadersPlugin } from "@orpc/server/plugins";
 import { createFileRoute } from "@tanstack/react-router";
 import appRouter from "@/server";
 
@@ -11,16 +11,13 @@ const handler = new RPCHandler(appRouter, {
 			console.error(error);
 		}),
 	],
-	plugins: [new CORSPlugin()],
+	plugins: [new CORSPlugin(), new RequestHeadersPlugin()],
 });
 
 async function handle({ request }: { request: Request }) {
-	const headers: Headers = request.headers;
 	const { response } = await handler.handle(request, {
-		context: { headers },
 		prefix: "/api",
 	});
-
 	return response ?? new Response("Not found", { status: 404 });
 }
 
