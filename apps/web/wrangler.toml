@@ -1,0 +1,23 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "web"
+# Set this to today's date
+compatibility_date = "2026-03-09"
+compatibility_flags = [ "nodejs_compat" ]
+main = "@tanstack/react-start/server-entry"
+
+
+[vars]
+VITE_APP_URL = "https://party-planner.benthedev.com"
+VITE_CLERK_AFTER_SIGN_IN_URL = "/"
+VITE_CLERK_AFTER_SIGN_UP_URL = "/onboarding"
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bGlrZWQtZmVsaW5lLTU5LmNsZXJrLmFjY291bnRzLmRldiQ"
+VITE_CLERK_SIGN_IN_URL = "/sign-in"
+VITE_CLERK_SIGN_UP_URL = "/sign-up"
+NODE_ENV = "production"
+
+[[routes]]
+pattern = "party-planner.benthedev.com/*"
+zone_name = "benthedev.com"
+
+[observability.logs]
+enabled = true

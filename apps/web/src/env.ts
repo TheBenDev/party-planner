@@ -16,7 +16,7 @@ export const env = createEnv({
 	},
 	clientPrefix: "VITE_",
 	emptyStringAsUndefined: true,
-	runtimeEnv: Bun.env,
+	runtimeEnv: process.env,
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),

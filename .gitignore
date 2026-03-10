@@ -50,10 +50,17 @@ Thumbs.db
 out
 
 # dotenv environment variables file
+.dev.vars
 .env
 .env.*
 !.env.example
 terraform.tfvars
+
+# CLOUDFLARE
+.wrangler/
+
+# CLERK
+/.clerk/
 
 # SECURITY
 *.pem

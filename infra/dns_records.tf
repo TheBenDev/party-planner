@@ -1,3 +1,13 @@
+resource "cloudflare_dns_record" "party_planner" {
+  zone_id = var.zone_id
+  name    = "party-planner.benthedev.com"
+  type    = "AAAA"
+  content = "100::"
+  proxied = true
+  ttl     = 1
+  settings = {}
+}
+
 resource "cloudflare_dns_record" "mx_alt3" {
   content  = "alt3.aspmx.l.google.com"
   name     = var.domain
