@@ -37,11 +37,8 @@ export const Route = createFileRoute("/api/webhooks/clerk")({
 							avatar: evt.data.image_url,
 							email: evt.data.email_addresses[0].email_address,
 							externalId: evt.data.id,
-							// TODO: MAKE NAME OPTIONAL only need email
-							firstName:
-								evt.data.first_name ??
-								evt.data.email_addresses[0].email_address,
-							lastName: evt.data.last_name ?? "",
+							firstName: evt.data.first_name,
+							lastName: evt.data.last_name,
 						};
 						try {
 							await serverClient.user.createUser(user);

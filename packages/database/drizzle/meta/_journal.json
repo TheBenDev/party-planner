@@ -98,6 +98,13 @@
       "when": 1772668893742,
       "tag": "0013_update_npc_table",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1773178100355,
+      "tag": "0014_user_names_nullable",
+      "breakpoints": true
     }
   ],
   "version": "7"

@@ -8,16 +8,16 @@ export const UserSchema = BaseEntitySchema.extend({
 	deletedAt: z.date().nullable(),
 	email: z.email(),
 	externalId: z.string(),
-	firstName: z.string(),
-	lastName: z.string(),
+	firstName: z.string().nullable(),
+	lastName: z.string().nullable(),
 });
 
 export const CreateUserRequestSchema = z.object({
 	avatar: z.string().optional(),
 	email: z.email(),
 	externalId: z.string(),
-	firstName: z.string(),
-	lastName: z.string(),
+	firstName: z.string().nullable(),
+	lastName: z.string().nullable(),
 });
 export const CreateUserResponseSchema = z.void();
 
@@ -26,9 +26,9 @@ export const GetUserResponseSchema = z.object({
 	avatar: z.string().nullable(),
 	email: z.email(),
 	externalId: z.string(),
-	firstName: z.string(),
+	firstName: z.string().nullable(),
 	id: z.uuid(),
-	lastName: z.string(),
+	lastName: z.string().nullable(),
 });
 
 export const GetAuthRequestSchema = z.object({
