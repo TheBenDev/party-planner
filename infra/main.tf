@@ -1,4 +1,10 @@
 terraform {
+  cloud {
+      organization = "benthedev"
+      workspaces {
+        name = "party_planner"
+      }
+    }
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"

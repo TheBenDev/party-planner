@@ -1,0 +1,28 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+name = "party-planner"
+compatibility_date = "2026-03-01"
+compatibility_flags = [ "nodejs_compat" ]
+main = "@tanstack/react-start/server-entry"
+account_id = "5251e9d23897be4b068bc3c3524d480c"
+
+
+[vars]
+VITE_APP_URL = "https://party-planner.benthedev.com"
+VITE_CLERK_AFTER_SIGN_IN_URL = "/"
+VITE_CLERK_AFTER_SIGN_UP_URL = "/onboarding"
+VITE_CLERK_PUBLISHABLE_KEY = "pk_test_bGlrZWQtZmVsaW5lLTU5LmNsZXJrLmFjY291bnRzLmRldiQ"
+VITE_CLERK_SIGN_IN_URL = "/sign-in"
+VITE_CLERK_SIGN_UP_URL = "/sign-up"
+VITE_AUTH_PUBLIC_KEY_PEM="""-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjI+i1AeEOHr5gKpQrQLu
+JPZHOF+taTBZRshOwD3DXEGQymQ5s+LCJCqTkJslCDySvhYhpbwFFQ612m4m+MQm
+bV9+AOmsKlKDbEjr5VFoTT4UTxtApVQRmhch6Z+z2yUplE6oKhCy/lPpgaMKkq6c
+pqXEAOWBkf84L40sJVMbYiBtZAub4QcDa3J8L3nByXf1/xce2I5RGCS+uEUJytyw
+gEt35UvpGeQKkzi3jkID2AFwzu90iQVwXZin07v4vuvdd9MDizVMub6lyvZq7svu
+f3kpRBTHUjgajmdWfP7yJa/aZYovq+vCK8GBWlekWF6cdjOc032Ga9aMSTftDXvK
+iQIDAQAB
+-----END PUBLIC KEY-----"""
+NODE_ENV = "production"
+
+[observability.logs]
+enabled = true

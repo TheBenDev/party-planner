@@ -34,8 +34,7 @@ function NPCSPage() {
 						>
 							<User2 className="w-32 h-32" />
 							<div className="flex">
-								<span>{npc.firstName}</span>
-								<span>{npc.lastName}</span>
+								<span>{npc.name}</span>
 							</div>
 						</div>
 					);
