@@ -1,5 +1,5 @@
 "$schema" = "./node_modules/wrangler/config-schema.json"
-name = "web"
+name = "party-planner"
 compatibility_date = "2026-03-01"
 compatibility_flags = [ "nodejs_compat" ]
 main = "@tanstack/react-start/server-entry"
@@ -22,7 +22,7 @@ gEt35UvpGeQKkzi3jkID2AFwzu90iQVwXZin07v4vuvdd9MDizVMub6lyvZq7svu
 f3kpRBTHUjgajmdWfP7yJa/aZYovq+vCK8GBWlekWF6cdjOc032Ga9aMSTftDXvK
 iQIDAQAB
 -----END PUBLIC KEY-----"""
-NODE_ENV = "development"
+NODE_ENV = "production"
 
 [observability.logs]
 enabled = true
