@@ -9,9 +9,9 @@ export const usersTable = pgTable("users", {
 	deletedAt: timestamp("deleted_at", { mode: "date" }),
 	email: varchar("email").notNull().unique(),
 	externalId: varchar("external_id").unique().notNull(),
-	firstName: varchar("first_name").notNull(),
+	firstName: varchar("first_name"),
 	id: uuid("id").primaryKey().defaultRandom(),
-	lastName: varchar("last_name").notNull(),
+	lastName: varchar("last_name"),
 	updatedAt: timestamp("updated_at", { mode: "date" })
 		.defaultNow()
 		.notNull()
