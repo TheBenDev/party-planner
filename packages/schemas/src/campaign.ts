@@ -11,7 +11,7 @@ export const CampaignSchema = BaseEntitySchema.extend({
 });
 
 export const GetActiveCampaignRequestSchema = z.undefined();
-export const GetActiveCampaignResponseSchema = CampaignSchema;
+export const GetActiveCampaignResponseSchema = CampaignSchema.nullable();
 
 export const GetInvitationRequestSchema = z.object({
 	invitationId: z.uuid(),
