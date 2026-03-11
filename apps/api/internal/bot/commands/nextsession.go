@@ -18,8 +18,7 @@ var NextSessionCommand = Command{
 		slog.Info("Checking next session", "operation", "beny-bot.nextsession")
 
 		if i.GuildID == "" {
-			replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-			return nil
+			return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 		}
 
 		var result checkNextSessionResponse
@@ -28,11 +27,9 @@ var NextSessionCommand = Command{
 		}, &result)
 		if err != nil {
 			slog.Error("Failed to check next session", "operation", "beny-bot.nextsession", "error", err)
-			replyEphemeral(s, i, "Failed to check for the next session. Please try again later.")
-			return nil
+			return replyEphemeral(s, i, "Failed to check for the next session. Please try again later.")
 		}
 
-		replyPublic(s, i, result.Message)
-		return nil
+		return replyPublic(s, i, result.Message)
 	},
 }

@@ -16,8 +16,7 @@ type scheduleSessionResponse struct {
 
 func scheduleAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
 	if !hasAdminPermission(i) {
-		replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
-		return nil
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
 
 	now := time.Now().UTC()
@@ -86,8 +85,7 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	slog.Info("Scheduling session for dnd", "operation", "beny-bot.schedule")
 
 	if i.GuildID == "" {
-		replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-		return nil
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
 
 	data := i.ModalSubmitData()
@@ -97,8 +95,7 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	date := strings.TrimSpace(getModalTextInput(data, "sessionDate"))
 
 	if hour == "" || minute == "" || date == "" {
-		replyEphemeral(s, i, "Something went wrong trying to read your inputs. Please try again or ask for help.")
-		return nil
+		return replyEphemeral(s, i, "Something went wrong trying to read your inputs. Please try again or ask for help.")
 	}
 
 	// Normalise hour/minute to two digits
@@ -114,10 +111,13 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	scheduledStartTime, err := time.ParseInLocation("2006-01-02T15:04:05", fmt.Sprintf("%sT%s:%s:00", date, hour, minute), loc)
 	if err != nil {
 		slog.Error("Failed to parse schedule time", "operation", "beny-bot.schedule", "error", err)
-		replyEphemeral(s, i, "Failed to parse the date and time. Please try again.")
-		return nil
+		return replyEphemeral(s, i, "Failed to parse the date and time. Please try again.")
 	}
 	scheduledEndTime := scheduledStartTime.Add(2 * time.Hour)
+
+	if err := deferReply(s, i, false); err != nil {
+		return err
+	}
 
 	body := map[string]any{
 		"channelId": i.ChannelID,
@@ -133,14 +133,13 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	err = client.Post("/api/discord/scheduleSession", body, &result)
 	if err != nil {
 		slog.Error("Failed to schedule session", "operation", "beny-bot.schedule", "error", err)
-		replyEphemeral(s, i, "Failed to schedule session. Please try again later.")
-		return nil
+		return editReply(s, i, "Failed to schedule session. Please try again later.")
 	}
 
 	// Create Discord scheduled event
 	privacyLevel := discordgo.GuildScheduledEventPrivacyLevelGuildOnly
 	entityType := discordgo.GuildScheduledEventEntityTypeExternal
-	_, _ = s.GuildScheduledEventCreate(i.GuildID, &discordgo.GuildScheduledEventParams{
+	_, err = s.GuildScheduledEventCreate(i.GuildID, &discordgo.GuildScheduledEventParams{
 		Name:               eventName,
 		PrivacyLevel:       privacyLevel,
 		ScheduledStartTime: &scheduledStartTime,
@@ -150,6 +149,9 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 			Location: "Check the channel for details",
 		},
 	})
+	if err != nil {
+		slog.Error("Failed to create Discord scheduled event", "operation", "beny-bot.schedule", "error", err)
+	}
 
 	unixTimestamp := scheduledStartTime.Unix()
 	discordTimestamp := fmt.Sprintf("<t:%d:F>", unixTimestamp)
@@ -161,8 +163,11 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 		reply = fmt.Sprintf("Session scheduled %s.", discordTimestamp)
 	}
 
-	replyPublic(s, i, reply)
-	return nil
+	if err != nil {
+		reply += fmt.Sprintf(" The Discord scheduled event could not be created: %v", err)
+	}
+
+	return editReply(s, i, reply)
 }
 
 var ScheduleEventCommand = Command{

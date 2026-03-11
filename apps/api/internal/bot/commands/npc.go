@@ -9,26 +9,25 @@ import (
 
 type npcResponse struct {
 	NPC struct {
-		ID               string   `json:"id"`
-		Name             string   `json:"name"`
-		Age              string   `json:"age"`
-		Aliases          []string `json:"aliases"`
-		Appearance       string   `json:"appearance"`
-		Avatar           string   `json:"avatar"`
-		IsKnownToParty   bool     `json:"isKnownToParty"`
-		KnownName        string   `json:"knownName"`
-		Personality      string   `json:"personality"`
-		PlayerNotes      string   `json:"playerNotes"`
-		Race             string   `json:"race"`
-		RelationToParty  string   `json:"relationToParty"`
-		Status           string   `json:"status"`
+		ID              string   `json:"id"`
+		Name            string   `json:"name"`
+		Age             string   `json:"age"`
+		Aliases         []string `json:"aliases"`
+		Appearance      string   `json:"appearance"`
+		Avatar          string   `json:"avatar"`
+		IsKnownToParty  bool     `json:"isKnownToParty"`
+		KnownName       string   `json:"knownName"`
+		Personality     string   `json:"personality"`
+		PlayerNotes     string   `json:"playerNotes"`
+		Race            string   `json:"race"`
+		RelationToParty string   `json:"relationToParty"`
+		Status          string   `json:"status"`
 	} `json:"npc"`
 }
 
 func npcSetAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
 	if !hasAdminPermission(i) {
-		replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
-		return nil
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
 
 	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -68,8 +67,7 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, c
 	slog.Info("Updating an npc's bio", "operation", "beny-bot.npc-set")
 
 	if i.GuildID == "" {
-		replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-		return nil
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
 
 	data := i.ModalSubmitData()
@@ -77,11 +75,12 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, c
 	bio := getModalTextInput(data, "npcBio")
 
 	if name == "" || bio == "" {
-		replyEphemeral(s, i, "Input required to update bio.")
-		return nil
+		return replyEphemeral(s, i, "Input required to update bio.")
 	}
 
-	deferReply(s, i)
+	if err := deferReply(s, i, true); err != nil {
+		return err
+	}
 
 	body := map[string]any{
 		"npc": map[string]any{
@@ -95,26 +94,24 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, c
 	if err != nil {
 		slog.Error("Failed to update npc bio", "operation", "beny-bot.npc-set", "error", err)
 		if isStatusCode(err, 404) {
-			editReply(s, i, "I could not find that npc.")
-		} else {
-			editReply(s, i, "Something went wrong. Please try again later.")
+			return editReply(s, i, "I could not find that npc.")
 		}
-		return nil
+		return editReply(s, i, "Something went wrong. Please try again later.")
 	}
 
-	editReply(s, i, "Npc bio updated successfully.")
-	return nil
+	return editReply(s, i, "Npc bio updated successfully.")
 }
 
 func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
 	slog.Info("Fetching npc", "operation", "beny-bot.npc-view")
 
 	if i.GuildID == "" {
-		replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-		return nil
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
 
-	deferReply(s, i)
+	if err := deferReply(s, i, true); err != nil {
+		return err
+	}
 
 	data := i.ApplicationCommandData()
 	var npcName string
@@ -132,11 +129,9 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client 
 	if err != nil {
 		slog.Error("Failed to fetch npc", "operation", "beny-bot.npc-view", "error", err)
 		if isStatusCode(err, 404) {
-			editReply(s, i, "I could not find that npc.")
-		} else {
-			editReply(s, i, "Something went wrong. Please try again later.")
+			return editReply(s, i, "I could not find that npc.")
 		}
-		return nil
+		return editReply(s, i, "Something went wrong. Please try again later.")
 	}
 
 	npc := result.NPC
@@ -149,10 +144,10 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client 
 		embed.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: npc.Avatar}
 	}
 
-	_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+	_, err = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 		Embeds: &[]*discordgo.MessageEmbed{embed},
 	})
-	return nil
+	return err
 }
 
 var NpcCommand = Command{

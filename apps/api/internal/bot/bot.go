@@ -27,7 +27,7 @@ func Start(token string, client *api.Client) (*discordgo.Session, error) {
 		return nil, err
 	}
 
-	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.IntentsGuilds
 
 	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		slog.Info("Bot logged in", "bot", r.User.Username, "startedAt", time.Now())

@@ -8,10 +8,10 @@ import (
 )
 
 var (
-	regex24Hour       = regexp.MustCompile(`^(\d{1,2}):(\d{2})(?::(\d{2}))?$`)
-	regex12HourSpace  = regexp.MustCompile(`^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$`)
+	regex24Hour        = regexp.MustCompile(`^(\d{1,2}):(\d{2})(?::(\d{2}))?$`)
+	regex12HourSpace   = regexp.MustCompile(`^(\d{1,2})(?::(\d{2}))?\s*(am|pm)$`)
 	regex12HourNoSpace = regexp.MustCompile(`^(\d{1,2})(?::(\d{2}))?(am|pm)$`)
-	regexHourOnly     = regexp.MustCompile(`^(\d{1,2})$`)
+	regexHourOnly      = regexp.MustCompile(`^(\d{1,2})$`)
 )
 
 // MapStringInputToTime converts various user time input formats to HH:MM:SS (24-hour).
@@ -125,8 +125,15 @@ func FormatTime(t string) string {
 	if len(parts) < 2 {
 		return t
 	}
-	hour, _ := strconv.Atoi(parts[0])
-	minute := parts[1]
+	hour, err := strconv.Atoi(parts[0])
+	if err != nil || hour < 0 || hour > 23 {
+		return t
+	}
+
+	minute, err := strconv.Atoi(parts[1])
+	if err != nil || minute < 0 || minute > 59 {
+		return t
+	}
 
 	period := "AM"
 	if hour >= 12 {
@@ -140,5 +147,5 @@ func FormatTime(t string) string {
 		displayHour = hour - 12
 	}
 
-	return fmt.Sprintf("%d:%s %s", displayHour, minute, period)
+	return fmt.Sprintf("%d:%02d %s", displayHour, minute, period)
 }

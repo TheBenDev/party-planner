@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/lib"
@@ -90,8 +91,7 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 	slog.Info("Setting timeslot for user's availability", "operation", "beny-bot.availability-set")
 
 	if i.GuildID == "" {
-		replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-		return nil
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
 
 	data := i.ModalSubmitData()
@@ -105,20 +105,17 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 
 	day := lib.GetDayNumber(dayStr)
 	if day == -1 {
-		replyEphemeral(s, i, "I could not read the day you entered. Please use a day name like 'Monday'.")
-		return nil
+		return replyEphemeral(s, i, "I could not read the day you entered. Please use a day name like 'Monday'.")
 	}
 
 	frequency, err := strconv.Atoi(strings.TrimSpace(frequencyStr))
 	if err != nil || (frequency != 1 && frequency != 2) {
-		replyEphemeral(s, i, "Frequency must be 1 (every week) or 2 (every other week).")
-		return nil
+		return replyEphemeral(s, i, "Frequency must be 1 (every week) or 2 (every other week).")
 	}
 
 	parsedStart, ok := lib.MapStringInputToTime(startTimeStr)
 	if !ok {
-		replyEphemeral(s, i, "I could not convert the start time into a valid time")
-		return nil
+		return replyEphemeral(s, i, "I could not convert the start time into a valid time")
 	}
 
 	var parsedEnd string
@@ -127,9 +124,22 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 	} else {
 		parsedEnd, ok = lib.MapStringInputToTime(endTimeStr)
 		if !ok {
-			replyEphemeral(s, i, "I could not convert the end time into a valid time")
-			return nil
+			return replyEphemeral(s, i, "I could not convert the end time into a valid time")
 		}
+	}
+
+	startTime, err := time.Parse("15:04:05", parsedStart)
+	if err != nil {
+		return replyEphemeral(s, i, "I could not convert the start time into a valid time")
+	}
+
+	endTime, err := time.Parse("15:04:05", parsedEnd)
+	if err != nil {
+		return replyEphemeral(s, i, "I could not convert the end time into a valid time")
+	}
+
+	if !endTime.After(startTime) {
+		return replyEphemeral(s, i, "End time must be after start time")
 	}
 
 	body := map[string]any{
@@ -147,18 +157,19 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 	if err != nil {
 		slog.Error("Failed to set availability", "operation", "beny-bot.availability-set", "error", err)
 		if isStatusCode(err, 409) {
-			replyEphemeral(s, i, "Timeslot overlapping with an already existing one. Use /availability view to see your already set availabilities.")
-		} else {
-			replyEphemeral(s, i, "Failed to set availability. Please try again later")
+			return replyEphemeral(s, i, "Timeslot overlapping with an already existing one. Use /availability view to see your already set availabilities.")
 		}
-		return nil
+		return replyEphemeral(s, i, "Failed to set availability. Please try again later")
 	}
 
-	replyEphemeral(s, i, "Availability set successfully. Use /availability view to see your currently set availability timeslots.")
-	return nil
+	return replyEphemeral(s, i, "Availability set successfully. Use /availability view to see your currently set availability timeslots.")
 }
 
 func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
+	}
+
 	slog.Info("Viewing availabilities", "operation", "beny-bot.availability-view", "user", i.Member.User.GlobalName)
 
 	userID := i.Member.User.ID
@@ -168,13 +179,11 @@ func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate
 	}, &result)
 	if err != nil {
 		slog.Error("Failed to get availabilities", "operation", "beny-bot.availability-view", "error", err)
-		replyEphemeral(s, i, "Failed to check for your availabilities. Please try again later.")
-		return nil
+		return replyEphemeral(s, i, "Failed to check for your availabilities. Please try again later.")
 	}
 
 	if len(result.UserAvailabilities) == 0 {
-		replyEphemeral(s, i, "❌ You haven't set any availability yet.")
-		return nil
+		return replyEphemeral(s, i, "❌ You haven't set any availability yet.")
 	}
 
 	// Sort by day then time
@@ -195,11 +204,14 @@ func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate
 	}
 
 	content := "📅 **Your Availability**\n\n" + strings.Join(lines, "\n")
-	replyEphemeral(s, i, content)
-	return nil
+	return replyEphemeral(s, i, content)
 }
 
 func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
+	}
+
 	slog.Info("Removing an availability timeslot", "operation", "beny-bot.availability-remove", "user", i.Member.User.GlobalName)
 
 	userID := i.Member.User.ID
@@ -215,20 +227,17 @@ func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCrea
 	}
 
 	if dayVal == "" || timeVal == "" {
-		replyEphemeral(s, i, "I could not parse the day and time given.")
-		return nil
+		return replyEphemeral(s, i, "I could not parse the day and time given.")
 	}
 
 	normalizedDay := lib.GetDayNumber(dayVal)
 	if normalizedDay == -1 {
-		replyEphemeral(s, i, "I could not read the day you gave me.")
-		return nil
+		return replyEphemeral(s, i, "I could not read the day you gave me.")
 	}
 
 	normalizedTime, ok := lib.MapStringInputToTime(timeVal)
 	if !ok {
-		replyEphemeral(s, i, "I could not read the time you gave me.")
-		return nil
+		return replyEphemeral(s, i, "I could not read the time you gave me.")
 	}
 
 	body := map[string]any{
@@ -240,15 +249,17 @@ func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCrea
 	err := client.Post("/api/discord/removeAvailability", body, nil)
 	if err != nil {
 		slog.Error("Failed to remove availability", "operation", "beny-bot.availability-remove", "error", err)
-		replyEphemeral(s, i, "Something went wrong when trying to remove your availability timeslot. Please try again later or reach out for help.")
-		return nil
+		return replyEphemeral(s, i, "Something went wrong when trying to remove your availability timeslot. Please try again later or reach out for help.")
 	}
 
-	replyEphemeral(s, i, "Successfully removed availability timeslot.")
-	return nil
+	return replyEphemeral(s, i, "Successfully removed availability timeslot.")
 }
 
 func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
+	}
+
 	slog.Info("Clearing availability timeslots", "operation", "beny-bot.availability-clear", "user", i.Member.User.GlobalName)
 
 	userID := i.Member.User.ID
@@ -259,12 +270,10 @@ func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreat
 	err := client.Post("/api/discord/clearAvailability", body, nil)
 	if err != nil {
 		slog.Error("Failed to clear availability", "operation", "beny-bot.availability-clear", "error", err)
-		replyEphemeral(s, i, "Something went wrong when trying to remove all of your availability timeslots. Please try again later or reach out for help.")
-		return nil
+		return replyEphemeral(s, i, "Something went wrong when trying to remove all of your availability timeslots. Please try again later or reach out for help.")
 	}
 
-	replyEphemeral(s, i, "Successfully removed all of your availability timeslots.")
-	return nil
+	return replyEphemeral(s, i, "Successfully removed all of your availability timeslots.")
 }
 
 var AvailabilityCommand = Command{

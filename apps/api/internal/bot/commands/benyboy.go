@@ -9,7 +9,6 @@ var BenyBoyCommand = Command{
 	Name:        "beny",
 	Description: "Beny!",
 	Action: func(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
-		replyPublic(s, i, "Boy!")
-		return nil
+		return replyPublic(s, i, "Boy!")
 	},
 }

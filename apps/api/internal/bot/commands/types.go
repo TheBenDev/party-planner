@@ -49,10 +49,9 @@ func getModalTextInput(data discordgo.ModalSubmitInteractionData, customID strin
 	return ""
 }
 
-
 // Helper to reply ephemerally
-func replyEphemeral(s *discordgo.Session, i *discordgo.InteractionCreate, content string) {
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+func replyEphemeral(s *discordgo.Session, i *discordgo.InteractionCreate, content string) error {
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: content,
@@ -62,8 +61,8 @@ func replyEphemeral(s *discordgo.Session, i *discordgo.InteractionCreate, conten
 }
 
 // Helper to reply publicly
-func replyPublic(s *discordgo.Session, i *discordgo.InteractionCreate, content string) {
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+func replyPublic(s *discordgo.Session, i *discordgo.InteractionCreate, content string) error {
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: content,
@@ -72,17 +71,24 @@ func replyPublic(s *discordgo.Session, i *discordgo.InteractionCreate, content s
 }
 
 // Helper to defer reply
-func deferReply(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+func deferReply(s *discordgo.Session, i *discordgo.InteractionCreate, ephemeral bool) error {
+	data := &discordgo.InteractionResponseData{}
+	if ephemeral {
+		data.Flags = discordgo.MessageFlagsEphemeral
+	}
+
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		Data: data,
 	})
 }
 
 // Helper to edit deferred reply
-func editReply(s *discordgo.Session, i *discordgo.InteractionCreate, content string) {
-	_, _ = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+func editReply(s *discordgo.Session, i *discordgo.InteractionCreate, content string) error {
+	_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 		Content: &content,
 	})
+	return err
 }
 
 // Helper to check if API error has a specific status code

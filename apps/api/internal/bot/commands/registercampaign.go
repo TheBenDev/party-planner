@@ -9,8 +9,7 @@ import (
 
 func registerCampaignAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
 	if !hasAdminPermission(i) {
-		replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
-		return nil
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
 
 	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -41,8 +40,7 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 	slog.Info("Registering dnd campaign to discord server", "operation", "beny-bot.register")
 
 	if i.GuildID == "" {
-		replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-		return nil
+		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
 
 	data := i.ModalSubmitData()
@@ -59,17 +57,15 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 		slog.Error("Failed to register campaign", "operation", "beny-bot.registerCampaign", "error", err)
 		switch api.StatusCode(err) {
 		case 404:
-			replyEphemeral(s, i, "I could not find the campaign you were trying to integrate.")
+			return replyEphemeral(s, i, "I could not find the campaign you were trying to integrate.")
 		case 409:
-			replyEphemeral(s, i, "This discord channel is already integrated with a campaign.")
+			return replyEphemeral(s, i, "This discord channel is already integrated with a campaign.")
 		default:
-			replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
+			return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
 		}
-		return nil
 	}
 
-	replyPublic(s, i, "Your campaign has been successfully integrated with your discord server.")
-	return nil
+	return replyPublic(s, i, "Your campaign has been successfully integrated with your discord server.")
 }
 
 var RegisterCampaignCommand = Command{

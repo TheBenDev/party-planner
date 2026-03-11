@@ -6,20 +6,18 @@ import (
 )
 
 type Config struct {
-	APIKey           string
-	AppURL           string
-	DiscordPublicKey string
-	DiscordToken     string
-	Port             string
+	APIKey       string
+	AppURL       string
+	DiscordToken string
+	Port         string
 }
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		APIKey:           os.Getenv("API_KEY"),
-		AppURL:           os.Getenv("APP_URL"),
-		DiscordPublicKey: os.Getenv("DISCORD_PUBLIC_KEY"),
-		DiscordToken:     os.Getenv("DISCORD_TOKEN"),
-		Port:             os.Getenv("PORT"),
+		APIKey:       os.Getenv("API_KEY"),
+		AppURL:       os.Getenv("APP_URL"),
+		DiscordToken: os.Getenv("DISCORD_TOKEN"),
+		Port:         os.Getenv("PORT"),
 	}
 
 	if cfg.APIKey == "" {
@@ -27,9 +25,6 @@ func Load() (*Config, error) {
 	}
 	if cfg.AppURL == "" {
 		return nil, fmt.Errorf("APP_URL is required")
-	}
-	if cfg.DiscordPublicKey == "" {
-		return nil, fmt.Errorf("DISCORD_PUBLIC_KEY is required")
 	}
 	if cfg.DiscordToken == "" {
 		return nil, fmt.Errorf("DISCORD_TOKEN is required")

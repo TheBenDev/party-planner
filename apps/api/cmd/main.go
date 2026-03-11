@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/bot"
@@ -26,7 +28,11 @@ func main() {
 		slog.Error("Failed to start Discord bot", "error", err)
 		os.Exit(1)
 	}
-	defer session.Close()
+	defer func() {
+		if err := session.Close(); err != nil {
+			slog.Error("Failed to close Discord session", "error", err)
+		}
+	}()
 
 	srv := server.New(cfg.Port)
 	go server.Start(srv)
@@ -36,6 +42,14 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	<-stop
+	signal.Stop(stop)
 
-	slog.Info("Shutting down.")
+	slog.Info("Shutting down")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		slog.Error("Failed to shut down HTTP server gracefully", "error", err)
+	}
 }
