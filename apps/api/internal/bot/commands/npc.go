@@ -122,7 +122,7 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client 
 	}
 
 	var result npcResponse
-	err := client.Get("/api/discord/getNpc", map[string]string{
+	err := client.Get("/api/discord/npc", map[string]string{
 		"npcName":  npcName,
 		"serverId": i.GuildID,
 	}, &result)

@@ -2,7 +2,10 @@ package config
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -13,6 +16,12 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
+
+	// Load environment variables
+	if err := godotenv.Load(); err != nil {
+		slog.Info("Env file not loaded.")
+	}
+
 	cfg := &Config{
 		APIKey:       os.Getenv("API_KEY"),
 		AppURL:       os.Getenv("APP_URL"),
