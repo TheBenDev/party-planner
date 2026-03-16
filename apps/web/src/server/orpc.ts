@@ -1,5 +1,7 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
 import { REST } from "@discordjs/rest";
+import type { LoggerContext } from "@orpc/experimental-pino";
+import { getLogger } from "@orpc/experimental-pino";
 import { ORPCError, os } from "@orpc/server";
 import { getCookie, setCookie } from "@orpc/server/helpers";
 import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
@@ -15,11 +17,16 @@ import { Resend } from "resend";
 import { env } from "@/env";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
-interface ORPCContext extends RequestHeadersPluginContext {}
+interface ORPCContext extends RequestHeadersPluginContext, LoggerContext {}
 interface Context extends ORPCContext {
 	db: Client;
 }
 const base = os.$context<ORPCContext>();
+
+const loggingMiddleware = base.middleware(({ next, context, path }) => {
+	getLogger(context)?.info({ procedure: path.join(".") }, "Procedure invoked");
+	return next();
+});
 
 const dbMiddleware = base.middleware(({ next }) => {
 	const db: Client = createDb();
@@ -226,8 +233,7 @@ export const authMiddleware = os
 					secure: env.NODE_ENV === "production",
 				});
 			} catch (error) {
-				// biome-ignore lint/suspicious/noConsole: Need this log in case something goes wrong
-				console.error("Failed to set auth cookie: ", error);
+				getLogger(c)?.error({ err: error }, "Failed to set auth cookie");
 			}
 		}
 
@@ -248,7 +254,7 @@ export const authMiddleware = os
  *
  * This is the base piece you use to build new queries and mutations on your API.
  */
-export const publicProcedure = base.use(dbMiddleware);
+export const publicProcedure = base.use(loggingMiddleware).use(dbMiddleware);
 
 /**
  * Authenticated procedures - has token, userId, RPC clients
