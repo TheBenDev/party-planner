@@ -203,12 +203,15 @@ const getAvailabilities = discordProcedure
 
 		const userIntegrationRow = await db
 			.select({
-				dayOfWeek: userAvailabilitiesTable.dayOfWeek,
-				endTime: userAvailabilitiesTable.endTime,
-				startTime: userAvailabilitiesTable.startTime,
+				availability: {
+					dayOfWeek: userAvailabilitiesTable.dayOfWeek,
+					endTime: userAvailabilitiesTable.endTime,
+					startTime: userAvailabilitiesTable.startTime,
+				},
+				userId: userIntegrationsTable.userId,
 			})
 			.from(userIntegrationsTable)
-			.innerJoin(
+			.leftJoin(
 				userAvailabilitiesTable,
 				and(
 					eq(
@@ -226,7 +229,26 @@ const getAvailabilities = discordProcedure
 			});
 		}
 
-		return { userAvailabilities: userIntegrationRow };
+		const availabilities = userIntegrationRow.reduce<
+			{ dayOfWeek: number; endTime: string; startTime: string }[]
+		>((acc, row) => {
+			if (
+				row.availability?.dayOfWeek != null &&
+				row.availability?.endTime != null &&
+				row.availability?.startTime != null
+			) {
+				acc.push({
+					dayOfWeek: row.availability.dayOfWeek,
+					endTime: row.availability.endTime,
+					startTime: row.availability.startTime,
+				});
+			}
+			return acc;
+		}, []);
+
+		return {
+			userAvailabilities: availabilities,
+		};
 	});
 
 const getNpc = discordProcedure
@@ -278,14 +300,13 @@ const getNpc = discordProcedure
 				and(
 					eq(campaignIntegrationsTable.externalId, serverId),
 					eq(campaignIntegrationsTable.source, IntegrationSource.DISCORD),
-					ilike(nonPlayerCharactersTable.name, npcName),
+					ilike(nonPlayerCharactersTable.name, `%${npcName}%`),
 				),
 			);
 
 		if (npcRow.length === 0) {
 			throw new ORPCError("NOT_FOUND", { message: "NPC not found" });
 		}
-
 		return { npc: npcRow[0] };
 	});
 
@@ -300,7 +321,6 @@ const registerCampaign = discordProcedure
 	.handler(async ({ input, context }) => {
 		const db = context.db;
 		const { serverId, campaignId, channelId } = input;
-
 		if (!(serverId && campaignId && channelId)) {
 			throw new ORPCError("BAD_REQUEST", {
 				message: "missing params for register",

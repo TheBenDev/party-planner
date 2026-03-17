@@ -130,7 +130,7 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	}
 
 	var result scheduleSessionResponse
-	err = client.Post("/api/discord/scheduleSession", body, &result)
+	err = client.Post("/api/discord/session", body, &result)
 	if err != nil {
 		slog.Error("Failed to schedule session", "operation", "beny-bot.schedule", "error", err)
 		return editReply(s, i, "Failed to schedule session. Please try again later.")

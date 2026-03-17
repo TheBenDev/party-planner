@@ -153,7 +153,7 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 		},
 	}
 
-	err = client.Post("/api/discord/setAvailability", body, nil)
+	err = client.Post("/api/discord/availability", body, nil)
 	if err != nil {
 		slog.Error("Failed to set availability", "operation", "beny-bot.availability-set", "error", err)
 		if isStatusCode(err, 409) {
@@ -174,7 +174,7 @@ func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate
 
 	userID := i.Member.User.ID
 	var result getAvailabilitiesResponse
-	err := client.Get("/api/discord/getAvailabilities", map[string]string{
+	err := client.Get("/api/discord/availability", map[string]string{
 		"userExternalId": userID,
 	}, &result)
 	if err != nil {
@@ -246,7 +246,7 @@ func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCrea
 		"userExternalId": userID,
 	}
 
-	err := client.Post("/api/discord/removeAvailability", body, nil)
+	err := client.Delete("/api/discord/availability/single", body)
 	if err != nil {
 		slog.Error("Failed to remove availability", "operation", "beny-bot.availability-remove", "error", err)
 		return replyEphemeral(s, i, "Something went wrong when trying to remove your availability timeslot. Please try again later or reach out for help.")
@@ -267,7 +267,7 @@ func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreat
 		"userExternalId": userID,
 	}
 
-	err := client.Post("/api/discord/clearAvailability", body, nil)
+	err := client.Delete("/api/discord/availability", body)
 	if err != nil {
 		slog.Error("Failed to clear availability", "operation", "beny-bot.availability-clear", "error", err)
 		return replyEphemeral(s, i, "Something went wrong when trying to remove all of your availability timeslots. Please try again later or reach out for help.")

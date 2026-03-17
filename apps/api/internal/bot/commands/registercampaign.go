@@ -52,7 +52,7 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 		"serverId":   i.GuildID,
 	}
 
-	err := client.Post("/api/discord/registerCampaign", body, nil)
+	err := client.Post("/api/discord/register", body, nil)
 	if err != nil {
 		slog.Error("Failed to register campaign", "operation", "beny-bot.registerCampaign", "error", err)
 		switch api.StatusCode(err) {

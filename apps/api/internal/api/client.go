@@ -143,6 +143,56 @@ func (c *Client) Get(path string, params map[string]string, result any) error {
 	return nil
 }
 
+func (c *Client) Delete(path string, body any) error {
+	var bodyReader io.Reader
+	if body != nil {
+		data, err := json.Marshal(body)
+		if err != nil {
+			return fmt.Errorf("marshal request: %w", err)
+		}
+		bodyReader = bytes.NewReader(data)
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, c.baseURL+path, bodyReader)
+	if err != nil {
+		return fmt.Errorf("create request: %w", err)
+	}
+	for k, v := range c.headers() {
+		req.Header[k] = v
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("execute request: %w", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusNoContent {
+		return nil
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("read response: %w", err)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		var errMsg struct {
+			Message string `json:"message"`
+		}
+		_ = json.Unmarshal(respBody, &errMsg)
+		msg := errMsg.Message
+		if msg == "" {
+			msg = string(respBody)
+		}
+		return &APIError{StatusCode: resp.StatusCode, Message: msg}
+	}
+
+	return nil
+}
+
 func StatusCode(err error) int {
 	var apiErr *APIError
 	if err == nil {

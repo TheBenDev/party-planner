@@ -14,4 +14,7 @@ export default defineConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
+	server: {
+		allowedHosts: ["a62f-24-142-227-25.ngrok-free.app"],
+	},
 });
