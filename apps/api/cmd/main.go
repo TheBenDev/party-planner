@@ -3,23 +3,42 @@ package main
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"connectrpc.com/connect"
+	"connectrpc.com/validate"
+	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/bot"
 	"github.com/BBruington/party-planner/api/internal/config"
+	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
 )
 
+type PlannerServer struct{}
+
 func main() {
+
 	cfg, err := config.Load()
 	if err != nil {
 		slog.Error("Failed to load config", "error", err)
 		os.Exit(1)
 	}
+
+	health := &rpc.HealthServer{}
+	mux := http.NewServeMux()
+	path, handler := plannerv1connect.NewHealthServiceHandler(health, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(path, handler)
+
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok","service":"jfit-api"}`))
+	})
 
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
 

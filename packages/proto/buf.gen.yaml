@@ -10,4 +10,4 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: github.com/BBruington/party-planner/api
+      value: github.com/BBruington/party-planner/api/gen
