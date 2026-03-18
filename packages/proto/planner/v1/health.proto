@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package planner.v1;
+
+service HealthService {
+  rpc Check(CheckRequest) returns (CheckResponse);
+}
+
+message CheckRequest {}
+
+message CheckResponse {
+  string status = 1;
+  string timestamp = 2;
+  string version = 3;
+}
