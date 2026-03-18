@@ -129,8 +129,8 @@ const file_planner_v1_health_proto_rawDesc = "" +
 	"\ttimestamp\x18\x02 \x01(\tR\ttimestamp\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\tR\aversion2M\n" +
 	"\rHealthService\x12<\n" +
-	"\x05Check\x12\x18.planner.v1.CheckRequest\x1a\x19.planner.v1.CheckResponseB\x97\x01\n" +
-	"\x0ecom.planner.v1B\vHealthProtoP\x01Z/github.com/planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
+	"\x05Check\x12\x18.planner.v1.CheckRequest\x1a\x19.planner.v1.CheckResponseB\xa8\x01\n" +
+	"\x0ecom.planner.v1B\vHealthProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
 

@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "github.com/planner/api/gen/planner/v1"
+	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	http "net/http"
 	strings "strings"
 )
