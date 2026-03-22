@@ -1,20 +1,20 @@
-import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
+import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-export default defineConfig({
+const config = defineConfig({
 	plugins: [
+		devtools(),
+		nitro({ inlineDynamicImports: true, preset: "bun", serveStatic: "inline" }),
+		tsconfigPaths({ projects: ["./tsconfig.json"] }),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
 	],
-	resolve: {
-		tsconfigPaths: true,
-	},
-	server: {
-		allowedHosts: ["a62f-24-142-227-25.ngrok-free.app"],
-	},
 });
+
+export default config;
