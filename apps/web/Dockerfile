@@ -9,6 +9,10 @@ WORKDIR /app
 # Copy workspace manifests and config for layer caching
 COPY package.json bun.lock bunfig.toml ./
 COPY apps/web/package.json ./apps/web/
+COPY packages/database/package.json ./packages/database/
+COPY packages/enums/package.json ./packages/enums/
+COPY packages/schemas/package.json ./packages/schemas/
+COPY packages/security/package.json ./packages/security/
 
 RUN bun install --frozen-lockfile
 
@@ -21,10 +25,18 @@ COPY package.json bun.lock bunfig.toml ./
 
 # Copy source
 COPY apps/web/ ./apps/web/
+COPY packages/database/ ./packages/database/
+COPY packages/enums/ ./packages/enums/
+COPY packages/schemas/ ./packages/schemas/
+COPY packages/security/ ./packages/security/
 
 # Copy node_modules from deps (isolated linker gives each package its own)
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/database/node_modules ./packages/database/node_modules
+COPY --from=deps /app/packages/enums/node_modules ./packages/enums/node_modules
+COPY --from=deps /app/packages/schemas/node_modules ./packages/schemas/node_modules
+COPY --from=deps /app/packages/security/node_modules ./packages/security/node_modules
 
 # Build web
 WORKDIR /app/apps/web
