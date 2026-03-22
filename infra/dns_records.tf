@@ -1,20 +1,20 @@
 resource "cloudflare_dns_record" "party_planner" {
-  zone_id = var.zone_id
-  name    = "party-planner.benthedev.com"
-  type    = "AAAA"
-  content = "100::"
-  proxied = true
-  ttl     = 1
+  zone_id  = var.zone_id
+  name     = "party-planner.benthedev.com"
+  type     = "AAAA"
+  content  = "100::"
+  proxied  = true
+  ttl      = 1
   settings = {}
 }
 
-resource "cloudflare_dns_record" "api" {
-  zone_id = var.zone_id
-  name = "api.benthedev.com"
-  type = "AAAA"
-  content = "100::"
-  proxied = true
-  ttl = 1
+resource "cloudflare_dns_record" "party_planner_api" {
+  zone_id  = var.zone_id
+  name     = "api.party-planner.benthedev.com"
+  type     = "AAAA"
+  content  = "100::"
+  proxied  = true
+  ttl      = 1
   settings = {}
 }
 
