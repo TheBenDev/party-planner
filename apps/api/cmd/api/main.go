@@ -37,7 +37,7 @@ func main() {
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok","service":"jfit-api"}`))
+		w.Write([]byte(`{"status":"ok","service":"party-planner-api"}`))
 	})
 
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
