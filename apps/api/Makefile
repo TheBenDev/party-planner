@@ -1,10 +1,12 @@
 .PHONY: build run dev lint vet test clean tidy
 
-build:
-	go build -o bin/api ./cmd/...
-
-run: build
-	./bin/api
+build: download-go-deps
+	@echo "+++ Builds"
+	go build \
+		-o ./build/api \
+		-mod readonly \
+		-ldflags "-X main.version=$(VERSION)" \
+		./cmd/api
 
 dev:
 	go run ./cmd/main.go
@@ -19,7 +21,11 @@ test:
 	go test ./...
 
 clean:
-	rm -f bin/api
+	rm -rf ./build
 
 tidy:
 	go mod tidy
+
+download-go-deps:
+	@echo -e "\n--- Download go deps"
+	go mod download -x all
