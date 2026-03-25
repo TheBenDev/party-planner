@@ -11,7 +11,9 @@ import (
 type Config struct {
 	APIKey       string
 	AppURL       string
+	DatabaseUrl  string
 	DiscordToken string
+	Environment  string
 	Port         string
 }
 
@@ -25,7 +27,9 @@ func Load() (*Config, error) {
 	cfg := &Config{
 		APIKey:       os.Getenv("API_KEY"),
 		AppURL:       os.Getenv("APP_URL"),
+		DatabaseUrl:  os.Getenv("DATABASE_URL"),
 		DiscordToken: os.Getenv("DISCORD_TOKEN"),
+		Environment:  os.Getenv("ENVIRONMENT"),
 		Port:         os.Getenv("PORT"),
 	}
 
@@ -38,8 +42,11 @@ func Load() (*Config, error) {
 	if cfg.DiscordToken == "" {
 		return nil, fmt.Errorf("DISCORD_TOKEN is required")
 	}
+	if cfg.DatabaseUrl == "" {
+		return nil, fmt.Errorf("DATABASE_URL is required")
+	}
 	if cfg.Port == "" {
-		cfg.Port = "3000"
+		cfg.Port = "8000"
 	}
 
 	return cfg, nil

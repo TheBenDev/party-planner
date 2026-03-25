@@ -13,6 +13,7 @@
     "build": "nx run-many -t build",
     "build:packages": "nx run-many -t build --projects packages/*",
     "dev": "bun run dev:next",
+    "gen:proto": "cd packages/proto && buf generate",
     "lint": "nx run-many -t lint",
     "typecheck": "nx run-many -t typecheck"
   },

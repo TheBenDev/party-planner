@@ -15,24 +15,41 @@ import (
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/bot"
 	"github.com/BBruington/party-planner/api/internal/config"
+	"github.com/BBruington/party-planner/api/internal/db"
 	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
+	"github.com/BBruington/party-planner/api/internal/service"
 )
 
-type PlannerServer struct{}
-
 func main() {
-
 	cfg, err := config.Load()
 	if err != nil {
 		slog.Error("Failed to load config", "error", err)
 		os.Exit(1)
 	}
 
-	health := &rpc.HealthServer{}
+	var logger *slog.Logger
+	if cfg.Environment == "development" {
+		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	} else {
+		logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	}
+	slog.SetDefault(logger)
+
 	mux := http.NewServeMux()
-	path, handler := plannerv1connect.NewHealthServiceHandler(health, connect.WithInterceptors(validate.NewInterceptor()))
-	mux.Handle(path, handler)
+
+	database, err := db.New(cfg.DatabaseUrl, logger)
+	if err != nil {
+		logger.Error("failed to open database", "error", err)
+		os.Exit(1)
+	}
+
+	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(userPath, userHandler)
+
+	healthServer := &rpc.HealthServer{}
+	path, healthHandler := plannerv1connect.NewHealthServiceHandler(healthServer, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(path, healthHandler)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -53,7 +70,7 @@ func main() {
 		}
 	}()
 
-	srv := server.New(cfg.Port)
+	srv := server.New(cfg.Port, mux)
 	go server.Start(srv)
 
 	slog.Info("beny-bot is running. Press Ctrl+C to exit.")

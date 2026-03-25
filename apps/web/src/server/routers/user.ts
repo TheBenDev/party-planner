@@ -45,8 +45,8 @@ const createUser = publicProcedure
 
 const getUser = privateProcedure
 	.route({
-		method: "GET",
-		path: "/user",
+		method: "POST",
+		path: "/user/getUser",
 		summary: "Get the current user",
 	})
 	.output(GetUserResponseSchema)

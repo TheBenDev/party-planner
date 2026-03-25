@@ -25,7 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const { data: campaign = null } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
-		queryFn: client.campaign.getActiveCampaign,
+		// queryFn: client.campaign.getActiveCampaign,
+		queryFn: () => "",
 		queryKey: ["auth", "campaign"],
 	});
 

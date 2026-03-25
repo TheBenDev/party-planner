@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const env = createEnv({
 	client: {
+		VITE_API_URL: z.url().default("http://localhost:8000"),
 		VITE_APP_URL: z.url().default("http://localhost:3000"),
 		VITE_AUTH_PUBLIC_KEY_PEM: z.string().default(""),
 		VITE_CLERK_AFTER_SIGN_IN_URL: z.string().default("/"),

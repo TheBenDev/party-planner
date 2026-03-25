@@ -9,7 +9,7 @@ build: download-go-deps
 		./cmd/api
 
 dev:
-	go run ./cmd/api/main.go --port 8000
+	go run ./cmd/api/main.go
 
 lint:
 	golangci-lint run ./...
