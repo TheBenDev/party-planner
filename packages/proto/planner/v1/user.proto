@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+}
+
+message User {
+  string id = 1;
+  string email = 2;
+  string external_id = 3;
+  optional string avatar = 4;
+  optional string first_name = 5;
+  optional string last_name = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  optional google.protobuf.Timestamp deleted_at = 9;
+}
+
+message GetUserRequest {
+  string external_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}

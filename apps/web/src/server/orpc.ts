@@ -15,11 +15,14 @@ import {
 import { eq } from "drizzle-orm";
 import { Resend } from "resend";
 import { env } from "@/env";
+import { createApiClients } from "@/lib/api/index";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
 interface ORPCContext extends RequestHeadersPluginContext, LoggerContext {}
 interface Context extends ORPCContext {
+	api: ReturnType<typeof createApiClients>;
 	db: Client;
+	accessToken?: string;
 }
 const base = os.$context<ORPCContext>();
 
@@ -237,8 +240,10 @@ export const authMiddleware = os
 			}
 		}
 
+		const api = createApiClients();
 		return next({
 			context: {
+				api,
 				campaignId: authPayload.campaign?.id ?? null,
 				clerkClient,
 				clerkUserId,
