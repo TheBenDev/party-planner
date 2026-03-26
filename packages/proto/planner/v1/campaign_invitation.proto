@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service CampaignInvitationService {
+  rpc CreateCampaignInvitation(CreateCampaignInvitationRequest) returns (CreateCampaignInvitationResponse);
+  rpc GetCampaignInvitation(GetCampaignInvitationRequest) returns (GetCampaignInvitationResponse);
+  rpc UpdateCampaignInvitationStatus(UpdateCampaignInvitationStatusRequest) returns (UpdateCampaignInvitationStatusResponse);
+}
+
+enum InvitationStatus {
+  INVITATION_STATUS_UNSPECIFIED = 0;
+  INVITATION_STATUS_PENDING = 1;
+  INVITATION_STATUS_ACCEPTED = 2;
+  INVITATION_STATUS_DECLINED = 3;
+  INVITATION_STATUS_EXPIRED = 4;
+}
+
+enum CampaignRole {
+  CAMPAIGN_ROLE_UNSPECIFIED = 0;
+  CAMPAIGN_ROLE_PLAYER = 1;
+  CAMPAIGN_ROLE_GAME_MASTER = 2;
+}
+
+message CampaignInvitation {
+  string id = 1;
+  string campaign_id = 2;
+  string inviter_id = 3;
+  string invitee_email = 4;
+  CampaignRole role = 5;
+  InvitationStatus status = 6;
+  optional google.protobuf.Timestamp accepted_at = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message CreateCampaignInvitationRequest {
+  string campaign_id = 1;
+  string inviter_id = 2;
+  string invitee_email = 3;
+  CampaignRole role = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message CreateCampaignInvitationResponse {
+  CampaignInvitation invitation = 1;
+}
+
+message GetCampaignInvitationRequest {
+  string id = 1;
+}
+
+message GetCampaignInvitationResponse {
+  CampaignInvitation invitation = 1;
+}
+
+message UpdateCampaignInvitationStatusRequest {
+  string id = 1;
+  InvitationStatus status = 2;
+}
+
+message UpdateCampaignInvitationStatusResponse {
+  CampaignInvitation invitation = 1;
+}

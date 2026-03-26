@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service NonPlayerCharacterService {
+  rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
+  rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
+  rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
+}
+
+enum CharacterStatus {
+  CHARACTER_STATUS_UNSPECIFIED = 0;
+  CHARACTER_STATUS_UNKNOWN = 1;
+  CHARACTER_STATUS_ALIVE = 2;
+  CHARACTER_STATUS_DEAD = 3;
+  CHARACTER_STATUS_MISSING = 4;
+}
+
+enum RelationToParty {
+  RELATION_TO_PARTY_UNSPECIFIED = 0;
+  RELATION_TO_PARTY_UNKNOWN = 1;
+  RELATION_TO_PARTY_ALLY = 2;
+  RELATION_TO_PARTY_ENEMY = 3;
+  RELATION_TO_PARTY_NEUTRAL = 4;
+}
+
+message Npc {
+  string id = 1;
+  string campaign_id = 2;
+  string name = 3;
+  CharacterStatus status = 4;
+  RelationToParty relation_to_party_status = 5;
+  bool is_known_to_party = 6;
+  optional string age = 7;
+  optional string appearance = 8;
+  optional string avatar = 9;
+  optional string backstory = 10;
+  optional string dm_notes = 11;
+  optional string foundry_actor_id = 12;
+  optional string known_name = 13;
+  optional string personality = 14;
+  optional string player_notes = 15;
+  optional string race = 16;
+  optional string current_location_id = 17;
+  optional string origin_location_id = 18;
+  optional string session_encountered_id = 19;
+  repeated string aliases = 20;
+  optional google.protobuf.Timestamp last_foundry_sync_at = 21;
+  google.protobuf.Timestamp created_at = 22;
+  google.protobuf.Timestamp updated_at = 23;
+}
+
+message CreateNpcRequest {
+  string campaign_id = 1;
+  string name = 2;
+  CharacterStatus status = 3;
+  RelationToParty relation_to_party_status = 4;
+  bool is_known_to_party = 5;
+  optional string age = 6;
+  optional string appearance = 7;
+  optional string avatar = 8;
+  optional string backstory = 9;
+  optional string dm_notes = 10;
+  optional string known_name = 11;
+  optional string personality = 12;
+  optional string player_notes = 13;
+  optional string race = 14;
+  optional string current_location_id = 15;
+  optional string origin_location_id = 16;
+  optional string session_encountered_id = 17;
+  repeated string aliases = 18;
+  optional string foundry_actor_id = 19;
+}
+
+message CreateNpcResponse {
+  Npc npc = 1;
+}
+
+message GetNpcRequest {
+  string id = 1;
+}
+
+message GetNpcResponse {
+  Npc npc = 1;
+}
+
+message ListNpcsByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListNpcsByCampaignResponse {
+  repeated Npc npcs = 1;
+}

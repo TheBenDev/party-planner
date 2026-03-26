@@ -57,7 +57,8 @@
       "!**/build",
       "!**/.next",
       "!**/node_modules",
-      "!**/bun.lock"
+      "!**/bun.lock",
+      "!**/gen"
     ]
   },
   "formatter": {
