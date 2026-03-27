@@ -3,7 +3,6 @@ package rpc
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 
 	"connectrpc.com/connect"
@@ -20,18 +19,52 @@ type UserServer struct {
 	Log  *slog.Logger
 }
 
+func (s *UserServer) CreateUser(ctx context.Context, req *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error) {
+	if req.Msg.ExternalId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
+	}
+	if req.Msg.Email == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user email required"))
+	}
+
+	user, err := s.User.Create(&model.CreateUserRequest{
+		ExternalId: req.Msg.ExternalId,
+		Email:      req.Msg.Email,
+		Avatar:     sqlNullString(req.Msg.Avatar),
+		FirstName:  sqlNullString(req.Msg.FirstName),
+		LastName:   sqlNullString(req.Msg.LastName),
+	})
+	if err != nil {
+		return nil, mapServiceError(err, "failed to create user")
+	}
+
+	return connect.NewResponse(&v1.CreateUserResponse{User: userToProto(user)}), nil
+}
+
 func (s *UserServer) GetUser(ctx context.Context, req *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
 	if req.Msg.ExternalId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("User Clerk Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
 	}
 
 	user, err := s.User.GetByClerkId(req.Msg.ExternalId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user")
+		return nil, mapServiceError(err, "failed to get user")
 	}
 
 	return connect.NewResponse(&v1.GetUserResponse{User: userToProto(user)}), nil
+}
 
+func (s *UserServer) GetUserByEmail(ctx context.Context, req *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error) {
+	if req.Msg.Email == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user email required"))
+	}
+
+	user, err := s.User.GetByEmail(req.Msg.Email)
+	if err != nil {
+		return nil, mapServiceError(err, "failed to get user by email")
+	}
+
+	return connect.NewResponse(&v1.GetUserByEmailResponse{User: userToProto(user)}), nil
 }
 
 func userToProto(user *model.User) *v1.User {
@@ -60,13 +93,4 @@ func userToProto(user *model.User) *v1.User {
 	}
 
 	return proto
-}
-
-func mapUserError(ctx context.Context, log *slog.Logger, err error, keyvals ...any) error {
-	switch {
-	case errors.Is(err, service.ErrUserNotFound):
-		return connect.NewError(connect.CodeNotFound, errMsg("user not found"))
-	default:
-		return internalErr(ctx, log, "user service error", err, keyvals...)
-	}
 }

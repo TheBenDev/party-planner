@@ -6,7 +6,7 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
 service CampaignIntegrationService {
-  rpc RegisterCampaignIntegration(RegisterCampaignIntegrationRequest) returns (RegisterCampaignIntegrationResponse);
+  rpc CreateCampaignIntegration(CreateCampaignIntegrationRequest) returns (CreateCampaignIntegrationResponse);
   rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
   rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
 }
@@ -14,7 +14,6 @@ service CampaignIntegrationService {
 enum IntegrationSource {
   INTEGRATION_SOURCE_UNSPECIFIED = 0;
   INTEGRATION_SOURCE_DISCORD = 1;
-  INTEGRATION_SOURCE_FORGE = 2;
 }
 
 message CampaignIntegration {
@@ -28,7 +27,7 @@ message CampaignIntegration {
   google.protobuf.Timestamp updated_at = 8;
 }
 
-message RegisterCampaignIntegrationRequest {
+message CreateCampaignIntegrationRequest {
   string campaign_id = 1;
   string external_id = 2;
   IntegrationSource source = 3;
@@ -36,7 +35,7 @@ message RegisterCampaignIntegrationRequest {
   google.protobuf.Struct settings = 5;
 }
 
-message RegisterCampaignIntegrationResponse {
+message CreateCampaignIntegrationResponse {
   CampaignIntegration integration = 1;
 }
 

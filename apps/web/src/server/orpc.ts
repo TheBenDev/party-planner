@@ -32,8 +32,9 @@ const loggingMiddleware = base.middleware(({ next, context, path }) => {
 });
 
 const dbMiddleware = base.middleware(({ next }) => {
+	const api = createApiClients();
 	const db: Client = createDb();
-	return next({ context: { db } });
+	return next({ context: { api, db } });
 });
 
 const discordMiddleware = base.middleware(({ next, context: c }) => {
@@ -240,10 +241,8 @@ export const authMiddleware = os
 			}
 		}
 
-		const api = createApiClients();
 		return next({
 			context: {
-				api,
 				campaignId: authPayload.campaign?.id ?? null,
 				clerkClient,
 				clerkUserId,

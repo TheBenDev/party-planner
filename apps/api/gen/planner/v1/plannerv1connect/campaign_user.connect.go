@@ -33,9 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// CampaignUserServiceAddCampaignUserProcedure is the fully-qualified name of the
-	// CampaignUserService's AddCampaignUser RPC.
-	CampaignUserServiceAddCampaignUserProcedure = "/planner.v1.CampaignUserService/AddCampaignUser"
+	// CampaignUserServiceCreateCampaignUserProcedure is the fully-qualified name of the
+	// CampaignUserService's CreateCampaignUser RPC.
+	CampaignUserServiceCreateCampaignUserProcedure = "/planner.v1.CampaignUserService/CreateCampaignUser"
 	// CampaignUserServiceGetCampaignUserProcedure is the fully-qualified name of the
 	// CampaignUserService's GetCampaignUser RPC.
 	CampaignUserServiceGetCampaignUserProcedure = "/planner.v1.CampaignUserService/GetCampaignUser"
@@ -49,7 +49,7 @@ const (
 
 // CampaignUserServiceClient is a client for the planner.v1.CampaignUserService service.
 type CampaignUserServiceClient interface {
-	AddCampaignUser(context.Context, *connect.Request[v1.AddCampaignUserRequest]) (*connect.Response[v1.AddCampaignUserResponse], error)
+	CreateCampaignUser(context.Context, *connect.Request[v1.CreateCampaignUserRequest]) (*connect.Response[v1.CreateCampaignUserResponse], error)
 	GetCampaignUser(context.Context, *connect.Request[v1.GetCampaignUserRequest]) (*connect.Response[v1.GetCampaignUserResponse], error)
 	UpdateCampaignUserRole(context.Context, *connect.Request[v1.UpdateCampaignUserRoleRequest]) (*connect.Response[v1.UpdateCampaignUserRoleResponse], error)
 	RemoveCampaignUser(context.Context, *connect.Request[v1.RemoveCampaignUserRequest]) (*connect.Response[v1.RemoveCampaignUserResponse], error)
@@ -66,10 +66,10 @@ func NewCampaignUserServiceClient(httpClient connect.HTTPClient, baseURL string,
 	baseURL = strings.TrimRight(baseURL, "/")
 	campaignUserServiceMethods := v1.File_planner_v1_campaign_user_proto.Services().ByName("CampaignUserService").Methods()
 	return &campaignUserServiceClient{
-		addCampaignUser: connect.NewClient[v1.AddCampaignUserRequest, v1.AddCampaignUserResponse](
+		createCampaignUser: connect.NewClient[v1.CreateCampaignUserRequest, v1.CreateCampaignUserResponse](
 			httpClient,
-			baseURL+CampaignUserServiceAddCampaignUserProcedure,
-			connect.WithSchema(campaignUserServiceMethods.ByName("AddCampaignUser")),
+			baseURL+CampaignUserServiceCreateCampaignUserProcedure,
+			connect.WithSchema(campaignUserServiceMethods.ByName("CreateCampaignUser")),
 			connect.WithClientOptions(opts...),
 		),
 		getCampaignUser: connect.NewClient[v1.GetCampaignUserRequest, v1.GetCampaignUserResponse](
@@ -95,15 +95,15 @@ func NewCampaignUserServiceClient(httpClient connect.HTTPClient, baseURL string,
 
 // campaignUserServiceClient implements CampaignUserServiceClient.
 type campaignUserServiceClient struct {
-	addCampaignUser        *connect.Client[v1.AddCampaignUserRequest, v1.AddCampaignUserResponse]
+	createCampaignUser     *connect.Client[v1.CreateCampaignUserRequest, v1.CreateCampaignUserResponse]
 	getCampaignUser        *connect.Client[v1.GetCampaignUserRequest, v1.GetCampaignUserResponse]
 	updateCampaignUserRole *connect.Client[v1.UpdateCampaignUserRoleRequest, v1.UpdateCampaignUserRoleResponse]
 	removeCampaignUser     *connect.Client[v1.RemoveCampaignUserRequest, v1.RemoveCampaignUserResponse]
 }
 
-// AddCampaignUser calls planner.v1.CampaignUserService.AddCampaignUser.
-func (c *campaignUserServiceClient) AddCampaignUser(ctx context.Context, req *connect.Request[v1.AddCampaignUserRequest]) (*connect.Response[v1.AddCampaignUserResponse], error) {
-	return c.addCampaignUser.CallUnary(ctx, req)
+// CreateCampaignUser calls planner.v1.CampaignUserService.CreateCampaignUser.
+func (c *campaignUserServiceClient) CreateCampaignUser(ctx context.Context, req *connect.Request[v1.CreateCampaignUserRequest]) (*connect.Response[v1.CreateCampaignUserResponse], error) {
+	return c.createCampaignUser.CallUnary(ctx, req)
 }
 
 // GetCampaignUser calls planner.v1.CampaignUserService.GetCampaignUser.
@@ -123,7 +123,7 @@ func (c *campaignUserServiceClient) RemoveCampaignUser(ctx context.Context, req 
 
 // CampaignUserServiceHandler is an implementation of the planner.v1.CampaignUserService service.
 type CampaignUserServiceHandler interface {
-	AddCampaignUser(context.Context, *connect.Request[v1.AddCampaignUserRequest]) (*connect.Response[v1.AddCampaignUserResponse], error)
+	CreateCampaignUser(context.Context, *connect.Request[v1.CreateCampaignUserRequest]) (*connect.Response[v1.CreateCampaignUserResponse], error)
 	GetCampaignUser(context.Context, *connect.Request[v1.GetCampaignUserRequest]) (*connect.Response[v1.GetCampaignUserResponse], error)
 	UpdateCampaignUserRole(context.Context, *connect.Request[v1.UpdateCampaignUserRoleRequest]) (*connect.Response[v1.UpdateCampaignUserRoleResponse], error)
 	RemoveCampaignUser(context.Context, *connect.Request[v1.RemoveCampaignUserRequest]) (*connect.Response[v1.RemoveCampaignUserResponse], error)
@@ -136,10 +136,10 @@ type CampaignUserServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewCampaignUserServiceHandler(svc CampaignUserServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	campaignUserServiceMethods := v1.File_planner_v1_campaign_user_proto.Services().ByName("CampaignUserService").Methods()
-	campaignUserServiceAddCampaignUserHandler := connect.NewUnaryHandler(
-		CampaignUserServiceAddCampaignUserProcedure,
-		svc.AddCampaignUser,
-		connect.WithSchema(campaignUserServiceMethods.ByName("AddCampaignUser")),
+	campaignUserServiceCreateCampaignUserHandler := connect.NewUnaryHandler(
+		CampaignUserServiceCreateCampaignUserProcedure,
+		svc.CreateCampaignUser,
+		connect.WithSchema(campaignUserServiceMethods.ByName("CreateCampaignUser")),
 		connect.WithHandlerOptions(opts...),
 	)
 	campaignUserServiceGetCampaignUserHandler := connect.NewUnaryHandler(
@@ -162,8 +162,8 @@ func NewCampaignUserServiceHandler(svc CampaignUserServiceHandler, opts ...conne
 	)
 	return "/planner.v1.CampaignUserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case CampaignUserServiceAddCampaignUserProcedure:
-			campaignUserServiceAddCampaignUserHandler.ServeHTTP(w, r)
+		case CampaignUserServiceCreateCampaignUserProcedure:
+			campaignUserServiceCreateCampaignUserHandler.ServeHTTP(w, r)
 		case CampaignUserServiceGetCampaignUserProcedure:
 			campaignUserServiceGetCampaignUserHandler.ServeHTTP(w, r)
 		case CampaignUserServiceUpdateCampaignUserRoleProcedure:
@@ -179,8 +179,8 @@ func NewCampaignUserServiceHandler(svc CampaignUserServiceHandler, opts ...conne
 // UnimplementedCampaignUserServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedCampaignUserServiceHandler struct{}
 
-func (UnimplementedCampaignUserServiceHandler) AddCampaignUser(context.Context, *connect.Request[v1.AddCampaignUserRequest]) (*connect.Response[v1.AddCampaignUserResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignUserService.AddCampaignUser is not implemented"))
+func (UnimplementedCampaignUserServiceHandler) CreateCampaignUser(context.Context, *connect.Request[v1.CreateCampaignUserRequest]) (*connect.Response[v1.CreateCampaignUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignUserService.CreateCampaignUser is not implemented"))
 }
 
 func (UnimplementedCampaignUserServiceHandler) GetCampaignUser(context.Context, *connect.Request[v1.GetCampaignUserRequest]) (*connect.Response[v1.GetCampaignUserResponse], error) {
