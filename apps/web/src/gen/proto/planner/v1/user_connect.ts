@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { GetUserRequest, GetUserResponse } from "./user_pb.js";
+import { CreateUserRequest, CreateUserResponse, GetUserByEmailRequest, GetUserByEmailResponse, GetUserRequest, GetUserResponse } from "./user_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -13,12 +13,30 @@ export const UserService = {
   typeName: "planner.v1.UserService",
   methods: {
     /**
+     * @generated from rpc planner.v1.UserService.CreateUser
+     */
+    createUser: {
+      name: "CreateUser",
+      I: CreateUserRequest,
+      O: CreateUserResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
      * @generated from rpc planner.v1.UserService.GetUser
      */
     getUser: {
       name: "GetUser",
       I: GetUserRequest,
       O: GetUserResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.UserService.GetUserByEmail
+     */
+    getUserByEmail: {
+      name: "GetUserByEmail",
+      I: GetUserByEmailRequest,
+      O: GetUserByEmailResponse,
       kind: MethodKind.Unary,
     },
   }

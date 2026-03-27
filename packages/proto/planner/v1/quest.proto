@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+service QuestService {
+  rpc CreateQuest(CreateQuestRequest) returns (CreateQuestResponse);
+  rpc GetQuest(GetQuestRequest) returns (GetQuestResponse);
+  rpc ListQuestsByCampaign(ListQuestsByCampaignRequest) returns (ListQuestsByCampaignResponse);
+}
+
+enum QuestStatus {
+  QUEST_STATUS_UNSPECIFIED = 0;
+  QUEST_STATUS_ACTIVE = 1;
+  QUEST_STATUS_COMPLETED = 2;
+  QUEST_STATUS_FAILED = 3;
+}
+
+message Quest {
+  string id = 1;
+  string campaign_id = 2;
+  string title = 3;
+  QuestStatus status = 4;
+  optional string description = 5;
+  optional string quest_giver_id = 6;
+  optional google.protobuf.Struct reward = 7;
+  optional google.protobuf.Timestamp completed_at = 8;
+  optional google.protobuf.Timestamp deleted_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message CreateQuestRequest {
+  string campaign_id = 1;
+  string title = 2;
+  QuestStatus status = 3;
+  optional string description = 4;
+  optional string quest_giver_id = 5;
+  // TODO: fill out schema for reward
+  optional google.protobuf.Struct reward = 6;
+}
+
+message CreateQuestResponse {
+  Quest quest = 1;
+}
+
+message GetQuestRequest {
+  string id = 1;
+}
+
+message GetQuestResponse {
+  Quest quest = 1;
+}
+
+message ListQuestsByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListQuestsByCampaignResponse {
+  repeated Quest quests = 1;
+}

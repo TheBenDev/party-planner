@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service CampaignService {
+  rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+  rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+}
+
+message Campaign {
+  string id = 1;
+  string user_id = 2;
+  string title = 3;
+  optional string description = 4;
+  repeated string tags = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  optional google.protobuf.Timestamp deleted_at = 8;
+}
+
+message CreateCampaignRequest {
+  string user_id = 1;
+  string title = 2;
+  optional string description = 3;
+  repeated string tags = 4;
+}
+
+message CreateCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message GetCampaignRequest {
+  string id = 1;
+}
+
+message GetCampaignResponse {
+  Campaign campaign = 1;
+}

@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "planner/v1/non_player_character.proto";
+
+service DiscordService {
+  rpc CheckNextSession(CheckNextSessionRequest) returns (CheckNextSessionResponse);
+  rpc CheckReminders(CheckRemindersRequest) returns (CheckRemindersResponse);
+  rpc GetDiscordNpc(GetDiscordNpcRequest) returns (GetDiscordNpcResponse);
+  rpc ScheduleSession(ScheduleSessionRequest) returns (ScheduleSessionResponse);
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc SetAvailability(SetAvailabilityRequest) returns (SetAvailabilityResponse);
+  rpc GetAvailabilities(GetAvailabilitiesRequest) returns (GetAvailabilitiesResponse);
+  rpc RemoveAvailability(RemoveAvailabilityRequest) returns (RemoveAvailabilityResponse);
+  rpc ClearAvailability(ClearAvailabilityRequest) returns (ClearAvailabilityResponse);
+}
+
+// ---- Shared ----
+
+message TimeSlot {
+  int32 day_of_week = 1;
+  string start_time = 2;
+  string end_time = 3;
+}
+
+// ---- CheckNextSession ----
+
+message CheckNextSessionRequest {
+  string server_id = 1;
+}
+
+message CheckNextSessionResponse {
+  string message = 1;
+}
+
+// ---- CheckReminders ----
+
+message CheckRemindersRequest {}
+
+message CheckRemindersResponse {}
+
+// ---- GetNpc ----
+
+message GetDiscordNpcRequest {
+  string server_id = 1;
+  string npc_name = 2;
+}
+
+message GetDiscordNpcResponse {
+  Npc npc = 1;
+}
+
+// ---- ScheduleSession ----
+
+message SessionTime {
+  string date = 1;
+  string hour = 2;
+  string minute = 3;
+}
+
+message ScheduleSessionRequest {
+  string server_id = 1;
+  SessionTime time = 2;
+}
+
+message ScheduleSessionResponse {
+  repeated string available_users = 1;
+}
+
+// ---- SendMessage ----
+
+message SendMessageRequest {
+  string channel_id = 1;
+  string message = 2;
+}
+
+message SendMessageResponse {}
+
+// ---- Availability ----
+
+message SetAvailabilityRequest {
+  string server_id = 1;
+  string external_id = 2;
+  TimeSlot time = 3;
+  string frequency = 4;
+}
+
+message SetAvailabilityResponse {}
+
+message GetAvailabilitiesRequest {
+  string user_external_id = 1;
+}
+
+message GetAvailabilitiesResponse {
+  repeated TimeSlot availabilities = 1;
+}
+
+message RemoveAvailabilityRequest {
+  string user_external_id = 1;
+  int32 day_of_week = 2;
+  string start_time = 3;
+}
+
+message RemoveAvailabilityResponse {}
+
+message ClearAvailabilityRequest {
+  string user_external_id = 1;
+}
+
+message ClearAvailabilityResponse {}

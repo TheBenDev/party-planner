@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/user.proto.
  */
 export const file_planner_v1_user: GenFile = /*@__PURE__*/
-  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IiUKDkdldFVzZXJSZXF1ZXN0EhMKC2V4dGVybmFsX2lkGAEgASgJIjEKD0dldFVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyMlEKC1VzZXJTZXJ2aWNlEkIKB0dldFVzZXISGi5wbGFubmVyLnYxLkdldFVzZXJSZXF1ZXN0GhsucGxhbm5lci52MS5HZXRVc2VyUmVzcG9uc2VCpgEKDmNvbS5wbGFubmVyLnYxQglVc2VyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IqUBChFDcmVhdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRITCgZhdmF0YXIYAyABKAlIAIgBARIXCgpmaXJzdF9uYW1lGAQgASgJSAGIAQESFgoJbGFzdF9uYW1lGAUgASgJSAKIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIiYKFUdldFVzZXJCeUVtYWlsUmVxdWVzdBINCgVlbWFpbBgBIAEoCSI4ChZHZXRVc2VyQnlFbWFpbFJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIiJQoOR2V0VXNlclJlcXVlc3QSEwoLZXh0ZXJuYWxfaWQYASABKAkiMQoPR2V0VXNlclJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIy9wEKC1VzZXJTZXJ2aWNlEksKCkNyZWF0ZVVzZXISHS5wbGFubmVyLnYxLkNyZWF0ZVVzZXJSZXF1ZXN0Gh4ucGxhbm5lci52MS5DcmVhdGVVc2VyUmVzcG9uc2USQgoHR2V0VXNlchIaLnBsYW5uZXIudjEuR2V0VXNlclJlcXVlc3QaGy5wbGFubmVyLnYxLkdldFVzZXJSZXNwb25zZRJXCg5HZXRVc2VyQnlFbWFpbBIhLnBsYW5uZXIudjEuR2V0VXNlckJ5RW1haWxSZXF1ZXN0GiIucGxhbm5lci52MS5HZXRVc2VyQnlFbWFpbFJlc3BvbnNlQqYBCg5jb20ucGxhbm5lci52MUIJVXNlclByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.User
@@ -72,6 +72,94 @@ export const UserSchema: GenMessage<User> = /*@__PURE__*/
   messageDesc(file_planner_v1_user, 0);
 
 /**
+ * @generated from message planner.v1.CreateUserRequest
+ */
+export type CreateUserRequest = Message<"planner.v1.CreateUserRequest"> & {
+  /**
+   * @generated from field: string email = 1;
+   */
+  email: string;
+
+  /**
+   * @generated from field: string external_id = 2;
+   */
+  externalId: string;
+
+  /**
+   * @generated from field: optional string avatar = 3;
+   */
+  avatar?: string;
+
+  /**
+   * @generated from field: optional string first_name = 4;
+   */
+  firstName?: string;
+
+  /**
+   * @generated from field: optional string last_name = 5;
+   */
+  lastName?: string;
+};
+
+/**
+ * Describes the message planner.v1.CreateUserRequest.
+ * Use `create(CreateUserRequestSchema)` to create a new message.
+ */
+export const CreateUserRequestSchema: GenMessage<CreateUserRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 1);
+
+/**
+ * @generated from message planner.v1.CreateUserResponse
+ */
+export type CreateUserResponse = Message<"planner.v1.CreateUserResponse"> & {
+  /**
+   * @generated from field: planner.v1.User user = 1;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message planner.v1.CreateUserResponse.
+ * Use `create(CreateUserResponseSchema)` to create a new message.
+ */
+export const CreateUserResponseSchema: GenMessage<CreateUserResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 2);
+
+/**
+ * @generated from message planner.v1.GetUserByEmailRequest
+ */
+export type GetUserByEmailRequest = Message<"planner.v1.GetUserByEmailRequest"> & {
+  /**
+   * @generated from field: string email = 1;
+   */
+  email: string;
+};
+
+/**
+ * Describes the message planner.v1.GetUserByEmailRequest.
+ * Use `create(GetUserByEmailRequestSchema)` to create a new message.
+ */
+export const GetUserByEmailRequestSchema: GenMessage<GetUserByEmailRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 3);
+
+/**
+ * @generated from message planner.v1.GetUserByEmailResponse
+ */
+export type GetUserByEmailResponse = Message<"planner.v1.GetUserByEmailResponse"> & {
+  /**
+   * @generated from field: planner.v1.User user = 1;
+   */
+  user?: User;
+};
+
+/**
+ * Describes the message planner.v1.GetUserByEmailResponse.
+ * Use `create(GetUserByEmailResponseSchema)` to create a new message.
+ */
+export const GetUserByEmailResponseSchema: GenMessage<GetUserByEmailResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 4);
+
+/**
  * @generated from message planner.v1.GetUserRequest
  */
 export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
@@ -86,7 +174,7 @@ export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
 export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 1);
+  messageDesc(file_planner_v1_user, 5);
 
 /**
  * @generated from message planner.v1.GetUserResponse
@@ -103,12 +191,20 @@ export type GetUserResponse = Message<"planner.v1.GetUserResponse"> & {
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
 export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 2);
+  messageDesc(file_planner_v1_user, 6);
 
 /**
  * @generated from service planner.v1.UserService
  */
 export const UserService: GenService<{
+  /**
+   * @generated from rpc planner.v1.UserService.CreateUser
+   */
+  createUser: {
+    methodKind: "unary";
+    input: typeof CreateUserRequestSchema;
+    output: typeof CreateUserResponseSchema;
+  },
   /**
    * @generated from rpc planner.v1.UserService.GetUser
    */
@@ -116,6 +212,14 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof GetUserRequestSchema;
     output: typeof GetUserResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.UserService.GetUserByEmail
+   */
+  getUserByEmail: {
+    methodKind: "unary";
+    input: typeof GetUserByEmailRequestSchema;
+    output: typeof GetUserByEmailResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_user, 0);

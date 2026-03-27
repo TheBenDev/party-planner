@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service SessionService {
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);
+}
+
+message Session {
+  string id = 1;
+  string campaign_id = 2;
+  string title = 3;
+  optional string description = 4;
+  optional google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message CreateSessionRequest {
+  string campaign_id = 1;
+  string title = 2;
+  optional string description = 3;
+  optional google.protobuf.Timestamp starts_at = 4;
+}
+
+message CreateSessionResponse {
+  Session session = 1;
+}
+
+message GetSessionRequest {
+  string id = 1;
+}
+
+message GetSessionResponse {
+  Session session = 1;
+}
+
+message ListSessionsByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListSessionsByCampaignResponse {
+  repeated Session sessions = 1;
+}

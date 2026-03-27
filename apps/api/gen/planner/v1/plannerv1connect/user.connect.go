@@ -33,13 +33,20 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// UserServiceCreateUserProcedure is the fully-qualified name of the UserService's CreateUser RPC.
+	UserServiceCreateUserProcedure = "/planner.v1.UserService/CreateUser"
 	// UserServiceGetUserProcedure is the fully-qualified name of the UserService's GetUser RPC.
 	UserServiceGetUserProcedure = "/planner.v1.UserService/GetUser"
+	// UserServiceGetUserByEmailProcedure is the fully-qualified name of the UserService's
+	// GetUserByEmail RPC.
+	UserServiceGetUserByEmailProcedure = "/planner.v1.UserService/GetUserByEmail"
 )
 
 // UserServiceClient is a client for the planner.v1.UserService service.
 type UserServiceClient interface {
+	CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error)
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
+	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the planner.v1.UserService service. By default, it
@@ -53,10 +60,22 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 	baseURL = strings.TrimRight(baseURL, "/")
 	userServiceMethods := v1.File_planner_v1_user_proto.Services().ByName("UserService").Methods()
 	return &userServiceClient{
+		createUser: connect.NewClient[v1.CreateUserRequest, v1.CreateUserResponse](
+			httpClient,
+			baseURL+UserServiceCreateUserProcedure,
+			connect.WithSchema(userServiceMethods.ByName("CreateUser")),
+			connect.WithClientOptions(opts...),
+		),
 		getUser: connect.NewClient[v1.GetUserRequest, v1.GetUserResponse](
 			httpClient,
 			baseURL+UserServiceGetUserProcedure,
 			connect.WithSchema(userServiceMethods.ByName("GetUser")),
+			connect.WithClientOptions(opts...),
+		),
+		getUserByEmail: connect.NewClient[v1.GetUserByEmailRequest, v1.GetUserByEmailResponse](
+			httpClient,
+			baseURL+UserServiceGetUserByEmailProcedure,
+			connect.WithSchema(userServiceMethods.ByName("GetUserByEmail")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -64,7 +83,14 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
-	getUser *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	createUser     *connect.Client[v1.CreateUserRequest, v1.CreateUserResponse]
+	getUser        *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
+	getUserByEmail *connect.Client[v1.GetUserByEmailRequest, v1.GetUserByEmailResponse]
+}
+
+// CreateUser calls planner.v1.UserService.CreateUser.
+func (c *userServiceClient) CreateUser(ctx context.Context, req *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error) {
+	return c.createUser.CallUnary(ctx, req)
 }
 
 // GetUser calls planner.v1.UserService.GetUser.
@@ -72,9 +98,16 @@ func (c *userServiceClient) GetUser(ctx context.Context, req *connect.Request[v1
 	return c.getUser.CallUnary(ctx, req)
 }
 
+// GetUserByEmail calls planner.v1.UserService.GetUserByEmail.
+func (c *userServiceClient) GetUserByEmail(ctx context.Context, req *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error) {
+	return c.getUserByEmail.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the planner.v1.UserService service.
 type UserServiceHandler interface {
+	CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error)
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
+	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -84,16 +117,32 @@ type UserServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	userServiceMethods := v1.File_planner_v1_user_proto.Services().ByName("UserService").Methods()
+	userServiceCreateUserHandler := connect.NewUnaryHandler(
+		UserServiceCreateUserProcedure,
+		svc.CreateUser,
+		connect.WithSchema(userServiceMethods.ByName("CreateUser")),
+		connect.WithHandlerOptions(opts...),
+	)
 	userServiceGetUserHandler := connect.NewUnaryHandler(
 		UserServiceGetUserProcedure,
 		svc.GetUser,
 		connect.WithSchema(userServiceMethods.ByName("GetUser")),
 		connect.WithHandlerOptions(opts...),
 	)
+	userServiceGetUserByEmailHandler := connect.NewUnaryHandler(
+		UserServiceGetUserByEmailProcedure,
+		svc.GetUserByEmail,
+		connect.WithSchema(userServiceMethods.ByName("GetUserByEmail")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case UserServiceCreateUserProcedure:
+			userServiceCreateUserHandler.ServeHTTP(w, r)
 		case UserServiceGetUserProcedure:
 			userServiceGetUserHandler.ServeHTTP(w, r)
+		case UserServiceGetUserByEmailProcedure:
+			userServiceGetUserByEmailHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -103,6 +152,14 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 // UnimplementedUserServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedUserServiceHandler struct{}
 
+func (UnimplementedUserServiceHandler) CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.CreateUser is not implemented"))
+}
+
 func (UnimplementedUserServiceHandler) GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.GetUser is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.GetUserByEmail is not implemented"))
 }

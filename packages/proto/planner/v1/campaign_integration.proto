@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+service CampaignIntegrationService {
+  rpc RegisterCampaignIntegration(RegisterCampaignIntegrationRequest) returns (RegisterCampaignIntegrationResponse);
+  rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
+  rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
+}
+
+enum IntegrationSource {
+  INTEGRATION_SOURCE_UNSPECIFIED = 0;
+  INTEGRATION_SOURCE_DISCORD = 1;
+  INTEGRATION_SOURCE_FORGE = 2;
+}
+
+message CampaignIntegration {
+  string id = 1;
+  string campaign_id = 2;
+  string external_id = 3;
+  IntegrationSource source = 4;
+  google.protobuf.Struct metadata = 5;
+  google.protobuf.Struct settings = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+message RegisterCampaignIntegrationRequest {
+  string campaign_id = 1;
+  string external_id = 2;
+  IntegrationSource source = 3;
+  google.protobuf.Struct metadata = 4;
+  google.protobuf.Struct settings = 5;
+}
+
+message RegisterCampaignIntegrationResponse {
+  CampaignIntegration integration = 1;
+}
+
+message GetCampaignIntegrationRequest {
+  string campaign_id = 1;
+  IntegrationSource source = 2;
+}
+
+message GetCampaignIntegrationResponse {
+  CampaignIntegration integration = 1;
+}
+
+message RemoveCampaignIntegrationRequest {
+  string campaign_id = 1;
+  IntegrationSource source = 2;
+}
+
+message RemoveCampaignIntegrationResponse {}

@@ -5,7 +5,9 @@ package planner.v1;
 import "google/protobuf/timestamp.proto";
 
 service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
 }
 
 message User {
@@ -18,6 +20,26 @@ message User {
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
   optional google.protobuf.Timestamp deleted_at = 9;
+}
+
+message CreateUserRequest {
+  string email = 1;
+  string external_id = 2;
+  optional string avatar = 3;
+  optional string first_name = 4;
+  optional string last_name = 5;
+}
+
+message CreateUserResponse {
+  User user = 1;
+}
+
+message GetUserByEmailRequest {
+  string email = 1;
+}
+
+message GetUserByEmailResponse {
+  User user = 1;
 }
 
 message GetUserRequest {
