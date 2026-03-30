@@ -28,7 +28,6 @@ type IntegrationSource int32
 const (
 	IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED IntegrationSource = 0
 	IntegrationSource_INTEGRATION_SOURCE_DISCORD     IntegrationSource = 1
-	IntegrationSource_INTEGRATION_SOURCE_FORGE       IntegrationSource = 2
 )
 
 // Enum value maps for IntegrationSource.
@@ -36,12 +35,10 @@ var (
 	IntegrationSource_name = map[int32]string{
 		0: "INTEGRATION_SOURCE_UNSPECIFIED",
 		1: "INTEGRATION_SOURCE_DISCORD",
-		2: "INTEGRATION_SOURCE_FORGE",
 	}
 	IntegrationSource_value = map[string]int32{
 		"INTEGRATION_SOURCE_UNSPECIFIED": 0,
 		"INTEGRATION_SOURCE_DISCORD":     1,
-		"INTEGRATION_SOURCE_FORGE":       2,
 	}
 )
 
@@ -172,7 +169,7 @@ func (x *CampaignIntegration) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type RegisterCampaignIntegrationRequest struct {
+type CreateCampaignIntegrationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	ExternalId    string                 `protobuf:"bytes,2,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
@@ -183,20 +180,20 @@ type RegisterCampaignIntegrationRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RegisterCampaignIntegrationRequest) Reset() {
-	*x = RegisterCampaignIntegrationRequest{}
+func (x *CreateCampaignIntegrationRequest) Reset() {
+	*x = CreateCampaignIntegrationRequest{}
 	mi := &file_planner_v1_campaign_integration_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RegisterCampaignIntegrationRequest) String() string {
+func (x *CreateCampaignIntegrationRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterCampaignIntegrationRequest) ProtoMessage() {}
+func (*CreateCampaignIntegrationRequest) ProtoMessage() {}
 
-func (x *RegisterCampaignIntegrationRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateCampaignIntegrationRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_campaign_integration_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -208,67 +205,67 @@ func (x *RegisterCampaignIntegrationRequest) ProtoReflect() protoreflect.Message
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterCampaignIntegrationRequest.ProtoReflect.Descriptor instead.
-func (*RegisterCampaignIntegrationRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateCampaignIntegrationRequest.ProtoReflect.Descriptor instead.
+func (*CreateCampaignIntegrationRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_campaign_integration_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *RegisterCampaignIntegrationRequest) GetCampaignId() string {
+func (x *CreateCampaignIntegrationRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-func (x *RegisterCampaignIntegrationRequest) GetExternalId() string {
+func (x *CreateCampaignIntegrationRequest) GetExternalId() string {
 	if x != nil {
 		return x.ExternalId
 	}
 	return ""
 }
 
-func (x *RegisterCampaignIntegrationRequest) GetSource() IntegrationSource {
+func (x *CreateCampaignIntegrationRequest) GetSource() IntegrationSource {
 	if x != nil {
 		return x.Source
 	}
 	return IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED
 }
 
-func (x *RegisterCampaignIntegrationRequest) GetMetadata() *structpb.Struct {
+func (x *CreateCampaignIntegrationRequest) GetMetadata() *structpb.Struct {
 	if x != nil {
 		return x.Metadata
 	}
 	return nil
 }
 
-func (x *RegisterCampaignIntegrationRequest) GetSettings() *structpb.Struct {
+func (x *CreateCampaignIntegrationRequest) GetSettings() *structpb.Struct {
 	if x != nil {
 		return x.Settings
 	}
 	return nil
 }
 
-type RegisterCampaignIntegrationResponse struct {
+type CreateCampaignIntegrationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Integration   *CampaignIntegration   `protobuf:"bytes,1,opt,name=integration,proto3" json:"integration,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RegisterCampaignIntegrationResponse) Reset() {
-	*x = RegisterCampaignIntegrationResponse{}
+func (x *CreateCampaignIntegrationResponse) Reset() {
+	*x = CreateCampaignIntegrationResponse{}
 	mi := &file_planner_v1_campaign_integration_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RegisterCampaignIntegrationResponse) String() string {
+func (x *CreateCampaignIntegrationResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RegisterCampaignIntegrationResponse) ProtoMessage() {}
+func (*CreateCampaignIntegrationResponse) ProtoMessage() {}
 
-func (x *RegisterCampaignIntegrationResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateCampaignIntegrationResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_campaign_integration_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -280,12 +277,12 @@ func (x *RegisterCampaignIntegrationResponse) ProtoReflect() protoreflect.Messag
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RegisterCampaignIntegrationResponse.ProtoReflect.Descriptor instead.
-func (*RegisterCampaignIntegrationResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateCampaignIntegrationResponse.ProtoReflect.Descriptor instead.
+func (*CreateCampaignIntegrationResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_campaign_integration_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *RegisterCampaignIntegrationResponse) GetIntegration() *CampaignIntegration {
+func (x *CreateCampaignIntegrationResponse) GetIntegration() *CampaignIntegration {
 	if x != nil {
 		return x.Integration
 	}
@@ -494,16 +491,16 @@ const file_planner_v1_campaign_integration_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x02\n" +
-	"\"RegisterCampaignIntegrationRequest\x12\x1f\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x85\x02\n" +
+	" CreateCampaignIntegrationRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x1f\n" +
 	"\vexternal_id\x18\x02 \x01(\tR\n" +
 	"externalId\x125\n" +
 	"\x06source\x18\x03 \x01(\x0e2\x1d.planner.v1.IntegrationSourceR\x06source\x123\n" +
 	"\bmetadata\x18\x04 \x01(\v2\x17.google.protobuf.StructR\bmetadata\x123\n" +
-	"\bsettings\x18\x05 \x01(\v2\x17.google.protobuf.StructR\bsettings\"h\n" +
-	"#RegisterCampaignIntegrationResponse\x12A\n" +
+	"\bsettings\x18\x05 \x01(\v2\x17.google.protobuf.StructR\bsettings\"f\n" +
+	"!CreateCampaignIntegrationResponse\x12A\n" +
 	"\vintegration\x18\x01 \x01(\v2\x1f.planner.v1.CampaignIntegrationR\vintegration\"w\n" +
 	"\x1dGetCampaignIntegrationRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
@@ -515,13 +512,12 @@ const file_planner_v1_campaign_integration_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x125\n" +
 	"\x06source\x18\x02 \x01(\x0e2\x1d.planner.v1.IntegrationSourceR\x06source\"#\n" +
-	"!RemoveCampaignIntegrationResponse*u\n" +
+	"!RemoveCampaignIntegrationResponse*W\n" +
 	"\x11IntegrationSource\x12\"\n" +
 	"\x1eINTEGRATION_SOURCE_UNSPECIFIED\x10\x00\x12\x1e\n" +
-	"\x1aINTEGRATION_SOURCE_DISCORD\x10\x01\x12\x1c\n" +
-	"\x18INTEGRATION_SOURCE_FORGE\x10\x022\x87\x03\n" +
-	"\x1aCampaignIntegrationService\x12~\n" +
-	"\x1bRegisterCampaignIntegration\x12..planner.v1.RegisterCampaignIntegrationRequest\x1a/.planner.v1.RegisterCampaignIntegrationResponse\x12o\n" +
+	"\x1aINTEGRATION_SOURCE_DISCORD\x10\x012\x81\x03\n" +
+	"\x1aCampaignIntegrationService\x12x\n" +
+	"\x19CreateCampaignIntegration\x12,.planner.v1.CreateCampaignIntegrationRequest\x1a-.planner.v1.CreateCampaignIntegrationResponse\x12o\n" +
 	"\x16GetCampaignIntegration\x12).planner.v1.GetCampaignIntegrationRequest\x1a*.planner.v1.GetCampaignIntegrationResponse\x12x\n" +
 	"\x19RemoveCampaignIntegration\x12,.planner.v1.RemoveCampaignIntegrationRequest\x1a-.planner.v1.RemoveCampaignIntegrationResponseB\xb5\x01\n" +
 	"\x0ecom.planner.v1B\x18CampaignIntegrationProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
@@ -543,16 +539,16 @@ func file_planner_v1_campaign_integration_proto_rawDescGZIP() []byte {
 var file_planner_v1_campaign_integration_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_planner_v1_campaign_integration_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_planner_v1_campaign_integration_proto_goTypes = []any{
-	(IntegrationSource)(0),                      // 0: planner.v1.IntegrationSource
-	(*CampaignIntegration)(nil),                 // 1: planner.v1.CampaignIntegration
-	(*RegisterCampaignIntegrationRequest)(nil),  // 2: planner.v1.RegisterCampaignIntegrationRequest
-	(*RegisterCampaignIntegrationResponse)(nil), // 3: planner.v1.RegisterCampaignIntegrationResponse
-	(*GetCampaignIntegrationRequest)(nil),       // 4: planner.v1.GetCampaignIntegrationRequest
-	(*GetCampaignIntegrationResponse)(nil),      // 5: planner.v1.GetCampaignIntegrationResponse
-	(*RemoveCampaignIntegrationRequest)(nil),    // 6: planner.v1.RemoveCampaignIntegrationRequest
-	(*RemoveCampaignIntegrationResponse)(nil),   // 7: planner.v1.RemoveCampaignIntegrationResponse
-	(*structpb.Struct)(nil),                     // 8: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil),               // 9: google.protobuf.Timestamp
+	(IntegrationSource)(0),                    // 0: planner.v1.IntegrationSource
+	(*CampaignIntegration)(nil),               // 1: planner.v1.CampaignIntegration
+	(*CreateCampaignIntegrationRequest)(nil),  // 2: planner.v1.CreateCampaignIntegrationRequest
+	(*CreateCampaignIntegrationResponse)(nil), // 3: planner.v1.CreateCampaignIntegrationResponse
+	(*GetCampaignIntegrationRequest)(nil),     // 4: planner.v1.GetCampaignIntegrationRequest
+	(*GetCampaignIntegrationResponse)(nil),    // 5: planner.v1.GetCampaignIntegrationResponse
+	(*RemoveCampaignIntegrationRequest)(nil),  // 6: planner.v1.RemoveCampaignIntegrationRequest
+	(*RemoveCampaignIntegrationResponse)(nil), // 7: planner.v1.RemoveCampaignIntegrationResponse
+	(*structpb.Struct)(nil),                   // 8: google.protobuf.Struct
+	(*timestamppb.Timestamp)(nil),             // 9: google.protobuf.Timestamp
 }
 var file_planner_v1_campaign_integration_proto_depIdxs = []int32{
 	0,  // 0: planner.v1.CampaignIntegration.source:type_name -> planner.v1.IntegrationSource
@@ -560,17 +556,17 @@ var file_planner_v1_campaign_integration_proto_depIdxs = []int32{
 	8,  // 2: planner.v1.CampaignIntegration.settings:type_name -> google.protobuf.Struct
 	9,  // 3: planner.v1.CampaignIntegration.created_at:type_name -> google.protobuf.Timestamp
 	9,  // 4: planner.v1.CampaignIntegration.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 5: planner.v1.RegisterCampaignIntegrationRequest.source:type_name -> planner.v1.IntegrationSource
-	8,  // 6: planner.v1.RegisterCampaignIntegrationRequest.metadata:type_name -> google.protobuf.Struct
-	8,  // 7: planner.v1.RegisterCampaignIntegrationRequest.settings:type_name -> google.protobuf.Struct
-	1,  // 8: planner.v1.RegisterCampaignIntegrationResponse.integration:type_name -> planner.v1.CampaignIntegration
+	0,  // 5: planner.v1.CreateCampaignIntegrationRequest.source:type_name -> planner.v1.IntegrationSource
+	8,  // 6: planner.v1.CreateCampaignIntegrationRequest.metadata:type_name -> google.protobuf.Struct
+	8,  // 7: planner.v1.CreateCampaignIntegrationRequest.settings:type_name -> google.protobuf.Struct
+	1,  // 8: planner.v1.CreateCampaignIntegrationResponse.integration:type_name -> planner.v1.CampaignIntegration
 	0,  // 9: planner.v1.GetCampaignIntegrationRequest.source:type_name -> planner.v1.IntegrationSource
 	1,  // 10: planner.v1.GetCampaignIntegrationResponse.integration:type_name -> planner.v1.CampaignIntegration
 	0,  // 11: planner.v1.RemoveCampaignIntegrationRequest.source:type_name -> planner.v1.IntegrationSource
-	2,  // 12: planner.v1.CampaignIntegrationService.RegisterCampaignIntegration:input_type -> planner.v1.RegisterCampaignIntegrationRequest
+	2,  // 12: planner.v1.CampaignIntegrationService.CreateCampaignIntegration:input_type -> planner.v1.CreateCampaignIntegrationRequest
 	4,  // 13: planner.v1.CampaignIntegrationService.GetCampaignIntegration:input_type -> planner.v1.GetCampaignIntegrationRequest
 	6,  // 14: planner.v1.CampaignIntegrationService.RemoveCampaignIntegration:input_type -> planner.v1.RemoveCampaignIntegrationRequest
-	3,  // 15: planner.v1.CampaignIntegrationService.RegisterCampaignIntegration:output_type -> planner.v1.RegisterCampaignIntegrationResponse
+	3,  // 15: planner.v1.CampaignIntegrationService.CreateCampaignIntegration:output_type -> planner.v1.CreateCampaignIntegrationResponse
 	5,  // 16: planner.v1.CampaignIntegrationService.GetCampaignIntegration:output_type -> planner.v1.GetCampaignIntegrationResponse
 	7,  // 17: planner.v1.CampaignIntegrationService.RemoveCampaignIntegration:output_type -> planner.v1.RemoveCampaignIntegrationResponse
 	15, // [15:18] is the sub-list for method output_type

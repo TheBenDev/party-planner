@@ -1,5 +1,3 @@
-"use client";
-
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import type { GetActiveCampaignResponse } from "@planner/schemas/campaigns";
 import type { GetUserResponse } from "@planner/schemas/user";
@@ -19,14 +17,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const { data: user = null } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
-		queryFn: client.user.getUser,
+		queryFn: async () => await client.user.getUser(),
 		queryKey: ["auth", "user"],
 	});
 	const { data: campaign = null } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
-		// queryFn: client.campaign.getActiveCampaign,
-		queryFn: () => "",
+		queryFn: async () => await client.campaign.getActiveCampaign(),
 		queryKey: ["auth", "campaign"],
 	});
 

@@ -25,9 +25,9 @@ const (
 type CampaignUserRole int32
 
 const (
-	CampaignUserRole_CAMPAIGN_USER_ROLE_UNSPECIFIED CampaignUserRole = 0
-	CampaignUserRole_CAMPAIGN_USER_ROLE_PLAYER      CampaignUserRole = 1
-	CampaignUserRole_CAMPAIGN_USER_ROLE_GAME_MASTER CampaignUserRole = 2
+	CampaignUserRole_CAMPAIGN_USER_ROLE_UNSPECIFIED    CampaignUserRole = 0
+	CampaignUserRole_CAMPAIGN_USER_ROLE_PLAYER         CampaignUserRole = 1
+	CampaignUserRole_CAMPAIGN_USER_ROLE_DUNGEON_MASTER CampaignUserRole = 2
 )
 
 // Enum value maps for CampaignUserRole.
@@ -35,12 +35,12 @@ var (
 	CampaignUserRole_name = map[int32]string{
 		0: "CAMPAIGN_USER_ROLE_UNSPECIFIED",
 		1: "CAMPAIGN_USER_ROLE_PLAYER",
-		2: "CAMPAIGN_USER_ROLE_GAME_MASTER",
+		2: "CAMPAIGN_USER_ROLE_DUNGEON_MASTER",
 	}
 	CampaignUserRole_value = map[string]int32{
-		"CAMPAIGN_USER_ROLE_UNSPECIFIED": 0,
-		"CAMPAIGN_USER_ROLE_PLAYER":      1,
-		"CAMPAIGN_USER_ROLE_GAME_MASTER": 2,
+		"CAMPAIGN_USER_ROLE_UNSPECIFIED":    0,
+		"CAMPAIGN_USER_ROLE_PLAYER":         1,
+		"CAMPAIGN_USER_ROLE_DUNGEON_MASTER": 2,
 	}
 )
 
@@ -147,7 +147,7 @@ func (x *CampaignUser) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-type AddCampaignUserRequest struct {
+type CreateCampaignUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -156,20 +156,20 @@ type AddCampaignUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddCampaignUserRequest) Reset() {
-	*x = AddCampaignUserRequest{}
+func (x *CreateCampaignUserRequest) Reset() {
+	*x = CreateCampaignUserRequest{}
 	mi := &file_planner_v1_campaign_user_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddCampaignUserRequest) String() string {
+func (x *CreateCampaignUserRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddCampaignUserRequest) ProtoMessage() {}
+func (*CreateCampaignUserRequest) ProtoMessage() {}
 
-func (x *AddCampaignUserRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateCampaignUserRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_campaign_user_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -181,53 +181,53 @@ func (x *AddCampaignUserRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddCampaignUserRequest.ProtoReflect.Descriptor instead.
-func (*AddCampaignUserRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateCampaignUserRequest.ProtoReflect.Descriptor instead.
+func (*CreateCampaignUserRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_campaign_user_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AddCampaignUserRequest) GetCampaignId() string {
+func (x *CreateCampaignUserRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-func (x *AddCampaignUserRequest) GetUserId() string {
+func (x *CreateCampaignUserRequest) GetUserId() string {
 	if x != nil {
 		return x.UserId
 	}
 	return ""
 }
 
-func (x *AddCampaignUserRequest) GetRole() CampaignUserRole {
+func (x *CreateCampaignUserRequest) GetRole() CampaignUserRole {
 	if x != nil {
 		return x.Role
 	}
 	return CampaignUserRole_CAMPAIGN_USER_ROLE_UNSPECIFIED
 }
 
-type AddCampaignUserResponse struct {
+type CreateCampaignUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignUser  *CampaignUser          `protobuf:"bytes,1,opt,name=campaign_user,json=campaignUser,proto3" json:"campaign_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddCampaignUserResponse) Reset() {
-	*x = AddCampaignUserResponse{}
+func (x *CreateCampaignUserResponse) Reset() {
+	*x = CreateCampaignUserResponse{}
 	mi := &file_planner_v1_campaign_user_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddCampaignUserResponse) String() string {
+func (x *CreateCampaignUserResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddCampaignUserResponse) ProtoMessage() {}
+func (*CreateCampaignUserResponse) ProtoMessage() {}
 
-func (x *AddCampaignUserResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateCampaignUserResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_campaign_user_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -239,12 +239,12 @@ func (x *AddCampaignUserResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddCampaignUserResponse.ProtoReflect.Descriptor instead.
-func (*AddCampaignUserResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateCampaignUserResponse.ProtoReflect.Descriptor instead.
+func (*CreateCampaignUserResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_campaign_user_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *AddCampaignUserResponse) GetCampaignUser() *CampaignUser {
+func (x *CreateCampaignUserResponse) GetCampaignUser() *CampaignUser {
 	if x != nil {
 		return x.CampaignUser
 	}
@@ -553,13 +553,13 @@ const file_planner_v1_campaign_user_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x84\x01\n" +
-	"\x16AddCampaignUserRequest\x12\x1f\n" +
+	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x87\x01\n" +
+	"\x19CreateCampaignUserRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x120\n" +
-	"\x04role\x18\x03 \x01(\x0e2\x1c.planner.v1.CampaignUserRoleR\x04role\"X\n" +
-	"\x17AddCampaignUserResponse\x12=\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x1c.planner.v1.CampaignUserRoleR\x04role\"[\n" +
+	"\x1aCreateCampaignUserResponse\x12=\n" +
 	"\rcampaign_user\x18\x01 \x01(\v2\x18.planner.v1.CampaignUserR\fcampaignUser\"R\n" +
 	"\x16GetCampaignUserRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
@@ -578,13 +578,13 @@ const file_planner_v1_campaign_user_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"\x1c\n" +
-	"\x1aRemoveCampaignUserResponse*y\n" +
+	"\x1aRemoveCampaignUserResponse*|\n" +
 	"\x10CampaignUserRole\x12\"\n" +
 	"\x1eCAMPAIGN_USER_ROLE_UNSPECIFIED\x10\x00\x12\x1d\n" +
-	"\x19CAMPAIGN_USER_ROLE_PLAYER\x10\x01\x12\"\n" +
-	"\x1eCAMPAIGN_USER_ROLE_GAME_MASTER\x10\x022\xa3\x03\n" +
-	"\x13CampaignUserService\x12Z\n" +
-	"\x0fAddCampaignUser\x12\".planner.v1.AddCampaignUserRequest\x1a#.planner.v1.AddCampaignUserResponse\x12Z\n" +
+	"\x19CAMPAIGN_USER_ROLE_PLAYER\x10\x01\x12%\n" +
+	"!CAMPAIGN_USER_ROLE_DUNGEON_MASTER\x10\x022\xac\x03\n" +
+	"\x13CampaignUserService\x12c\n" +
+	"\x12CreateCampaignUser\x12%.planner.v1.CreateCampaignUserRequest\x1a&.planner.v1.CreateCampaignUserResponse\x12Z\n" +
 	"\x0fGetCampaignUser\x12\".planner.v1.GetCampaignUserRequest\x1a#.planner.v1.GetCampaignUserResponse\x12o\n" +
 	"\x16UpdateCampaignUserRole\x12).planner.v1.UpdateCampaignUserRoleRequest\x1a*.planner.v1.UpdateCampaignUserRoleResponse\x12c\n" +
 	"\x12RemoveCampaignUser\x12%.planner.v1.RemoveCampaignUserRequest\x1a&.planner.v1.RemoveCampaignUserResponseB\xae\x01\n" +
@@ -609,8 +609,8 @@ var file_planner_v1_campaign_user_proto_msgTypes = make([]protoimpl.MessageInfo,
 var file_planner_v1_campaign_user_proto_goTypes = []any{
 	(CampaignUserRole)(0),                  // 0: planner.v1.CampaignUserRole
 	(*CampaignUser)(nil),                   // 1: planner.v1.CampaignUser
-	(*AddCampaignUserRequest)(nil),         // 2: planner.v1.AddCampaignUserRequest
-	(*AddCampaignUserResponse)(nil),        // 3: planner.v1.AddCampaignUserResponse
+	(*CreateCampaignUserRequest)(nil),      // 2: planner.v1.CreateCampaignUserRequest
+	(*CreateCampaignUserResponse)(nil),     // 3: planner.v1.CreateCampaignUserResponse
 	(*GetCampaignUserRequest)(nil),         // 4: planner.v1.GetCampaignUserRequest
 	(*GetCampaignUserResponse)(nil),        // 5: planner.v1.GetCampaignUserResponse
 	(*UpdateCampaignUserRoleRequest)(nil),  // 6: planner.v1.UpdateCampaignUserRoleRequest
@@ -623,16 +623,16 @@ var file_planner_v1_campaign_user_proto_depIdxs = []int32{
 	0,  // 0: planner.v1.CampaignUser.role:type_name -> planner.v1.CampaignUserRole
 	10, // 1: planner.v1.CampaignUser.created_at:type_name -> google.protobuf.Timestamp
 	10, // 2: planner.v1.CampaignUser.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: planner.v1.AddCampaignUserRequest.role:type_name -> planner.v1.CampaignUserRole
-	1,  // 4: planner.v1.AddCampaignUserResponse.campaign_user:type_name -> planner.v1.CampaignUser
+	0,  // 3: planner.v1.CreateCampaignUserRequest.role:type_name -> planner.v1.CampaignUserRole
+	1,  // 4: planner.v1.CreateCampaignUserResponse.campaign_user:type_name -> planner.v1.CampaignUser
 	1,  // 5: planner.v1.GetCampaignUserResponse.campaign_user:type_name -> planner.v1.CampaignUser
 	0,  // 6: planner.v1.UpdateCampaignUserRoleRequest.role:type_name -> planner.v1.CampaignUserRole
 	1,  // 7: planner.v1.UpdateCampaignUserRoleResponse.campaign_user:type_name -> planner.v1.CampaignUser
-	2,  // 8: planner.v1.CampaignUserService.AddCampaignUser:input_type -> planner.v1.AddCampaignUserRequest
+	2,  // 8: planner.v1.CampaignUserService.CreateCampaignUser:input_type -> planner.v1.CreateCampaignUserRequest
 	4,  // 9: planner.v1.CampaignUserService.GetCampaignUser:input_type -> planner.v1.GetCampaignUserRequest
 	6,  // 10: planner.v1.CampaignUserService.UpdateCampaignUserRole:input_type -> planner.v1.UpdateCampaignUserRoleRequest
 	8,  // 11: planner.v1.CampaignUserService.RemoveCampaignUser:input_type -> planner.v1.RemoveCampaignUserRequest
-	3,  // 12: planner.v1.CampaignUserService.AddCampaignUser:output_type -> planner.v1.AddCampaignUserResponse
+	3,  // 12: planner.v1.CampaignUserService.CreateCampaignUser:output_type -> planner.v1.CreateCampaignUserResponse
 	5,  // 13: planner.v1.CampaignUserService.GetCampaignUser:output_type -> planner.v1.GetCampaignUserResponse
 	7,  // 14: planner.v1.CampaignUserService.UpdateCampaignUserRole:output_type -> planner.v1.UpdateCampaignUserRoleResponse
 	9,  // 15: planner.v1.CampaignUserService.RemoveCampaignUser:output_type -> planner.v1.RemoveCampaignUserResponse

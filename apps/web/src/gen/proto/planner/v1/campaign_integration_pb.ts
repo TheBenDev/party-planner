@@ -12,7 +12,7 @@ import type { JsonObject, Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/campaign_integration.proto.
  */
 export const file_planner_v1_campaign_integration: GenFile = /*@__PURE__*/
-  fileDesc("CiVwbGFubmVyL3YxL2NhbXBhaWduX2ludGVncmF0aW9uLnByb3RvEgpwbGFubmVyLnYxIrACChNDYW1wYWlnbkludGVncmF0aW9uEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhMKC2V4dGVybmFsX2lkGAMgASgJEi0KBnNvdXJjZRgEIAEoDjIdLnBsYW5uZXIudjEuSW50ZWdyYXRpb25Tb3VyY2USKQoIbWV0YWRhdGEYBSABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EikKCHNldHRpbmdzGAYgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIuCgpjcmVhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLTAQoiUmVnaXN0ZXJDYW1wYWlnbkludGVncmF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRItCgZzb3VyY2UYAyABKA4yHS5wbGFubmVyLnYxLkludGVncmF0aW9uU291cmNlEikKCG1ldGFkYXRhGAQgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIpCghzZXR0aW5ncxgFIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3QiWwojUmVnaXN0ZXJDYW1wYWlnbkludGVncmF0aW9uUmVzcG9uc2USNAoLaW50ZWdyYXRpb24YASABKAsyHy5wbGFubmVyLnYxLkNhbXBhaWduSW50ZWdyYXRpb24iYwodR2V0Q2FtcGFpZ25JbnRlZ3JhdGlvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSLQoGc291cmNlGAIgASgOMh0ucGxhbm5lci52MS5JbnRlZ3JhdGlvblNvdXJjZSJWCh5HZXRDYW1wYWlnbkludGVncmF0aW9uUmVzcG9uc2USNAoLaW50ZWdyYXRpb24YASABKAsyHy5wbGFubmVyLnYxLkNhbXBhaWduSW50ZWdyYXRpb24iZgogUmVtb3ZlQ2FtcGFpZ25JbnRlZ3JhdGlvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSLQoGc291cmNlGAIgASgOMh0ucGxhbm5lci52MS5JbnRlZ3JhdGlvblNvdXJjZSIjCiFSZW1vdmVDYW1wYWlnbkludGVncmF0aW9uUmVzcG9uc2UqdQoRSW50ZWdyYXRpb25Tb3VyY2USIgoeSU5URUdSQVRJT05fU09VUkNFX1VOU1BFQ0lGSUVEEAASHgoaSU5URUdSQVRJT05fU09VUkNFX0RJU0NPUkQQARIcChhJTlRFR1JBVElPTl9TT1VSQ0VfRk9SR0UQAjKHAwoaQ2FtcGFpZ25JbnRlZ3JhdGlvblNlcnZpY2USfgobUmVnaXN0ZXJDYW1wYWlnbkludGVncmF0aW9uEi4ucGxhbm5lci52MS5SZWdpc3RlckNhbXBhaWduSW50ZWdyYXRpb25SZXF1ZXN0Gi8ucGxhbm5lci52MS5SZWdpc3RlckNhbXBhaWduSW50ZWdyYXRpb25SZXNwb25zZRJvChZHZXRDYW1wYWlnbkludGVncmF0aW9uEikucGxhbm5lci52MS5HZXRDYW1wYWlnbkludGVncmF0aW9uUmVxdWVzdBoqLnBsYW5uZXIudjEuR2V0Q2FtcGFpZ25JbnRlZ3JhdGlvblJlc3BvbnNlEngKGVJlbW92ZUNhbXBhaWduSW50ZWdyYXRpb24SLC5wbGFubmVyLnYxLlJlbW92ZUNhbXBhaWduSW50ZWdyYXRpb25SZXF1ZXN0Gi0ucGxhbm5lci52MS5SZW1vdmVDYW1wYWlnbkludGVncmF0aW9uUmVzcG9uc2VCtQEKDmNvbS5wbGFubmVyLnYxQhhDYW1wYWlnbkludGVncmF0aW9uUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_struct, file_google_protobuf_timestamp]);
+  fileDesc("CiVwbGFubmVyL3YxL2NhbXBhaWduX2ludGVncmF0aW9uLnByb3RvEgpwbGFubmVyLnYxIrACChNDYW1wYWlnbkludGVncmF0aW9uEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhMKC2V4dGVybmFsX2lkGAMgASgJEi0KBnNvdXJjZRgEIAEoDjIdLnBsYW5uZXIudjEuSW50ZWdyYXRpb25Tb3VyY2USKQoIbWV0YWRhdGEYBSABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0EikKCHNldHRpbmdzGAYgASgLMhcuZ29vZ2xlLnByb3RvYnVmLlN0cnVjdBIuCgpjcmVhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCLRAQogQ3JlYXRlQ2FtcGFpZ25JbnRlZ3JhdGlvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEwoLZXh0ZXJuYWxfaWQYAiABKAkSLQoGc291cmNlGAMgASgOMh0ucGxhbm5lci52MS5JbnRlZ3JhdGlvblNvdXJjZRIpCghtZXRhZGF0YRgEIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3QSKQoIc2V0dGluZ3MYBSABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0IlkKIUNyZWF0ZUNhbXBhaWduSW50ZWdyYXRpb25SZXNwb25zZRI0CgtpbnRlZ3JhdGlvbhgBIAEoCzIfLnBsYW5uZXIudjEuQ2FtcGFpZ25JbnRlZ3JhdGlvbiJjCh1HZXRDYW1wYWlnbkludGVncmF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRItCgZzb3VyY2UYAiABKA4yHS5wbGFubmVyLnYxLkludGVncmF0aW9uU291cmNlIlYKHkdldENhbXBhaWduSW50ZWdyYXRpb25SZXNwb25zZRI0CgtpbnRlZ3JhdGlvbhgBIAEoCzIfLnBsYW5uZXIudjEuQ2FtcGFpZ25JbnRlZ3JhdGlvbiJmCiBSZW1vdmVDYW1wYWlnbkludGVncmF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRItCgZzb3VyY2UYAiABKA4yHS5wbGFubmVyLnYxLkludGVncmF0aW9uU291cmNlIiMKIVJlbW92ZUNhbXBhaWduSW50ZWdyYXRpb25SZXNwb25zZSpXChFJbnRlZ3JhdGlvblNvdXJjZRIiCh5JTlRFR1JBVElPTl9TT1VSQ0VfVU5TUEVDSUZJRUQQABIeChpJTlRFR1JBVElPTl9TT1VSQ0VfRElTQ09SRBABMoEDChpDYW1wYWlnbkludGVncmF0aW9uU2VydmljZRJ4ChlDcmVhdGVDYW1wYWlnbkludGVncmF0aW9uEiwucGxhbm5lci52MS5DcmVhdGVDYW1wYWlnbkludGVncmF0aW9uUmVxdWVzdBotLnBsYW5uZXIudjEuQ3JlYXRlQ2FtcGFpZ25JbnRlZ3JhdGlvblJlc3BvbnNlEm8KFkdldENhbXBhaWduSW50ZWdyYXRpb24SKS5wbGFubmVyLnYxLkdldENhbXBhaWduSW50ZWdyYXRpb25SZXF1ZXN0GioucGxhbm5lci52MS5HZXRDYW1wYWlnbkludGVncmF0aW9uUmVzcG9uc2USeAoZUmVtb3ZlQ2FtcGFpZ25JbnRlZ3JhdGlvbhIsLnBsYW5uZXIudjEuUmVtb3ZlQ2FtcGFpZ25JbnRlZ3JhdGlvblJlcXVlc3QaLS5wbGFubmVyLnYxLlJlbW92ZUNhbXBhaWduSW50ZWdyYXRpb25SZXNwb25zZUK1AQoOY29tLnBsYW5uZXIudjFCGENhbXBhaWduSW50ZWdyYXRpb25Qcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_struct, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.CampaignIntegration
@@ -67,9 +67,9 @@ export const CampaignIntegrationSchema: GenMessage<CampaignIntegration> = /*@__P
   messageDesc(file_planner_v1_campaign_integration, 0);
 
 /**
- * @generated from message planner.v1.RegisterCampaignIntegrationRequest
+ * @generated from message planner.v1.CreateCampaignIntegrationRequest
  */
-export type RegisterCampaignIntegrationRequest = Message<"planner.v1.RegisterCampaignIntegrationRequest"> & {
+export type CreateCampaignIntegrationRequest = Message<"planner.v1.CreateCampaignIntegrationRequest"> & {
   /**
    * @generated from field: string campaign_id = 1;
    */
@@ -97,16 +97,16 @@ export type RegisterCampaignIntegrationRequest = Message<"planner.v1.RegisterCam
 };
 
 /**
- * Describes the message planner.v1.RegisterCampaignIntegrationRequest.
- * Use `create(RegisterCampaignIntegrationRequestSchema)` to create a new message.
+ * Describes the message planner.v1.CreateCampaignIntegrationRequest.
+ * Use `create(CreateCampaignIntegrationRequestSchema)` to create a new message.
  */
-export const RegisterCampaignIntegrationRequestSchema: GenMessage<RegisterCampaignIntegrationRequest> = /*@__PURE__*/
+export const CreateCampaignIntegrationRequestSchema: GenMessage<CreateCampaignIntegrationRequest> = /*@__PURE__*/
   messageDesc(file_planner_v1_campaign_integration, 1);
 
 /**
- * @generated from message planner.v1.RegisterCampaignIntegrationResponse
+ * @generated from message planner.v1.CreateCampaignIntegrationResponse
  */
-export type RegisterCampaignIntegrationResponse = Message<"planner.v1.RegisterCampaignIntegrationResponse"> & {
+export type CreateCampaignIntegrationResponse = Message<"planner.v1.CreateCampaignIntegrationResponse"> & {
   /**
    * @generated from field: planner.v1.CampaignIntegration integration = 1;
    */
@@ -114,10 +114,10 @@ export type RegisterCampaignIntegrationResponse = Message<"planner.v1.RegisterCa
 };
 
 /**
- * Describes the message planner.v1.RegisterCampaignIntegrationResponse.
- * Use `create(RegisterCampaignIntegrationResponseSchema)` to create a new message.
+ * Describes the message planner.v1.CreateCampaignIntegrationResponse.
+ * Use `create(CreateCampaignIntegrationResponseSchema)` to create a new message.
  */
-export const RegisterCampaignIntegrationResponseSchema: GenMessage<RegisterCampaignIntegrationResponse> = /*@__PURE__*/
+export const CreateCampaignIntegrationResponseSchema: GenMessage<CreateCampaignIntegrationResponse> = /*@__PURE__*/
   messageDesc(file_planner_v1_campaign_integration, 2);
 
 /**
@@ -207,11 +207,6 @@ export enum IntegrationSource {
    * @generated from enum value: INTEGRATION_SOURCE_DISCORD = 1;
    */
   DISCORD = 1,
-
-  /**
-   * @generated from enum value: INTEGRATION_SOURCE_FORGE = 2;
-   */
-  FORGE = 2,
 }
 
 /**
@@ -225,12 +220,12 @@ export const IntegrationSourceSchema: GenEnum<IntegrationSource> = /*@__PURE__*/
  */
 export const CampaignIntegrationService: GenService<{
   /**
-   * @generated from rpc planner.v1.CampaignIntegrationService.RegisterCampaignIntegration
+   * @generated from rpc planner.v1.CampaignIntegrationService.CreateCampaignIntegration
    */
-  registerCampaignIntegration: {
+  createCampaignIntegration: {
     methodKind: "unary";
-    input: typeof RegisterCampaignIntegrationRequestSchema;
-    output: typeof RegisterCampaignIntegrationResponseSchema;
+    input: typeof CreateCampaignIntegrationRequestSchema;
+    output: typeof CreateCampaignIntegrationResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.CampaignIntegrationService.GetCampaignIntegration

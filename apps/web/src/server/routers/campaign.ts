@@ -9,6 +9,7 @@ import {
 	GetInvitationResponseSchema,
 } from "@planner/schemas/campaigns";
 import { eq } from "drizzle-orm";
+import { protoTimeStampToDate } from "@/lib/utils";
 import { privateProcedure } from "../orpc";
 
 const { campaignsTable, campaignUsersTable, campaignInvitationsTable } = schema;
@@ -16,7 +17,7 @@ const { campaignsTable, campaignUsersTable, campaignInvitationsTable } = schema;
 const createCampaign = privateProcedure
 	.route({
 		method: "POST",
-		path: "/campaign",
+		path: "/campaign/createCampaign",
 		summary: "Creates a campaign",
 	})
 	.input(CreateCampaignRequestSchema)
@@ -68,31 +69,35 @@ const createCampaign = privateProcedure
 
 const getActiveCampaign = privateProcedure
 	.route({
-		method: "GET",
-		path: "/campaign",
+		method: "POST",
+		path: "/campaign/getActiveCampaign",
 		summary: "Get a web user's active campaign",
 	})
 	.output(GetActiveCampaignResponseSchema)
 	.handler(async ({ context }) => {
 		const campaignId = context.campaignId;
-		const db = context.db;
+		const api = context.api;
 		if (!campaignId) return null;
-		const campaignRow = await db
-			.select()
-			.from(campaignsTable)
-			.where(eq(campaignsTable.id, campaignId))
-			.limit(1);
+		const campaign = (await api.campaign.getCampaign({ id: campaignId }))
+			.campaign;
+		if (campaign === undefined) return null;
 
-		if (campaignRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "campaign not found" });
-		}
-		return campaignRow[0];
+		return {
+			createdAt: protoTimeStampToDate(campaign.createdAt),
+			deletedAt: protoTimeStampToDate(campaign.deletedAt),
+			description: campaign.description ?? null,
+			id: campaign.id,
+			tags: campaign.tags,
+			title: campaign.title,
+			updatedAt: protoTimeStampToDate(campaign.updatedAt),
+			userId: campaign.userId,
+		};
 	});
 
 const getInvitationById = privateProcedure
 	.route({
 		method: "GET",
-		path: "/campaign",
+		path: "/campaign/getInvitation",
 		summary: "Get an invitation to a campaign by id",
 	})
 	.input(GetInvitationRequestSchema)

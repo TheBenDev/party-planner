@@ -44,6 +44,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(campaignPath, campaignHandler)
+
+	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
+
+	campaignUserPath, campaignUserHandler := plannerv1connect.NewCampaignUserServiceHandler(&rpc.CampaignUserServer{CampaignUser: &service.CampaignUserService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(campaignUserPath, campaignUserHandler)
+
+	campaignInvitationPath, campaignInvitationHandler := plannerv1connect.NewCampaignInvitationServiceHandler(&rpc.CampaignInvitationServer{CampaignInvitation: &service.CampaignInvitationService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(campaignInvitationPath, campaignInvitationHandler)
+
+	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(npcPath, npcHandler)
+
+	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(questPath, questHandler)
+
+	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(sessionPath, sessionHandler)
+
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
 	mux.Handle(userPath, userHandler)
 
