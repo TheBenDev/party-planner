@@ -1,62 +1,85 @@
 import { ORPCError } from "@orpc/server";
-import { schema } from "@planner/database";
 import {
-	GetQuestByIdRequestSchema,
-	GetQuestByIdResponseSchema,
-	ListQuestsByCampaignIdRequestSchema,
-	ListQuestsByCampaignIdResponseSchema,
+	CreateQuestRequestSchema,
+	CreateQuestResponseSchema,
+	GetQuestRequestSchema,
+	GetQuestResponseSchema,
+	ListQuestsByCampaignRequestSchema,
+	ListQuestsByCampaignResponseSchema,
 } from "@planner/schemas/quests";
-import { eq } from "drizzle-orm";
+import { throwConnectError } from "../connectErrors";
 import { privateProcedure } from "../orpc";
+import { protoToQuest, questStatusToProto } from "./util/proto/quest";
 
-const { questsTable } = schema;
-
-const getQuestById = privateProcedure
+const createQuest = privateProcedure
 	.route({
-		method: "GET",
-		path: "/quest",
-		summary: "Get a quest by id",
+		method: "POST",
+		path: "/quest/create",
+		summary: "Create a quest",
 	})
-	.input(GetQuestByIdRequestSchema)
-	.output(GetQuestByIdResponseSchema)
+	.input(CreateQuestRequestSchema)
+	.output(CreateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { id } = input;
-		const db = context.db;
-
-		const questRow = await db
-			.select()
-			.from(questsTable)
-			.where(eq(questsTable.id, id))
-			.limit(1);
-
-		if (questRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "quest not found" });
+		const api = context.api;
+		try {
+			const res = await api.quest.createQuest({
+				...input,
+				status: questStatusToProto(input.status),
+			});
+			if (res.quest === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create quest",
+				});
+			}
+			return { quest: protoToQuest(res.quest) };
+		} catch (err) {
+			throwConnectError(err, "failed to create quest");
 		}
-
-		return questRow[0];
 	});
 
-const listQuestsByCampaignId = privateProcedure
+const getQuest = privateProcedure
 	.route({
-		method: "GET",
-		path: "/quests",
+		method: "POST",
+		path: "/quest/get",
+		summary: "Get a quest by id",
+	})
+	.input(GetQuestRequestSchema)
+	.output(GetQuestResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id } = input;
+		const api = context.api;
+		try {
+			const res = await api.quest.getQuest({ id });
+			if (res.quest === undefined) {
+				throw new ORPCError("NOT_FOUND", { message: "quest not found" });
+			}
+			return { quest: protoToQuest(res.quest) };
+		} catch (err) {
+			throwConnectError(err, "failed to get quest");
+		}
+	});
+
+const listQuestsByCampaign = privateProcedure
+	.route({
+		method: "POST",
+		path: "/quest/list",
 		summary: "List quests by campaign",
 	})
-	.input(ListQuestsByCampaignIdRequestSchema)
-	.output(ListQuestsByCampaignIdResponseSchema)
+	.input(ListQuestsByCampaignRequestSchema)
+	.output(ListQuestsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
-		const db = context.db;
-
-		const questsRow = await db
-			.select()
-			.from(questsTable)
-			.where(eq(questsTable.campaignId, campaignId));
-
-		return questsRow;
+		const api = context.api;
+		try {
+			const res = await api.quest.listQuestsByCampaign({ campaignId });
+			return { quests: res.quests.map(protoToQuest) };
+		} catch (err) {
+			throwConnectError(err, "failed to list quests");
+		}
 	});
 
 export const questRouter = {
-	getQuestById,
-	listQuestsByCampaignId,
+	createQuest,
+	getQuest,
+	listQuestsByCampaign,
 };

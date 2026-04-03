@@ -1,4 +1,5 @@
 import { campaignRouter } from "./routers/campaign";
+import { campaignIntegrationRouter } from "./routers/campaignIntegration";
 import { characterRouter } from "./routers/character";
 import { discordRouter } from "./routers/discord";
 import { emailRouter } from "./routers/email";
@@ -15,6 +16,7 @@ import { userRouter } from "./routers/user";
  */
 const appRouter = {
 	campaign: campaignRouter,
+	campaignIntegration: campaignIntegrationRouter,
 	character: characterRouter,
 	discord: discordRouter,
 	email: emailRouter,

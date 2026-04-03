@@ -1,30 +1,24 @@
 import { ORPCError } from "@orpc/server";
-import { schema } from "@planner/database";
-import { UserRole } from "@planner/enums/user";
 import {
-	CreateCamapaingResponseSchema,
+	CreateCamapaignResponseSchema,
 	CreateCampaignRequestSchema,
 	GetActiveCampaignResponseSchema,
-	GetInvitationRequestSchema,
-	GetInvitationResponseSchema,
 } from "@planner/schemas/campaigns";
-import { eq } from "drizzle-orm";
-import { protoTimeStampToDate } from "@/lib/utils";
+import { throwConnectError } from "../connectErrors";
 import { privateProcedure } from "../orpc";
-
-const { campaignsTable, campaignUsersTable, campaignInvitationsTable } = schema;
+import { protoToCampaign } from "./util/proto/campaign";
 
 const createCampaign = privateProcedure
 	.route({
 		method: "POST",
-		path: "/campaign/createCampaign",
+		path: "/campaign/create",
 		summary: "Creates a campaign",
 	})
 	.input(CreateCampaignRequestSchema)
-	.output(CreateCamapaingResponseSchema)
+	.output(CreateCamapaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { tags, title, description } = input;
-		const db = context.db;
+		const api = context.api;
 		const userId = context.userId;
 
 		const values = {
@@ -34,43 +28,25 @@ const createCampaign = privateProcedure
 			userId,
 		};
 
-		const createdCampaign = await db.transaction(async (tx) => {
-			const createdCampaignRow = await tx
-				.insert(campaignsTable)
-				.values(values)
-				.returning();
-
-			if (createdCampaignRow.length === 0) {
+		try {
+			const result = await api.campaign.createCampaign(values);
+			const campaign = result.campaign;
+			if (campaign === undefined)
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to create campaign",
 				});
-			}
-
-			const createdMembershipRow = await tx
-				.insert(campaignUsersTable)
-				.values({
-					campaignId: createdCampaignRow[0].id,
-					role: UserRole.DUNGEON_MASTER,
-					userId,
-				})
-				.returning();
-
-			if (createdMembershipRow.length === 0) {
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "failed to create campaign membership",
-				});
-			}
-
-			return createdCampaignRow[0];
-		});
-
-		return { id: createdCampaign.id };
+			return {
+				campaign: protoToCampaign(campaign),
+			};
+		} catch (err) {
+			throwConnectError(err, "failed to create campaign");
+		}
 	});
 
 const getActiveCampaign = privateProcedure
 	.route({
 		method: "POST",
-		path: "/campaign/getActiveCampaign",
+		path: "/campaign/getActive",
 		summary: "Get a web user's active campaign",
 	})
 	.output(GetActiveCampaignResponseSchema)
@@ -78,52 +54,20 @@ const getActiveCampaign = privateProcedure
 		const campaignId = context.campaignId;
 		const api = context.api;
 		if (!campaignId) return null;
-		const campaign = (await api.campaign.getCampaign({ id: campaignId }))
-			.campaign;
-		if (campaign === undefined) return null;
 
-		return {
-			createdAt: protoTimeStampToDate(campaign.createdAt),
-			deletedAt: protoTimeStampToDate(campaign.deletedAt),
-			description: campaign.description ?? null,
-			id: campaign.id,
-			tags: campaign.tags,
-			title: campaign.title,
-			updatedAt: protoTimeStampToDate(campaign.updatedAt),
-			userId: campaign.userId,
-		};
-	});
-
-const getInvitationById = privateProcedure
-	.route({
-		method: "GET",
-		path: "/campaign/getInvitation",
-		summary: "Get an invitation to a campaign by id",
-	})
-	.input(GetInvitationRequestSchema)
-	.output(GetInvitationResponseSchema)
-	.handler(async ({ input, context }) => {
-		const { invitationId } = input;
-		const db = context.db;
-		const invitationRow = await db
-			.select({
-				campaignId: campaignInvitationsTable.campaignId,
-				inviteeEmail: campaignInvitationsTable.inviteeEmail,
-				inviterId: campaignInvitationsTable.inviterId,
-				role: campaignInvitationsTable.role,
-			})
-			.from(campaignInvitationsTable)
-			.where(eq(campaignInvitationsTable.id, invitationId));
-
-		if (invitationRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "Invitation not found" });
+		try {
+			const result = await api.campaign.getCampaign({ id: campaignId });
+			const campaign = result.campaign;
+			if (campaign === undefined) return null;
+			return {
+				campaign: protoToCampaign(campaign),
+			};
+		} catch (err) {
+			throwConnectError(err, "failed to get active campaign");
 		}
-
-		return invitationRow[0];
 	});
 
 export const campaignRouter = {
 	createCampaign,
 	getActiveCampaign,
-	getInvitationById,
 };

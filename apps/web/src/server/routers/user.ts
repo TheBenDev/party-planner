@@ -4,12 +4,14 @@ import {
 	CreateUserResponseSchema,
 	GetUserResponseSchema,
 } from "@planner/schemas/user";
+import { throwConnectError } from "../connectErrors";
 import { privateProcedure, publicProcedure } from "../orpc";
+import { protoToUser } from "./util/proto/user";
 
 const createUser = publicProcedure
 	.route({
 		method: "POST",
-		path: "/user/createUser",
+		path: "/user/create",
 		summary: "Creates a user",
 	})
 	.input(CreateUserRequestSchema)
@@ -25,33 +27,37 @@ const createUser = publicProcedure
 			firstName: firstName ?? undefined,
 			lastName: lastName ?? undefined,
 		};
-		await api.user.createUser(values);
+
+		try {
+			const { user } = await api.user.createUser(values);
+			if (!user) {
+				throw new ORPCError("NOT_FOUND", { message: "user not found" });
+			}
+			return { user: protoToUser(user) };
+		} catch (err) {
+			throwConnectError(err, "failed to create user");
+		}
 	});
 
 const getUser = privateProcedure
 	.route({
 		method: "POST",
-		path: "/user/getUser",
+		path: "/user/get",
 		summary: "Get the current user",
 	})
 	.output(GetUserResponseSchema)
 	.handler(async ({ context }) => {
 		const userId = context.clerkUserId;
 		const api = context.api;
-
-		const userRow = await api.user.getUser({ externalId: userId });
-		if (!userRow.user) {
-			throw new ORPCError("NOT_FOUND", { message: "user not found" });
+		try {
+			const { user } = await api.user.getUser({ externalId: userId });
+			if (!user) {
+				throw new ORPCError("NOT_FOUND", { message: "user not found" });
+			}
+			return { user: protoToUser(user) };
+		} catch (err) {
+			throwConnectError(err, "failed to get user");
 		}
-		const user = {
-			avatar: userRow.user.avatar ?? null,
-			email: userRow.user.email,
-			externalId: userRow.user.externalId,
-			firstName: userRow.user.firstName ?? null,
-			id: userRow.user.id,
-			lastName: userRow.user.lastName ?? null,
-		};
-		return user;
 	});
 
 export const userRouter = {

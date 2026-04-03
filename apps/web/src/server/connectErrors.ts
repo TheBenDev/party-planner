@@ -20,7 +20,7 @@ const CONNECT_TO_ORPC_CODE = {
 	[Code.Unauthenticated]: "UNAUTHORIZED",
 };
 
-export function handleConnectError(
+export function throwConnectError(
 	err: unknown,
 	fallbackMessage: string,
 ): never {

@@ -2,7 +2,7 @@ import { Status } from "@planner/enums/quest";
 import z from "zod";
 import { BaseEntitySchema } from "./common";
 
-export const QuestsSchema = BaseEntitySchema.extend({
+export const QuestSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	completedAt: z.date().nullable().optional(),
 	deletedAt: z.date().nullable().optional(),
@@ -13,15 +13,25 @@ export const QuestsSchema = BaseEntitySchema.extend({
 	title: z.string(),
 });
 
-export const GetQuestByIdResponseSchema = QuestsSchema;
-export const GetQuestByIdRequestSchema = z.object({ id: z.uuid() });
+export const CreateQuestRequestSchema = z.object({
+	campaignId: z.uuid(),
+	description: z.string().optional(),
+	questGiverId: z.uuid().optional(),
+	// TODO: FLESH THIS OUT BETTER
+	reward: z.any().optional(),
+	status: z.enum(Status),
+	title: z.string(),
+});
 
-export const ListQuestsByCampaignIdRequestSchema = z.object({
+export const CreateQuestResponseSchema = z.object({ quest: QuestSchema });
+export const GetQuestRequestSchema = z.object({ id: z.uuid() });
+export const GetQuestResponseSchema = z.object({ quest: QuestSchema });
+export const ListQuestsByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
-export const ListQuestsByCampaignIdResponseSchema = z.array(QuestsSchema);
+export const ListQuestsByCampaignResponseSchema = z.object({
+	quests: z.array(QuestSchema),
+});
 
-export type ListQuestsByCampaignIdResponse = z.infer<
-	typeof ListQuestsByCampaignIdResponseSchema
->;
-export type Quests = z.infer<typeof QuestsSchema>;
+export type CreateQuestRequest = z.infer<typeof CreateQuestRequestSchema>;
+export type Quest = z.infer<typeof QuestSchema>;

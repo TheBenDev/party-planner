@@ -8,7 +8,6 @@ import (
 	"log/slog"
 
 	"connectrpc.com/connect"
-	plannerv1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
 	model "github.com/BBruington/party-planner/api/internal/models"
@@ -27,7 +26,7 @@ func (s *CampaignIntegrationServer) GetCampaignIntegration(ctx context.Context, 
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Id Required"))
 	}
-	if req.Msg.Source == plannerv1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
+	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Integration Required"))
 	}
 	source, err := protoToIntegrationSource(req.Msg.Source)
@@ -48,7 +47,7 @@ func (s *CampaignIntegrationServer) CreateCampaignIntegration(ctx context.Contex
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Id Required"))
 	}
-	if req.Msg.Source == plannerv1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
+	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Integration Required"))
 	}
 	source, err := protoToIntegrationSource(req.Msg.Source)
@@ -135,9 +134,9 @@ func campaignIntegrationToProto(integration *model.CampaignIntegration) *v1.Camp
 	return proto
 }
 
-func protoToIntegrationSource(s plannerv1.IntegrationSource) (model.IntegrationSource, error) {
+func protoToIntegrationSource(s v1.IntegrationSource) (model.IntegrationSource, error) {
 	switch s {
-	case plannerv1.IntegrationSource_INTEGRATION_SOURCE_DISCORD:
+	case v1.IntegrationSource_INTEGRATION_SOURCE_DISCORD:
 		return model.IntegrationSourceDiscord, nil
 	default:
 		return "", fmt.Errorf("unknown integration source: %v", s)

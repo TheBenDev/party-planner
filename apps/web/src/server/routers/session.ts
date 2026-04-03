@@ -1,62 +1,91 @@
+import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/server";
-import { schema } from "@planner/database";
 import {
-	GetSessionByIdRequestSchema,
-	GetSessionByIdResponseSchema,
-	ListSessionsByCampaignIdRequestSchema,
-	ListSessionsByCampaignIdResponseSchema,
+	CreateSessionRequestSchema,
+	CreateSessionResponseSchema,
+	GetSessionRequestSchema,
+	GetSessionResponseSchema,
+	ListSessionsRequestSchema,
+	ListSessionsResponseSchema,
 } from "@planner/schemas/sessions";
-import { eq } from "drizzle-orm";
+import { throwConnectError } from "../connectErrors";
 import { privateProcedure } from "../orpc";
+import { protoToSession } from "./util/proto/session";
 
-const { sessionsTable } = schema;
-
-const getSessionById = privateProcedure
+const createSession = privateProcedure
 	.route({
-		method: "GET",
-		path: "/session",
-		summary: "Get a session by id",
+		method: "POST",
+		path: "/session/create",
+		summary: "Create a session",
 	})
-	.input(GetSessionByIdRequestSchema)
-	.output(GetSessionByIdResponseSchema)
+	.input(CreateSessionRequestSchema)
+	.output(CreateSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { id } = input;
-		const db = context.db;
-
-		const sessionRow = await db
-			.select()
-			.from(sessionsTable)
-			.where(eq(sessionsTable.id, id))
-			.limit(1);
-
-		if (sessionRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "session not found" });
+		const api = context.api;
+		const startsAt = input.startsAt
+			? timestampFromDate(input.startsAt)
+			: undefined;
+		try {
+			const res = await api.session.createSession({
+				campaignId: input.campaignId,
+				description: input.description,
+				startsAt,
+				title: input.title,
+			});
+			if (res.session === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create session",
+				});
+			}
+			return { session: protoToSession(res.session) };
+		} catch (err) {
+			throwConnectError(err, "failed to create session");
 		}
-
-		return sessionRow[0];
 	});
 
-const listSessionsByCampaignId = privateProcedure
+const getSession = privateProcedure
 	.route({
-		method: "GET",
-		path: "/sessions",
+		method: "POST",
+		path: "/session/get",
+		summary: "Get a session by id",
+	})
+	.input(GetSessionRequestSchema)
+	.output(GetSessionResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id } = input;
+		const api = context.api;
+		try {
+			const res = await api.session.getSession({ id });
+			if (res.session === undefined) {
+				throw new ORPCError("NOT_FOUND", { message: "session not found" });
+			}
+			return { session: protoToSession(res.session) };
+		} catch (err) {
+			throwConnectError(err, "failed to get session");
+		}
+	});
+
+const listSessions = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/list",
 		summary: "List sessions by campaign",
 	})
-	.input(ListSessionsByCampaignIdRequestSchema)
-	.output(ListSessionsByCampaignIdResponseSchema)
+	.input(ListSessionsRequestSchema)
+	.output(ListSessionsResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
-		const db = context.db;
-
-		const sessionsRow = await db
-			.select()
-			.from(sessionsTable)
-			.where(eq(sessionsTable.campaignId, campaignId));
-
-		return sessionsRow;
+		const api = context.api;
+		try {
+			const res = await api.session.listSessionsByCampaign({ campaignId });
+			return { sessions: res.sessions.map(protoToSession) };
+		} catch (err) {
+			throwConnectError(err, "failed to list sessions");
+		}
 	});
 
 export const sessionRouter = {
-	getSessionById,
-	listSessionsByCampaignId,
+	createSession,
+	getSession,
+	listSessions,
 };

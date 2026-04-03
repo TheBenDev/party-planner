@@ -1,6 +1,9 @@
 export enum StatusEnum {
 	PENDING = "PENDING",
 	ACCEPTED = "ACCEPTED",
+	REVOKED = "REVOKED",
+	DECLINED = "DECLINED",
+	EXPIRED = "EXPIRED",
 }
 
 export enum DayOfWeekEnum {
