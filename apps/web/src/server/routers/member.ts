@@ -13,7 +13,7 @@ import {
 	RemoveMemberRequestSchema,
 	RemoveMemberResponseSchema,
 } from "@planner/schemas/member";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import {
 	protoToCampaignInvitation,
@@ -52,7 +52,7 @@ const acceptCampaignInvitation = privateProcedure
 				member: protoToMember(res.member),
 			};
 		} catch (err) {
-			throwConnectError(err, "failed to accept campaign invitation");
+			handleError(err, "failed to accept campaign invitation");
 		}
 	});
 
@@ -80,7 +80,7 @@ const declineCampaignInvitation = privateProcedure
 			}
 			return protoToCampaignInvitation(inv.invitation);
 		} catch (err) {
-			throwConnectError(err, "Failed to decline campaign invitation");
+			handleError(err, "Failed to decline campaign invitation");
 		}
 	});
 const createMember = privateProcedure
@@ -105,7 +105,7 @@ const createMember = privateProcedure
 			}
 			return { member: protoToMember(res.member) };
 		} catch (err) {
-			throwConnectError(err, "failed to create member");
+			handleError(err, "failed to create member");
 		}
 	});
 
@@ -127,7 +127,7 @@ const getMember = privateProcedure
 			}
 			return { member: protoToMember(res.member) };
 		} catch (err) {
-			throwConnectError(err, "failed to get member");
+			handleError(err, "failed to get member");
 		}
 	});
 
@@ -146,7 +146,7 @@ const listMembers = privateProcedure
 			const res = await api.member.listMembers({ campaignId });
 			return { members: res.members.map(protoToMember) };
 		} catch (err) {
-			throwConnectError(err, "failed to list members");
+			handleError(err, "failed to list members");
 		}
 	});
 
@@ -165,7 +165,7 @@ const removeMember = privateProcedure
 			await api.member.removeMember({ campaignId, userId });
 			return {};
 		} catch (err) {
-			throwConnectError(err, "failed to remove member");
+			handleError(err, "failed to remove member");
 		}
 	});
 

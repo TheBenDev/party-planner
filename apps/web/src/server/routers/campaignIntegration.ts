@@ -8,7 +8,7 @@ import {
 	RemoveCampaignIntegrationRequestSchema,
 	RemoveCampaignIntegrationResponseSchema,
 } from "@planner/schemas/discord";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import {
 	integrationSourceToProto,
@@ -52,7 +52,7 @@ const createCampaignIntegration = privateProcedure
 			}
 			return { integration: protoToCampaignIntegration(result.integration) };
 		} catch (err) {
-			throwConnectError(err, "failed to create campaign integration");
+			handleError(err, "failed to create campaign integration");
 		}
 	});
 
@@ -79,7 +79,7 @@ const getCampaignIntegration = privateProcedure
 			}
 			return { integration: protoToCampaignIntegration(result.integration) };
 		} catch (err) {
-			throwConnectError(err, "failed to get campaign integration");
+			handleError(err, "failed to get campaign integration");
 		}
 	});
 
@@ -102,7 +102,7 @@ const removeCampaignIntegration = privateProcedure
 			});
 			return {};
 		} catch (err) {
-			throwConnectError(err, "failed to remove campaign integration");
+			handleError(err, "failed to remove campaign integration");
 		}
 	});
 

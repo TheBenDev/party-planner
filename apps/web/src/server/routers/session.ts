@@ -8,7 +8,7 @@ import {
 	ListSessionsRequestSchema,
 	ListSessionsResponseSchema,
 } from "@planner/schemas/sessions";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import { protoToSession } from "./util/proto/session";
 
@@ -39,7 +39,7 @@ const createSession = privateProcedure
 			}
 			return { session: protoToSession(res.session) };
 		} catch (err) {
-			throwConnectError(err, "failed to create session");
+			handleError(err, "failed to create session");
 		}
 	});
 
@@ -61,7 +61,7 @@ const getSession = privateProcedure
 			}
 			return { session: protoToSession(res.session) };
 		} catch (err) {
-			throwConnectError(err, "failed to get session");
+			handleError(err, "failed to get session");
 		}
 	});
 
@@ -80,7 +80,7 @@ const listSessions = privateProcedure
 			const res = await api.session.listSessionsByCampaign({ campaignId });
 			return { sessions: res.sessions.map(protoToSession) };
 		} catch (err) {
-			throwConnectError(err, "failed to list sessions");
+			handleError(err, "failed to list sessions");
 		}
 	});
 

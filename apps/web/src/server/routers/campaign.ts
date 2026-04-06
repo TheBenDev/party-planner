@@ -4,7 +4,7 @@ import {
 	CreateCampaignRequestSchema,
 	GetActiveCampaignResponseSchema,
 } from "@planner/schemas/campaigns";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import { protoToCampaign } from "./util/proto/campaign";
 
@@ -39,7 +39,7 @@ const createCampaign = privateProcedure
 				campaign: protoToCampaign(campaign),
 			};
 		} catch (err) {
-			throwConnectError(err, "failed to create campaign");
+			handleError(err, "failed to create campaign");
 		}
 	});
 
@@ -63,7 +63,7 @@ const getActiveCampaign = privateProcedure
 				campaign: protoToCampaign(campaign),
 			};
 		} catch (err) {
-			throwConnectError(err, "failed to get active campaign");
+			handleError(err, "failed to get active campaign");
 		}
 	});
 

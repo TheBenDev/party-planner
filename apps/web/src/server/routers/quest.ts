@@ -7,7 +7,7 @@ import {
 	ListQuestsByCampaignRequestSchema,
 	ListQuestsByCampaignResponseSchema,
 } from "@planner/schemas/quests";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import { protoToQuest, questStatusToProto } from "./util/proto/quest";
 
@@ -33,7 +33,7 @@ const createQuest = privateProcedure
 			}
 			return { quest: protoToQuest(res.quest) };
 		} catch (err) {
-			throwConnectError(err, "failed to create quest");
+			handleError(err, "failed to create quest");
 		}
 	});
 
@@ -55,7 +55,7 @@ const getQuest = privateProcedure
 			}
 			return { quest: protoToQuest(res.quest) };
 		} catch (err) {
-			throwConnectError(err, "failed to get quest");
+			handleError(err, "failed to get quest");
 		}
 	});
 
@@ -74,7 +74,7 @@ const listQuestsByCampaign = privateProcedure
 			const res = await api.quest.listQuestsByCampaign({ campaignId });
 			return { quests: res.quests.map(protoToQuest) };
 		} catch (err) {
-			throwConnectError(err, "failed to list quests");
+			handleError(err, "failed to list quests");
 		}
 	});
 

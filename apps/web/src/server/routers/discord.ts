@@ -417,8 +417,8 @@ const scheduleSession = discordProcedure
 				),
 			);
 
-		const availableUsers = userAvailabilitiesRow.map(
-			(user) => `${user.users.firstName} ${user.users.lastName}`,
+		const availableUsers = userAvailabilitiesRow.map((user) =>
+			`${user.users.firstName ?? ""} ${user.users.lastName ?? ""}`.trim(),
 		);
 
 		await db.insert(sessionsTable).values({
