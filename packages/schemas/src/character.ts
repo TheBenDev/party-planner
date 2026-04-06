@@ -15,14 +15,18 @@ export const CharactersSchema = BaseEntitySchema.extend({
 });
 
 export const GetCharacterRequestSchema = z.object({ id: z.uuid() });
-export const GetCharacterResponseSchema = CharactersSchema;
+export const GetCharacterResponseSchema = z.object({
+	character: CharactersSchema,
+});
 
 export const ListCharactersRequestSchema = z.object({
 	by: z.enum(ListByEnum),
 	id: z.uuid(),
 });
 
-export const ListCharactersResponseSchema = z.array(CharactersSchema);
+export const ListCharactersResponseSchema = z.object({
+	characters: z.array(CharactersSchema),
+});
 
 export type ListCharactersResponse = z.infer<
 	typeof ListCharactersResponseSchema

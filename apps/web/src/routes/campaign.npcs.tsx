@@ -12,13 +12,13 @@ export const Route = createFileRoute("/campaign/npcs")({
 function NPCSPage() {
 	const { campaign } = useAuth();
 
-	const { data: npcs = [], isLoading } = useQuery({
+	const { data: npcs = { npcs: [] }, isLoading } = useQuery({
 		enabled: Boolean(campaign),
 		queryFn: () =>
-			client.npc.listNonPlayerCharactersByCampaignId({
-				campaignId: campaign?.id ?? "",
+			client.npc.listNonPlayerCharacters({
+				campaignId: campaign?.campaign.id ?? "",
 			}),
-		queryKey: ["npcs"],
+		queryKey: ["npcs", "campaignId"],
 	});
 
 	if (isLoading) return <div>loading...</div>;
@@ -26,7 +26,7 @@ function NPCSPage() {
 	return (
 		<CampaignShell>
 			<div className="space-y-3 flex flex-col">
-				{npcs.map((npc) => {
+				{npcs.npcs.map((npc) => {
 					return (
 						<div
 							className="w-full h-80 border-2 flex flex-col items-center justify-center"

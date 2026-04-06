@@ -28,22 +28,49 @@ export const NonPlayerCharactersSchema = BaseEntitySchema.extend({
 	status: z.enum(CharacterStatusEnum),
 });
 
-export const GetNonPlayerCharacterByIdRequestSchema = z.object({
+export const CreateNpcRequestSchema = z.object({
+	age: z.string().optional(),
+	aliases: z.array(z.string()).default([]),
+	appearance: z.string().optional(),
+	avatar: z.string().optional(),
+	backstory: z.string().optional(),
+	campaignId: z.uuid(),
+	currentLocationId: z.uuid().optional(),
+	dmNotes: z.string().optional(),
+	foundryActorId: z.string().optional(),
+	isKnownToParty: z.boolean(),
+	knownName: z.string().optional(),
+	name: z.string(),
+	originLocationId: z.uuid().optional(),
+	personality: z.string().optional(),
+	playerNotes: z.string().optional(),
+	race: z.string().optional(),
+	relationToPartyStatus: z.enum(RelationToPartyEnum),
+	sessionEncounteredId: z.uuid().optional(),
+	status: z.enum(CharacterStatusEnum),
+});
+
+export const CreateNpcResponseSchema = z.object({
+	npc: NonPlayerCharactersSchema,
+});
+
+export const GetNonPlayerCharacterRequestSchema = z.object({
 	id: z.uuid(),
 });
-export const GetNonPlayerCharacterByIdResponseSchema =
-	NonPlayerCharactersSchema;
+export const GetNonPlayerCharacterResponseSchema = z.object({
+	npc: NonPlayerCharactersSchema,
+});
 
-export const ListNonPlayerCharactersByCampaignIdRequestSchema = z.object({
+export const ListNonPlayerCharactersRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 
-export const ListNonPlayerCharactersByCampaignIdResponseSchema = z.array(
-	NonPlayerCharactersSchema,
-);
+export const ListNonPlayerCharactersResponseSchema = z.object({
+	npcs: z.array(NonPlayerCharactersSchema),
+});
 
 export type ListCharactersResponse = z.infer<
-	typeof ListNonPlayerCharactersByCampaignIdResponseSchema
+	typeof ListNonPlayerCharactersResponseSchema
 >;
 
 export type NonPlayerCharacters = z.infer<typeof NonPlayerCharactersSchema>;

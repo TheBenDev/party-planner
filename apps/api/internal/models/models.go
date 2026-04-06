@@ -71,24 +71,29 @@ type CreateCampaignIntegrationRequest struct {
 	Settings   json.RawMessage
 }
 
-type CampaignUserRole string
+type MemberRole string
 
 const (
-	CampaignUserRolePlayer        CampaignUserRole = "PLAYER"
-	CampaignUserRoleDungeonMaster CampaignUserRole = "DUNGEON_MASTER"
+	MemberRolePlayer        MemberRole = "PLAYER"
+	MemberRoleDungeonMaster MemberRole = "DUNGEON_MASTER"
 )
 
-type CampaignUser struct {
+type Member struct {
 	CampaignID string
-	Role       CampaignUserRole
+	Role       MemberRole
 	UserID     string
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }
 
-type CreateCampaignUserRequest struct {
+type InvitationResponse struct {
+	Member     *Member
+	Invitation *CampaignInvitation
+}
+
+type CreateMemberRequest struct {
 	CampaignID string
-	Role       CampaignUserRole
+	Role       MemberRole
 	UserID     string
 }
 
@@ -100,6 +105,7 @@ const (
 	CharacterStatusAlive       CharacterStatus = "ALIVE"
 	CharacterStatusDead        CharacterStatus = "DEAD"
 	CharacterStatusMissing     CharacterStatus = "MISSING"
+	CharacterStatusSuspicious  CharacterStatus = "SUSPICIOUS"
 )
 
 type RelationToParty string
@@ -110,6 +116,7 @@ const (
 	RelationToPartyAlly        RelationToParty = "ALLY"
 	RelationToPartyEnemy       RelationToParty = "ENEMY"
 	RelationToPartyNeutral     RelationToParty = "NEUTRAL"
+	RelationToPartySuspicious  RelationToParty = "SUSPICIOUS"
 )
 
 type Npc struct {
@@ -209,18 +216,12 @@ type CreateSessionRequest struct {
 	StartsAt    sql.NullTime
 }
 
-type CampaignRole string
-
-const (
-	CampaignRolePlayer     CampaignRole = "PLAYER"
-	CampaignRoleGameMaster CampaignRole = "GAME_MASTER"
-)
-
 type InvitationStatus string
 
 const (
 	InvitationStatusPending  InvitationStatus = "PENDING"
 	InvitationStatusAccepted InvitationStatus = "ACCEPTED"
+	InvitationStatusRevoked  InvitationStatus = "REVOKED"
 	InvitationStatusDeclined InvitationStatus = "DECLINED"
 	InvitationStatusExpired  InvitationStatus = "EXPIRED"
 )
@@ -230,7 +231,7 @@ type CampaignInvitation struct {
 	CampaignID   string
 	InviterID    string
 	InviteeEmail string
-	Role         CampaignRole
+	Role         MemberRole
 	Status       InvitationStatus
 	AcceptedAt   sql.NullTime
 	ExpiresAt    time.Time
@@ -242,6 +243,6 @@ type CreateCampaignInvitationRequest struct {
 	CampaignID   string
 	InviterID    string
 	InviteeEmail string
-	Role         CampaignRole
+	Role         MemberRole
 	ExpiresAt    time.Time
 }

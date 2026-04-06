@@ -9,8 +9,6 @@ import {
 	GetAvailabilitiesResponseSchema,
 	GetNpcRequestSchema,
 	GetNpcResponseSchema,
-	RegisterCampaignRequestSchema,
-	RegisterCampaignResponseSchema,
 	RemoveAvailabilityRequestSchema,
 	ScheduleSessionRequestSchema,
 	SendMessageRequestSchema,
@@ -21,7 +19,6 @@ import { and, asc, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
 import { discordProcedure } from "../orpc";
 
 const {
-	campaignsTable,
 	sessionsTable,
 	campaignIntegrationsTable,
 	nonPlayerCharactersTable,
@@ -310,63 +307,6 @@ const getNpc = discordProcedure
 		return { npc: npcRow[0] };
 	});
 
-const registerCampaign = discordProcedure
-	.route({
-		method: "POST",
-		path: "/discord/register",
-		summary: "Register a campaign with a Discord server",
-	})
-	.input(RegisterCampaignRequestSchema)
-	.output(RegisterCampaignResponseSchema)
-	.handler(async ({ input, context }) => {
-		const db = context.db;
-		const { serverId, campaignId, channelId } = input;
-		if (!(serverId && campaignId && channelId)) {
-			throw new ORPCError("BAD_REQUEST", {
-				message: "missing params for register",
-			});
-		}
-
-		const campaignRow = await db
-			.select()
-			.from(campaignsTable)
-			.leftJoin(
-				campaignIntegrationsTable,
-				and(
-					eq(campaignIntegrationsTable.campaignId, campaignId),
-					eq(campaignIntegrationsTable.externalId, serverId),
-				),
-			)
-			.where(eq(campaignsTable.id, campaignId))
-			.limit(1);
-
-		if (campaignRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "Campaign not found" });
-		}
-
-		if (campaignRow[0].campaign_integrations !== null) {
-			throw new ORPCError("CONFLICT", {
-				message: "Campaign is already integrated with discord server",
-			});
-		}
-
-		const values = {
-			campaignId,
-			externalId: serverId,
-			metadata: { channelId, source: IntegrationSource.DISCORD },
-			settings: {
-				enableSessionReminders: true,
-				source: IntegrationSource.DISCORD,
-			},
-			source: IntegrationSource.DISCORD,
-		};
-
-		await db
-			.insert(campaignIntegrationsTable)
-			.values(values)
-			.onConflictDoNothing();
-	});
-
 const removeAvailability = discordProcedure
 	.route({
 		method: "DELETE",
@@ -593,7 +533,6 @@ export const discordRouter = {
 	clearAvailability,
 	getAvailabilities,
 	getNpc,
-	registerCampaign,
 	removeAvailability,
 	scheduleSession,
 	sendMessage,

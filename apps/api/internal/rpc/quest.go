@@ -7,7 +7,6 @@ import (
 	"log/slog"
 
 	"connectrpc.com/connect"
-	plannerv1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
 	model "github.com/BBruington/party-planner/api/internal/models"
@@ -29,7 +28,7 @@ func (s *QuestServer) CreateQuest(ctx context.Context, req *connect.Request[v1.C
 	if req.Msg.Title == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("title required"))
 	}
-	if req.Msg.Status == plannerv1.QuestStatus_QUEST_STATUS_UNSPECIFIED {
+	if req.Msg.Status == v1.QuestStatus_QUEST_STATUS_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("status required"))
 	}
 
@@ -98,29 +97,29 @@ func (s *QuestServer) ListQuestsByCampaign(ctx context.Context, req *connect.Req
 	}), nil
 }
 
-func protoToQuestStatus(s plannerv1.QuestStatus) (model.QuestStatus, error) {
+func protoToQuestStatus(s v1.QuestStatus) (model.QuestStatus, error) {
 	switch s {
-	case plannerv1.QuestStatus_QUEST_STATUS_ACTIVE:
+	case v1.QuestStatus_QUEST_STATUS_ACTIVE:
 		return model.QuestStatusActive, nil
-	case plannerv1.QuestStatus_QUEST_STATUS_COMPLETED:
+	case v1.QuestStatus_QUEST_STATUS_COMPLETED:
 		return model.QuestStatusCompleted, nil
-	case plannerv1.QuestStatus_QUEST_STATUS_FAILED:
+	case v1.QuestStatus_QUEST_STATUS_FAILED:
 		return model.QuestStatusFailed, nil
 	default:
 		return "", fmt.Errorf("unknown quest status: %v", s)
 	}
 }
 
-func questStatusToProto(s model.QuestStatus) plannerv1.QuestStatus {
+func questStatusToProto(s model.QuestStatus) v1.QuestStatus {
 	switch s {
 	case model.QuestStatusActive:
-		return plannerv1.QuestStatus_QUEST_STATUS_ACTIVE
+		return v1.QuestStatus_QUEST_STATUS_ACTIVE
 	case model.QuestStatusCompleted:
-		return plannerv1.QuestStatus_QUEST_STATUS_COMPLETED
+		return v1.QuestStatus_QUEST_STATUS_COMPLETED
 	case model.QuestStatusFailed:
-		return plannerv1.QuestStatus_QUEST_STATUS_FAILED
+		return v1.QuestStatus_QUEST_STATUS_FAILED
 	default:
-		return plannerv1.QuestStatus_QUEST_STATUS_UNSPECIFIED
+		return v1.QuestStatus_QUEST_STATUS_UNSPECIFIED
 	}
 }
 

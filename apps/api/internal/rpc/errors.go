@@ -23,6 +23,8 @@ func mapServiceError(err error, fallbackMsg string) error {
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case service.ErrCampaignIntegrationInvalidCampaign:
 		return connect.NewError(connect.CodeInvalidArgument, err)
+	case service.ErrInvitationExpired:
+		return connect.NewError(connect.CodeFailedPrecondition, err)
 	// Campaign User
 	case service.ErrCampaignUserNotFound:
 		return connect.NewError(connect.CodeNotFound, err)
@@ -33,6 +35,8 @@ func mapServiceError(err error, fallbackMsg string) error {
 	case service.ErrCampaignUserInvalidUser:
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	// Campaign Invitation
+	case service.ErrCampaignInvitationInvalidCampaign:
+		return connect.NewError(connect.CodeInvalidArgument, err)
 	case service.ErrCampaignInvitationNotFound:
 		return connect.NewError(connect.CodeNotFound, err)
 	case service.ErrCampaignInvitationAlreadyExists:

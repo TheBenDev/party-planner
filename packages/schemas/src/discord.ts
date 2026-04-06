@@ -5,6 +5,50 @@ import {
 import { DayOfWeekEnum } from "@planner/enums/common";
 import { IntegrationSource } from "@planner/enums/integration";
 import { z } from "zod";
+import { BaseEntitySchema } from "./common";
+
+export const CampaignIntegrationMetadataSchema = z.object({
+	channelId: z.string(),
+	source: z.enum(IntegrationSource),
+});
+export const CampaignIntegrationSettingsSchema = z.object({
+	enableSessionReminders: z.boolean(),
+	source: z.enum(IntegrationSource),
+});
+
+export const CampaignIntegrationSchema = BaseEntitySchema.extend({
+	campaignId: z.uuid(),
+	externalId: z.string(),
+	metaData: CampaignIntegrationMetadataSchema,
+	settings: CampaignIntegrationSettingsSchema,
+	source: z.enum(IntegrationSource),
+});
+
+export const GetCampaignIntegrationRequestSchema = z.object({
+	campaignId: z.uuid(),
+	source: z.enum(IntegrationSource),
+});
+
+export const GetCampaignIntegrationResponseSchema = z.object({
+	integration: CampaignIntegrationSchema,
+});
+
+export const CreateCampaignIntegrationRequestSchema = z.object({
+	campaignId: z.uuid(),
+	channelId: z.string(),
+	serverId: z.string(),
+});
+
+export const CreateCampaignIntegrationResponseSchema = z.object({
+	integration: CampaignIntegrationSchema,
+});
+
+export const RemoveCampaignIntegrationRequestSchema = z.object({
+	campaignId: z.uuid(),
+	source: z.enum(IntegrationSource),
+});
+
+export const RemoveCampaignIntegrationResponseSchema = z.object({});
 
 export const CheckNextSessionRequestSchema = z.object({
 	serverId: z.string(),
@@ -63,14 +107,6 @@ export const GetNpcResponseSchema = z.object({
 	}),
 });
 
-export const RegisterCampaignRequestSchema = z.object({
-	campaignId: z.string(),
-	channelId: z.string(),
-	serverId: z.string(),
-});
-
-export const RegisterCampaignResponseSchema = z.void();
-
 export const ScheduleSessionRequestSchema = z.object({
 	serverId: z.string(),
 	time: z.object({
@@ -116,3 +152,5 @@ export type DiscordIntegrationMetadata = z.infer<
 export type DiscordIntegrationSettings = z.infer<
 	typeof DiscordIntegrationSettingsSchema
 >;
+
+export type CampaignIntegration = z.infer<typeof CampaignIntegrationSchema>;

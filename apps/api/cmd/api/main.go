@@ -50,11 +50,8 @@ func main() {
 	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
 
-	campaignUserPath, campaignUserHandler := plannerv1connect.NewCampaignUserServiceHandler(&rpc.CampaignUserServer{CampaignUser: &service.CampaignUserService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
-	mux.Handle(campaignUserPath, campaignUserHandler)
-
-	campaignInvitationPath, campaignInvitationHandler := plannerv1connect.NewCampaignInvitationServiceHandler(&rpc.CampaignInvitationServer{CampaignInvitation: &service.CampaignInvitationService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
-	mux.Handle(campaignInvitationPath, campaignInvitationHandler)
+	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	mux.Handle(memberPath, memberHandler)
 
 	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
 	mux.Handle(npcPath, npcHandler)

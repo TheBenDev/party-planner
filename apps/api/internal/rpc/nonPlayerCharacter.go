@@ -7,7 +7,6 @@ import (
 	"log/slog"
 
 	"connectrpc.com/connect"
-	plannerv1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
 	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
 	model "github.com/BBruington/party-planner/api/internal/models"
@@ -28,10 +27,10 @@ func (s *NpcServer) CreateNpc(ctx context.Context, req *connect.Request[v1.Creat
 	if req.Msg.Name == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("name required"))
 	}
-	if req.Msg.Status == plannerv1.CharacterStatus_CHARACTER_STATUS_UNSPECIFIED {
+	if req.Msg.Status == v1.CharacterStatus_CHARACTER_STATUS_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("status required"))
 	}
-	if req.Msg.RelationToPartyStatus == plannerv1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED {
+	if req.Msg.RelationToPartyStatus == v1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("relation to party status required"))
 	}
 
@@ -109,63 +108,63 @@ func (s *NpcServer) ListNpcsByCampaign(ctx context.Context, req *connect.Request
 	}), nil
 }
 
-func protoToCharacterStatus(s plannerv1.CharacterStatus) (model.CharacterStatus, error) {
+func protoToCharacterStatus(s v1.CharacterStatus) (model.CharacterStatus, error) {
 	switch s {
-	case plannerv1.CharacterStatus_CHARACTER_STATUS_UNKNOWN:
+	case v1.CharacterStatus_CHARACTER_STATUS_UNKNOWN:
 		return model.CharacterStatusUnknown, nil
-	case plannerv1.CharacterStatus_CHARACTER_STATUS_ALIVE:
+	case v1.CharacterStatus_CHARACTER_STATUS_ALIVE:
 		return model.CharacterStatusAlive, nil
-	case plannerv1.CharacterStatus_CHARACTER_STATUS_DEAD:
+	case v1.CharacterStatus_CHARACTER_STATUS_DEAD:
 		return model.CharacterStatusDead, nil
-	case plannerv1.CharacterStatus_CHARACTER_STATUS_MISSING:
+	case v1.CharacterStatus_CHARACTER_STATUS_MISSING:
 		return model.CharacterStatusMissing, nil
 	default:
 		return "", fmt.Errorf("unknown character status: %v", s)
 	}
 }
 
-func characterStatusToProto(s model.CharacterStatus) plannerv1.CharacterStatus {
+func characterStatusToProto(s model.CharacterStatus) v1.CharacterStatus {
 	switch s {
 	case model.CharacterStatusUnknown:
-		return plannerv1.CharacterStatus_CHARACTER_STATUS_UNKNOWN
+		return v1.CharacterStatus_CHARACTER_STATUS_UNKNOWN
 	case model.CharacterStatusAlive:
-		return plannerv1.CharacterStatus_CHARACTER_STATUS_ALIVE
+		return v1.CharacterStatus_CHARACTER_STATUS_ALIVE
 	case model.CharacterStatusDead:
-		return plannerv1.CharacterStatus_CHARACTER_STATUS_DEAD
+		return v1.CharacterStatus_CHARACTER_STATUS_DEAD
 	case model.CharacterStatusMissing:
-		return plannerv1.CharacterStatus_CHARACTER_STATUS_MISSING
+		return v1.CharacterStatus_CHARACTER_STATUS_MISSING
 	default:
-		return plannerv1.CharacterStatus_CHARACTER_STATUS_UNSPECIFIED
+		return v1.CharacterStatus_CHARACTER_STATUS_UNSPECIFIED
 	}
 }
 
-func protoToRelationToParty(r plannerv1.RelationToParty) (model.RelationToParty, error) {
+func protoToRelationToParty(r v1.RelationToParty) (model.RelationToParty, error) {
 	switch r {
-	case plannerv1.RelationToParty_RELATION_TO_PARTY_UNKNOWN:
+	case v1.RelationToParty_RELATION_TO_PARTY_UNKNOWN:
 		return model.RelationToPartyUnknown, nil
-	case plannerv1.RelationToParty_RELATION_TO_PARTY_ALLY:
+	case v1.RelationToParty_RELATION_TO_PARTY_ALLY:
 		return model.RelationToPartyAlly, nil
-	case plannerv1.RelationToParty_RELATION_TO_PARTY_ENEMY:
+	case v1.RelationToParty_RELATION_TO_PARTY_ENEMY:
 		return model.RelationToPartyEnemy, nil
-	case plannerv1.RelationToParty_RELATION_TO_PARTY_NEUTRAL:
+	case v1.RelationToParty_RELATION_TO_PARTY_NEUTRAL:
 		return model.RelationToPartyNeutral, nil
 	default:
 		return "", fmt.Errorf("unknown relation to party: %v", r)
 	}
 }
 
-func relationToPartyToProto(r model.RelationToParty) plannerv1.RelationToParty {
+func relationToPartyToProto(r model.RelationToParty) v1.RelationToParty {
 	switch r {
 	case model.RelationToPartyUnknown:
-		return plannerv1.RelationToParty_RELATION_TO_PARTY_UNKNOWN
+		return v1.RelationToParty_RELATION_TO_PARTY_UNKNOWN
 	case model.RelationToPartyAlly:
-		return plannerv1.RelationToParty_RELATION_TO_PARTY_ALLY
+		return v1.RelationToParty_RELATION_TO_PARTY_ALLY
 	case model.RelationToPartyEnemy:
-		return plannerv1.RelationToParty_RELATION_TO_PARTY_ENEMY
+		return v1.RelationToParty_RELATION_TO_PARTY_ENEMY
 	case model.RelationToPartyNeutral:
-		return plannerv1.RelationToParty_RELATION_TO_PARTY_NEUTRAL
+		return v1.RelationToParty_RELATION_TO_PARTY_NEUTRAL
 	default:
-		return plannerv1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED
+		return v1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED
 	}
 }
 

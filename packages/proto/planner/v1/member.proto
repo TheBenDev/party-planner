@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+service MemberService {
+  rpc AcceptCampaignInvitation(AcceptCampaignInvitationRequest) returns (AcceptCampaignInvitationResponse);
+  rpc CreateMember(CreateMemberRequest) returns (CreateMemberResponse);
+  rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
+  rpc GetMember(GetMemberRequest) returns (GetMemberResponse);
+  rpc ListMembers(ListMembersRequest) returns (ListMembersResponse);
+  rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse);
+}
+
+enum InvitationStatus {
+  INVITATION_STATUS_UNSPECIFIED = 0;
+  INVITATION_STATUS_PENDING = 1;
+  INVITATION_STATUS_ACCEPTED = 2;
+  INVITATION_STATUS_EXPIRED = 3;
+  INVITATION_STATUS_DECLINED = 4;
+  INVITATION_STATUS_REVOKED = 5;
+}
+
+enum MemberRole {
+  MEMBER_ROLE_UNSPECIFIED = 0;
+  MEMBER_ROLE_PLAYER = 1;
+  MEMBER_ROLE_DUNGEON_MASTER = 2;
+}
+
+message CampaignInvitation {
+  string id = 1;
+  string campaign_id = 2;
+  string inviter_id = 3;
+  string invitee_email = 4;
+  MemberRole role = 5;
+  InvitationStatus status = 6;
+  optional google.protobuf.Timestamp accepted_at = 7;
+  google.protobuf.Timestamp expires_at = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message Member {
+  string campaign_id = 1;
+  string user_id = 2;
+  MemberRole role = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+}
+
+message CreateMemberRequest {
+  string campaign_id = 1;
+  string user_id = 2;
+  MemberRole role = 3;
+}
+
+message CreateMemberResponse {
+  Member member = 1;
+}
+
+message GetMemberRequest {
+  string campaign_id = 1;
+  string user_id = 2;
+}
+
+message GetMemberResponse {
+  Member member = 1;
+}
+
+message ListMembersRequest {
+  string campaign_id = 1;
+}
+
+message ListMembersResponse {
+  repeated Member members = 1;
+}
+
+message RemoveMemberRequest {
+  string campaign_id = 1;
+  string user_id = 2;
+}
+
+message RemoveMemberResponse {}
+
+message AcceptCampaignInvitationRequest {
+  string campaign_id = 1;
+  string invitee_email = 2;
+}
+
+message AcceptCampaignInvitationResponse {
+  Member member = 1;
+  CampaignInvitation invitation = 2;
+}
+
+message DeclineCampaignInvitationRequest {
+  string campaign_id = 1;
+  string invitee_email = 2;
+}
+
+message DeclineCampaignInvitationResponse {
+  CampaignInvitation invitation = 1;
+}

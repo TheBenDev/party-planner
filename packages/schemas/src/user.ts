@@ -19,17 +19,12 @@ export const CreateUserRequestSchema = z.object({
 	firstName: z.string().nullable(),
 	lastName: z.string().nullable(),
 });
-export const CreateUserResponseSchema = z.void();
+export const CreateUserResponseSchema = z.object({
+	user: UserSchema,
+});
 
 export const GetUserRequestSchema = z.object({ id: z.uuid() });
-export const GetUserResponseSchema = z.object({
-	avatar: z.string().nullable(),
-	email: z.email(),
-	externalId: z.string(),
-	firstName: z.string().nullable(),
-	id: z.uuid(),
-	lastName: z.string().nullable(),
-});
+export const GetUserResponseSchema = z.object({ user: UserSchema });
 
 export const GetAuthRequestSchema = z.object({
 	userId: z.uuid(),

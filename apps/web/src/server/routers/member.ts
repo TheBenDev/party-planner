@@ -1,195 +1,179 @@
-import { ORPCError } from "@orpc/server";
-import { schema } from "@planner/database";
-import { StatusEnum } from "@planner/enums/common";
+import { ORPCError } from "@orpc/client";
 import {
-	AcceptMemberInvitationRequestSchema,
-	InviteMemberToCampaignRequest,
+	AcceptCampaignInvitationRequestSchema,
+	AcceptCampaignInvitationResponseSchema,
+	CreateMemberRequestSchema,
+	CreateMemberResponseSchema,
+	DeclineCampaignInvitationRequestSchema,
+	DeclineCampaignInvitationResponseSchema,
+	GetMemberRequestSchema,
+	GetMemberResponseSchema,
+	ListMembersRequestSchema,
+	ListMembersResponseSchema,
+	RemoveMemberRequestSchema,
+	RemoveMemberResponseSchema,
 } from "@planner/schemas/member";
-import { and, eq } from "drizzle-orm";
+import { throwConnectError } from "../connectErrors";
 import { privateProcedure } from "../orpc";
-
-const { campaignInvitationsTable, campaignUsersTable, usersTable } = schema;
+import {
+	protoToCampaignInvitation,
+	protoToMember,
+	userRoleToProtoRole,
+} from "./util/proto/member";
 
 const acceptCampaignInvitation = privateProcedure
 	.route({
 		method: "POST",
 		path: "/member/accept",
-		summary: "Accept a campaign invitation",
+		summary: "Accept invitation to a campaign",
 	})
-	.input(AcceptMemberInvitationRequestSchema)
+	.input(AcceptCampaignInvitationRequestSchema)
+	.output(AcceptCampaignInvitationResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { campaignId, inviteeEmail, inviterId, role } = input;
-		const db = context.db;
-		const userId = context.userId;
+		const { campaignId, inviteeEmail } = input;
+		const api = context.api;
 
-		await db.transaction(async (tx) => {
-			const invitationRow = await tx
-				.select()
-				.from(campaignInvitationsTable)
-				.leftJoin(
-					campaignUsersTable,
-					and(
-						eq(campaignUsersTable.userId, inviterId),
-						eq(campaignUsersTable.campaignId, campaignId),
-					),
-				)
-				.leftJoin(usersTable, eq(usersTable.id, userId))
-				.where(
-					and(
-						eq(campaignInvitationsTable.inviteeEmail, inviteeEmail),
-						eq(campaignInvitationsTable.campaignId, campaignId),
-					),
-				);
-
-			if (invitationRow.length === 0) {
+		try {
+			const res = await api.member.acceptCampaignInvitation({
+				campaignId,
+				inviteeEmail,
+			});
+			if (res.member === undefined) {
+				throw new ORPCError("NOT_FOUND", { message: "could not find user" });
+			}
+			if (res.invitation === undefined) {
 				throw new ORPCError("NOT_FOUND", {
-					message: "Campaign Invitation not found",
+					message: "could not find invitation",
 				});
 			}
 
-			const invitation = invitationRow[0];
-
-			if (invitation.users?.email !== inviteeEmail) {
-				throw new ORPCError("FORBIDDEN", {
-					message: "Email does not match invitation",
-				});
-			}
-
-			if (invitation.campaign_users === null) {
-				throw new ORPCError("FORBIDDEN", {
-					message:
-						"Invitation is invalid - inviter is not a member of this campaign",
-				});
-			}
-
-			if (invitation.campaign_invitations.status === StatusEnum.ACCEPTED) {
-				throw new ORPCError("BAD_REQUEST", {
-					message: "Invitation has already been accepted",
-				});
-			}
-
-			const currentTime = new Date();
-			if (
-				invitation.campaign_invitations.expiresAt &&
-				new Date(invitation.campaign_invitations.expiresAt) < currentTime
-			) {
-				throw new ORPCError("BAD_REQUEST", {
-					message: "Invitation has expired",
-				});
-			}
-
-			await Promise.all([
-				tx
-					.update(campaignInvitationsTable)
-					.set({ acceptedAt: currentTime, status: StatusEnum.ACCEPTED })
-					.where(
-						and(
-							eq(campaignInvitationsTable.inviteeEmail, inviteeEmail),
-							eq(campaignInvitationsTable.campaignId, campaignId),
-						),
-					),
-				tx.insert(campaignUsersTable).values({
-					campaignId,
-					role,
-					userId,
-				}),
-			]);
-		});
+			return {
+				invitation: protoToCampaignInvitation(res.invitation),
+				member: protoToMember(res.member),
+			};
+		} catch (err) {
+			throwConnectError(err, "failed to accept campaign invitation");
+		}
 	});
 
-const inviteMemberToCampaign = privateProcedure
+const declineCampaignInvitation = privateProcedure
 	.route({
 		method: "POST",
-		path: "/member/invite",
-		summary: "Invite a member to a campaign",
+		path: "/member/decline",
+		summary: "Decline invitation to a campaign",
 	})
-	.input(InviteMemberToCampaignRequest)
+	.input(DeclineCampaignInvitationRequestSchema)
+	.output(DeclineCampaignInvitationResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { campaignId, inviteeEmail, role } = input;
-		const db = context.db;
-		const inviterId = context.userId;
+		const { campaignId, inviteeEmail } = input;
+		const api = context.api;
 
-		const expiresAt = new Date();
-		expiresAt.setDate(expiresAt.getDate() + 7);
-
-		await db.transaction(async (tx) => {
-			const [inviteeRow, inviterRow, invitationRow] = await Promise.all([
-				tx
-					.select()
-					.from(usersTable)
-					.leftJoin(
-						campaignUsersTable,
-						and(
-							eq(usersTable.id, campaignUsersTable.userId),
-							eq(campaignUsersTable.campaignId, campaignId),
-						),
-					)
-					.where(eq(usersTable.email, inviteeEmail))
-					.limit(1),
-				tx
-					.select()
-					.from(campaignUsersTable)
-					.where(
-						and(
-							eq(campaignUsersTable.userId, inviterId),
-							eq(campaignUsersTable.campaignId, campaignId),
-						),
-					)
-					.limit(1),
-				tx
-					.select()
-					.from(campaignInvitationsTable)
-					.where(
-						and(
-							eq(campaignInvitationsTable.inviteeEmail, inviteeEmail),
-							eq(campaignInvitationsTable.campaignId, campaignId),
-							eq(campaignInvitationsTable.status, StatusEnum.PENDING),
-						),
-					)
-					.limit(1),
-			]);
-
-			if (inviterRow.length === 0) {
-				throw new ORPCError("FORBIDDEN", {
-					message: "Must be a member of the campaign to invite someone",
-				});
-			}
-
-			if (inviteeRow.length > 0 && inviteeRow[0].campaign_users !== null) {
-				throw new ORPCError("CONFLICT", {
-					message: "User is already a member of the campaign",
-				});
-			}
-
-			if (invitationRow.length > 0) {
-				if (new Date(invitationRow[0].expiresAt) < new Date()) {
-					await tx
-						.update(campaignInvitationsTable)
-						.set({ expiresAt })
-						.where(
-							and(
-								eq(campaignInvitationsTable.inviteeEmail, inviteeEmail),
-								eq(campaignInvitationsTable.campaignId, campaignId),
-							),
-						);
-					return;
-				}
-				throw new ORPCError("CONFLICT", {
-					message: "User is already invited to the campaign",
-				});
-			}
-
-			await tx.insert(campaignInvitationsTable).values({
+		try {
+			const inv = await api.member.declineCampaignInvitation({
 				campaignId,
-				expiresAt,
 				inviteeEmail,
-				inviterId,
-				role,
 			});
-		});
+			if (inv.invitation === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to decline campaign invitation",
+				});
+			}
+			return protoToCampaignInvitation(inv.invitation);
+		} catch (err) {
+			throwConnectError(err, "Failed to decline campaign invitation");
+		}
+	});
+const createMember = privateProcedure
+	.route({
+		method: "POST",
+		path: "/member",
+		summary: "Add a member to a campaign",
+	})
+	.input(CreateMemberRequestSchema)
+	.output(CreateMemberResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { campaignId, userId, role } = input;
+		const api = context.api;
+		try {
+			const res = await api.member.createMember({
+				campaignId,
+				role: userRoleToProtoRole(role),
+				userId,
+			});
+			if (res.member === undefined) {
+				throw new ORPCError("NOT_FOUND", { message: "could not find member" });
+			}
+			return { member: protoToMember(res.member) };
+		} catch (err) {
+			throwConnectError(err, "failed to create member");
+		}
+	});
+
+const getMember = privateProcedure
+	.route({
+		method: "GET",
+		path: "/member",
+		summary: "Get a campaign member",
+	})
+	.input(GetMemberRequestSchema)
+	.output(GetMemberResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { campaignId, userId } = input;
+		const api = context.api;
+		try {
+			const res = await api.member.getMember({ campaignId, userId });
+			if (res.member === undefined) {
+				throw new ORPCError("NOT_FOUND", { message: "could not find member" });
+			}
+			return { member: protoToMember(res.member) };
+		} catch (err) {
+			throwConnectError(err, "failed to get member");
+		}
+	});
+
+const listMembers = privateProcedure
+	.route({
+		method: "GET",
+		path: "/member/list",
+		summary: "List all members of a campaign",
+	})
+	.input(ListMembersRequestSchema)
+	.output(ListMembersResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { campaignId } = input;
+		const api = context.api;
+		try {
+			const res = await api.member.listMembers({ campaignId });
+			return { members: res.members.map(protoToMember) };
+		} catch (err) {
+			throwConnectError(err, "failed to list members");
+		}
+	});
+
+const removeMember = privateProcedure
+	.route({
+		method: "DELETE",
+		path: "/member",
+		summary: "Remove a member from a campaign",
+	})
+	.input(RemoveMemberRequestSchema)
+	.output(RemoveMemberResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { campaignId, userId } = input;
+		const api = context.api;
+		try {
+			await api.member.removeMember({ campaignId, userId });
+			return {};
+		} catch (err) {
+			throwConnectError(err, "failed to remove member");
+		}
 	});
 
 export const memberRouter = {
 	acceptCampaignInvitation,
-	inviteMemberToCampaign,
+	createMember,
+	declineCampaignInvitation,
+	getMember,
+	listMembers,
+	removeMember,
 };

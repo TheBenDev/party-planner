@@ -31,7 +31,7 @@ function CreateCampaignForm() {
 			});
 		},
 		onSuccess: (res) => {
-			navigate({ to: `/campaign/${res.id}` });
+			navigate({ to: `/campaign/${res.campaign.id}` });
 		},
 	});
 

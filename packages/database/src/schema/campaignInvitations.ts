@@ -1,10 +1,11 @@
 import { StatusEnum } from "@planner/enums/common";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	foreignKey,
 	pgEnum,
 	pgTable,
 	timestamp,
+	uniqueIndex,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
@@ -48,6 +49,9 @@ export const campaignInvitationsTable = pgTable(
 			foreignColumns: [usersTable.id],
 			name: "fk_invitation_inviter_id",
 		}).onDelete("cascade"),
+		uniqueIndex("one_pending_invite_per_email")
+			.on(t.campaignId, t.inviteeEmail)
+			.where(sql`${t.status} = 'PENDING'`),
 	],
 );
 
