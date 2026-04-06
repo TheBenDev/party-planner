@@ -1,200 +1,105 @@
-import type { CreateCampaignRequest } from "@planner/schemas/campaigns";
-import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/auth";
-import { client } from "@/lib/client";
 
 export const Route = createFileRoute("/")({
-	component: CreateCampaignForm,
+	component: Page,
 });
 
-export type CreateCampaignFormType = {
-	title: string;
-	description: string;
-};
-
-function CreateCampaignForm() {
-	const [tags, setTags] = useState<string[]>([]);
-	const [tagInput, setTagInput] = useState("");
-	const navigate = useNavigate();
-	const { user } = useAuth();
-
-	const { mutate: createCampaign } = useMutation({
-		mutationFn: (c: CreateCampaignRequest) => client.campaign.createCampaign(c),
-		onError: (error) => {
-			toast.error("something went wrong creating campaign.", {
-				description: error.message,
-			});
-		},
-		onSuccess: (res) => {
-			navigate({ to: `/campaign/${res.campaign.id}` });
-		},
-	});
-
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			description: "",
-			title: "",
-		},
-	});
-
-	if (!user) {
-		return <div>Must be signed in to create a campaign</div>;
-	}
-
-	const addTag = (e: React.MouseEvent | React.KeyboardEvent) => {
-		e.preventDefault();
-		if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-			setTags([...tags, tagInput.trim()]);
-			setTagInput("");
-		}
-	};
-
-	const removeTag = (tagToRemove: string) => {
-		setTags(tags.filter((tag) => tag !== tagToRemove));
-	};
-
-	const onSubmit = (data: CreateCampaignFormType) => {
-		const formData: CreateCampaignRequest = {
-			...data,
-			tags,
-		};
-
-		createCampaign(formData);
-	};
-
+function Page() {
 	return (
-		<div className="min-h-screen bg-background py-12 px-4">
-			<div className="max-w-2xl mx-auto">
-				<div className="bg-card rounded-2xl shadow-lg border border-border p-8">
-					<div className="mb-8">
-						<h1 className="text-4xl font-bold text-foreground mb-2">
-							Create Your Campaign
-						</h1>
-						<p className="text-muted-foreground">
-							Begin your next epic D&D adventure
+		<div className="min-h-screen w-full bg-background">
+			{/* Hero */}
+			<section className="flex flex-col items-center text-center py-24 px-4">
+				<h1 className="text-4xl font-bold max-w-2xl">
+					Welcome to Party Planner. Where running a D&D campaign becomes easy!
+				</h1>
+				<p className="text-lg text-muted-foreground mt-4 max-w-xl">
+					Schedule sessions, manage NPCs, sync with Foundry, and keep your party
+					in the loop — all in one place.
+				</p>
+				<Button className="mt-6">Start building for free</Button>
+			</section>
+
+			{/* How it works */}
+			<section className="flex flex-col items-center text-center py-16 px-4 bg-muted">
+				<h2 className="text-2xl font-bold">How it works</h2>
+				<div className="flex flex-col md:flex-row gap-8 mt-8 max-w-3xl w-full justify-center">
+					<div className="flex-1">
+						<p className="font-semibold">1. Create your campaign</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							Set up your world, players, and NPCs in minutes.
 						</p>
 					</div>
-
-					<div className="space-y-6">
-						<div>
-							<label
-								className="block text-sm font-medium text-foreground mb-2"
-								htmlFor="title"
-							>
-								Campaign Title
-							</label>
-							<input
-								{...register("title", {
-									minLength: {
-										message: "Title must be at least 3 characters",
-										value: 3,
-									},
-									required: "Campaign title is required",
-								})}
-								className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition"
-								id="title"
-								placeholder="The Lost Mines of Phandelver"
-								type="text"
-							/>
-							{errors.title && (
-								<p className="mt-1 text-sm text-destructive">
-									{errors.title.message}
-								</p>
-							)}
-						</div>
-
-						<div>
-							<label
-								className="block text-sm font-medium text-foreground mb-2"
-								htmlFor="description"
-							>
-								Description
-							</label>
-							<textarea
-								{...register("description", {
-									minLength: {
-										message: "Description must be at least 10 characters",
-										value: 10,
-									},
-									required: "Description is required",
-								})}
-								className="w-full px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition resize-none"
-								id="description"
-								placeholder="A tale of heroes, dragons, and forgotten treasures..."
-								rows={5}
-							/>
-							{errors.description && (
-								<p className="mt-1 text-sm text-destructive">
-									{errors.description.message}
-								</p>
-							)}
-						</div>
-
-						<div>
-							<label
-								className="block text-sm font-medium text-foreground mb-2"
-								htmlFor="tags"
-							>
-								Tags
-							</label>
-							<div className="flex gap-2 mb-3">
-								<input
-									className="flex-1 px-4 py-3 bg-background border border-input rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition"
-									id="tags"
-									onChange={(e) => setTagInput(e.target.value)}
-									onKeyDown={(e) => e.key === "Enter" && addTag(e)}
-									placeholder="e.g., Fantasy, High-Level, Homebrew"
-									type="text"
-									value={tagInput}
-								/>
-								<Button
-									className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg transition"
-									onClick={addTag}
-								>
-									Add
-								</Button>
-							</div>
-
-							{tags.length > 0 && (
-								<div className="flex flex-wrap gap-2">
-									{tags.map((tag, index) => (
-										<span
-											className="inline-flex items-center gap-2 px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm border border-border"
-											key={index}
-										>
-											{tag}
-											<button
-												className="hover:text-destructive transition"
-												onClick={() => removeTag(tag)}
-												type="button"
-											>
-												×
-											</button>
-										</span>
-									))}
-								</div>
-							)}
-						</div>
-
-						<button
-							className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg transition transform hover:scale-[1.02] active:scale-[0.98]"
-							onClick={handleSubmit(onSubmit)}
-							type="button"
-						>
-							Create Campaign
-						</button>
+					<div className="flex-1">
+						<p className="font-semibold">2. Invite via Discord</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							The bot handles scheduling, reminders, and recap publishing.
+						</p>
+					</div>
+					<div className="flex-1">
+						<p className="font-semibold">3. Run your session</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							Get an AI-generated brief before every session with full context.
+						</p>
 					</div>
 				</div>
-			</div>
+			</section>
+
+			{/* Features */}
+			<section className="flex flex-col items-center text-center py-16 px-4">
+				<h2 className="text-2xl font-bold">Everything a DM needs</h2>
+				<div className="flex flex-col md:flex-row gap-8 mt-8 max-w-4xl w-full">
+					<div className="flex-1">
+						<p className="font-semibold">Session Scheduling</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							Create sessions, poll your party for availability, and send
+							automatic reminders.
+						</p>
+					</div>
+					<div className="flex-1">
+						<p className="font-semibold">NPC & Lore Management</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							Track relationships, factions, locations, and plot arcs across
+							your entire campaign.
+						</p>
+					</div>
+					<div className="flex-1">
+						<p className="font-semibold">Foundry VTT Sync</p>
+						<p className="text-muted-foreground text-sm mt-1">
+							Keep your game data in sync between Party Planner and Foundry
+							automatically.
+						</p>
+					</div>
+				</div>
+			</section>
+
+			{/* Discord callout */}
+			<section className="flex flex-col items-center text-center py-16 px-4 bg-muted">
+				<h2 className="text-2xl font-bold">Built around Discord</h2>
+				<p className="text-muted-foreground mt-4 max-w-xl">
+					Party Planner's bot lives in your server. It schedules sessions,
+					publishes recaps, and keeps your players informed without them ever
+					needing to open the app.
+				</p>
+			</section>
+
+			{/* AI callout */}
+			<section className="flex flex-col items-center text-center py-16 px-4">
+				<h2 className="text-2xl font-bold">AI that knows your campaign</h2>
+				<p className="text-muted-foreground mt-4 max-w-xl">
+					Generate NPC backstories, get a pre-session brief of open plot
+					threads, and publish AI-assisted recaps after every session.
+				</p>
+			</section>
+
+			{/* Bottom CTA */}
+			<section className="flex flex-col items-center text-center py-24 px-4 bg-muted">
+				<h2 className="text-2xl font-bold">Ready to run a better campaign?</h2>
+				<p className="text-muted-foreground mt-4">
+					Free to get started. No credit card required.
+				</p>
+				<Button className="mt-6">Start building for free</Button>
+			</section>
 		</div>
 	);
 }
