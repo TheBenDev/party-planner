@@ -5,7 +5,7 @@ import CampaignShell from "@/components/campaign-shell";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
-export const Route = createFileRoute("/campaign/npcs")({
+export const Route = createFileRoute("/campaign/npcs/")({
 	component: NPCSPage,
 });
 

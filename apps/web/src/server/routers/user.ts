@@ -4,7 +4,7 @@ import {
 	CreateUserResponseSchema,
 	GetUserResponseSchema,
 } from "@planner/schemas/user";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure, publicProcedure } from "../orpc";
 import { protoToUser } from "./util/proto/user";
 
@@ -35,7 +35,7 @@ const createUser = publicProcedure
 			}
 			return { user: protoToUser(user) };
 		} catch (err) {
-			throwConnectError(err, "failed to create user");
+			handleError(err, "failed to create user");
 		}
 	});
 
@@ -56,7 +56,7 @@ const getUser = privateProcedure
 			}
 			return { user: protoToUser(user) };
 		} catch (err) {
-			throwConnectError(err, "failed to get user");
+			handleError(err, "failed to get user");
 		}
 	});
 

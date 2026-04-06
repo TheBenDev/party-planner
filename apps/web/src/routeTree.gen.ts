@@ -11,10 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CampaignRouteImport } from './routes/campaign'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CampaignNpcsRouteImport } from './routes/campaign.npcs'
+import { Route as CampaignIndexRouteImport } from './routes/campaign/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as CampaignNpcsIndexRouteImport } from './routes/campaign/npcs/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
 
 const SignInRoute = SignInRouteImport.update({
@@ -27,24 +27,24 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CampaignRoute = CampaignRouteImport.update({
-  id: '/campaign',
-  path: '/campaign',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CampaignNpcsRoute = CampaignNpcsRouteImport.update({
-  id: '/npcs',
-  path: '/npcs',
-  getParentRoute: () => CampaignRoute,
+const CampaignIndexRoute = CampaignIndexRouteImport.update({
+  id: '/campaign/',
+  path: '/campaign/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CampaignNpcsIndexRoute = CampaignNpcsIndexRouteImport.update({
+  id: '/campaign/npcs/',
+  path: '/campaign/npcs/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
@@ -55,69 +55,70 @@ const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/campaign': typeof CampaignRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/sign-in': typeof SignInRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/npcs': typeof CampaignNpcsRoute
+  '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/npcs/': typeof CampaignNpcsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/campaign': typeof CampaignRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/sign-in': typeof SignInRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/npcs': typeof CampaignNpcsRoute
+  '/campaign': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/npcs': typeof CampaignNpcsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/campaign': typeof CampaignRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/sign-in': typeof SignInRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/npcs': typeof CampaignNpcsRoute
+  '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/npcs/': typeof CampaignNpcsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/campaign'
     | '/dashboard'
     | '/sign-in'
     | '/api/$'
-    | '/campaign/npcs'
+    | '/campaign/'
     | '/api/webhooks/clerk'
+    | '/campaign/npcs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/campaign'
     | '/dashboard'
     | '/sign-in'
     | '/api/$'
-    | '/campaign/npcs'
+    | '/campaign'
     | '/api/webhooks/clerk'
+    | '/campaign/npcs'
   id:
     | '__root__'
     | '/'
-    | '/campaign'
     | '/dashboard'
     | '/sign-in'
     | '/api/$'
-    | '/campaign/npcs'
+    | '/campaign/'
     | '/api/webhooks/clerk'
+    | '/campaign/npcs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CampaignRoute: typeof CampaignRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   SignInRoute: typeof SignInRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  CampaignIndexRoute: typeof CampaignIndexRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
+  CampaignNpcsIndexRoute: typeof CampaignNpcsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -136,13 +137,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaign': {
-      id: '/campaign'
-      path: '/campaign'
-      fullPath: '/campaign'
-      preLoaderRoute: typeof CampaignRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -150,18 +144,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaign/npcs': {
-      id: '/campaign/npcs'
-      path: '/npcs'
-      fullPath: '/campaign/npcs'
-      preLoaderRoute: typeof CampaignNpcsRouteImport
-      parentRoute: typeof CampaignRoute
+    '/campaign/': {
+      id: '/campaign/'
+      path: '/campaign'
+      fullPath: '/campaign/'
+      preLoaderRoute: typeof CampaignIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
       fullPath: '/api/$'
       preLoaderRoute: typeof ApiSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/campaign/npcs/': {
+      id: '/campaign/npcs/'
+      path: '/campaign/npcs'
+      fullPath: '/campaign/npcs/'
+      preLoaderRoute: typeof CampaignNpcsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/webhooks/clerk': {
@@ -174,25 +175,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CampaignRouteChildren {
-  CampaignNpcsRoute: typeof CampaignNpcsRoute
-}
-
-const CampaignRouteChildren: CampaignRouteChildren = {
-  CampaignNpcsRoute: CampaignNpcsRoute,
-}
-
-const CampaignRouteWithChildren = CampaignRoute._addFileChildren(
-  CampaignRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CampaignRoute: CampaignRouteWithChildren,
   DashboardRoute: DashboardRoute,
   SignInRoute: SignInRoute,
   ApiSplatRoute: ApiSplatRoute,
+  CampaignIndexRoute: CampaignIndexRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
+  CampaignNpcsIndexRoute: CampaignNpcsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

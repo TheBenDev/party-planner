@@ -7,7 +7,7 @@ import {
 	ListNonPlayerCharactersRequestSchema,
 	ListNonPlayerCharactersResponseSchema,
 } from "@planner/schemas/nonPlayerCharacters";
-import { throwConnectError } from "../connectErrors";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 import {
 	characterStatusToProto,
@@ -40,7 +40,7 @@ const createNpc = privateProcedure
 			}
 			return { npc: protoToNpc(res.npc) };
 		} catch (err) {
-			throwConnectError(err, "failed to create npc");
+			handleError(err, "failed to create npc");
 		}
 	});
 
@@ -62,7 +62,7 @@ const getNonPlayerCharacter = privateProcedure
 			}
 			return { npc: protoToNpc(res.npc) };
 		} catch (err) {
-			throwConnectError(err, "failed to get npc");
+			handleError(err, "failed to get npc");
 		}
 	});
 
@@ -83,7 +83,7 @@ const listNonPlayerCharacters = privateProcedure
 			});
 			return { npcs: res.npcs.map(protoToNpc) };
 		} catch (err) {
-			throwConnectError(err, "failed to list npcs");
+			handleError(err, "failed to list npcs");
 		}
 	});
 

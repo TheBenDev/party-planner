@@ -1,5 +1,6 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/client";
+import { ZodError } from "zod";
 
 const CONNECT_TO_ORPC_CODE = {
 	[Code.Canceled]: "CLIENT_CLOSED_REQUEST",
@@ -20,14 +21,15 @@ const CONNECT_TO_ORPC_CODE = {
 	[Code.Unauthenticated]: "UNAUTHORIZED",
 };
 
-export function throwConnectError(
-	err: unknown,
-	fallbackMessage: string,
-): never {
+export function handleError(err: unknown, fallbackMessage: string): never {
+	if (err instanceof ORPCError) throw err;
 	if (err instanceof ConnectError) {
 		throw new ORPCError(CONNECT_TO_ORPC_CODE[err.code], {
 			message: err.message || fallbackMessage,
 		});
+	}
+	if (err instanceof ZodError) {
+		throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
 	}
 	throw new ORPCError("INTERNAL_SERVER_ERROR", {
 		message: fallbackMessage,

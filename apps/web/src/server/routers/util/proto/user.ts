@@ -1,13 +1,3 @@
-// string id = 1;
-// string email = 2;
-// string external_id = 3;
-// optional string avatar = 4;
-// optional string first_name = 5;
-// optional string last_name = 6;
-// google.protobuf.Timestamp created_at = 7;
-// google.protobuf.Timestamp updated_at = 8;
-// optional google.protobuf.Timestamp deleted_at = 9;
-
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/client";
 import { type User, UserSchema } from "@planner/schemas/user";
@@ -31,9 +21,9 @@ export function protoToUser(proto: UserProto): User {
 		deletedAt: proto.deletedAt ? timestampDate(proto.deletedAt) : null,
 		email: proto.email,
 		externalId: proto.externalId,
-		firstName: proto.firstName,
+		firstName: proto.firstName ?? null,
 		id: proto.id,
-		lastName: proto.lastName,
+		lastName: proto.lastName ?? null,
 		updatedAt: timestampDate(proto.updatedAt),
 	});
 }
