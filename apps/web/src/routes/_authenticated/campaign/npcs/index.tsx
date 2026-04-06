@@ -5,7 +5,7 @@ import CampaignShell from "@/components/campaign-shell";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
-export const Route = createFileRoute("/campaign/npcs/")({
+export const Route = createFileRoute("/_authenticated/campaign/npcs/")({
 	component: NPCSPage,
 });
 
@@ -19,7 +19,7 @@ function NPCSPage() {
 				campaignId: campaign?.campaign.id ?? "",
 			}),
 		queryKey: ["npcs", "campaignId"],
-	});
+	})
 
 	if (isLoading) return <div>loading...</div>;
 
@@ -37,9 +37,9 @@ function NPCSPage() {
 								<span>{npc.name}</span>
 							</div>
 						</div>
-					);
+					)
 				})}
 			</div>
 		</CampaignShell>
-	);
+	)
 }

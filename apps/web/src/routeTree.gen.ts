@@ -10,22 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignInRouteImport } from './routes/sign-in'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CampaignIndexRouteImport } from './routes/campaign/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
-import { Route as CampaignNpcsIndexRouteImport } from './routes/campaign/npcs/index'
-import { Route as CampaignCreateIndexRouteImport } from './routes/campaign/create/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedCampaignIndexRouteImport } from './routes/_authenticated/campaign/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
+import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
+import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
 
 const SignInRoute = SignInRouteImport.update({
   id: '/sign-in',
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -33,105 +33,112 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CampaignIndexRoute = CampaignIndexRouteImport.update({
-  id: '/campaign/',
-  path: '/campaign/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CampaignNpcsIndexRoute = CampaignNpcsIndexRouteImport.update({
-  id: '/campaign/npcs/',
-  path: '/campaign/npcs/',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const CampaignCreateIndexRoute = CampaignCreateIndexRouteImport.update({
-  id: '/campaign/create/',
-  path: '/campaign/create/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedCampaignIndexRoute =
+  AuthenticatedCampaignIndexRouteImport.update({
+    id: '/campaign/',
+    path: '/campaign/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   id: '/api/webhooks/clerk',
   path: '/api/webhooks/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCampaignNpcsIndexRoute =
+  AuthenticatedCampaignNpcsIndexRouteImport.update({
+    id: '/campaign/npcs/',
+    path: '/campaign/npcs/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCampaignCreateIndexRoute =
+  AuthenticatedCampaignCreateIndexRouteImport.update({
+    id: '/campaign/create/',
+    path: '/campaign/create/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/sign-in': typeof SignInRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
-  '/campaign/create/': typeof CampaignCreateIndexRoute
-  '/campaign/npcs/': typeof CampaignNpcsIndexRoute
+  '/campaign/': typeof AuthenticatedCampaignIndexRoute
+  '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
+  '/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/sign-in': typeof SignInRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
-  '/campaign/create': typeof CampaignCreateIndexRoute
-  '/campaign/npcs': typeof CampaignNpcsIndexRoute
+  '/campaign': typeof AuthenticatedCampaignIndexRoute
+  '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
+  '/campaign/npcs': typeof AuthenticatedCampaignNpcsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/sign-in': typeof SignInRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
-  '/campaign/create/': typeof CampaignCreateIndexRoute
-  '/campaign/npcs/': typeof CampaignNpcsIndexRoute
+  '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
+  '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
+  '/_authenticated/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
     | '/sign-in'
+    | '/dashboard'
     | '/api/$'
-    | '/campaign/'
     | '/api/webhooks/clerk'
+    | '/campaign/'
     | '/campaign/create/'
     | '/campaign/npcs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/sign-in'
+    | '/dashboard'
     | '/api/$'
-    | '/campaign'
     | '/api/webhooks/clerk'
+    | '/campaign'
     | '/campaign/create'
     | '/campaign/npcs'
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
+    | '/_authenticated'
     | '/sign-in'
+    | '/_authenticated/dashboard'
     | '/api/$'
-    | '/campaign/'
     | '/api/webhooks/clerk'
-    | '/campaign/create/'
-    | '/campaign/npcs/'
+    | '/_authenticated/campaign/'
+    | '/_authenticated/campaign/create/'
+    | '/_authenticated/campaign/npcs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   SignInRoute: typeof SignInRoute
   ApiSplatRoute: typeof ApiSplatRoute
-  CampaignIndexRoute: typeof CampaignIndexRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
-  CampaignCreateIndexRoute: typeof CampaignCreateIndexRoute
-  CampaignNpcsIndexRoute: typeof CampaignNpcsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -143,11 +150,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -157,13 +164,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaign/': {
-      id: '/campaign/'
-      path: '/campaign'
-      fullPath: '/campaign/'
-      preLoaderRoute: typeof CampaignIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -171,19 +171,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/campaign/npcs/': {
-      id: '/campaign/npcs/'
-      path: '/campaign/npcs'
-      fullPath: '/campaign/npcs/'
-      preLoaderRoute: typeof CampaignNpcsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/campaign/create/': {
-      id: '/campaign/create/'
-      path: '/campaign/create'
-      fullPath: '/campaign/create/'
-      preLoaderRoute: typeof CampaignCreateIndexRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/campaign/': {
+      id: '/_authenticated/campaign/'
+      path: '/campaign'
+      fullPath: '/campaign/'
+      preLoaderRoute: typeof AuthenticatedCampaignIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/api/webhooks/clerk': {
       id: '/api/webhooks/clerk'
@@ -192,28 +192,58 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksClerkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/campaign/npcs/': {
+      id: '/_authenticated/campaign/npcs/'
+      path: '/campaign/npcs'
+      fullPath: '/campaign/npcs/'
+      preLoaderRoute: typeof AuthenticatedCampaignNpcsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/campaign/create/': {
+      id: '/_authenticated/campaign/create/'
+      path: '/campaign/create'
+      fullPath: '/campaign/create/'
+      preLoaderRoute: typeof AuthenticatedCampaignCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedCampaignIndexRoute: typeof AuthenticatedCampaignIndexRoute
+  AuthenticatedCampaignCreateIndexRoute: typeof AuthenticatedCampaignCreateIndexRoute
+  AuthenticatedCampaignNpcsIndexRoute: typeof AuthenticatedCampaignNpcsIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedCampaignIndexRoute: AuthenticatedCampaignIndexRoute,
+  AuthenticatedCampaignCreateIndexRoute: AuthenticatedCampaignCreateIndexRoute,
+  AuthenticatedCampaignNpcsIndexRoute: AuthenticatedCampaignNpcsIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   SignInRoute: SignInRoute,
   ApiSplatRoute: ApiSplatRoute,
-  CampaignIndexRoute: CampaignIndexRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
-  CampaignCreateIndexRoute: CampaignCreateIndexRoute,
-  CampaignNpcsIndexRoute: CampaignNpcsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
 import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
+import type { startInstance } from './start.ts'
 declare module '@tanstack/react-start' {
   interface Register {
     ssr: true
     router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
   }
 }
