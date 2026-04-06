@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CampaignIndexRouteImport } from './routes/campaign/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as CampaignNpcsIndexRouteImport } from './routes/campaign/npcs/index'
+import { Route as CampaignCreateIndexRouteImport } from './routes/campaign/create/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
 
 const SignInRoute = SignInRouteImport.update({
@@ -47,6 +48,11 @@ const CampaignNpcsIndexRoute = CampaignNpcsIndexRouteImport.update({
   path: '/campaign/npcs/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CampaignCreateIndexRoute = CampaignCreateIndexRouteImport.update({
+  id: '/campaign/create/',
+  path: '/campaign/create/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   id: '/api/webhooks/clerk',
   path: '/api/webhooks/clerk',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/api/$': typeof ApiSplatRoute
   '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/create/': typeof CampaignCreateIndexRoute
   '/campaign/npcs/': typeof CampaignNpcsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
   '/campaign': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/create': typeof CampaignCreateIndexRoute
   '/campaign/npcs': typeof CampaignNpcsIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/api/$': typeof ApiSplatRoute
   '/campaign/': typeof CampaignIndexRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
+  '/campaign/create/': typeof CampaignCreateIndexRoute
   '/campaign/npcs/': typeof CampaignNpcsIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/campaign/'
     | '/api/webhooks/clerk'
+    | '/campaign/create/'
     | '/campaign/npcs/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/campaign'
     | '/api/webhooks/clerk'
+    | '/campaign/create'
     | '/campaign/npcs'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/campaign/'
     | '/api/webhooks/clerk'
+    | '/campaign/create/'
     | '/campaign/npcs/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   ApiSplatRoute: typeof ApiSplatRoute
   CampaignIndexRoute: typeof CampaignIndexRoute
   ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
+  CampaignCreateIndexRoute: typeof CampaignCreateIndexRoute
   CampaignNpcsIndexRoute: typeof CampaignNpcsIndexRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CampaignNpcsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/campaign/create/': {
+      id: '/campaign/create/'
+      path: '/campaign/create'
+      fullPath: '/campaign/create/'
+      preLoaderRoute: typeof CampaignCreateIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/webhooks/clerk': {
       id: '/api/webhooks/clerk'
       path: '/api/webhooks/clerk'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSplatRoute: ApiSplatRoute,
   CampaignIndexRoute: CampaignIndexRoute,
   ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
+  CampaignCreateIndexRoute: CampaignCreateIndexRoute,
   CampaignNpcsIndexRoute: CampaignNpcsIndexRoute,
 }
 export const routeTree = rootRouteImport
