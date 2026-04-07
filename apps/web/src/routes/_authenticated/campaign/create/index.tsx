@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
-export const Route = createFileRoute("/campaign/create/")({
+export const Route = createFileRoute("/_authenticated/campaign/create/")({
 	component: CreateCampaignForm,
 });
 
