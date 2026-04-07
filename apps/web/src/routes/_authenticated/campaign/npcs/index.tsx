@@ -19,7 +19,7 @@ function NPCSPage() {
 				campaignId: campaign?.campaign.id ?? "",
 			}),
 		queryKey: ["npcs", "campaignId"],
-	})
+	});
 
 	if (isLoading) return <div>loading...</div>;
 
@@ -37,9 +37,9 @@ function NPCSPage() {
 								<span>{npc.name}</span>
 							</div>
 						</div>
-					)
+					);
 				})}
 			</div>
 		</CampaignShell>
-	)
+	);
 }

@@ -28,12 +28,12 @@ function CreateCampaignForm() {
 		onError: (error) => {
 			toast.error("something went wrong creating campaign.", {
 				description: error.message,
-			})
+			});
 		},
 		onSuccess: (res) => {
 			navigate({ to: `/campaign/${res.campaign.id}` });
 		},
-	})
+	});
 
 	const {
 		register,
@@ -44,7 +44,7 @@ function CreateCampaignForm() {
 			description: "",
 			title: "",
 		},
-	})
+	});
 
 	if (!user) {
 		return <div>Must be signed in to create a campaign</div>;
@@ -56,20 +56,20 @@ function CreateCampaignForm() {
 			setTags([...tags, tagInput.trim()]);
 			setTagInput("");
 		}
-	}
+	};
 
 	const removeTag = (tagToRemove: string) => {
 		setTags(tags.filter((tag) => tag !== tagToRemove));
-	}
+	};
 
 	const onSubmit = (data: CreateCampaignFormType) => {
 		const formData: CreateCampaignRequest = {
 			...data,
 			tags,
-		}
+		};
 
 		createCampaign(formData);
-	}
+	};
 
 	return (
 		<div className="min-h-screen bg-background py-12 px-4">
@@ -196,5 +196,5 @@ function CreateCampaignForm() {
 				</div>
 			</div>
 		</div>
-	)
+	);
 }
