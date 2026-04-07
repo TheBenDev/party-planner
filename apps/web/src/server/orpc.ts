@@ -167,7 +167,11 @@ export const authMiddleware = os
 
 			return {
 				campaign: activeCampaign
-					? { ...activeCampaign?.campaign, role: activeCampaign.role }
+					? {
+							...activeCampaign?.campaign,
+							role: activeCampaign.role,
+							tags: activeCampaign.campaign.tags ?? [],
+						}
 					: null,
 				user: {
 					avatar: row.avatar,

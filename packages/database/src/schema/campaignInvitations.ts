@@ -51,7 +51,7 @@ export const campaignInvitationsTable = pgTable(
 		}).onDelete("cascade"),
 		uniqueIndex("one_pending_invite_per_email")
 			.on(t.campaignId, t.inviteeEmail)
-			.where(sql`${t.status} = 'PENDING'`),
+			.where(sql`${t.status} = 'PENDING' OR ${t.status} = 'ACCEPTED'`),
 	],
 );
 

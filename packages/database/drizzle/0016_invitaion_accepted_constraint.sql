@@ -1,0 +1,2 @@
+DROP INDEX "one_pending_invite_per_email";--> statement-breakpoint
+CREATE UNIQUE INDEX "one_pending_invite_per_email" ON "campaign_invitations" USING btree ("campaign_id","invitee_email") WHERE "campaign_invitations"."status" = 'PENDING' OR "campaign_invitations"."status" = 'ACCEPTED';

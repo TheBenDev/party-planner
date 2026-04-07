@@ -112,6 +112,13 @@
       "when": 1775175943632,
       "tag": "0015_campaign_invitations_adjusted",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1775591780424,
+      "tag": "0016_invitaion_accepted_constraint",
+      "breakpoints": true
     }
   ],
   "version": "7"
