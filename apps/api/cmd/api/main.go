@@ -16,6 +16,7 @@ import (
 	"github.com/BBruington/party-planner/api/internal/bot"
 	"github.com/BBruington/party-planner/api/internal/config"
 	"github.com/BBruington/party-planner/api/internal/db"
+	"github.com/BBruington/party-planner/api/internal/middleware"
 	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
 	"github.com/BBruington/party-planner/api/internal/service"
@@ -44,29 +45,32 @@ func main() {
 		os.Exit(1)
 	}
 
-	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	rateLimiter := middleware.NewRateLimitInterceptor()
+	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter)
+
+	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
 
-	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
 
-	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(memberPath, memberHandler)
 
-	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(npcPath, npcHandler)
 
-	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(questPath, questHandler)
 
-	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(sessionPath, sessionHandler)
 
-	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger}}, connect.WithInterceptors(validate.NewInterceptor()))
+	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger}}, interceptors)
 	mux.Handle(userPath, userHandler)
 
 	healthServer := &rpc.HealthServer{}
-	path, healthHandler := plannerv1connect.NewHealthServiceHandler(healthServer, connect.WithInterceptors(validate.NewInterceptor()))
+	path, healthHandler := plannerv1connect.NewHealthServiceHandler(healthServer, interceptors)
 	mux.Handle(path, healthHandler)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
