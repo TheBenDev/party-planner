@@ -1,7 +1,7 @@
 import { LoggingHandlerPlugin } from "@orpc/experimental-pino";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
 import { RPCHandler } from "@orpc/server/fetch";
-import { CORSPlugin, RequestHeadersPlugin } from "@orpc/server/plugins";
+import { CORSPlugin, RequestHeadersPlugin, ResponseHeadersPlugin } from "@orpc/server/plugins";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { createFileRoute } from "@tanstack/react-router";
 import pino from "pino";
@@ -13,6 +13,7 @@ const handler = new RPCHandler(appRouter, {
 	plugins: [
 		new CORSPlugin(),
 		new RequestHeadersPlugin(),
+		new ResponseHeadersPlugin(),
 		new LoggingHandlerPlugin({
 			logger,
 			logRequestAbort: true,

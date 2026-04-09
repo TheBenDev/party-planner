@@ -4,7 +4,7 @@ import type { LoggerContext } from "@orpc/experimental-pino";
 import { getLogger } from "@orpc/experimental-pino";
 import { ORPCError, os } from "@orpc/server";
 import { getCookie, setCookie } from "@orpc/server/helpers";
-import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
+import type { RequestHeadersPluginContext, ResponseHeadersPluginContext } from "@orpc/server/plugins";
 import { type Client, createDb, schema } from "@planner/database";
 import type { GetAuthResponse } from "@planner/schemas/user";
 import {
@@ -18,7 +18,7 @@ import { env } from "@/env";
 import { createApiClients } from "@/lib/api/index";
 
 const { usersTable, campaignsTable, campaignUsersTable } = schema;
-interface ORPCContext extends RequestHeadersPluginContext, LoggerContext {}
+interface ORPCContext extends RequestHeadersPluginContext, ResponseHeadersPluginContext, LoggerContext {}
 interface Context extends ORPCContext {
 	api: ReturnType<typeof createApiClients>;
 	db: Client;
@@ -148,7 +148,7 @@ export const authMiddleware = os
 			if (!activeCampaignIdCookie && userCampaigns.length > 0) {
 				activeCampaignId = userCampaigns[0].campaign.id;
 				setCookie(
-					c.reqHeaders,
+					c.resHeaders,
 					ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 					activeCampaignId,
 					{
@@ -229,7 +229,7 @@ export const authMiddleware = os
 					COOKIE_MAX_AGE,
 				);
 
-				setCookie(c.reqHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
+				setCookie(c.resHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
 					httpOnly: true,
 					maxAge: COOKIE_MAX_AGE,
 					path: "/",
