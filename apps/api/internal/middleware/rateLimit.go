@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"errors"
-	"log/slog"
 	"sync"
 	"time"
 
