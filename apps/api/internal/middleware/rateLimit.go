@@ -66,9 +66,7 @@ func getUserLimiter(userID string) *rate.Limiter {
 func NewRateLimitInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			for key, values := range req.Header() {
-				slog.Debug("header", "key", key, "value", values)
-			}
+
 			// 1. Global limit
 			if !globalLimiter.Allow() {
 				return nil, ErrGlobalRateLimit
@@ -77,7 +75,7 @@ func NewRateLimitInterceptor() connect.UnaryInterceptorFunc {
 			// 2. Per-user limit
 			userID := req.Header().Get("Authorization")
 			if userID == "" {
-				userID = req.Header().Get("X-Forwarded-For")
+				userID = req.Header().Get("X-Real-Ip")
 			}
 			if userID != "" {
 				if !getUserLimiter(userID).Allow() {
