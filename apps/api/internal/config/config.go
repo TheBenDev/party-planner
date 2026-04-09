@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	APIKey       string
-	AppURL       string
-	DatabaseUrl  string
-	DiscordToken string
-	Environment  string
-	Port         string
+	APIKey             string
+	AppURL             string
+	CORSAllowedOrigins []string
+	DatabaseUrl        string
+	DiscordToken       string
+	Environment        string
+	Port               string
 }
 
 func Load() (*Config, error) {
@@ -23,14 +25,26 @@ func Load() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
 		slog.Info("Env file not loaded.")
 	}
+	rawOrigins := os.Getenv("CORS_ALLOWED_ORIGINS")
+	var origins []string
+	for _, o := range strings.Split(rawOrigins, ",") {
+		o = strings.TrimSpace(o)
+		if o != "" {
+			origins = append(origins, o)
+		}
+	}
+	if len(origins) == 0 {
+		return nil, fmt.Errorf("CORS_ALLOWED_ORIGINS is required")
+	}
 
 	cfg := &Config{
-		APIKey:       os.Getenv("API_KEY"),
-		AppURL:       os.Getenv("APP_URL"),
-		DatabaseUrl:  os.Getenv("DATABASE_URL"),
-		DiscordToken: os.Getenv("DISCORD_TOKEN"),
-		Environment:  os.Getenv("ENVIRONMENT"),
-		Port:         os.Getenv("PORT"),
+		APIKey:             os.Getenv("API_KEY"),
+		AppURL:             os.Getenv("APP_URL"),
+		CORSAllowedOrigins: origins,
+		DatabaseUrl:        os.Getenv("DATABASE_URL"),
+		DiscordToken:       os.Getenv("DISCORD_TOKEN"),
+		Environment:        os.Getenv("ENVIRONMENT"),
+		Port:               os.Getenv("PORT"),
 	}
 
 	if cfg.APIKey == "" {
