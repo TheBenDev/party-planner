@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -65,6 +66,9 @@ func getUserLimiter(userID string) *rate.Limiter {
 func NewRateLimitInterceptor() connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
+			for key, values := range req.Header() {
+				slog.Debug("header", "key", key, "value", values)
+			}
 			// 1. Global limit
 			if !globalLimiter.Allow() {
 				return nil, ErrGlobalRateLimit
