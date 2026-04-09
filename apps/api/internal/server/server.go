@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-func New(port string, mux *http.ServeMux) *http.Server {
+func New(port string, handler http.Handler) *http.Server {
 
 	return &http.Server{
 		Addr:         ":" + port,
-		Handler:      mux,
+		Handler:      handler,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  60 * time.Second,

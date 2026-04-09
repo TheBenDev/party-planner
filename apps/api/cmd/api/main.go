@@ -92,10 +92,12 @@ func main() {
 		}
 	}()
 
-	srv := server.New(cfg.Port, mux)
+	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, mux)
+
+	srv := server.New(cfg.Port, handler)
 	go server.Start(srv)
 
-	slog.Info("beny-bot is running. Press Ctrl+C to exit.")
+	slog.Info("beny-bot is running.")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
