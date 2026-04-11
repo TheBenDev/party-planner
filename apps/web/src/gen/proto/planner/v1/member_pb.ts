@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/member.proto.
  */
 export const file_planner_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChdwbGFubmVyL3YxL21lbWJlci5wcm90bxIKcGxhbm5lci52MSKKAwoSQ2FtcGFpZ25JbnZpdGF0aW9uEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhIKCmludml0ZXJfaWQYAyABKAkSFQoNaW52aXRlZV9lbWFpbBgEIAEoCRIkCgRyb2xlGAUgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlEiwKBnN0YXR1cxgGIAEoDjIcLnBsYW5uZXIudjEuSW52aXRhdGlvblN0YXR1cxI0CgthY2NlcHRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIuCgpleHBpcmVzX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIOCgxfYWNjZXB0ZWRfYXQitAEKBk1lbWJlchITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUSLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYQoTQ3JlYXRlTWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUiOgoUQ3JlYXRlTWVtYmVyUmVzcG9uc2USIgoGbWVtYmVyGAEgASgLMhIucGxhbm5lci52MS5NZW1iZXIiOAoQR2V0TWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJIjcKEUdldE1lbWJlclJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyIikKEkxpc3RNZW1iZXJzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSI6ChNMaXN0TWVtYmVyc1Jlc3BvbnNlEiMKB21lbWJlcnMYASADKAsyEi5wbGFubmVyLnYxLk1lbWJlciI7ChNSZW1vdmVNZW1iZXJSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkiFgoUUmVtb3ZlTWVtYmVyUmVzcG9uc2UiTQofQWNjZXB0Q2FtcGFpZ25JbnZpdGF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIVCg1pbnZpdGVlX2VtYWlsGAIgASgJInoKIEFjY2VwdENhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyEjIKCmludml0YXRpb24YAiABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiJOCiBEZWNsaW5lQ2FtcGFpZ25JbnZpdGF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIVCg1pbnZpdGVlX2VtYWlsGAIgASgJIlcKIURlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24q0gEKEEludml0YXRpb25TdGF0dXMSIQodSU5WSVRBVElPTl9TVEFUVVNfVU5TUEVDSUZJRUQQABIdChlJTlZJVEFUSU9OX1NUQVRVU19QRU5ESU5HEAESHgoaSU5WSVRBVElPTl9TVEFUVVNfQUNDRVBURUQQAhIdChlJTlZJVEFUSU9OX1NUQVRVU19FWFBJUkVEEAMSHgoaSU5WSVRBVElPTl9TVEFUVVNfREVDTElORUQQBBIdChlJTlZJVEFUSU9OX1NUQVRVU19SRVZPS0VEEAUqYQoKTWVtYmVyUm9sZRIbChdNRU1CRVJfUk9MRV9VTlNQRUNJRklFRBAAEhYKEk1FTUJFUl9ST0xFX1BMQVlFUhABEh4KGk1FTUJFUl9ST0xFX0RVTkdFT05fTUFTVEVSEAIywAQKDU1lbWJlclNlcnZpY2USdQoYQWNjZXB0Q2FtcGFpZ25JbnZpdGF0aW9uEisucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0GiwucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRJRCgxDcmVhdGVNZW1iZXISHy5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlcXVlc3QaIC5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlc3BvbnNlEngKGURlY2xpbmVDYW1wYWlnbkludml0YXRpb24SLC5wbGFubmVyLnYxLkRlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Gi0ucGxhbm5lci52MS5EZWNsaW5lQ2FtcGFpZ25JbnZpdGF0aW9uUmVzcG9uc2USSAoJR2V0TWVtYmVyEhwucGxhbm5lci52MS5HZXRNZW1iZXJSZXF1ZXN0Gh0ucGxhbm5lci52MS5HZXRNZW1iZXJSZXNwb25zZRJOCgtMaXN0TWVtYmVycxIeLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNSZXF1ZXN0Gh8ucGxhbm5lci52MS5MaXN0TWVtYmVyc1Jlc3BvbnNlElEKDFJlbW92ZU1lbWJlchIfLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVxdWVzdBogLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVzcG9uc2VCqAEKDmNvbS5wbGFubmVyLnYxQgtNZW1iZXJQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("ChdwbGFubmVyL3YxL21lbWJlci5wcm90bxIKcGxhbm5lci52MSKKAwoSQ2FtcGFpZ25JbnZpdGF0aW9uEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhIKCmludml0ZXJfaWQYAyABKAkSFQoNaW52aXRlZV9lbWFpbBgEIAEoCRIkCgRyb2xlGAUgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlEiwKBnN0YXR1cxgGIAEoDjIcLnBsYW5uZXIudjEuSW52aXRhdGlvblN0YXR1cxI0CgthY2NlcHRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIuCgpleHBpcmVzX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIOCgxfYWNjZXB0ZWRfYXQitAEKBk1lbWJlchITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUSLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiYQoTQ3JlYXRlTWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUiOgoUQ3JlYXRlTWVtYmVyUmVzcG9uc2USIgoGbWVtYmVyGAEgASgLMhIucGxhbm5lci52MS5NZW1iZXIiOAoQR2V0TWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJIjcKEUdldE1lbWJlclJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyIjMKHExpc3RNZW1iZXJzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiRAodTGlzdE1lbWJlcnNCeUNhbXBhaWduUmVzcG9uc2USIwoHbWVtYmVycxgBIAMoCzISLnBsYW5uZXIudjEuTWVtYmVyIisKGExpc3RNZW1iZXJzQnlVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIkAKGUxpc3RNZW1iZXJzQnlVc2VyUmVzcG9uc2USIwoHbWVtYmVycxgBIAMoCzISLnBsYW5uZXIudjEuTWVtYmVyIjsKE1JlbW92ZU1lbWJlclJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSIWChRSZW1vdmVNZW1iZXJSZXNwb25zZSJNCh9BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhUKDWludml0ZWVfZW1haWwYAiABKAkiegogQWNjZXB0Q2FtcGFpZ25JbnZpdGF0aW9uUmVzcG9uc2USIgoGbWVtYmVyGAEgASgLMhIucGxhbm5lci52MS5NZW1iZXISMgoKaW52aXRhdGlvbhgCIAEoCzIeLnBsYW5uZXIudjEuQ2FtcGFpZ25JbnZpdGF0aW9uIk4KIERlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEhUKDWludml0ZWVfZW1haWwYAiABKAkiVwohRGVjbGluZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEjIKCmludml0YXRpb24YASABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbirSAQoQSW52aXRhdGlvblN0YXR1cxIhCh1JTlZJVEFUSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGUlOVklUQVRJT05fU1RBVFVTX1BFTkRJTkcQARIeChpJTlZJVEFUSU9OX1NUQVRVU19BQ0NFUFRFRBACEh0KGUlOVklUQVRJT05fU1RBVFVTX0VYUElSRUQQAxIeChpJTlZJVEFUSU9OX1NUQVRVU19ERUNMSU5FRBAEEh0KGUlOVklUQVRJT05fU1RBVFVTX1JFVk9LRUQQBSphCgpNZW1iZXJSb2xlEhsKF01FTUJFUl9ST0xFX1VOU1BFQ0lGSUVEEAASFgoSTUVNQkVSX1JPTEVfUExBWUVSEAESHgoaTUVNQkVSX1JPTEVfRFVOR0VPTl9NQVNURVIQAjLABQoNTWVtYmVyU2VydmljZRJ1ChhBY2NlcHRDYW1wYWlnbkludml0YXRpb24SKy5wbGFubmVyLnYxLkFjY2VwdENhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLC5wbGFubmVyLnYxLkFjY2VwdENhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlElEKDENyZWF0ZU1lbWJlchIfLnBsYW5uZXIudjEuQ3JlYXRlTWVtYmVyUmVxdWVzdBogLnBsYW5uZXIudjEuQ3JlYXRlTWVtYmVyUmVzcG9uc2USeAoZRGVjbGluZUNhbXBhaWduSW52aXRhdGlvbhIsLnBsYW5uZXIudjEuRGVjbGluZUNhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLS5wbGFubmVyLnYxLkRlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRJICglHZXRNZW1iZXISHC5wbGFubmVyLnYxLkdldE1lbWJlclJlcXVlc3QaHS5wbGFubmVyLnYxLkdldE1lbWJlclJlc3BvbnNlEmwKFUxpc3RNZW1iZXJzQnlDYW1wYWlnbhIoLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNCeUNhbXBhaWduUmVxdWVzdBopLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNCeUNhbXBhaWduUmVzcG9uc2USYAoRTGlzdE1lbWJlcnNCeVVzZXISJC5wbGFubmVyLnYxLkxpc3RNZW1iZXJzQnlVc2VyUmVxdWVzdBolLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNCeVVzZXJSZXNwb25zZRJRCgxSZW1vdmVNZW1iZXISHy5wbGFubmVyLnYxLlJlbW92ZU1lbWJlclJlcXVlc3QaIC5wbGFubmVyLnYxLlJlbW92ZU1lbWJlclJlc3BvbnNlQqgBCg5jb20ucGxhbm5lci52MUILTWVtYmVyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.CampaignInvitation
@@ -197,9 +197,9 @@ export const GetMemberResponseSchema: GenMessage<GetMemberResponse> = /*@__PURE_
   messageDesc(file_planner_v1_member, 5);
 
 /**
- * @generated from message planner.v1.ListMembersRequest
+ * @generated from message planner.v1.ListMembersByCampaignRequest
  */
-export type ListMembersRequest = Message<"planner.v1.ListMembersRequest"> & {
+export type ListMembersByCampaignRequest = Message<"planner.v1.ListMembersByCampaignRequest"> & {
   /**
    * @generated from field: string campaign_id = 1;
    */
@@ -207,16 +207,16 @@ export type ListMembersRequest = Message<"planner.v1.ListMembersRequest"> & {
 };
 
 /**
- * Describes the message planner.v1.ListMembersRequest.
- * Use `create(ListMembersRequestSchema)` to create a new message.
+ * Describes the message planner.v1.ListMembersByCampaignRequest.
+ * Use `create(ListMembersByCampaignRequestSchema)` to create a new message.
  */
-export const ListMembersRequestSchema: GenMessage<ListMembersRequest> = /*@__PURE__*/
+export const ListMembersByCampaignRequestSchema: GenMessage<ListMembersByCampaignRequest> = /*@__PURE__*/
   messageDesc(file_planner_v1_member, 6);
 
 /**
- * @generated from message planner.v1.ListMembersResponse
+ * @generated from message planner.v1.ListMembersByCampaignResponse
  */
-export type ListMembersResponse = Message<"planner.v1.ListMembersResponse"> & {
+export type ListMembersByCampaignResponse = Message<"planner.v1.ListMembersByCampaignResponse"> & {
   /**
    * @generated from field: repeated planner.v1.Member members = 1;
    */
@@ -224,11 +224,45 @@ export type ListMembersResponse = Message<"planner.v1.ListMembersResponse"> & {
 };
 
 /**
- * Describes the message planner.v1.ListMembersResponse.
- * Use `create(ListMembersResponseSchema)` to create a new message.
+ * Describes the message planner.v1.ListMembersByCampaignResponse.
+ * Use `create(ListMembersByCampaignResponseSchema)` to create a new message.
  */
-export const ListMembersResponseSchema: GenMessage<ListMembersResponse> = /*@__PURE__*/
+export const ListMembersByCampaignResponseSchema: GenMessage<ListMembersByCampaignResponse> = /*@__PURE__*/
   messageDesc(file_planner_v1_member, 7);
+
+/**
+ * @generated from message planner.v1.ListMembersByUserRequest
+ */
+export type ListMembersByUserRequest = Message<"planner.v1.ListMembersByUserRequest"> & {
+  /**
+   * @generated from field: string user_id = 1;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message planner.v1.ListMembersByUserRequest.
+ * Use `create(ListMembersByUserRequestSchema)` to create a new message.
+ */
+export const ListMembersByUserRequestSchema: GenMessage<ListMembersByUserRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_member, 8);
+
+/**
+ * @generated from message planner.v1.ListMembersByUserResponse
+ */
+export type ListMembersByUserResponse = Message<"planner.v1.ListMembersByUserResponse"> & {
+  /**
+   * @generated from field: repeated planner.v1.Member members = 1;
+   */
+  members: Member[];
+};
+
+/**
+ * Describes the message planner.v1.ListMembersByUserResponse.
+ * Use `create(ListMembersByUserResponseSchema)` to create a new message.
+ */
+export const ListMembersByUserResponseSchema: GenMessage<ListMembersByUserResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_member, 9);
 
 /**
  * @generated from message planner.v1.RemoveMemberRequest
@@ -250,7 +284,7 @@ export type RemoveMemberRequest = Message<"planner.v1.RemoveMemberRequest"> & {
  * Use `create(RemoveMemberRequestSchema)` to create a new message.
  */
 export const RemoveMemberRequestSchema: GenMessage<RemoveMemberRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 8);
+  messageDesc(file_planner_v1_member, 10);
 
 /**
  * @generated from message planner.v1.RemoveMemberResponse
@@ -263,7 +297,7 @@ export type RemoveMemberResponse = Message<"planner.v1.RemoveMemberResponse"> & 
  * Use `create(RemoveMemberResponseSchema)` to create a new message.
  */
 export const RemoveMemberResponseSchema: GenMessage<RemoveMemberResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 9);
+  messageDesc(file_planner_v1_member, 11);
 
 /**
  * @generated from message planner.v1.AcceptCampaignInvitationRequest
@@ -285,7 +319,7 @@ export type AcceptCampaignInvitationRequest = Message<"planner.v1.AcceptCampaign
  * Use `create(AcceptCampaignInvitationRequestSchema)` to create a new message.
  */
 export const AcceptCampaignInvitationRequestSchema: GenMessage<AcceptCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 10);
+  messageDesc(file_planner_v1_member, 12);
 
 /**
  * @generated from message planner.v1.AcceptCampaignInvitationResponse
@@ -307,7 +341,7 @@ export type AcceptCampaignInvitationResponse = Message<"planner.v1.AcceptCampaig
  * Use `create(AcceptCampaignInvitationResponseSchema)` to create a new message.
  */
 export const AcceptCampaignInvitationResponseSchema: GenMessage<AcceptCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 11);
+  messageDesc(file_planner_v1_member, 13);
 
 /**
  * @generated from message planner.v1.DeclineCampaignInvitationRequest
@@ -329,7 +363,7 @@ export type DeclineCampaignInvitationRequest = Message<"planner.v1.DeclineCampai
  * Use `create(DeclineCampaignInvitationRequestSchema)` to create a new message.
  */
 export const DeclineCampaignInvitationRequestSchema: GenMessage<DeclineCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 12);
+  messageDesc(file_planner_v1_member, 14);
 
 /**
  * @generated from message planner.v1.DeclineCampaignInvitationResponse
@@ -346,7 +380,7 @@ export type DeclineCampaignInvitationResponse = Message<"planner.v1.DeclineCampa
  * Use `create(DeclineCampaignInvitationResponseSchema)` to create a new message.
  */
 export const DeclineCampaignInvitationResponseSchema: GenMessage<DeclineCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 13);
+  messageDesc(file_planner_v1_member, 15);
 
 /**
  * @generated from enum planner.v1.InvitationStatus
@@ -452,12 +486,20 @@ export const MemberService: GenService<{
     output: typeof GetMemberResponseSchema;
   },
   /**
-   * @generated from rpc planner.v1.MemberService.ListMembers
+   * @generated from rpc planner.v1.MemberService.ListMembersByCampaign
    */
-  listMembers: {
+  listMembersByCampaign: {
     methodKind: "unary";
-    input: typeof ListMembersRequestSchema;
-    output: typeof ListMembersResponseSchema;
+    input: typeof ListMembersByCampaignRequestSchema;
+    output: typeof ListMembersByCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.MemberService.ListMembersByUser
+   */
+  listMembersByUser: {
+    methodKind: "unary";
+    input: typeof ListMembersByUserRequestSchema;
+    output: typeof ListMembersByUserResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.MemberService.RemoveMember

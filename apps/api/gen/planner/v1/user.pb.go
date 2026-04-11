@@ -130,6 +130,118 @@ func (x *User) GetDeletedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type GetAuthRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClerkId       string                 `protobuf:"bytes,1,opt,name=clerk_id,json=clerkId,proto3" json:"clerk_id,omitempty"`
+	CampaignId    *string                `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3,oneof" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAuthRequest) Reset() {
+	*x = GetAuthRequest{}
+	mi := &file_planner_v1_user_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAuthRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuthRequest) ProtoMessage() {}
+
+func (x *GetAuthRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_user_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuthRequest.ProtoReflect.Descriptor instead.
+func (*GetAuthRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetAuthRequest) GetClerkId() string {
+	if x != nil {
+		return x.ClerkId
+	}
+	return ""
+}
+
+func (x *GetAuthRequest) GetCampaignId() string {
+	if x != nil && x.CampaignId != nil {
+		return *x.CampaignId
+	}
+	return ""
+}
+
+type GetAuthResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Campaign      *Campaign              `protobuf:"bytes,2,opt,name=campaign,proto3,oneof" json:"campaign,omitempty"`
+	Role          *MemberRole            `protobuf:"varint,3,opt,name=role,proto3,enum=planner.v1.MemberRole,oneof" json:"role,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAuthResponse) Reset() {
+	*x = GetAuthResponse{}
+	mi := &file_planner_v1_user_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAuthResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAuthResponse) ProtoMessage() {}
+
+func (x *GetAuthResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_user_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAuthResponse.ProtoReflect.Descriptor instead.
+func (*GetAuthResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetAuthResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *GetAuthResponse) GetCampaign() *Campaign {
+	if x != nil {
+		return x.Campaign
+	}
+	return nil
+}
+
+func (x *GetAuthResponse) GetRole() MemberRole {
+	if x != nil && x.Role != nil {
+		return *x.Role
+	}
+	return MemberRole_MEMBER_ROLE_UNSPECIFIED
+}
+
 type CreateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -143,7 +255,7 @@ type CreateUserRequest struct {
 
 func (x *CreateUserRequest) Reset() {
 	*x = CreateUserRequest{}
-	mi := &file_planner_v1_user_proto_msgTypes[1]
+	mi := &file_planner_v1_user_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -155,7 +267,7 @@ func (x *CreateUserRequest) String() string {
 func (*CreateUserRequest) ProtoMessage() {}
 
 func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[1]
+	mi := &file_planner_v1_user_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -168,7 +280,7 @@ func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
 func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{1}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateUserRequest) GetEmail() string {
@@ -215,7 +327,7 @@ type CreateUserResponse struct {
 
 func (x *CreateUserResponse) Reset() {
 	*x = CreateUserResponse{}
-	mi := &file_planner_v1_user_proto_msgTypes[2]
+	mi := &file_planner_v1_user_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -227,7 +339,7 @@ func (x *CreateUserResponse) String() string {
 func (*CreateUserResponse) ProtoMessage() {}
 
 func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[2]
+	mi := &file_planner_v1_user_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -240,7 +352,7 @@ func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
 func (*CreateUserResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{2}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateUserResponse) GetUser() *User {
@@ -259,7 +371,7 @@ type GetUserByEmailRequest struct {
 
 func (x *GetUserByEmailRequest) Reset() {
 	*x = GetUserByEmailRequest{}
-	mi := &file_planner_v1_user_proto_msgTypes[3]
+	mi := &file_planner_v1_user_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -271,7 +383,7 @@ func (x *GetUserByEmailRequest) String() string {
 func (*GetUserByEmailRequest) ProtoMessage() {}
 
 func (x *GetUserByEmailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[3]
+	mi := &file_planner_v1_user_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +396,7 @@ func (x *GetUserByEmailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByEmailRequest.ProtoReflect.Descriptor instead.
 func (*GetUserByEmailRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{3}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetUserByEmailRequest) GetEmail() string {
@@ -303,7 +415,7 @@ type GetUserByEmailResponse struct {
 
 func (x *GetUserByEmailResponse) Reset() {
 	*x = GetUserByEmailResponse{}
-	mi := &file_planner_v1_user_proto_msgTypes[4]
+	mi := &file_planner_v1_user_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -315,7 +427,7 @@ func (x *GetUserByEmailResponse) String() string {
 func (*GetUserByEmailResponse) ProtoMessage() {}
 
 func (x *GetUserByEmailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[4]
+	mi := &file_planner_v1_user_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -328,7 +440,7 @@ func (x *GetUserByEmailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByEmailResponse.ProtoReflect.Descriptor instead.
 func (*GetUserByEmailResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{4}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetUserByEmailResponse) GetUser() *User {
@@ -338,6 +450,7 @@ func (x *GetUserByEmailResponse) GetUser() *User {
 	return nil
 }
 
+// TODO: make get use id not clerk id
 type GetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ExternalId    string                 `protobuf:"bytes,1,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
@@ -347,7 +460,7 @@ type GetUserRequest struct {
 
 func (x *GetUserRequest) Reset() {
 	*x = GetUserRequest{}
-	mi := &file_planner_v1_user_proto_msgTypes[5]
+	mi := &file_planner_v1_user_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -359,7 +472,7 @@ func (x *GetUserRequest) String() string {
 func (*GetUserRequest) ProtoMessage() {}
 
 func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[5]
+	mi := &file_planner_v1_user_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -372,7 +485,7 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{5}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetUserRequest) GetExternalId() string {
@@ -391,7 +504,7 @@ type GetUserResponse struct {
 
 func (x *GetUserResponse) Reset() {
 	*x = GetUserResponse{}
-	mi := &file_planner_v1_user_proto_msgTypes[6]
+	mi := &file_planner_v1_user_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -403,7 +516,7 @@ func (x *GetUserResponse) String() string {
 func (*GetUserResponse) ProtoMessage() {}
 
 func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[6]
+	mi := &file_planner_v1_user_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -416,7 +529,7 @@ func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
 func (*GetUserResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{6}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetUserResponse) GetUser() *User {
@@ -431,7 +544,7 @@ var File_planner_v1_user_proto protoreflect.FileDescriptor
 const file_planner_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"\x15planner/v1/user.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9d\x03\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x19planner/v1/campaign.proto\x1a\x17planner/v1/member.proto\"\x9d\x03\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x1f\n" +
@@ -451,7 +564,18 @@ const file_planner_v1_user_proto_rawDesc = "" +
 	"\v_first_nameB\f\n" +
 	"\n" +
 	"_last_nameB\r\n" +
-	"\v_deleted_at\"\xd5\x01\n" +
+	"\v_deleted_at\"a\n" +
+	"\x0eGetAuthRequest\x12\x19\n" +
+	"\bclerk_id\x18\x01 \x01(\tR\aclerkId\x12$\n" +
+	"\vcampaign_id\x18\x02 \x01(\tH\x00R\n" +
+	"campaignId\x88\x01\x01B\x0e\n" +
+	"\f_campaign_id\"\xb5\x01\n" +
+	"\x0fGetAuthResponse\x12$\n" +
+	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user\x125\n" +
+	"\bcampaign\x18\x02 \x01(\v2\x14.planner.v1.CampaignH\x00R\bcampaign\x88\x01\x01\x12/\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x16.planner.v1.MemberRoleH\x01R\x04role\x88\x01\x01B\v\n" +
+	"\t_campaignB\a\n" +
+	"\x05_role\"\xd5\x01\n" +
 	"\x11CreateUserRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1f\n" +
 	"\vexternal_id\x18\x02 \x01(\tR\n" +
@@ -474,12 +598,13 @@ const file_planner_v1_user_proto_rawDesc = "" +
 	"\vexternal_id\x18\x01 \x01(\tR\n" +
 	"externalId\"7\n" +
 	"\x0fGetUserResponse\x12$\n" +
-	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user2\xf7\x01\n" +
+	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user2\xbb\x02\n" +
 	"\vUserService\x12K\n" +
 	"\n" +
 	"CreateUser\x12\x1d.planner.v1.CreateUserRequest\x1a\x1e.planner.v1.CreateUserResponse\x12B\n" +
 	"\aGetUser\x12\x1a.planner.v1.GetUserRequest\x1a\x1b.planner.v1.GetUserResponse\x12W\n" +
-	"\x0eGetUserByEmail\x12!.planner.v1.GetUserByEmailRequest\x1a\".planner.v1.GetUserByEmailResponseB\xa6\x01\n" +
+	"\x0eGetUserByEmail\x12!.planner.v1.GetUserByEmailRequest\x1a\".planner.v1.GetUserByEmailResponse\x12B\n" +
+	"\aGetAuth\x12\x1a.planner.v1.GetAuthRequest\x1a\x1b.planner.v1.GetAuthResponseB\xa6\x01\n" +
 	"\x0ecom.planner.v1B\tUserProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
@@ -496,35 +621,44 @@ func file_planner_v1_user_proto_rawDescGZIP() []byte {
 	return file_planner_v1_user_proto_rawDescData
 }
 
-var file_planner_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_planner_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_planner_v1_user_proto_goTypes = []any{
 	(*User)(nil),                   // 0: planner.v1.User
-	(*CreateUserRequest)(nil),      // 1: planner.v1.CreateUserRequest
-	(*CreateUserResponse)(nil),     // 2: planner.v1.CreateUserResponse
-	(*GetUserByEmailRequest)(nil),  // 3: planner.v1.GetUserByEmailRequest
-	(*GetUserByEmailResponse)(nil), // 4: planner.v1.GetUserByEmailResponse
-	(*GetUserRequest)(nil),         // 5: planner.v1.GetUserRequest
-	(*GetUserResponse)(nil),        // 6: planner.v1.GetUserResponse
-	(*timestamppb.Timestamp)(nil),  // 7: google.protobuf.Timestamp
+	(*GetAuthRequest)(nil),         // 1: planner.v1.GetAuthRequest
+	(*GetAuthResponse)(nil),        // 2: planner.v1.GetAuthResponse
+	(*CreateUserRequest)(nil),      // 3: planner.v1.CreateUserRequest
+	(*CreateUserResponse)(nil),     // 4: planner.v1.CreateUserResponse
+	(*GetUserByEmailRequest)(nil),  // 5: planner.v1.GetUserByEmailRequest
+	(*GetUserByEmailResponse)(nil), // 6: planner.v1.GetUserByEmailResponse
+	(*GetUserRequest)(nil),         // 7: planner.v1.GetUserRequest
+	(*GetUserResponse)(nil),        // 8: planner.v1.GetUserResponse
+	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
+	(*Campaign)(nil),               // 10: planner.v1.Campaign
+	(MemberRole)(0),                // 11: planner.v1.MemberRole
 }
 var file_planner_v1_user_proto_depIdxs = []int32{
-	7, // 0: planner.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	7, // 1: planner.v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	7, // 2: planner.v1.User.deleted_at:type_name -> google.protobuf.Timestamp
-	0, // 3: planner.v1.CreateUserResponse.user:type_name -> planner.v1.User
-	0, // 4: planner.v1.GetUserByEmailResponse.user:type_name -> planner.v1.User
-	0, // 5: planner.v1.GetUserResponse.user:type_name -> planner.v1.User
-	1, // 6: planner.v1.UserService.CreateUser:input_type -> planner.v1.CreateUserRequest
-	5, // 7: planner.v1.UserService.GetUser:input_type -> planner.v1.GetUserRequest
-	3, // 8: planner.v1.UserService.GetUserByEmail:input_type -> planner.v1.GetUserByEmailRequest
-	2, // 9: planner.v1.UserService.CreateUser:output_type -> planner.v1.CreateUserResponse
-	6, // 10: planner.v1.UserService.GetUser:output_type -> planner.v1.GetUserResponse
-	4, // 11: planner.v1.UserService.GetUserByEmail:output_type -> planner.v1.GetUserByEmailResponse
-	9, // [9:12] is the sub-list for method output_type
-	6, // [6:9] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	9,  // 0: planner.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	9,  // 1: planner.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: planner.v1.User.deleted_at:type_name -> google.protobuf.Timestamp
+	0,  // 3: planner.v1.GetAuthResponse.user:type_name -> planner.v1.User
+	10, // 4: planner.v1.GetAuthResponse.campaign:type_name -> planner.v1.Campaign
+	11, // 5: planner.v1.GetAuthResponse.role:type_name -> planner.v1.MemberRole
+	0,  // 6: planner.v1.CreateUserResponse.user:type_name -> planner.v1.User
+	0,  // 7: planner.v1.GetUserByEmailResponse.user:type_name -> planner.v1.User
+	0,  // 8: planner.v1.GetUserResponse.user:type_name -> planner.v1.User
+	3,  // 9: planner.v1.UserService.CreateUser:input_type -> planner.v1.CreateUserRequest
+	7,  // 10: planner.v1.UserService.GetUser:input_type -> planner.v1.GetUserRequest
+	5,  // 11: planner.v1.UserService.GetUserByEmail:input_type -> planner.v1.GetUserByEmailRequest
+	1,  // 12: planner.v1.UserService.GetAuth:input_type -> planner.v1.GetAuthRequest
+	4,  // 13: planner.v1.UserService.CreateUser:output_type -> planner.v1.CreateUserResponse
+	8,  // 14: planner.v1.UserService.GetUser:output_type -> planner.v1.GetUserResponse
+	6,  // 15: planner.v1.UserService.GetUserByEmail:output_type -> planner.v1.GetUserByEmailResponse
+	2,  // 16: planner.v1.UserService.GetAuth:output_type -> planner.v1.GetAuthResponse
+	13, // [13:17] is the sub-list for method output_type
+	9,  // [9:13] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_user_proto_init() }
@@ -532,15 +666,19 @@ func file_planner_v1_user_proto_init() {
 	if File_planner_v1_user_proto != nil {
 		return
 	}
+	file_planner_v1_campaign_proto_init()
+	file_planner_v1_member_proto_init()
 	file_planner_v1_user_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_user_proto_msgTypes[1].OneofWrappers = []any{}
+	file_planner_v1_user_proto_msgTypes[2].OneofWrappers = []any{}
+	file_planner_v1_user_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_user_proto_rawDesc), len(file_planner_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

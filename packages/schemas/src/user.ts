@@ -31,13 +31,8 @@ export const GetAuthRequestSchema = z.object({
 });
 
 export const GetAuthResponseSchema = z.object({
-	campaign: CampaignSchema.omit({
-		createdAt: true,
-		deletedAt: true,
-		updatedAt: true,
-	})
-		.extend({ role: z.enum(UserRole) })
-		.nullable(),
+	campaign: CampaignSchema.nullable(),
+	role: z.enum(UserRole).nullable(),
 	user: UserSchema.omit({ createdAt: true, deletedAt: true, updatedAt: true }),
 });
 

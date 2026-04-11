@@ -55,6 +55,55 @@ func (s *UserService) GetByEmail(email string) (*model.User, error) {
 	return user, nil
 }
 
+func (s *UserService) GetAuth(clerkId string, campaignId *string) (*model.GetAuthResponse, error) {
+	user, err := s.GetByClerkId(clerkId)
+	s.Log.Info("Getting Auth")
+	if err != nil {
+		return nil, err
+	}
+	if campaignId != nil {
+		campaign, err := s.DB.GetCampaign(*campaignId)
+		if err != nil {
+			return nil, fmt.Errorf("get campaign error: %w", err)
+		}
+		member, err := s.DB.GetCampaignUser(*campaignId, user.ID)
+		if err != nil {
+			return nil, fmt.Errorf("get campaign user error: %w", err)
+		}
+
+		return &model.GetAuthResponse{
+			User:     user,
+			Role:     &member.Role,
+			Campaign: campaign,
+		}, nil
+	}
+	members, err := s.DB.ListCampaignUsersByUser(user.ID)
+	if err != nil {
+		if mapped := mapCampaignUserPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("list campaign users by user error: %w", err)
+	}
+	if len(members) == 0 {
+		return &model.GetAuthResponse{
+			User:     user,
+			Campaign: nil,
+			Role:     nil,
+		}, nil
+	}
+
+	campaign, err := s.DB.GetCampaign(members[0].CampaignID)
+	if err != nil {
+		return nil, fmt.Errorf("get campaign error: %w", err)
+	}
+
+	return &model.GetAuthResponse{
+		User:     user,
+		Campaign: campaign,
+		Role:     &members[0].Role,
+	}, nil
+}
+
 func mapUserPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		switch pgConstraint(err) {

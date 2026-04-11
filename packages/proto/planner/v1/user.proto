@@ -3,11 +3,14 @@ syntax = "proto3";
 package planner.v1;
 
 import "google/protobuf/timestamp.proto";
+import "planner/v1/campaign.proto";
+import "planner/v1/member.proto";
 
 service UserService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
+  rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
 }
 
 message User {
@@ -20,6 +23,16 @@ message User {
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
   optional google.protobuf.Timestamp deleted_at = 9;
+}
+
+message GetAuthRequest {
+  string clerk_id = 1;
+  optional string campaign_id = 2;
+}
+message GetAuthResponse {
+  User user = 1;
+  optional Campaign campaign = 2;
+  optional MemberRole role = 3;
 }
 
 message CreateUserRequest {
@@ -42,6 +55,7 @@ message GetUserByEmailResponse {
   User user = 1;
 }
 
+// TODO: make get use id not clerk id
 message GetUserRequest {
   string external_id = 1;
 }

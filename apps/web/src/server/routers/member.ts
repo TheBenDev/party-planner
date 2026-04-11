@@ -8,8 +8,8 @@ import {
 	DeclineCampaignInvitationResponseSchema,
 	GetMemberRequestSchema,
 	GetMemberResponseSchema,
-	ListMembersRequestSchema,
-	ListMembersResponseSchema,
+	ListMembersByCampaignResponseSchema,
+	ListMembersByUserResponseSchema,
 	RemoveMemberRequestSchema,
 	RemoveMemberResponseSchema,
 } from "@planner/schemas/member";
@@ -131,19 +131,37 @@ const getMember = privateProcedure
 		}
 	});
 
-const listMembers = privateProcedure
+const listMembersByCampaign = privateProcedure
 	.route({
 		method: "GET",
-		path: "/member/list",
+		path: "/member/listByCampaign",
 		summary: "List all members of a campaign",
 	})
-	.input(ListMembersRequestSchema)
-	.output(ListMembersResponseSchema)
-	.handler(async ({ input, context }) => {
-		const { campaignId } = input;
+	.output(ListMembersByCampaignResponseSchema)
+	.handler(async ({ context }) => {
+		const { campaignId } = context;
+		const api = context.api;
+		if (campaignId === undefined || campaignId === null) return { members: [] };
+		try {
+			const res = await api.member.listMembersByCampaign({ campaignId });
+			return { members: res.members.map(protoToMember) };
+		} catch (err) {
+			handleError(err, "failed to list members");
+		}
+	});
+
+const listMembersByUser = privateProcedure
+	.route({
+		method: "GET",
+		path: "/member/listByUser",
+		summary: "List all members of a user",
+	})
+	.output(ListMembersByUserResponseSchema)
+	.handler(async ({ context }) => {
+		const { userId } = context;
 		const api = context.api;
 		try {
-			const res = await api.member.listMembers({ campaignId });
+			const res = await api.member.listMembersByUser({ userId });
 			return { members: res.members.map(protoToMember) };
 		} catch (err) {
 			handleError(err, "failed to list members");
@@ -174,6 +192,7 @@ export const memberRouter = {
 	createMember,
 	declineCampaignInvitation,
 	getMember,
-	listMembers,
+	listMembersByCampaign,
+	listMembersByUser,
 	removeMember,
 };

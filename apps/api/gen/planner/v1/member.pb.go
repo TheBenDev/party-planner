@@ -521,27 +521,27 @@ func (x *GetMemberResponse) GetMember() *Member {
 	return nil
 }
 
-type ListMembersRequest struct {
+type ListMembersByCampaignRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListMembersRequest) Reset() {
-	*x = ListMembersRequest{}
+func (x *ListMembersByCampaignRequest) Reset() {
+	*x = ListMembersByCampaignRequest{}
 	mi := &file_planner_v1_member_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListMembersRequest) String() string {
+func (x *ListMembersByCampaignRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListMembersRequest) ProtoMessage() {}
+func (*ListMembersByCampaignRequest) ProtoMessage() {}
 
-func (x *ListMembersRequest) ProtoReflect() protoreflect.Message {
+func (x *ListMembersByCampaignRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_member_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -553,39 +553,39 @@ func (x *ListMembersRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListMembersRequest.ProtoReflect.Descriptor instead.
-func (*ListMembersRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListMembersByCampaignRequest.ProtoReflect.Descriptor instead.
+func (*ListMembersByCampaignRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_member_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ListMembersRequest) GetCampaignId() string {
+func (x *ListMembersByCampaignRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-type ListMembersResponse struct {
+type ListMembersByCampaignResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Members       []*Member              `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListMembersResponse) Reset() {
-	*x = ListMembersResponse{}
+func (x *ListMembersByCampaignResponse) Reset() {
+	*x = ListMembersByCampaignResponse{}
 	mi := &file_planner_v1_member_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListMembersResponse) String() string {
+func (x *ListMembersByCampaignResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListMembersResponse) ProtoMessage() {}
+func (*ListMembersByCampaignResponse) ProtoMessage() {}
 
-func (x *ListMembersResponse) ProtoReflect() protoreflect.Message {
+func (x *ListMembersByCampaignResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_member_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -597,12 +597,100 @@ func (x *ListMembersResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListMembersResponse.ProtoReflect.Descriptor instead.
-func (*ListMembersResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListMembersByCampaignResponse.ProtoReflect.Descriptor instead.
+func (*ListMembersByCampaignResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_member_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListMembersResponse) GetMembers() []*Member {
+func (x *ListMembersByCampaignResponse) GetMembers() []*Member {
+	if x != nil {
+		return x.Members
+	}
+	return nil
+}
+
+type ListMembersByUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMembersByUserRequest) Reset() {
+	*x = ListMembersByUserRequest{}
+	mi := &file_planner_v1_member_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMembersByUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMembersByUserRequest) ProtoMessage() {}
+
+func (x *ListMembersByUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_member_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMembersByUserRequest.ProtoReflect.Descriptor instead.
+func (*ListMembersByUserRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListMembersByUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type ListMembersByUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Members       []*Member              `protobuf:"bytes,1,rep,name=members,proto3" json:"members,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMembersByUserResponse) Reset() {
+	*x = ListMembersByUserResponse{}
+	mi := &file_planner_v1_member_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMembersByUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMembersByUserResponse) ProtoMessage() {}
+
+func (x *ListMembersByUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_member_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMembersByUserResponse.ProtoReflect.Descriptor instead.
+func (*ListMembersByUserResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ListMembersByUserResponse) GetMembers() []*Member {
 	if x != nil {
 		return x.Members
 	}
@@ -619,7 +707,7 @@ type RemoveMemberRequest struct {
 
 func (x *RemoveMemberRequest) Reset() {
 	*x = RemoveMemberRequest{}
-	mi := &file_planner_v1_member_proto_msgTypes[8]
+	mi := &file_planner_v1_member_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -631,7 +719,7 @@ func (x *RemoveMemberRequest) String() string {
 func (*RemoveMemberRequest) ProtoMessage() {}
 
 func (x *RemoveMemberRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[8]
+	mi := &file_planner_v1_member_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -644,7 +732,7 @@ func (x *RemoveMemberRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveMemberRequest.ProtoReflect.Descriptor instead.
 func (*RemoveMemberRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RemoveMemberRequest) GetCampaignId() string {
@@ -669,7 +757,7 @@ type RemoveMemberResponse struct {
 
 func (x *RemoveMemberResponse) Reset() {
 	*x = RemoveMemberResponse{}
-	mi := &file_planner_v1_member_proto_msgTypes[9]
+	mi := &file_planner_v1_member_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -681,7 +769,7 @@ func (x *RemoveMemberResponse) String() string {
 func (*RemoveMemberResponse) ProtoMessage() {}
 
 func (x *RemoveMemberResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[9]
+	mi := &file_planner_v1_member_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -694,7 +782,7 @@ func (x *RemoveMemberResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveMemberResponse.ProtoReflect.Descriptor instead.
 func (*RemoveMemberResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{9}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{11}
 }
 
 type AcceptCampaignInvitationRequest struct {
@@ -707,7 +795,7 @@ type AcceptCampaignInvitationRequest struct {
 
 func (x *AcceptCampaignInvitationRequest) Reset() {
 	*x = AcceptCampaignInvitationRequest{}
-	mi := &file_planner_v1_member_proto_msgTypes[10]
+	mi := &file_planner_v1_member_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -719,7 +807,7 @@ func (x *AcceptCampaignInvitationRequest) String() string {
 func (*AcceptCampaignInvitationRequest) ProtoMessage() {}
 
 func (x *AcceptCampaignInvitationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[10]
+	mi := &file_planner_v1_member_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -732,7 +820,7 @@ func (x *AcceptCampaignInvitationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptCampaignInvitationRequest.ProtoReflect.Descriptor instead.
 func (*AcceptCampaignInvitationRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{10}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *AcceptCampaignInvitationRequest) GetCampaignId() string {
@@ -759,7 +847,7 @@ type AcceptCampaignInvitationResponse struct {
 
 func (x *AcceptCampaignInvitationResponse) Reset() {
 	*x = AcceptCampaignInvitationResponse{}
-	mi := &file_planner_v1_member_proto_msgTypes[11]
+	mi := &file_planner_v1_member_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -771,7 +859,7 @@ func (x *AcceptCampaignInvitationResponse) String() string {
 func (*AcceptCampaignInvitationResponse) ProtoMessage() {}
 
 func (x *AcceptCampaignInvitationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[11]
+	mi := &file_planner_v1_member_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -784,7 +872,7 @@ func (x *AcceptCampaignInvitationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AcceptCampaignInvitationResponse.ProtoReflect.Descriptor instead.
 func (*AcceptCampaignInvitationResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{11}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *AcceptCampaignInvitationResponse) GetMember() *Member {
@@ -811,7 +899,7 @@ type DeclineCampaignInvitationRequest struct {
 
 func (x *DeclineCampaignInvitationRequest) Reset() {
 	*x = DeclineCampaignInvitationRequest{}
-	mi := &file_planner_v1_member_proto_msgTypes[12]
+	mi := &file_planner_v1_member_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -823,7 +911,7 @@ func (x *DeclineCampaignInvitationRequest) String() string {
 func (*DeclineCampaignInvitationRequest) ProtoMessage() {}
 
 func (x *DeclineCampaignInvitationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[12]
+	mi := &file_planner_v1_member_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -836,7 +924,7 @@ func (x *DeclineCampaignInvitationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeclineCampaignInvitationRequest.ProtoReflect.Descriptor instead.
 func (*DeclineCampaignInvitationRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{12}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeclineCampaignInvitationRequest) GetCampaignId() string {
@@ -862,7 +950,7 @@ type DeclineCampaignInvitationResponse struct {
 
 func (x *DeclineCampaignInvitationResponse) Reset() {
 	*x = DeclineCampaignInvitationResponse{}
-	mi := &file_planner_v1_member_proto_msgTypes[13]
+	mi := &file_planner_v1_member_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -874,7 +962,7 @@ func (x *DeclineCampaignInvitationResponse) String() string {
 func (*DeclineCampaignInvitationResponse) ProtoMessage() {}
 
 func (x *DeclineCampaignInvitationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_member_proto_msgTypes[13]
+	mi := &file_planner_v1_member_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -887,7 +975,7 @@ func (x *DeclineCampaignInvitationResponse) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use DeclineCampaignInvitationResponse.ProtoReflect.Descriptor instead.
 func (*DeclineCampaignInvitationResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_member_proto_rawDescGZIP(), []int{13}
+	return file_planner_v1_member_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *DeclineCampaignInvitationResponse) GetInvitation() *CampaignInvitation {
@@ -943,11 +1031,15 @@ const file_planner_v1_member_proto_rawDesc = "" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\"?\n" +
 	"\x11GetMemberResponse\x12*\n" +
-	"\x06member\x18\x01 \x01(\v2\x12.planner.v1.MemberR\x06member\"5\n" +
-	"\x12ListMembersRequest\x12\x1f\n" +
+	"\x06member\x18\x01 \x01(\v2\x12.planner.v1.MemberR\x06member\"?\n" +
+	"\x1cListMembersByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"C\n" +
-	"\x13ListMembersResponse\x12,\n" +
+	"campaignId\"M\n" +
+	"\x1dListMembersByCampaignResponse\x12,\n" +
+	"\amembers\x18\x01 \x03(\v2\x12.planner.v1.MemberR\amembers\"3\n" +
+	"\x18ListMembersByUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"I\n" +
+	"\x19ListMembersByUserResponse\x12,\n" +
 	"\amembers\x18\x01 \x03(\v2\x12.planner.v1.MemberR\amembers\"O\n" +
 	"\x13RemoveMemberRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
@@ -982,13 +1074,14 @@ const file_planner_v1_member_proto_rawDesc = "" +
 	"MemberRole\x12\x1b\n" +
 	"\x17MEMBER_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12MEMBER_ROLE_PLAYER\x10\x01\x12\x1e\n" +
-	"\x1aMEMBER_ROLE_DUNGEON_MASTER\x10\x022\xc0\x04\n" +
+	"\x1aMEMBER_ROLE_DUNGEON_MASTER\x10\x022\xc0\x05\n" +
 	"\rMemberService\x12u\n" +
 	"\x18AcceptCampaignInvitation\x12+.planner.v1.AcceptCampaignInvitationRequest\x1a,.planner.v1.AcceptCampaignInvitationResponse\x12Q\n" +
 	"\fCreateMember\x12\x1f.planner.v1.CreateMemberRequest\x1a .planner.v1.CreateMemberResponse\x12x\n" +
 	"\x19DeclineCampaignInvitation\x12,.planner.v1.DeclineCampaignInvitationRequest\x1a-.planner.v1.DeclineCampaignInvitationResponse\x12H\n" +
-	"\tGetMember\x12\x1c.planner.v1.GetMemberRequest\x1a\x1d.planner.v1.GetMemberResponse\x12N\n" +
-	"\vListMembers\x12\x1e.planner.v1.ListMembersRequest\x1a\x1f.planner.v1.ListMembersResponse\x12Q\n" +
+	"\tGetMember\x12\x1c.planner.v1.GetMemberRequest\x1a\x1d.planner.v1.GetMemberResponse\x12l\n" +
+	"\x15ListMembersByCampaign\x12(.planner.v1.ListMembersByCampaignRequest\x1a).planner.v1.ListMembersByCampaignResponse\x12`\n" +
+	"\x11ListMembersByUser\x12$.planner.v1.ListMembersByUserRequest\x1a%.planner.v1.ListMembersByUserResponse\x12Q\n" +
 	"\fRemoveMember\x12\x1f.planner.v1.RemoveMemberRequest\x1a .planner.v1.RemoveMemberResponseB\xa8\x01\n" +
 	"\x0ecom.planner.v1B\vMemberProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
@@ -1007,7 +1100,7 @@ func file_planner_v1_member_proto_rawDescGZIP() []byte {
 }
 
 var file_planner_v1_member_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_planner_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_planner_v1_member_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_planner_v1_member_proto_goTypes = []any{
 	(InvitationStatus)(0),                     // 0: planner.v1.InvitationStatus
 	(MemberRole)(0),                           // 1: planner.v1.MemberRole
@@ -1017,50 +1110,55 @@ var file_planner_v1_member_proto_goTypes = []any{
 	(*CreateMemberResponse)(nil),              // 5: planner.v1.CreateMemberResponse
 	(*GetMemberRequest)(nil),                  // 6: planner.v1.GetMemberRequest
 	(*GetMemberResponse)(nil),                 // 7: planner.v1.GetMemberResponse
-	(*ListMembersRequest)(nil),                // 8: planner.v1.ListMembersRequest
-	(*ListMembersResponse)(nil),               // 9: planner.v1.ListMembersResponse
-	(*RemoveMemberRequest)(nil),               // 10: planner.v1.RemoveMemberRequest
-	(*RemoveMemberResponse)(nil),              // 11: planner.v1.RemoveMemberResponse
-	(*AcceptCampaignInvitationRequest)(nil),   // 12: planner.v1.AcceptCampaignInvitationRequest
-	(*AcceptCampaignInvitationResponse)(nil),  // 13: planner.v1.AcceptCampaignInvitationResponse
-	(*DeclineCampaignInvitationRequest)(nil),  // 14: planner.v1.DeclineCampaignInvitationRequest
-	(*DeclineCampaignInvitationResponse)(nil), // 15: planner.v1.DeclineCampaignInvitationResponse
-	(*timestamppb.Timestamp)(nil),             // 16: google.protobuf.Timestamp
+	(*ListMembersByCampaignRequest)(nil),      // 8: planner.v1.ListMembersByCampaignRequest
+	(*ListMembersByCampaignResponse)(nil),     // 9: planner.v1.ListMembersByCampaignResponse
+	(*ListMembersByUserRequest)(nil),          // 10: planner.v1.ListMembersByUserRequest
+	(*ListMembersByUserResponse)(nil),         // 11: planner.v1.ListMembersByUserResponse
+	(*RemoveMemberRequest)(nil),               // 12: planner.v1.RemoveMemberRequest
+	(*RemoveMemberResponse)(nil),              // 13: planner.v1.RemoveMemberResponse
+	(*AcceptCampaignInvitationRequest)(nil),   // 14: planner.v1.AcceptCampaignInvitationRequest
+	(*AcceptCampaignInvitationResponse)(nil),  // 15: planner.v1.AcceptCampaignInvitationResponse
+	(*DeclineCampaignInvitationRequest)(nil),  // 16: planner.v1.DeclineCampaignInvitationRequest
+	(*DeclineCampaignInvitationResponse)(nil), // 17: planner.v1.DeclineCampaignInvitationResponse
+	(*timestamppb.Timestamp)(nil),             // 18: google.protobuf.Timestamp
 }
 var file_planner_v1_member_proto_depIdxs = []int32{
 	1,  // 0: planner.v1.CampaignInvitation.role:type_name -> planner.v1.MemberRole
 	0,  // 1: planner.v1.CampaignInvitation.status:type_name -> planner.v1.InvitationStatus
-	16, // 2: planner.v1.CampaignInvitation.accepted_at:type_name -> google.protobuf.Timestamp
-	16, // 3: planner.v1.CampaignInvitation.expires_at:type_name -> google.protobuf.Timestamp
-	16, // 4: planner.v1.CampaignInvitation.created_at:type_name -> google.protobuf.Timestamp
-	16, // 5: planner.v1.CampaignInvitation.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 2: planner.v1.CampaignInvitation.accepted_at:type_name -> google.protobuf.Timestamp
+	18, // 3: planner.v1.CampaignInvitation.expires_at:type_name -> google.protobuf.Timestamp
+	18, // 4: planner.v1.CampaignInvitation.created_at:type_name -> google.protobuf.Timestamp
+	18, // 5: planner.v1.CampaignInvitation.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 6: planner.v1.Member.role:type_name -> planner.v1.MemberRole
-	16, // 7: planner.v1.Member.created_at:type_name -> google.protobuf.Timestamp
-	16, // 8: planner.v1.Member.updated_at:type_name -> google.protobuf.Timestamp
+	18, // 7: planner.v1.Member.created_at:type_name -> google.protobuf.Timestamp
+	18, // 8: planner.v1.Member.updated_at:type_name -> google.protobuf.Timestamp
 	1,  // 9: planner.v1.CreateMemberRequest.role:type_name -> planner.v1.MemberRole
 	3,  // 10: planner.v1.CreateMemberResponse.member:type_name -> planner.v1.Member
 	3,  // 11: planner.v1.GetMemberResponse.member:type_name -> planner.v1.Member
-	3,  // 12: planner.v1.ListMembersResponse.members:type_name -> planner.v1.Member
-	3,  // 13: planner.v1.AcceptCampaignInvitationResponse.member:type_name -> planner.v1.Member
-	2,  // 14: planner.v1.AcceptCampaignInvitationResponse.invitation:type_name -> planner.v1.CampaignInvitation
-	2,  // 15: planner.v1.DeclineCampaignInvitationResponse.invitation:type_name -> planner.v1.CampaignInvitation
-	12, // 16: planner.v1.MemberService.AcceptCampaignInvitation:input_type -> planner.v1.AcceptCampaignInvitationRequest
-	4,  // 17: planner.v1.MemberService.CreateMember:input_type -> planner.v1.CreateMemberRequest
-	14, // 18: planner.v1.MemberService.DeclineCampaignInvitation:input_type -> planner.v1.DeclineCampaignInvitationRequest
-	6,  // 19: planner.v1.MemberService.GetMember:input_type -> planner.v1.GetMemberRequest
-	8,  // 20: planner.v1.MemberService.ListMembers:input_type -> planner.v1.ListMembersRequest
-	10, // 21: planner.v1.MemberService.RemoveMember:input_type -> planner.v1.RemoveMemberRequest
-	13, // 22: planner.v1.MemberService.AcceptCampaignInvitation:output_type -> planner.v1.AcceptCampaignInvitationResponse
-	5,  // 23: planner.v1.MemberService.CreateMember:output_type -> planner.v1.CreateMemberResponse
-	15, // 24: planner.v1.MemberService.DeclineCampaignInvitation:output_type -> planner.v1.DeclineCampaignInvitationResponse
-	7,  // 25: planner.v1.MemberService.GetMember:output_type -> planner.v1.GetMemberResponse
-	9,  // 26: planner.v1.MemberService.ListMembers:output_type -> planner.v1.ListMembersResponse
-	11, // 27: planner.v1.MemberService.RemoveMember:output_type -> planner.v1.RemoveMemberResponse
-	22, // [22:28] is the sub-list for method output_type
-	16, // [16:22] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	3,  // 12: planner.v1.ListMembersByCampaignResponse.members:type_name -> planner.v1.Member
+	3,  // 13: planner.v1.ListMembersByUserResponse.members:type_name -> planner.v1.Member
+	3,  // 14: planner.v1.AcceptCampaignInvitationResponse.member:type_name -> planner.v1.Member
+	2,  // 15: planner.v1.AcceptCampaignInvitationResponse.invitation:type_name -> planner.v1.CampaignInvitation
+	2,  // 16: planner.v1.DeclineCampaignInvitationResponse.invitation:type_name -> planner.v1.CampaignInvitation
+	14, // 17: planner.v1.MemberService.AcceptCampaignInvitation:input_type -> planner.v1.AcceptCampaignInvitationRequest
+	4,  // 18: planner.v1.MemberService.CreateMember:input_type -> planner.v1.CreateMemberRequest
+	16, // 19: planner.v1.MemberService.DeclineCampaignInvitation:input_type -> planner.v1.DeclineCampaignInvitationRequest
+	6,  // 20: planner.v1.MemberService.GetMember:input_type -> planner.v1.GetMemberRequest
+	8,  // 21: planner.v1.MemberService.ListMembersByCampaign:input_type -> planner.v1.ListMembersByCampaignRequest
+	10, // 22: planner.v1.MemberService.ListMembersByUser:input_type -> planner.v1.ListMembersByUserRequest
+	12, // 23: planner.v1.MemberService.RemoveMember:input_type -> planner.v1.RemoveMemberRequest
+	15, // 24: planner.v1.MemberService.AcceptCampaignInvitation:output_type -> planner.v1.AcceptCampaignInvitationResponse
+	5,  // 25: planner.v1.MemberService.CreateMember:output_type -> planner.v1.CreateMemberResponse
+	17, // 26: planner.v1.MemberService.DeclineCampaignInvitation:output_type -> planner.v1.DeclineCampaignInvitationResponse
+	7,  // 27: planner.v1.MemberService.GetMember:output_type -> planner.v1.GetMemberResponse
+	9,  // 28: planner.v1.MemberService.ListMembersByCampaign:output_type -> planner.v1.ListMembersByCampaignResponse
+	11, // 29: planner.v1.MemberService.ListMembersByUser:output_type -> planner.v1.ListMembersByUserResponse
+	13, // 30: planner.v1.MemberService.RemoveMember:output_type -> planner.v1.RemoveMemberResponse
+	24, // [24:31] is the sub-list for method output_type
+	17, // [17:24] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_member_proto_init() }
@@ -1075,7 +1173,7 @@ func file_planner_v1_member_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_member_proto_rawDesc), len(file_planner_v1_member_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   14,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

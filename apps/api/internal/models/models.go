@@ -44,6 +44,12 @@ type CreateUserRequest struct {
 	LastName   sql.NullString
 }
 
+type GetAuthResponse struct {
+	User     *User
+	Campaign *Campaign
+	Role     *MemberRole
+}
+
 type IntegrationSource string
 
 const (

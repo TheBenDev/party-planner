@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateUserRequest, CreateUserResponse, GetUserByEmailRequest, GetUserByEmailResponse, GetUserRequest, GetUserResponse } from "./user_pb.js";
+import { CreateUserRequest, CreateUserResponse, GetAuthRequest, GetAuthResponse, GetUserByEmailRequest, GetUserByEmailResponse, GetUserRequest, GetUserResponse } from "./user_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,15 @@ export const UserService = {
       name: "GetUserByEmail",
       I: GetUserByEmailRequest,
       O: GetUserByEmailResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.UserService.GetAuth
+     */
+    getAuth: {
+      name: "GetAuth",
+      I: GetAuthRequest,
+      O: GetAuthResponse,
       kind: MethodKind.Unary,
     },
   }
