@@ -1,7 +1,8 @@
 import { ClerkProvider } from "@clerk/clerk-react";
+import { env } from "@/env";
 
 function getPublishableKey(): string {
-	const key = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+	const key = env.VITE_CLERK_PUBLISHABLE_KEY;
 	if (!key) {
 		throw new Error("Add VITE_CLERK_PUBLISHABLE_KEY to your environment.");
 	}
