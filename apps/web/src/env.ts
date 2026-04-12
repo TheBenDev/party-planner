@@ -21,7 +21,7 @@ export const env = createEnv({
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
-		CLERK_WEBHOOK_SECRET: z.string(),
+		CLERK_WEBHOOK_SIGNING_SECRET: z.string(),
 		DATABASE_URL: z
 			.string()
 			.default(

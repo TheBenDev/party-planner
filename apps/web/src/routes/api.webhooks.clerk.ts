@@ -1,31 +1,20 @@
-import type { WebhookEvent } from "@clerk/backend";
+import {
+	verifyWebhook,
+	type WebhookEvent,
+} from "@clerk/tanstack-react-start/webhooks";
 import { createFileRoute } from "@tanstack/react-router";
-import { Webhook } from "svix";
-import { env } from "@/env";
 import { serverClient } from "@/lib/serverClient";
 
 export const Route = createFileRoute("/api/webhooks/clerk")({
 	server: {
 		handlers: {
 			POST: async ({ request }) => {
-				const payload = await request.text();
-
-				const svixId = request.headers.get("svix-id");
-				const svixTimestamp = request.headers.get("svix-timestamp");
-				const svixSignature = request.headers.get("svix-signature");
-				if (!(svixId && svixTimestamp && svixSignature)) {
-					return new Response("Missing svix headers", { status: 400 });
-				}
-				const wh = new Webhook(env.CLERK_WEBHOOK_SECRET);
 				let evt: WebhookEvent;
-
 				try {
-					evt = wh.verify(payload, {
-						"svix-id": svixId,
-						"svix-signature": svixSignature,
-						"svix-timestamp": svixTimestamp,
-					}) as WebhookEvent;
-				} catch (_) {
+					evt = await verifyWebhook(request);
+				} catch (error) {
+					// biome-ignore lint/suspicious/noConsole: This is ok for now
+					console.error(error);
 					return new Response("Invalid signature", { status: 400 });
 				}
 				switch (evt.type) {
