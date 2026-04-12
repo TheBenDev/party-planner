@@ -54,6 +54,24 @@ func (s *UserServer) GetUser(ctx context.Context, req *connect.Request[v1.GetUse
 	return connect.NewResponse(&v1.GetUserResponse{User: userToProto(user)}), nil
 }
 
+func (s *UserServer) GetAuth(ctx context.Context, req *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error) {
+	if req.Msg.ClerkId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
+	}
+
+	auth, err := s.User.GetAuth(req.Msg.ClerkId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(err, "failed to get user")
+	}
+
+	var role *v1.MemberRole
+	if auth.Role != nil {
+		r := memberRoleToProto(*auth.Role)
+		role = &r
+	}
+	return connect.NewResponse(&v1.GetAuthResponse{User: userToProto(auth.User), Campaign: campaignToProto(auth.Campaign), Role: role}), nil
+}
+
 func (s *UserServer) GetUserByEmail(ctx context.Context, req *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error) {
 	if req.Msg.Email == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user email required"))

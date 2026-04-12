@@ -43,11 +43,11 @@ export const GetMemberRequestSchema = z.object({
 
 export const GetMemberResponseSchema = z.object({ member: CampaignUserSchema });
 
-export const ListMembersRequestSchema = z.object({
-	campaignId: z.uuid(),
+export const ListMembersByCampaignResponseSchema = z.object({
+	members: z.array(CampaignUserSchema),
 });
 
-export const ListMembersResponseSchema = z.object({
+export const ListMembersByUserResponseSchema = z.object({
 	members: z.array(CampaignUserSchema),
 });
 

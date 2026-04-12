@@ -3,22 +3,30 @@ import { REST } from "@discordjs/rest";
 import type { LoggerContext } from "@orpc/experimental-pino";
 import { getLogger } from "@orpc/experimental-pino";
 import { ORPCError, os } from "@orpc/server";
-import { getCookie, setCookie } from "@orpc/server/helpers";
-import type { RequestHeadersPluginContext } from "@orpc/server/plugins";
-import { type Client, createDb, schema } from "@planner/database";
+import { deleteCookie, getCookie, setCookie } from "@orpc/server/helpers";
+import type {
+	RequestHeadersPluginContext,
+	ResponseHeadersPluginContext,
+} from "@orpc/server/plugins";
+import { type Client, createDb } from "@planner/database";
 import type { GetAuthResponse } from "@planner/schemas/user";
 import {
 	type AuthCookiePayload,
 	decryptAuthCookie,
 	encryptAuthCookie,
 } from "@planner/security/auth";
-import { eq } from "drizzle-orm";
 import { Resend } from "resend";
 import { env } from "@/env";
 import { createApiClients } from "@/lib/api/index";
+import { handleError } from "./errors";
+import { protoToCampaign } from "./routers/util/proto/campaign";
+import { protoRoleToUserRole } from "./routers/util/proto/member";
+import { protoToUser } from "./routers/util/proto/user";
 
-const { usersTable, campaignsTable, campaignUsersTable } = schema;
-interface ORPCContext extends RequestHeadersPluginContext, LoggerContext {}
+interface ORPCContext
+	extends RequestHeadersPluginContext,
+		ResponseHeadersPluginContext,
+		LoggerContext {}
 interface Context extends ORPCContext {
 	api: ReturnType<typeof createApiClients>;
 	db: Client;
@@ -82,7 +90,6 @@ function getSessionToken(headers: Headers): string | undefined {
 export const authMiddleware = os
 	.$context<Context>()
 	.middleware(async ({ next, context: c }) => {
-		const db = c.db;
 		if (!c.reqHeaders) {
 			throw new ORPCError("UNAUTHORIZED", {
 				message: "Request headers not available",
@@ -121,34 +128,52 @@ export const authMiddleware = os
 
 		// Use clerk external id to fetch user information for cookie
 		async function getAuth(): Promise<GetAuthResponse> {
-			const [row] = await db
-				.select()
-				.from(usersTable)
-				.where(eq(usersTable.externalId, clerkUserId))
-				.limit(1);
-
-			if (!row) {
-				throw new ORPCError("NOT_FOUND", { message: "User not found" });
-			}
-
-			const userCampaigns = await db
-				.select({
-					campaign: campaignsTable,
-					role: campaignUsersTable.role,
-				})
-				.from(campaignUsersTable)
-				.innerJoin(
-					campaignsTable,
-					eq(campaignUsersTable.campaignId, campaignsTable.id),
-				)
-				.where(eq(campaignUsersTable.userId, row.id));
-
 			let activeCampaignId = activeCampaignIdCookie;
+			async function fetchAuth(
+				campaignId: string | undefined,
+			): Promise<GetAuthResponse> {
+				const authProto = await c.api.user.getAuth({
+					campaignId,
+					clerkId: clerkUserId,
+				});
+				if (authProto.user === undefined) {
+					throw new ORPCError("NOT_FOUND", { message: "user not found" });
+				}
+				const campaign =
+					authProto.campaign === undefined
+						? null
+						: { ...protoToCampaign(authProto.campaign) };
+				const role =
+					authProto.role === undefined
+						? null
+						: protoRoleToUserRole(authProto.role);
+
+				return { campaign, role, user: protoToUser(authProto.user) };
+			}
+			let auth: GetAuthResponse;
+			try {
+				auth = await fetchAuth(activeCampaignId);
+			} catch (err) {
+				// check without a campaign id stored in cookies
+				// guardrail if a campaign is deleted but has its cookie still stored
+				if (activeCampaignId) {
+					deleteCookie(c.resHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+					deleteCookie(c.resHeaders, AUTH_COOKIE_NAME);
+					activeCampaignId = undefined;
+					try {
+						auth = await fetchAuth(undefined);
+					} catch (retryErr) {
+						handleError(retryErr, "failed to get auth");
+					}
+				} else {
+					handleError(err, "failed to get auth");
+				}
+			}
 			// set an active campaign for user if they don't have one and have a campaign available
-			if (!activeCampaignIdCookie && userCampaigns.length > 0) {
-				activeCampaignId = userCampaigns[0].campaign.id;
+			if (!activeCampaignIdCookie && auth.campaign !== null) {
+				activeCampaignId = auth.campaign.id;
 				setCookie(
-					c.reqHeaders,
+					c.resHeaders,
 					ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 					activeCampaignId,
 					{
@@ -161,22 +186,10 @@ export const authMiddleware = os
 				);
 			}
 
-			const activeCampaign = userCampaigns.find(
-				(campaigns) => campaigns.campaign.id === activeCampaignId,
-			);
-
 			return {
-				campaign: activeCampaign
-					? { ...activeCampaign?.campaign, role: activeCampaign.role }
-					: null,
-				user: {
-					avatar: row.avatar,
-					email: row.email,
-					externalId: row.externalId,
-					firstName: row.firstName,
-					id: row.id,
-					lastName: row.lastName,
-				},
+				campaign: auth.campaign,
+				role: auth.role,
+				user: auth.user,
 			};
 		}
 
@@ -193,7 +206,6 @@ export const authMiddleware = os
 					env.AUTH_PRIVATE_KEY_PEM,
 				);
 				const now = Math.floor(Date.now() / 1000);
-
 				if (rawCookie.exp < now) {
 					authPayload = await getAuth();
 					shouldSetCookie = true;
@@ -222,14 +234,15 @@ export const authMiddleware = os
 			try {
 				const encryptedCookie = await encryptAuthCookie(
 					{
-						campaign: authPayload.campaign ? authPayload.campaign : null,
+						campaign: authPayload.campaign,
+						role: authPayload.role,
 						user: authPayload.user,
 					},
 					publicKey,
 					COOKIE_MAX_AGE,
 				);
 
-				setCookie(c.reqHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
+				setCookie(c.resHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
 					httpOnly: true,
 					maxAge: COOKIE_MAX_AGE,
 					path: "/",
@@ -247,7 +260,7 @@ export const authMiddleware = os
 				clerkClient,
 				clerkUserId,
 				resend,
-				role: authPayload.campaign?.role ?? null,
+				role: authPayload.role,
 				userId: authPayload.user.id,
 			},
 		});

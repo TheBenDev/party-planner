@@ -44,9 +44,12 @@ const (
 	MemberServiceDeclineCampaignInvitationProcedure = "/planner.v1.MemberService/DeclineCampaignInvitation"
 	// MemberServiceGetMemberProcedure is the fully-qualified name of the MemberService's GetMember RPC.
 	MemberServiceGetMemberProcedure = "/planner.v1.MemberService/GetMember"
-	// MemberServiceListMembersProcedure is the fully-qualified name of the MemberService's ListMembers
-	// RPC.
-	MemberServiceListMembersProcedure = "/planner.v1.MemberService/ListMembers"
+	// MemberServiceListMembersByCampaignProcedure is the fully-qualified name of the MemberService's
+	// ListMembersByCampaign RPC.
+	MemberServiceListMembersByCampaignProcedure = "/planner.v1.MemberService/ListMembersByCampaign"
+	// MemberServiceListMembersByUserProcedure is the fully-qualified name of the MemberService's
+	// ListMembersByUser RPC.
+	MemberServiceListMembersByUserProcedure = "/planner.v1.MemberService/ListMembersByUser"
 	// MemberServiceRemoveMemberProcedure is the fully-qualified name of the MemberService's
 	// RemoveMember RPC.
 	MemberServiceRemoveMemberProcedure = "/planner.v1.MemberService/RemoveMember"
@@ -58,7 +61,8 @@ type MemberServiceClient interface {
 	CreateMember(context.Context, *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error)
 	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
 	GetMember(context.Context, *connect.Request[v1.GetMemberRequest]) (*connect.Response[v1.GetMemberResponse], error)
-	ListMembers(context.Context, *connect.Request[v1.ListMembersRequest]) (*connect.Response[v1.ListMembersResponse], error)
+	ListMembersByCampaign(context.Context, *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error)
+	ListMembersByUser(context.Context, *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error)
 	RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error)
 }
 
@@ -97,10 +101,16 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("GetMember")),
 			connect.WithClientOptions(opts...),
 		),
-		listMembers: connect.NewClient[v1.ListMembersRequest, v1.ListMembersResponse](
+		listMembersByCampaign: connect.NewClient[v1.ListMembersByCampaignRequest, v1.ListMembersByCampaignResponse](
 			httpClient,
-			baseURL+MemberServiceListMembersProcedure,
-			connect.WithSchema(memberServiceMethods.ByName("ListMembers")),
+			baseURL+MemberServiceListMembersByCampaignProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("ListMembersByCampaign")),
+			connect.WithClientOptions(opts...),
+		),
+		listMembersByUser: connect.NewClient[v1.ListMembersByUserRequest, v1.ListMembersByUserResponse](
+			httpClient,
+			baseURL+MemberServiceListMembersByUserProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("ListMembersByUser")),
 			connect.WithClientOptions(opts...),
 		),
 		removeMember: connect.NewClient[v1.RemoveMemberRequest, v1.RemoveMemberResponse](
@@ -118,7 +128,8 @@ type memberServiceClient struct {
 	createMember              *connect.Client[v1.CreateMemberRequest, v1.CreateMemberResponse]
 	declineCampaignInvitation *connect.Client[v1.DeclineCampaignInvitationRequest, v1.DeclineCampaignInvitationResponse]
 	getMember                 *connect.Client[v1.GetMemberRequest, v1.GetMemberResponse]
-	listMembers               *connect.Client[v1.ListMembersRequest, v1.ListMembersResponse]
+	listMembersByCampaign     *connect.Client[v1.ListMembersByCampaignRequest, v1.ListMembersByCampaignResponse]
+	listMembersByUser         *connect.Client[v1.ListMembersByUserRequest, v1.ListMembersByUserResponse]
 	removeMember              *connect.Client[v1.RemoveMemberRequest, v1.RemoveMemberResponse]
 }
 
@@ -142,9 +153,14 @@ func (c *memberServiceClient) GetMember(ctx context.Context, req *connect.Reques
 	return c.getMember.CallUnary(ctx, req)
 }
 
-// ListMembers calls planner.v1.MemberService.ListMembers.
-func (c *memberServiceClient) ListMembers(ctx context.Context, req *connect.Request[v1.ListMembersRequest]) (*connect.Response[v1.ListMembersResponse], error) {
-	return c.listMembers.CallUnary(ctx, req)
+// ListMembersByCampaign calls planner.v1.MemberService.ListMembersByCampaign.
+func (c *memberServiceClient) ListMembersByCampaign(ctx context.Context, req *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error) {
+	return c.listMembersByCampaign.CallUnary(ctx, req)
+}
+
+// ListMembersByUser calls planner.v1.MemberService.ListMembersByUser.
+func (c *memberServiceClient) ListMembersByUser(ctx context.Context, req *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error) {
+	return c.listMembersByUser.CallUnary(ctx, req)
 }
 
 // RemoveMember calls planner.v1.MemberService.RemoveMember.
@@ -158,7 +174,8 @@ type MemberServiceHandler interface {
 	CreateMember(context.Context, *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error)
 	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
 	GetMember(context.Context, *connect.Request[v1.GetMemberRequest]) (*connect.Response[v1.GetMemberResponse], error)
-	ListMembers(context.Context, *connect.Request[v1.ListMembersRequest]) (*connect.Response[v1.ListMembersResponse], error)
+	ListMembersByCampaign(context.Context, *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error)
+	ListMembersByUser(context.Context, *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error)
 	RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error)
 }
 
@@ -193,10 +210,16 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("GetMember")),
 		connect.WithHandlerOptions(opts...),
 	)
-	memberServiceListMembersHandler := connect.NewUnaryHandler(
-		MemberServiceListMembersProcedure,
-		svc.ListMembers,
-		connect.WithSchema(memberServiceMethods.ByName("ListMembers")),
+	memberServiceListMembersByCampaignHandler := connect.NewUnaryHandler(
+		MemberServiceListMembersByCampaignProcedure,
+		svc.ListMembersByCampaign,
+		connect.WithSchema(memberServiceMethods.ByName("ListMembersByCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceListMembersByUserHandler := connect.NewUnaryHandler(
+		MemberServiceListMembersByUserProcedure,
+		svc.ListMembersByUser,
+		connect.WithSchema(memberServiceMethods.ByName("ListMembersByUser")),
 		connect.WithHandlerOptions(opts...),
 	)
 	memberServiceRemoveMemberHandler := connect.NewUnaryHandler(
@@ -215,8 +238,10 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceDeclineCampaignInvitationHandler.ServeHTTP(w, r)
 		case MemberServiceGetMemberProcedure:
 			memberServiceGetMemberHandler.ServeHTTP(w, r)
-		case MemberServiceListMembersProcedure:
-			memberServiceListMembersHandler.ServeHTTP(w, r)
+		case MemberServiceListMembersByCampaignProcedure:
+			memberServiceListMembersByCampaignHandler.ServeHTTP(w, r)
+		case MemberServiceListMembersByUserProcedure:
+			memberServiceListMembersByUserHandler.ServeHTTP(w, r)
 		case MemberServiceRemoveMemberProcedure:
 			memberServiceRemoveMemberHandler.ServeHTTP(w, r)
 		default:
@@ -244,8 +269,12 @@ func (UnimplementedMemberServiceHandler) GetMember(context.Context, *connect.Req
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.GetMember is not implemented"))
 }
 
-func (UnimplementedMemberServiceHandler) ListMembers(context.Context, *connect.Request[v1.ListMembersRequest]) (*connect.Response[v1.ListMembersResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.ListMembers is not implemented"))
+func (UnimplementedMemberServiceHandler) ListMembersByCampaign(context.Context, *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.ListMembersByCampaign is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) ListMembersByUser(context.Context, *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.ListMembersByUser is not implemented"))
 }
 
 func (UnimplementedMemberServiceHandler) RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error) {

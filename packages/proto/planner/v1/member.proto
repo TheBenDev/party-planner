@@ -9,7 +9,8 @@ service MemberService {
   rpc CreateMember(CreateMemberRequest) returns (CreateMemberResponse);
   rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
   rpc GetMember(GetMemberRequest) returns (GetMemberResponse);
-  rpc ListMembers(ListMembersRequest) returns (ListMembersResponse);
+  rpc ListMembersByCampaign(ListMembersByCampaignRequest) returns (ListMembersByCampaignResponse);
+  rpc ListMembersByUser(ListMembersByUserRequest) returns (ListMembersByUserResponse);
   rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse);
 }
 
@@ -68,11 +69,19 @@ message GetMemberResponse {
   Member member = 1;
 }
 
-message ListMembersRequest {
+message ListMembersByCampaignRequest {
   string campaign_id = 1;
 }
 
-message ListMembersResponse {
+message ListMembersByCampaignResponse {
+  repeated Member members = 1;
+}
+
+message ListMembersByUserRequest {
+  string user_id = 1;
+}
+
+message ListMembersByUserResponse {
   repeated Member members = 1;
 }
 

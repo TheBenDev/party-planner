@@ -66,16 +66,28 @@ func (s *MemberServer) GetMember(ctx context.Context, req *connect.Request[v1.Ge
 		Member: memberToProto(member),
 	}), nil
 }
-func (s *MemberServer) ListMembers(ctx context.Context, req *connect.Request[v1.ListMembersRequest]) (*connect.Response[v1.ListMembersResponse], error) {
+func (s *MemberServer) ListMembersByCampaign(ctx context.Context, req *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	members, err := s.Member.List(req.Msg.CampaignId)
+	members, err := s.Member.ListByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list campaign user")
+		return nil, mapServiceError(err, "failed to list campaign users by campaign")
 	}
 
-	return connect.NewResponse(&v1.ListMembersResponse{Members: Map(members, memberToProto)}), nil
+	return connect.NewResponse(&v1.ListMembersByCampaignResponse{Members: Map(members, memberToProto)}), nil
+}
+
+func (s *MemberServer) ListMembersByUser(ctx context.Context, req *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error) {
+	if req.Msg.UserId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
+	}
+	members, err := s.Member.ListByUser(req.Msg.UserId)
+	if err != nil {
+		return nil, mapServiceError(err, "failed to list campaign users by user")
+	}
+
+	return connect.NewResponse(&v1.ListMembersByUserResponse{Members: Map(members, memberToProto)}), nil
 }
 
 func (s *MemberServer) RemoveMember(ctx context.Context, req *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error) {

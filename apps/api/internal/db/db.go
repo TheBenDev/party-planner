@@ -186,8 +186,28 @@ func (db *DB) GetCampaignUser(campaignId, userId string) (*model.Member, error) 
 	return scanCampaignUser(row)
 }
 
-func (db *DB) ListCampaignUsers(campaignId string) ([]*model.Member, error) {
+func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, error) {
 	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE campaign_id = $1`, campaignId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var members []*model.Member
+	for rows.Next() {
+		member, err := scanCampaignUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, member)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return members, nil
+}
+
+func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
+	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE user_id = $1`, userId)
 	if err != nil {
 		return nil, err
 	}

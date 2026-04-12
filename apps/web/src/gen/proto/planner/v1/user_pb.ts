@@ -6,13 +6,17 @@ import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegen
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Campaign } from "./campaign_pb";
+import { file_planner_v1_campaign } from "./campaign_pb";
+import type { MemberRole } from "./member_pb";
+import { file_planner_v1_member } from "./member_pb";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file planner/v1/user.proto.
  */
 export const file_planner_v1_user: GenFile = /*@__PURE__*/
-  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IqUBChFDcmVhdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRITCgZhdmF0YXIYAyABKAlIAIgBARIXCgpmaXJzdF9uYW1lGAQgASgJSAGIAQESFgoJbGFzdF9uYW1lGAUgASgJSAKIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIiYKFUdldFVzZXJCeUVtYWlsUmVxdWVzdBINCgVlbWFpbBgBIAEoCSI4ChZHZXRVc2VyQnlFbWFpbFJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIiJQoOR2V0VXNlclJlcXVlc3QSEwoLZXh0ZXJuYWxfaWQYASABKAkiMQoPR2V0VXNlclJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIy9wEKC1VzZXJTZXJ2aWNlEksKCkNyZWF0ZVVzZXISHS5wbGFubmVyLnYxLkNyZWF0ZVVzZXJSZXF1ZXN0Gh4ucGxhbm5lci52MS5DcmVhdGVVc2VyUmVzcG9uc2USQgoHR2V0VXNlchIaLnBsYW5uZXIudjEuR2V0VXNlclJlcXVlc3QaGy5wbGFubmVyLnYxLkdldFVzZXJSZXNwb25zZRJXCg5HZXRVc2VyQnlFbWFpbBIhLnBsYW5uZXIudjEuR2V0VXNlckJ5RW1haWxSZXF1ZXN0GiIucGxhbm5lci52MS5HZXRVc2VyQnlFbWFpbFJlc3BvbnNlQqYBCg5jb20ucGxhbm5lci52MUIJVXNlclByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp]);
+  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IkwKDkdldEF1dGhSZXF1ZXN0EhAKCGNsZXJrX2lkGAEgASgJEhgKC2NhbXBhaWduX2lkGAIgASgJSACIAQFCDgoMX2NhbXBhaWduX2lkIp8BCg9HZXRBdXRoUmVzcG9uc2USHgoEdXNlchgBIAEoCzIQLnBsYW5uZXIudjEuVXNlchIrCghjYW1wYWlnbhgCIAEoCzIULnBsYW5uZXIudjEuQ2FtcGFpZ25IAIgBARIpCgRyb2xlGAMgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlSAGIAQFCCwoJX2NhbXBhaWduQgcKBV9yb2xlIqUBChFDcmVhdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRITCgZhdmF0YXIYAyABKAlIAIgBARIXCgpmaXJzdF9uYW1lGAQgASgJSAGIAQESFgoJbGFzdF9uYW1lGAUgASgJSAKIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIiYKFUdldFVzZXJCeUVtYWlsUmVxdWVzdBINCgVlbWFpbBgBIAEoCSI4ChZHZXRVc2VyQnlFbWFpbFJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIiJQoOR2V0VXNlclJlcXVlc3QSEwoLZXh0ZXJuYWxfaWQYASABKAkiMQoPR2V0VXNlclJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIyuwIKC1VzZXJTZXJ2aWNlEksKCkNyZWF0ZVVzZXISHS5wbGFubmVyLnYxLkNyZWF0ZVVzZXJSZXF1ZXN0Gh4ucGxhbm5lci52MS5DcmVhdGVVc2VyUmVzcG9uc2USQgoHR2V0VXNlchIaLnBsYW5uZXIudjEuR2V0VXNlclJlcXVlc3QaGy5wbGFubmVyLnYxLkdldFVzZXJSZXNwb25zZRJXCg5HZXRVc2VyQnlFbWFpbBIhLnBsYW5uZXIudjEuR2V0VXNlckJ5RW1haWxSZXF1ZXN0GiIucGxhbm5lci52MS5HZXRVc2VyQnlFbWFpbFJlc3BvbnNlEkIKB0dldEF1dGgSGi5wbGFubmVyLnYxLkdldEF1dGhSZXF1ZXN0GhsucGxhbm5lci52MS5HZXRBdXRoUmVzcG9uc2VCpgEKDmNvbS5wbGFubmVyLnYxQglVc2VyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_planner_v1_campaign, file_planner_v1_member]);
 
 /**
  * @generated from message planner.v1.User
@@ -72,6 +76,55 @@ export const UserSchema: GenMessage<User> = /*@__PURE__*/
   messageDesc(file_planner_v1_user, 0);
 
 /**
+ * @generated from message planner.v1.GetAuthRequest
+ */
+export type GetAuthRequest = Message<"planner.v1.GetAuthRequest"> & {
+  /**
+   * @generated from field: string clerk_id = 1;
+   */
+  clerkId: string;
+
+  /**
+   * @generated from field: optional string campaign_id = 2;
+   */
+  campaignId?: string;
+};
+
+/**
+ * Describes the message planner.v1.GetAuthRequest.
+ * Use `create(GetAuthRequestSchema)` to create a new message.
+ */
+export const GetAuthRequestSchema: GenMessage<GetAuthRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 1);
+
+/**
+ * @generated from message planner.v1.GetAuthResponse
+ */
+export type GetAuthResponse = Message<"planner.v1.GetAuthResponse"> & {
+  /**
+   * @generated from field: planner.v1.User user = 1;
+   */
+  user?: User;
+
+  /**
+   * @generated from field: optional planner.v1.Campaign campaign = 2;
+   */
+  campaign?: Campaign;
+
+  /**
+   * @generated from field: optional planner.v1.MemberRole role = 3;
+   */
+  role?: MemberRole;
+};
+
+/**
+ * Describes the message planner.v1.GetAuthResponse.
+ * Use `create(GetAuthResponseSchema)` to create a new message.
+ */
+export const GetAuthResponseSchema: GenMessage<GetAuthResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 2);
+
+/**
  * @generated from message planner.v1.CreateUserRequest
  */
 export type CreateUserRequest = Message<"planner.v1.CreateUserRequest"> & {
@@ -106,7 +159,7 @@ export type CreateUserRequest = Message<"planner.v1.CreateUserRequest"> & {
  * Use `create(CreateUserRequestSchema)` to create a new message.
  */
 export const CreateUserRequestSchema: GenMessage<CreateUserRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 1);
+  messageDesc(file_planner_v1_user, 3);
 
 /**
  * @generated from message planner.v1.CreateUserResponse
@@ -123,7 +176,7 @@ export type CreateUserResponse = Message<"planner.v1.CreateUserResponse"> & {
  * Use `create(CreateUserResponseSchema)` to create a new message.
  */
 export const CreateUserResponseSchema: GenMessage<CreateUserResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 2);
+  messageDesc(file_planner_v1_user, 4);
 
 /**
  * @generated from message planner.v1.GetUserByEmailRequest
@@ -140,7 +193,7 @@ export type GetUserByEmailRequest = Message<"planner.v1.GetUserByEmailRequest"> 
  * Use `create(GetUserByEmailRequestSchema)` to create a new message.
  */
 export const GetUserByEmailRequestSchema: GenMessage<GetUserByEmailRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 3);
+  messageDesc(file_planner_v1_user, 5);
 
 /**
  * @generated from message planner.v1.GetUserByEmailResponse
@@ -157,9 +210,11 @@ export type GetUserByEmailResponse = Message<"planner.v1.GetUserByEmailResponse"
  * Use `create(GetUserByEmailResponseSchema)` to create a new message.
  */
 export const GetUserByEmailResponseSchema: GenMessage<GetUserByEmailResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 4);
+  messageDesc(file_planner_v1_user, 6);
 
 /**
+ * TODO: make get use id not clerk id
+ *
  * @generated from message planner.v1.GetUserRequest
  */
 export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
@@ -174,7 +229,7 @@ export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
 export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 5);
+  messageDesc(file_planner_v1_user, 7);
 
 /**
  * @generated from message planner.v1.GetUserResponse
@@ -191,7 +246,7 @@ export type GetUserResponse = Message<"planner.v1.GetUserResponse"> & {
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
 export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 6);
+  messageDesc(file_planner_v1_user, 8);
 
 /**
  * @generated from service planner.v1.UserService
@@ -220,6 +275,14 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof GetUserByEmailRequestSchema;
     output: typeof GetUserByEmailResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.UserService.GetAuth
+   */
+  getAuth: {
+    methodKind: "unary";
+    input: typeof GetAuthRequestSchema;
+    output: typeof GetAuthResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_user, 0);
