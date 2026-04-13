@@ -11,10 +11,10 @@ import {
 export default function ProfileButtonComponent() {
 	const { signOut } = useClerk();
 	const { user } = useUser();
-	function handleSignOut() {
+	async function handleSignOut() {
 		try {
-			client.user.signOut();
-			signOut();
+			await client.user.signOut();
+			await signOut({ redirectUrl: "/" });
 		} catch {
 			toast.error("Something went wrong when trying to sign out");
 		}
