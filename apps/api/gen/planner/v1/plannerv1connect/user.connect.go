@@ -35,6 +35,8 @@ const (
 const (
 	// UserServiceCreateUserProcedure is the fully-qualified name of the UserService's CreateUser RPC.
 	UserServiceCreateUserProcedure = "/planner.v1.UserService/CreateUser"
+	// UserServiceDeleteUserProcedure is the fully-qualified name of the UserService's DeleteUser RPC.
+	UserServiceDeleteUserProcedure = "/planner.v1.UserService/DeleteUser"
 	// UserServiceGetUserProcedure is the fully-qualified name of the UserService's GetUser RPC.
 	UserServiceGetUserProcedure = "/planner.v1.UserService/GetUser"
 	// UserServiceGetUserByEmailProcedure is the fully-qualified name of the UserService's
@@ -47,6 +49,7 @@ const (
 // UserServiceClient is a client for the planner.v1.UserService service.
 type UserServiceClient interface {
 	CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error)
+	DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error)
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 	GetAuth(context.Context, *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error)
@@ -67,6 +70,12 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			httpClient,
 			baseURL+UserServiceCreateUserProcedure,
 			connect.WithSchema(userServiceMethods.ByName("CreateUser")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteUser: connect.NewClient[v1.DeleteUserRequest, v1.DeleteUserResponse](
+			httpClient,
+			baseURL+UserServiceDeleteUserProcedure,
+			connect.WithSchema(userServiceMethods.ByName("DeleteUser")),
 			connect.WithClientOptions(opts...),
 		),
 		getUser: connect.NewClient[v1.GetUserRequest, v1.GetUserResponse](
@@ -93,6 +102,7 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 // userServiceClient implements UserServiceClient.
 type userServiceClient struct {
 	createUser     *connect.Client[v1.CreateUserRequest, v1.CreateUserResponse]
+	deleteUser     *connect.Client[v1.DeleteUserRequest, v1.DeleteUserResponse]
 	getUser        *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
 	getUserByEmail *connect.Client[v1.GetUserByEmailRequest, v1.GetUserByEmailResponse]
 	getAuth        *connect.Client[v1.GetAuthRequest, v1.GetAuthResponse]
@@ -101,6 +111,11 @@ type userServiceClient struct {
 // CreateUser calls planner.v1.UserService.CreateUser.
 func (c *userServiceClient) CreateUser(ctx context.Context, req *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error) {
 	return c.createUser.CallUnary(ctx, req)
+}
+
+// DeleteUser calls planner.v1.UserService.DeleteUser.
+func (c *userServiceClient) DeleteUser(ctx context.Context, req *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error) {
+	return c.deleteUser.CallUnary(ctx, req)
 }
 
 // GetUser calls planner.v1.UserService.GetUser.
@@ -121,6 +136,7 @@ func (c *userServiceClient) GetAuth(ctx context.Context, req *connect.Request[v1
 // UserServiceHandler is an implementation of the planner.v1.UserService service.
 type UserServiceHandler interface {
 	CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error)
+	DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error)
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 	GetAuth(context.Context, *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error)
@@ -137,6 +153,12 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		UserServiceCreateUserProcedure,
 		svc.CreateUser,
 		connect.WithSchema(userServiceMethods.ByName("CreateUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	userServiceDeleteUserHandler := connect.NewUnaryHandler(
+		UserServiceDeleteUserProcedure,
+		svc.DeleteUser,
+		connect.WithSchema(userServiceMethods.ByName("DeleteUser")),
 		connect.WithHandlerOptions(opts...),
 	)
 	userServiceGetUserHandler := connect.NewUnaryHandler(
@@ -161,6 +183,8 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		switch r.URL.Path {
 		case UserServiceCreateUserProcedure:
 			userServiceCreateUserHandler.ServeHTTP(w, r)
+		case UserServiceDeleteUserProcedure:
+			userServiceDeleteUserHandler.ServeHTTP(w, r)
 		case UserServiceGetUserProcedure:
 			userServiceGetUserHandler.ServeHTTP(w, r)
 		case UserServiceGetUserByEmailProcedure:
@@ -178,6 +202,10 @@ type UnimplementedUserServiceHandler struct{}
 
 func (UnimplementedUserServiceHandler) CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.CreateUser is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) DeleteUser(context.Context, *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.DeleteUser is not implemented"))
 }
 
 func (UnimplementedUserServiceHandler) GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
