@@ -3,6 +3,7 @@ import {
 	type WebhookEvent,
 } from "@clerk/tanstack-react-start/webhooks";
 import { createFileRoute } from "@tanstack/react-router";
+import { env } from "@/env";
 import { serverClient } from "@/lib/serverClient";
 
 export const Route = createFileRoute("/api/webhooks/clerk")({
@@ -11,7 +12,9 @@ export const Route = createFileRoute("/api/webhooks/clerk")({
 			POST: async ({ request }) => {
 				let evt: WebhookEvent;
 				try {
-					evt = await verifyWebhook(request);
+					evt = await verifyWebhook(request, {
+						signingSecret: env.CLERK_WEBHOOK_SIGNING_SECRET,
+					});
 				} catch (error) {
 					// biome-ignore lint/suspicious/noConsole: This is ok for now
 					console.error(error);
