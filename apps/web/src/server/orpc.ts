@@ -66,7 +66,7 @@ const discordMiddleware = base.middleware(({ next, context: c }) => {
 
 const resend = new Resend(env.RESEND_API_KEY);
 export const AUTH_COOKIE_NAME = "planner_auth";
-const ACTIVE_CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
+export const ACTIVE_CAMPAIGN_ID_COOKIE_NAME = "active_campaign_id";
 const CLERK_SESSION_COOKIE_NAMES = [
 	"__session",
 	`__session_${env.VITE_CLERK_PUBLISHABLE_KEY?.slice(3, 11)}`,

@@ -1,11 +1,18 @@
 import { ORPCError } from "@orpc/server";
+import { deleteCookie } from "@orpc/server/helpers";
 import {
 	CreateUserRequestSchema,
 	CreateUserResponseSchema,
 	GetUserResponseSchema,
 } from "@planner/schemas/user";
+import z from "zod";
 import { handleError } from "../errors";
-import { privateProcedure, publicProcedure } from "../orpc";
+import {
+	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
+	AUTH_COOKIE_NAME,
+	privateProcedure,
+	publicProcedure,
+} from "../orpc";
 import { protoToUser } from "./util/proto/user";
 
 const createUser = publicProcedure
@@ -60,7 +67,22 @@ const getUser = privateProcedure
 		}
 	});
 
+const signOut = privateProcedure
+	.route({
+		method: "POST",
+		path: "/user/signout",
+		summary: "Handles custom logic when logging out with clerk",
+	})
+	.output(z.object({ success: z.boolean() }))
+	.handler(({ context }) => {
+		const resHeaders = context.resHeaders;
+		deleteCookie(resHeaders, AUTH_COOKIE_NAME);
+		deleteCookie(resHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+		return { success: true };
+	});
+
 export const userRouter = {
 	createUser,
 	getUser,
+	signOut,
 };
