@@ -3,7 +3,6 @@ import {
 	SignedOut,
 	SignInButton,
 	SignUpButton,
-	UserButton,
 } from "@clerk/clerk-react";
 import type { QueryClient } from "@tanstack/react-query";
 import {
@@ -12,6 +11,7 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
+import ProfileButtonComponent from "@/components/profile-button";
 import AppClerkProvider from "@/integrations/clerk/provider";
 import TanStackQueryProvider from "@/integrations/tanstack-query/root-provider";
 import appCss from "@/styles.css?url";
@@ -58,7 +58,7 @@ function RootDocument() {
 								</SignUpButton>
 							</SignedOut>
 							<SignedIn>
-								<UserButton />
+								<ProfileButtonComponent />
 							</SignedIn>
 						</header>
 						<Outlet />
