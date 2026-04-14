@@ -41,6 +41,20 @@ func (s *UserServer) CreateUser(ctx context.Context, req *connect.Request[v1.Cre
 	return connect.NewResponse(&v1.CreateUserResponse{User: userToProto(user)}), nil
 }
 
+func (s *UserServer) DeleteUser(ctx context.Context, req *connect.Request[v1.DeleteUserRequest]) (*connect.Response[v1.DeleteUserResponse], error) {
+	if req.Msg.ExternalId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
+	}
+	_, err := s.User.Delete(req.Msg.ExternalId)
+	if err != nil {
+		if errors.Is(err, service.ErrUserNotFound) {
+			return connect.NewResponse(&v1.DeleteUserResponse{}), nil
+		}
+		return nil, mapServiceError(err, "failed to create user")
+	}
+	return connect.NewResponse(&v1.DeleteUserResponse{}), nil
+}
+
 func (s *UserServer) GetUser(ctx context.Context, req *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error) {
 	if req.Msg.ExternalId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))

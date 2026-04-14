@@ -12,17 +12,6 @@ export const UserSchema = BaseEntitySchema.extend({
 	lastName: z.string().nullable(),
 });
 
-export const CreateUserRequestSchema = z.object({
-	avatar: z.string().optional(),
-	email: z.email(),
-	externalId: z.string(),
-	firstName: z.string().nullable(),
-	lastName: z.string().nullable(),
-});
-export const CreateUserResponseSchema = z.object({
-	user: UserSchema,
-});
-
 export const GetUserRequestSchema = z.object({ id: z.uuid() });
 export const GetUserResponseSchema = z.object({ user: UserSchema });
 
@@ -35,9 +24,6 @@ export const GetAuthResponseSchema = z.object({
 	role: z.enum(UserRole).nullable(),
 	user: UserSchema.omit({ createdAt: true, deletedAt: true, updatedAt: true }),
 });
-
-export type CreateUserRequest = z.infer<typeof CreateUserRequestSchema>;
-export type CreateUserResponse = z.infer<typeof CreateUserResponseSchema>;
 
 export type GetAuthRequest = z.infer<typeof GetAuthRequestSchema>;
 export type GetAuthResponse = z.infer<typeof GetAuthResponseSchema>;

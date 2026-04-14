@@ -362,6 +362,86 @@ func (x *CreateUserResponse) GetUser() *User {
 	return nil
 }
 
+type DeleteUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ExternalId    string                 `protobuf:"bytes,1,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUserRequest) Reset() {
+	*x = DeleteUserRequest{}
+	mi := &file_planner_v1_user_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUserRequest) ProtoMessage() {}
+
+func (x *DeleteUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_user_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUserRequest.ProtoReflect.Descriptor instead.
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *DeleteUserRequest) GetExternalId() string {
+	if x != nil {
+		return x.ExternalId
+	}
+	return ""
+}
+
+type DeleteUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUserResponse) Reset() {
+	*x = DeleteUserResponse{}
+	mi := &file_planner_v1_user_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUserResponse) ProtoMessage() {}
+
+func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_user_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
+func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{6}
+}
+
 type GetUserByEmailRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
@@ -371,7 +451,7 @@ type GetUserByEmailRequest struct {
 
 func (x *GetUserByEmailRequest) Reset() {
 	*x = GetUserByEmailRequest{}
-	mi := &file_planner_v1_user_proto_msgTypes[5]
+	mi := &file_planner_v1_user_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -383,7 +463,7 @@ func (x *GetUserByEmailRequest) String() string {
 func (*GetUserByEmailRequest) ProtoMessage() {}
 
 func (x *GetUserByEmailRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[5]
+	mi := &file_planner_v1_user_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -396,7 +476,7 @@ func (x *GetUserByEmailRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByEmailRequest.ProtoReflect.Descriptor instead.
 func (*GetUserByEmailRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{5}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetUserByEmailRequest) GetEmail() string {
@@ -415,7 +495,7 @@ type GetUserByEmailResponse struct {
 
 func (x *GetUserByEmailResponse) Reset() {
 	*x = GetUserByEmailResponse{}
-	mi := &file_planner_v1_user_proto_msgTypes[6]
+	mi := &file_planner_v1_user_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -427,7 +507,7 @@ func (x *GetUserByEmailResponse) String() string {
 func (*GetUserByEmailResponse) ProtoMessage() {}
 
 func (x *GetUserByEmailResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[6]
+	mi := &file_planner_v1_user_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -440,7 +520,7 @@ func (x *GetUserByEmailResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserByEmailResponse.ProtoReflect.Descriptor instead.
 func (*GetUserByEmailResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{6}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *GetUserByEmailResponse) GetUser() *User {
@@ -450,7 +530,6 @@ func (x *GetUserByEmailResponse) GetUser() *User {
 	return nil
 }
 
-// TODO: make get use id not clerk id
 type GetUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ExternalId    string                 `protobuf:"bytes,1,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
@@ -460,7 +539,7 @@ type GetUserRequest struct {
 
 func (x *GetUserRequest) Reset() {
 	*x = GetUserRequest{}
-	mi := &file_planner_v1_user_proto_msgTypes[7]
+	mi := &file_planner_v1_user_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -472,7 +551,7 @@ func (x *GetUserRequest) String() string {
 func (*GetUserRequest) ProtoMessage() {}
 
 func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[7]
+	mi := &file_planner_v1_user_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -485,7 +564,7 @@ func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
 func (*GetUserRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetUserRequest) GetExternalId() string {
@@ -504,7 +583,7 @@ type GetUserResponse struct {
 
 func (x *GetUserResponse) Reset() {
 	*x = GetUserResponse{}
-	mi := &file_planner_v1_user_proto_msgTypes[8]
+	mi := &file_planner_v1_user_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -516,7 +595,7 @@ func (x *GetUserResponse) String() string {
 func (*GetUserResponse) ProtoMessage() {}
 
 func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_user_proto_msgTypes[8]
+	mi := &file_planner_v1_user_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -529,7 +608,7 @@ func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
 func (*GetUserResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_user_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_user_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetUserResponse) GetUser() *User {
@@ -589,7 +668,11 @@ const file_planner_v1_user_proto_rawDesc = "" +
 	"\n" +
 	"_last_name\":\n" +
 	"\x12CreateUserResponse\x12$\n" +
-	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user\"-\n" +
+	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user\"4\n" +
+	"\x11DeleteUserRequest\x12\x1f\n" +
+	"\vexternal_id\x18\x01 \x01(\tR\n" +
+	"externalId\"\x14\n" +
+	"\x12DeleteUserResponse\"-\n" +
 	"\x15GetUserByEmailRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\">\n" +
 	"\x16GetUserByEmailResponse\x12$\n" +
@@ -598,10 +681,12 @@ const file_planner_v1_user_proto_rawDesc = "" +
 	"\vexternal_id\x18\x01 \x01(\tR\n" +
 	"externalId\"7\n" +
 	"\x0fGetUserResponse\x12$\n" +
-	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user2\xbb\x02\n" +
+	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user2\x88\x03\n" +
 	"\vUserService\x12K\n" +
 	"\n" +
-	"CreateUser\x12\x1d.planner.v1.CreateUserRequest\x1a\x1e.planner.v1.CreateUserResponse\x12B\n" +
+	"CreateUser\x12\x1d.planner.v1.CreateUserRequest\x1a\x1e.planner.v1.CreateUserResponse\x12K\n" +
+	"\n" +
+	"DeleteUser\x12\x1d.planner.v1.DeleteUserRequest\x1a\x1e.planner.v1.DeleteUserResponse\x12B\n" +
 	"\aGetUser\x12\x1a.planner.v1.GetUserRequest\x1a\x1b.planner.v1.GetUserResponse\x12W\n" +
 	"\x0eGetUserByEmail\x12!.planner.v1.GetUserByEmailRequest\x1a\".planner.v1.GetUserByEmailResponse\x12B\n" +
 	"\aGetAuth\x12\x1a.planner.v1.GetAuthRequest\x1a\x1b.planner.v1.GetAuthResponseB\xa6\x01\n" +
@@ -621,41 +706,45 @@ func file_planner_v1_user_proto_rawDescGZIP() []byte {
 	return file_planner_v1_user_proto_rawDescData
 }
 
-var file_planner_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_planner_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_user_proto_goTypes = []any{
 	(*User)(nil),                   // 0: planner.v1.User
 	(*GetAuthRequest)(nil),         // 1: planner.v1.GetAuthRequest
 	(*GetAuthResponse)(nil),        // 2: planner.v1.GetAuthResponse
 	(*CreateUserRequest)(nil),      // 3: planner.v1.CreateUserRequest
 	(*CreateUserResponse)(nil),     // 4: planner.v1.CreateUserResponse
-	(*GetUserByEmailRequest)(nil),  // 5: planner.v1.GetUserByEmailRequest
-	(*GetUserByEmailResponse)(nil), // 6: planner.v1.GetUserByEmailResponse
-	(*GetUserRequest)(nil),         // 7: planner.v1.GetUserRequest
-	(*GetUserResponse)(nil),        // 8: planner.v1.GetUserResponse
-	(*timestamppb.Timestamp)(nil),  // 9: google.protobuf.Timestamp
-	(*Campaign)(nil),               // 10: planner.v1.Campaign
-	(MemberRole)(0),                // 11: planner.v1.MemberRole
+	(*DeleteUserRequest)(nil),      // 5: planner.v1.DeleteUserRequest
+	(*DeleteUserResponse)(nil),     // 6: planner.v1.DeleteUserResponse
+	(*GetUserByEmailRequest)(nil),  // 7: planner.v1.GetUserByEmailRequest
+	(*GetUserByEmailResponse)(nil), // 8: planner.v1.GetUserByEmailResponse
+	(*GetUserRequest)(nil),         // 9: planner.v1.GetUserRequest
+	(*GetUserResponse)(nil),        // 10: planner.v1.GetUserResponse
+	(*timestamppb.Timestamp)(nil),  // 11: google.protobuf.Timestamp
+	(*Campaign)(nil),               // 12: planner.v1.Campaign
+	(MemberRole)(0),                // 13: planner.v1.MemberRole
 }
 var file_planner_v1_user_proto_depIdxs = []int32{
-	9,  // 0: planner.v1.User.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 1: planner.v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 2: planner.v1.User.deleted_at:type_name -> google.protobuf.Timestamp
+	11, // 0: planner.v1.User.created_at:type_name -> google.protobuf.Timestamp
+	11, // 1: planner.v1.User.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 2: planner.v1.User.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: planner.v1.GetAuthResponse.user:type_name -> planner.v1.User
-	10, // 4: planner.v1.GetAuthResponse.campaign:type_name -> planner.v1.Campaign
-	11, // 5: planner.v1.GetAuthResponse.role:type_name -> planner.v1.MemberRole
+	12, // 4: planner.v1.GetAuthResponse.campaign:type_name -> planner.v1.Campaign
+	13, // 5: planner.v1.GetAuthResponse.role:type_name -> planner.v1.MemberRole
 	0,  // 6: planner.v1.CreateUserResponse.user:type_name -> planner.v1.User
 	0,  // 7: planner.v1.GetUserByEmailResponse.user:type_name -> planner.v1.User
 	0,  // 8: planner.v1.GetUserResponse.user:type_name -> planner.v1.User
 	3,  // 9: planner.v1.UserService.CreateUser:input_type -> planner.v1.CreateUserRequest
-	7,  // 10: planner.v1.UserService.GetUser:input_type -> planner.v1.GetUserRequest
-	5,  // 11: planner.v1.UserService.GetUserByEmail:input_type -> planner.v1.GetUserByEmailRequest
-	1,  // 12: planner.v1.UserService.GetAuth:input_type -> planner.v1.GetAuthRequest
-	4,  // 13: planner.v1.UserService.CreateUser:output_type -> planner.v1.CreateUserResponse
-	8,  // 14: planner.v1.UserService.GetUser:output_type -> planner.v1.GetUserResponse
-	6,  // 15: planner.v1.UserService.GetUserByEmail:output_type -> planner.v1.GetUserByEmailResponse
-	2,  // 16: planner.v1.UserService.GetAuth:output_type -> planner.v1.GetAuthResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
+	5,  // 10: planner.v1.UserService.DeleteUser:input_type -> planner.v1.DeleteUserRequest
+	9,  // 11: planner.v1.UserService.GetUser:input_type -> planner.v1.GetUserRequest
+	7,  // 12: planner.v1.UserService.GetUserByEmail:input_type -> planner.v1.GetUserByEmailRequest
+	1,  // 13: planner.v1.UserService.GetAuth:input_type -> planner.v1.GetAuthRequest
+	4,  // 14: planner.v1.UserService.CreateUser:output_type -> planner.v1.CreateUserResponse
+	6,  // 15: planner.v1.UserService.DeleteUser:output_type -> planner.v1.DeleteUserResponse
+	10, // 16: planner.v1.UserService.GetUser:output_type -> planner.v1.GetUserResponse
+	8,  // 17: planner.v1.UserService.GetUserByEmail:output_type -> planner.v1.GetUserByEmailResponse
+	2,  // 18: planner.v1.UserService.GetAuth:output_type -> planner.v1.GetAuthResponse
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -678,7 +767,7 @@ func file_planner_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_user_proto_rawDesc), len(file_planner_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

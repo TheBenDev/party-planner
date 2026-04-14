@@ -86,6 +86,11 @@ func (db *DB) CreateUser(user *model.CreateUserRequest) (*model.User, error) {
 	return scanUser(row)
 }
 
+func (db *DB) DeleteUser(clerkId string) (*model.User, error) {
+	row := db.conn.QueryRow(`UPDATE users SET deleted_at = NOW() WHERE external_id = $1 AND deleted_at IS NULL RETURNING `+userColumns, clerkId)
+	return scanUser(row)
+}
+
 func (db *DB) GetUserByClerkId(userId string) (*model.User, error) {
 	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE external_id = $1 LIMIT 1`, userId)
 

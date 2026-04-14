@@ -33,6 +33,18 @@ func (s *UserService) Create(user *model.CreateUserRequest) (*model.User, error)
 	return created, nil
 }
 
+func (s *UserService) Delete(clerkID string) (*model.User, error) {
+	user, err := s.DB.DeleteUser(clerkID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.Log.Warn("delete user called for unknown external id", "external_id", clerkID)
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("delete user: %w", err)
+	}
+	return user, nil
+}
+
 func (s *UserService) GetByClerkId(clerkID string) (*model.User, error) {
 	user, err := s.DB.GetUserByClerkId(clerkID)
 	if err != nil {

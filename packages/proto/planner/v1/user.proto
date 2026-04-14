@@ -8,6 +8,7 @@ import "planner/v1/member.proto";
 
 service UserService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
   rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
@@ -47,6 +48,12 @@ message CreateUserResponse {
   User user = 1;
 }
 
+message DeleteUserRequest {
+  string external_id = 1;
+}
+
+message DeleteUserResponse {}
+
 message GetUserByEmailRequest {
   string email = 1;
 }
@@ -55,7 +62,6 @@ message GetUserByEmailResponse {
   User user = 1;
 }
 
-// TODO: make get use id not clerk id
 message GetUserRequest {
   string external_id = 1;
 }

@@ -16,7 +16,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/user.proto.
  */
 export const file_planner_v1_user: GenFile = /*@__PURE__*/
-  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IkwKDkdldEF1dGhSZXF1ZXN0EhAKCGNsZXJrX2lkGAEgASgJEhgKC2NhbXBhaWduX2lkGAIgASgJSACIAQFCDgoMX2NhbXBhaWduX2lkIp8BCg9HZXRBdXRoUmVzcG9uc2USHgoEdXNlchgBIAEoCzIQLnBsYW5uZXIudjEuVXNlchIrCghjYW1wYWlnbhgCIAEoCzIULnBsYW5uZXIudjEuQ2FtcGFpZ25IAIgBARIpCgRyb2xlGAMgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlSAGIAQFCCwoJX2NhbXBhaWduQgcKBV9yb2xlIqUBChFDcmVhdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRITCgZhdmF0YXIYAyABKAlIAIgBARIXCgpmaXJzdF9uYW1lGAQgASgJSAGIAQESFgoJbGFzdF9uYW1lGAUgASgJSAKIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIiYKFUdldFVzZXJCeUVtYWlsUmVxdWVzdBINCgVlbWFpbBgBIAEoCSI4ChZHZXRVc2VyQnlFbWFpbFJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIiJQoOR2V0VXNlclJlcXVlc3QSEwoLZXh0ZXJuYWxfaWQYASABKAkiMQoPR2V0VXNlclJlc3BvbnNlEh4KBHVzZXIYASABKAsyEC5wbGFubmVyLnYxLlVzZXIyuwIKC1VzZXJTZXJ2aWNlEksKCkNyZWF0ZVVzZXISHS5wbGFubmVyLnYxLkNyZWF0ZVVzZXJSZXF1ZXN0Gh4ucGxhbm5lci52MS5DcmVhdGVVc2VyUmVzcG9uc2USQgoHR2V0VXNlchIaLnBsYW5uZXIudjEuR2V0VXNlclJlcXVlc3QaGy5wbGFubmVyLnYxLkdldFVzZXJSZXNwb25zZRJXCg5HZXRVc2VyQnlFbWFpbBIhLnBsYW5uZXIudjEuR2V0VXNlckJ5RW1haWxSZXF1ZXN0GiIucGxhbm5lci52MS5HZXRVc2VyQnlFbWFpbFJlc3BvbnNlEkIKB0dldEF1dGgSGi5wbGFubmVyLnYxLkdldEF1dGhSZXF1ZXN0GhsucGxhbm5lci52MS5HZXRBdXRoUmVzcG9uc2VCpgEKDmNvbS5wbGFubmVyLnYxQglVc2VyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_planner_v1_campaign, file_planner_v1_member]);
+  fileDesc("ChVwbGFubmVyL3YxL3VzZXIucHJvdG8SCnBsYW5uZXIudjEiyAIKBFVzZXISCgoCaWQYASABKAkSDQoFZW1haWwYAiABKAkSEwoLZXh0ZXJuYWxfaWQYAyABKAkSEwoGYXZhdGFyGAQgASgJSACIAQESFwoKZmlyc3RfbmFtZRgFIAEoCUgBiAEBEhYKCWxhc3RfbmFtZRgGIAEoCUgCiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lQg0KC19kZWxldGVkX2F0IkwKDkdldEF1dGhSZXF1ZXN0EhAKCGNsZXJrX2lkGAEgASgJEhgKC2NhbXBhaWduX2lkGAIgASgJSACIAQFCDgoMX2NhbXBhaWduX2lkIp8BCg9HZXRBdXRoUmVzcG9uc2USHgoEdXNlchgBIAEoCzIQLnBsYW5uZXIudjEuVXNlchIrCghjYW1wYWlnbhgCIAEoCzIULnBsYW5uZXIudjEuQ2FtcGFpZ25IAIgBARIpCgRyb2xlGAMgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlSAGIAQFCCwoJX2NhbXBhaWduQgcKBV9yb2xlIqUBChFDcmVhdGVVc2VyUmVxdWVzdBINCgVlbWFpbBgBIAEoCRITCgtleHRlcm5hbF9pZBgCIAEoCRITCgZhdmF0YXIYAyABKAlIAIgBARIXCgpmaXJzdF9uYW1lGAQgASgJSAGIAQESFgoJbGFzdF9uYW1lGAUgASgJSAKIAQFCCQoHX2F2YXRhckINCgtfZmlyc3RfbmFtZUIMCgpfbGFzdF9uYW1lIjQKEkNyZWF0ZVVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIigKEURlbGV0ZVVzZXJSZXF1ZXN0EhMKC2V4dGVybmFsX2lkGAEgASgJIhQKEkRlbGV0ZVVzZXJSZXNwb25zZSImChVHZXRVc2VyQnlFbWFpbFJlcXVlc3QSDQoFZW1haWwYASABKAkiOAoWR2V0VXNlckJ5RW1haWxSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyIiUKDkdldFVzZXJSZXF1ZXN0EhMKC2V4dGVybmFsX2lkGAEgASgJIjEKD0dldFVzZXJSZXNwb25zZRIeCgR1c2VyGAEgASgLMhAucGxhbm5lci52MS5Vc2VyMogDCgtVc2VyU2VydmljZRJLCgpDcmVhdGVVc2VyEh0ucGxhbm5lci52MS5DcmVhdGVVc2VyUmVxdWVzdBoeLnBsYW5uZXIudjEuQ3JlYXRlVXNlclJlc3BvbnNlEksKCkRlbGV0ZVVzZXISHS5wbGFubmVyLnYxLkRlbGV0ZVVzZXJSZXF1ZXN0Gh4ucGxhbm5lci52MS5EZWxldGVVc2VyUmVzcG9uc2USQgoHR2V0VXNlchIaLnBsYW5uZXIudjEuR2V0VXNlclJlcXVlc3QaGy5wbGFubmVyLnYxLkdldFVzZXJSZXNwb25zZRJXCg5HZXRVc2VyQnlFbWFpbBIhLnBsYW5uZXIudjEuR2V0VXNlckJ5RW1haWxSZXF1ZXN0GiIucGxhbm5lci52MS5HZXRVc2VyQnlFbWFpbFJlc3BvbnNlEkIKB0dldEF1dGgSGi5wbGFubmVyLnYxLkdldEF1dGhSZXF1ZXN0GhsucGxhbm5lci52MS5HZXRBdXRoUmVzcG9uc2VCpgEKDmNvbS5wbGFubmVyLnYxQglVc2VyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_planner_v1_campaign, file_planner_v1_member]);
 
 /**
  * @generated from message planner.v1.User
@@ -179,6 +179,36 @@ export const CreateUserResponseSchema: GenMessage<CreateUserResponse> = /*@__PUR
   messageDesc(file_planner_v1_user, 4);
 
 /**
+ * @generated from message planner.v1.DeleteUserRequest
+ */
+export type DeleteUserRequest = Message<"planner.v1.DeleteUserRequest"> & {
+  /**
+   * @generated from field: string external_id = 1;
+   */
+  externalId: string;
+};
+
+/**
+ * Describes the message planner.v1.DeleteUserRequest.
+ * Use `create(DeleteUserRequestSchema)` to create a new message.
+ */
+export const DeleteUserRequestSchema: GenMessage<DeleteUserRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 5);
+
+/**
+ * @generated from message planner.v1.DeleteUserResponse
+ */
+export type DeleteUserResponse = Message<"planner.v1.DeleteUserResponse"> & {
+};
+
+/**
+ * Describes the message planner.v1.DeleteUserResponse.
+ * Use `create(DeleteUserResponseSchema)` to create a new message.
+ */
+export const DeleteUserResponseSchema: GenMessage<DeleteUserResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_user, 6);
+
+/**
  * @generated from message planner.v1.GetUserByEmailRequest
  */
 export type GetUserByEmailRequest = Message<"planner.v1.GetUserByEmailRequest"> & {
@@ -193,7 +223,7 @@ export type GetUserByEmailRequest = Message<"planner.v1.GetUserByEmailRequest"> 
  * Use `create(GetUserByEmailRequestSchema)` to create a new message.
  */
 export const GetUserByEmailRequestSchema: GenMessage<GetUserByEmailRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 5);
+  messageDesc(file_planner_v1_user, 7);
 
 /**
  * @generated from message planner.v1.GetUserByEmailResponse
@@ -210,11 +240,9 @@ export type GetUserByEmailResponse = Message<"planner.v1.GetUserByEmailResponse"
  * Use `create(GetUserByEmailResponseSchema)` to create a new message.
  */
 export const GetUserByEmailResponseSchema: GenMessage<GetUserByEmailResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 6);
+  messageDesc(file_planner_v1_user, 8);
 
 /**
- * TODO: make get use id not clerk id
- *
  * @generated from message planner.v1.GetUserRequest
  */
 export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
@@ -229,7 +257,7 @@ export type GetUserRequest = Message<"planner.v1.GetUserRequest"> & {
  * Use `create(GetUserRequestSchema)` to create a new message.
  */
 export const GetUserRequestSchema: GenMessage<GetUserRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 7);
+  messageDesc(file_planner_v1_user, 9);
 
 /**
  * @generated from message planner.v1.GetUserResponse
@@ -246,7 +274,7 @@ export type GetUserResponse = Message<"planner.v1.GetUserResponse"> & {
  * Use `create(GetUserResponseSchema)` to create a new message.
  */
 export const GetUserResponseSchema: GenMessage<GetUserResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_user, 8);
+  messageDesc(file_planner_v1_user, 10);
 
 /**
  * @generated from service planner.v1.UserService
@@ -259,6 +287,14 @@ export const UserService: GenService<{
     methodKind: "unary";
     input: typeof CreateUserRequestSchema;
     output: typeof CreateUserResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.UserService.DeleteUser
+   */
+  deleteUser: {
+    methodKind: "unary";
+    input: typeof DeleteUserRequestSchema;
+    output: typeof DeleteUserResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.UserService.GetUser

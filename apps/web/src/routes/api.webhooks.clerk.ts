@@ -4,8 +4,9 @@ import {
 } from "@clerk/tanstack-react-start/webhooks";
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "@/env";
-import { serverClient } from "@/lib/serverClient";
+import { createApiClients } from "@/lib/api";
 
+// TODO: migrate webhooks to api
 export const Route = createFileRoute("/api/webhooks/clerk")({
 	server: {
 		handlers: {
@@ -29,16 +30,33 @@ export const Route = createFileRoute("/api/webhooks/clerk")({
 							avatar: evt.data.image_url,
 							email: evt.data.email_addresses[0].email_address,
 							externalId: evt.data.id,
-							firstName: evt.data.first_name,
-							lastName: evt.data.last_name,
+							firstName: evt.data.first_name ?? undefined,
+							lastName: evt.data.last_name ?? undefined,
 						};
 						try {
-							await serverClient.user.createUser(user);
+							const api = createApiClients();
+							await api.user.createUser(user);
 							return Response.json({ received: true });
 						} catch (error) {
 							// biome-ignore lint/suspicious/noConsole: This is ok for now
 							console.error(error);
 							return new Response("Failed to create user", { status: 500 });
+						}
+					}
+					case "user.deleted": {
+						if (!evt.data.id) {
+							return new Response("No clerk id found deleting user", {
+								status: 400,
+							});
+						}
+						try {
+							const api = createApiClients();
+							await api.user.deleteUser({ externalId: evt.data.id });
+							return Response.json({ received: true });
+						} catch (error) {
+							// biome-ignore lint/suspicious/noConsole: This is ok for now
+							console.error(error);
+							return new Response("Failed to delete user", { status: 500 });
 						}
 					}
 					default:
