@@ -69,7 +69,6 @@ func (s *UserService) GetByEmail(email string) (*model.User, error) {
 
 func (s *UserService) GetAuth(clerkId string, campaignId *string) (*model.GetAuthResponse, error) {
 	user, err := s.GetByClerkId(clerkId)
-	s.Log.Info("Getting Auth")
 	if err != nil {
 		return nil, err
 	}

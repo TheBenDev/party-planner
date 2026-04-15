@@ -64,7 +64,6 @@ func (s *UserServer) GetUser(ctx context.Context, req *connect.Request[v1.GetUse
 	if err != nil {
 		return nil, mapServiceError(err, "failed to get user")
 	}
-
 	return connect.NewResponse(&v1.GetUserResponse{User: userToProto(user)}), nil
 }
 

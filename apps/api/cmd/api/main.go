@@ -16,6 +16,7 @@ import (
 	"github.com/BBruington/party-planner/api/internal/bot"
 	"github.com/BBruington/party-planner/api/internal/config"
 	"github.com/BBruington/party-planner/api/internal/db"
+	"github.com/BBruington/party-planner/api/internal/logger"
 	"github.com/BBruington/party-planner/api/internal/middleware"
 	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
@@ -28,45 +29,38 @@ func main() {
 		slog.Error("Failed to load config", "error", err)
 		os.Exit(1)
 	}
-
-	var logger *slog.Logger
-	if cfg.Environment == "development" {
-		logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
-	} else {
-		logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	}
-	slog.SetDefault(logger)
+	logger.Init(cfg.Environment)
 
 	mux := http.NewServeMux()
 
-	database, err := db.New(cfg.DatabaseUrl, logger)
+	database, err := db.New(cfg.DatabaseUrl, logger.Logger)
 	if err != nil {
 		logger.Error("failed to open database", "error", err)
 		os.Exit(1)
 	}
 
 	rateLimiter := middleware.NewRateLimitInterceptor()
-	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter)
+	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter, logger.NewLoggingInterceptor(logger.Logger))
 
-	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger}}, interceptors)
+	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
 
-	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger}}, interceptors)
+	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
 
-	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger}}, interceptors)
+	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(memberPath, memberHandler)
 
-	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger}}, interceptors)
+	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(&rpc.NpcServer{Npc: &service.NpcService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(npcPath, npcHandler)
 
-	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger}}, interceptors)
+	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(questPath, questHandler)
 
-	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger}}, interceptors)
+	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(sessionPath, sessionHandler)
 
-	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger}}, interceptors)
+	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(userPath, userHandler)
 
 	healthServer := &rpc.HealthServer{}
