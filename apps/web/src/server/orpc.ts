@@ -15,6 +15,7 @@ import {
 	decryptAuthCookie,
 	encryptAuthCookie,
 } from "@planner/security/auth";
+import type pino from "pino";
 import { Resend } from "resend";
 import { env } from "@/env";
 import { createApiClients } from "@/lib/api/index";
@@ -31,12 +32,18 @@ interface Context extends ORPCContext {
 	api: ReturnType<typeof createApiClients>;
 	db: Client;
 	accessToken?: string;
+	logger?: pino.Logger;
 }
 const base = os.$context<ORPCContext>();
 
 const loggingMiddleware = base.middleware(({ next, context, path }) => {
-	getLogger(context)?.info({ procedure: path.join(".") }, "Procedure invoked");
-	return next();
+	const logger = getLogger(context);
+	logger?.info({ procedure: path.join(".") }, "Procedure invoked");
+	return next({
+		context: {
+			logger,
+		},
+	});
 });
 
 const dbMiddleware = base.middleware(({ next }) => {
@@ -137,6 +144,10 @@ export const authMiddleware = os
 					clerkId: clerkUserId,
 				});
 				if (authProto.user === undefined) {
+					c.logger?.error(
+						{ clerkId: clerkUserId },
+						"Data synchronization error. Clerk user found but database user not found.",
+					);
 					throw new ORPCError("NOT_FOUND", { message: "user not found" });
 				}
 				const campaign =
@@ -163,10 +174,24 @@ export const authMiddleware = os
 					try {
 						auth = await fetchAuth(undefined);
 					} catch (retryErr) {
-						handleError(retryErr, "failed to get auth");
+						handleError(
+							retryErr,
+							"failed to get auth",
+							{
+								clerkId: clerkUserId,
+							},
+							c.logger,
+						);
 					}
 				} else {
-					handleError(err, "failed to get auth");
+					handleError(
+						err,
+						"failed to get auth",
+						{
+							clerkId: clerkUserId,
+						},
+						c.logger,
+					);
 				}
 			}
 			// set an active campaign for user if they don't have one and have a campaign available

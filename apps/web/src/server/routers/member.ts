@@ -52,7 +52,12 @@ const acceptCampaignInvitation = privateProcedure
 				member: protoToMember(res.member),
 			};
 		} catch (err) {
-			handleError(err, "failed to accept campaign invitation");
+			handleError(
+				err,
+				"failed to accept campaign invitation",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 
@@ -80,7 +85,12 @@ const declineCampaignInvitation = privateProcedure
 			}
 			return protoToCampaignInvitation(inv.invitation);
 		} catch (err) {
-			handleError(err, "Failed to decline campaign invitation");
+			handleError(
+				err,
+				"Failed to decline campaign invitation",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 const createMember = privateProcedure
@@ -105,7 +115,7 @@ const createMember = privateProcedure
 			}
 			return { member: protoToMember(res.member) };
 		} catch (err) {
-			handleError(err, "failed to create member");
+			handleError(err, "failed to create member", input, context.logger);
 		}
 	});
 
@@ -127,7 +137,7 @@ const getMember = privateProcedure
 			}
 			return { member: protoToMember(res.member) };
 		} catch (err) {
-			handleError(err, "failed to get member");
+			handleError(err, "failed to get member", input, context.logger);
 		}
 	});
 
@@ -146,7 +156,12 @@ const listMembersByCampaign = privateProcedure
 			const res = await api.member.listMembersByCampaign({ campaignId });
 			return { members: res.members.map(protoToMember) };
 		} catch (err) {
-			handleError(err, "failed to list members");
+			handleError(
+				err,
+				"failed to list members",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 
@@ -164,7 +179,7 @@ const listMembersByUser = privateProcedure
 			const res = await api.member.listMembersByUser({ userId });
 			return { members: res.members.map(protoToMember) };
 		} catch (err) {
-			handleError(err, "failed to list members");
+			handleError(err, "failed to list members", { userId }, context.logger);
 		}
 	});
 
@@ -183,7 +198,7 @@ const removeMember = privateProcedure
 			await api.member.removeMember({ campaignId, userId });
 			return {};
 		} catch (err) {
-			handleError(err, "failed to remove member");
+			handleError(err, "failed to remove member", input, context.logger);
 		}
 	});
 

@@ -33,7 +33,14 @@ const createQuest = privateProcedure
 			}
 			return { quest: protoToQuest(res.quest) };
 		} catch (err) {
-			handleError(err, "failed to create quest");
+			handleError(
+				err,
+				"failed to create quest",
+				{
+					campaignId: input.campaignId,
+				},
+				context.logger,
+			);
 		}
 	});
 
@@ -55,7 +62,7 @@ const getQuest = privateProcedure
 			}
 			return { quest: protoToQuest(res.quest) };
 		} catch (err) {
-			handleError(err, "failed to get quest");
+			handleError(err, "failed to get quest", { questId: id }, context.logger);
 		}
 	});
 
@@ -74,7 +81,7 @@ const listQuestsByCampaign = privateProcedure
 			const res = await api.quest.listQuestsByCampaign({ campaignId });
 			return { quests: res.quests.map(protoToQuest) };
 		} catch (err) {
-			handleError(err, "failed to list quests");
+			handleError(err, "failed to list quests", { campaignId }, context.logger);
 		}
 	});
 

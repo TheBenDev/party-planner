@@ -2,6 +2,7 @@ import { ORPCError } from "@orpc/server";
 import { InviteToCampaignRequest } from "@planner/schemas/email";
 import { DndInviteEmail } from "@/components/email-invite-template";
 import { env } from "@/env";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
 
 const inviteToCampaign = privateProcedure
@@ -36,10 +37,13 @@ const inviteToCampaign = privateProcedure
 			}
 
 			return { id: data.id };
-		} catch {
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "Failed to invite",
-			});
+		} catch (err) {
+			handleError(
+				err,
+				"Failed to send invitation",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 
