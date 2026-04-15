@@ -39,7 +39,7 @@ const createCampaign = privateProcedure
 				campaign: protoToCampaign(campaign),
 			};
 		} catch (err) {
-			handleError(err, "failed to create campaign");
+			handleError(err, "failed to create campaign", { userId }, context.logger);
 		}
 	});
 
@@ -63,7 +63,12 @@ const getActiveCampaign = privateProcedure
 				campaign: protoToCampaign(campaign),
 			};
 		} catch (err) {
-			handleError(err, "failed to get active campaign");
+			handleError(
+				err,
+				"failed to get active campaign",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 

@@ -39,7 +39,12 @@ const createSession = privateProcedure
 			}
 			return { session: protoToSession(res.session) };
 		} catch (err) {
-			handleError(err, "failed to create session");
+			handleError(
+				err,
+				"failed to create session",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
 		}
 	});
 
@@ -61,7 +66,12 @@ const getSession = privateProcedure
 			}
 			return { session: protoToSession(res.session) };
 		} catch (err) {
-			handleError(err, "failed to get session");
+			handleError(
+				err,
+				"failed to get session",
+				{ sessionId: id },
+				context.logger,
+			);
 		}
 	});
 
@@ -80,7 +90,12 @@ const listSessions = privateProcedure
 			const res = await api.session.listSessionsByCampaign({ campaignId });
 			return { sessions: res.sessions.map(protoToSession) };
 		} catch (err) {
-			handleError(err, "failed to list sessions");
+			handleError(
+				err,
+				"failed to list sessions",
+				{ campaignId },
+				context.logger,
+			);
 		}
 	});
 

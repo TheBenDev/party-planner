@@ -40,7 +40,12 @@ const createNpc = privateProcedure
 			}
 			return { npc: protoToNpc(res.npc) };
 		} catch (err) {
-			handleError(err, "failed to create npc");
+			handleError(
+				err,
+				"failed to create npc",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
 		}
 	});
 
@@ -62,7 +67,7 @@ const getNonPlayerCharacter = privateProcedure
 			}
 			return { npc: protoToNpc(res.npc) };
 		} catch (err) {
-			handleError(err, "failed to get npc");
+			handleError(err, "failed to get npc", { npcId: id }, context.logger);
 		}
 	});
 
@@ -83,7 +88,7 @@ const listNonPlayerCharacters = privateProcedure
 			});
 			return { npcs: res.npcs.map(protoToNpc) };
 		} catch (err) {
-			handleError(err, "failed to list npcs");
+			handleError(err, "failed to list npcs", { campaignId }, context.logger);
 		}
 	});
 

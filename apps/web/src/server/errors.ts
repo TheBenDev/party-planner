@@ -1,5 +1,6 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/client";
+import type pino from "pino";
 import { ZodError } from "zod";
 
 const CONNECT_TO_ORPC_CODE = {
@@ -21,16 +22,25 @@ const CONNECT_TO_ORPC_CODE = {
 	[Code.Unauthenticated]: "UNAUTHORIZED",
 };
 
-export function handleError(err: unknown, fallbackMessage: string): never {
+export function handleError(
+	err: unknown,
+	fallbackMessage: string,
+	params: Record<string, unknown>,
+	log: pino.Logger | undefined,
+): never {
 	if (err instanceof ORPCError) throw err;
 	if (err instanceof ConnectError) {
+		const logMessage = err.message || fallbackMessage;
+		log?.error({ ...params, err }, logMessage);
 		throw new ORPCError(CONNECT_TO_ORPC_CODE[err.code], {
-			message: err.message || fallbackMessage,
+			message: fallbackMessage,
 		});
 	}
 	if (err instanceof ZodError) {
+		log?.error({ ...params, err }, err.message);
 		throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
 	}
+	log?.error({ ...params, err }, fallbackMessage);
 	throw new ORPCError("INTERNAL_SERVER_ERROR", {
 		message: fallbackMessage,
 	});

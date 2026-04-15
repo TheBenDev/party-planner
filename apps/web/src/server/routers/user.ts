@@ -1,3 +1,4 @@
+import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/server";
 import { deleteCookie } from "@orpc/server/helpers";
 import { GetUserResponseSchema } from "@planner/schemas/user";
@@ -18,16 +19,27 @@ const getUser = privateProcedure
 	})
 	.output(GetUserResponseSchema)
 	.handler(async ({ context }) => {
+		const logger = context.logger;
 		const userId = context.clerkUserId;
 		const api = context.api;
 		try {
 			const { user } = await api.user.getUser({ externalId: userId });
 			if (!user) {
+				logger?.error(
+					{ clerkId: userId },
+					"Data synchronization error. Clerk user found but database user not found.",
+				);
 				throw new ORPCError("NOT_FOUND", { message: "user not found" });
 			}
 			return { user: protoToUser(user) };
 		} catch (err) {
-			handleError(err, "failed to get user");
+			if (err instanceof ConnectError && err.code === Code.NotFound) {
+				context.logger?.error(
+					{ clerkId: userId },
+					"Data synchronization error. Clerk user found but database user not found.",
+				);
+			}
+			handleError(err, "failed to get user", { clerkId: userId }, logger);
 		}
 	});
 

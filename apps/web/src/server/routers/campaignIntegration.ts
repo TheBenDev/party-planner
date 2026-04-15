@@ -31,16 +31,16 @@ const createCampaignIntegration = privateProcedure
 				message: "missing params for register",
 			});
 		}
-
+		const source = integrationSourceToProto(IntegrationSource.DISCORD);
 		const values = {
 			campaignId,
 			externalId: serverId,
 			metadata: { channelId, source: IntegrationSource.DISCORD },
 			settings: {
 				enableSessionReminders: true,
-				source: integrationSourceToProto(IntegrationSource.DISCORD),
+				source,
 			},
-			source: integrationSourceToProto(IntegrationSource.DISCORD),
+			source,
 		};
 		try {
 			const result =
@@ -52,7 +52,12 @@ const createCampaignIntegration = privateProcedure
 			}
 			return { integration: protoToCampaignIntegration(result.integration) };
 		} catch (err) {
-			handleError(err, "failed to create campaign integration");
+			handleError(
+				err,
+				"failed to create campaign integration",
+				{ campaignId, externalId: serverId, integrationSource: source },
+				context.logger,
+			);
 		}
 	});
 
@@ -79,7 +84,12 @@ const getCampaignIntegration = privateProcedure
 			}
 			return { integration: protoToCampaignIntegration(result.integration) };
 		} catch (err) {
-			handleError(err, "failed to get campaign integration");
+			handleError(
+				err,
+				"failed to get campaign integration",
+				input,
+				context.logger,
+			);
 		}
 	});
 
@@ -102,7 +112,12 @@ const removeCampaignIntegration = privateProcedure
 			});
 			return {};
 		} catch (err) {
-			handleError(err, "failed to remove campaign integration");
+			handleError(
+				err,
+				"failed to remove campaign integration",
+				input,
+				context.logger,
+			);
 		}
 	});
 
