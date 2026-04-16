@@ -1,45 +1,45 @@
 {
-  "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
-    "@planner/enums": "workspace:*",
-    "@planner/schemas": "workspace:*",
-    "@t3-oss/env-core": "catalog:",
-    "drizzle-orm": "catalog:",
-    "drizzle-zod": "^0.8.3",
-    "ws": "^8.19.0",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@types/bun": "catalog:",
-    "@types/ws": "^8.18.1",
-    "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.7",
-    "typescript": "catalog:"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
-  },
-  "module": "src/index.ts",
-  "name": "@planner/database",
-  "peerDependencies": {
-    "typescript": "catalog:"
-  },
-  "scripts": {
-    "build": "bun run build.ts",
-    "db:gen": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "format": "biome check --linter-enabled=false --write .",
-    "lint": "biome lint --write .",
-    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
-    "studio": "drizzle-kit studio",
-    "typecheck": "tsc --noEmit"
-  },
-  "type": "module",
-  "types": "./dist/index.d.ts"
+	"dependencies": {
+		"@neondatabase/serverless": "^1.0.2",
+		"@planner/enums": "workspace:*",
+		"@planner/schemas": "workspace:*",
+		"@t3-oss/env-core": "catalog:",
+		"drizzle-orm": "catalog:",
+		"drizzle-zod": "^0.8.3",
+		"ws": "^8.19.0",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"@types/ws": "^8.18.1",
+		"dotenv": "^17.2.3",
+		"drizzle-kit": "^0.31.7",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"module": "src/index.ts",
+	"name": "@planner/database",
+	"peerDependencies": {
+		"typescript": "catalog:"
+	},
+	"scripts": {
+		"build": "bun run build.ts",
+		"db:gen": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"format": "biome check --linter-enabled=false --write .",
+		"lint": "biome lint --write .",
+		"prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+		"studio": "drizzle-kit studio",
+		"typecheck": "tsc --noEmit"
+	},
+	"type": "module",
+	"types": "./dist/index.d.ts"
 }

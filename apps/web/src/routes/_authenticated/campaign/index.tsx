@@ -12,5 +12,5 @@ export default function CampaignPage() {
 			sapiente deserunt minus, ab quo alias cupiditate optio omnis consectetur
 			cum quae!
 		</div>
-	)
+	);
 }

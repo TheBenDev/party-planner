@@ -1,80 +1,80 @@
 {
-  "dependencies": {
-    "@planner/enums": "workspace:*",
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "@types/bun": "catalog:",
-    "typescript": "catalog:"
-  },
-  "exports": {
-    "./campaigns": {
-      "import": "./dist/campaign.js",
-      "require": "./dist/campaign.js",
-      "types": "./dist/campaign.d.ts"
-    },
-    "./character": {
-      "import": "./dist/character.js",
-      "require": "./dist/character.js",
-      "types": "./dist/character.d.ts"
-    },
-    "./discord": {
-      "import": "./dist/discord.js",
-      "require": "./dist/discord.js",
-      "types": "./dist/discord.d.ts"
-    },
-    "./email": {
-      "import": "./dist/email.js",
-      "require": "./dist/email.js",
-      "types": "./dist/email.d.ts"
-    },
-    "./integration": {
-      "import": "./dist/integration.js",
-      "require": "./dist/integration.js",
-      "types": "./dist/integration.d.ts"
-    },
-    "./locations": {
-      "import": "./dist/location.js",
-      "require": "./dist/location.js",
-      "types": "./dist/location.d.ts"
-    },
-    "./member": {
-      "import": "./dist/member.js",
-      "require": "./dist/member.js",
-      "types": "./dist/member.d.ts"
-    },
-    "./nonPlayerCharacters": {
-      "import": "./dist/nonPlayerCharacter.js",
-      "require": "./dist/nonPlayerCharacter.js",
-      "types": "./dist/nonPlayerCharacter.d.ts"
-    },
-    "./quests": {
-      "import": "./dist/quest.js",
-      "require": "./dist/quest.js",
-      "types": "./dist/quest.d.ts"
-    },
-    "./sessions": {
-      "import": "./dist/session.js",
-      "require": "./dist/session.js",
-      "types": "./dist/session.d.ts"
-    },
-    "./user": {
-      "import": "./dist/user.js",
-      "require": "./dist/user.js",
-      "types": "./dist/user.d.ts"
-    }
-  },
-  "module": "src/index.ts",
-  "name": "@planner/schemas",
-  "peerDependencies": {
-    "typescript": "catalog:"
-  },
-  "scripts": {
-    "build": "bun run build.ts",
-    "format": "biome check --linter-enabled=false --write .",
-    "lint": "biome lint --write .",
-    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit"
-  },
-  "type": "module"
+	"dependencies": {
+		"@planner/enums": "workspace:*",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		"./campaigns": {
+			"import": "./dist/campaign.js",
+			"require": "./dist/campaign.js",
+			"types": "./dist/campaign.d.ts"
+		},
+		"./character": {
+			"import": "./dist/character.js",
+			"require": "./dist/character.js",
+			"types": "./dist/character.d.ts"
+		},
+		"./discord": {
+			"import": "./dist/discord.js",
+			"require": "./dist/discord.js",
+			"types": "./dist/discord.d.ts"
+		},
+		"./email": {
+			"import": "./dist/email.js",
+			"require": "./dist/email.js",
+			"types": "./dist/email.d.ts"
+		},
+		"./integration": {
+			"import": "./dist/integration.js",
+			"require": "./dist/integration.js",
+			"types": "./dist/integration.d.ts"
+		},
+		"./locations": {
+			"import": "./dist/location.js",
+			"require": "./dist/location.js",
+			"types": "./dist/location.d.ts"
+		},
+		"./member": {
+			"import": "./dist/member.js",
+			"require": "./dist/member.js",
+			"types": "./dist/member.d.ts"
+		},
+		"./nonPlayerCharacters": {
+			"import": "./dist/nonPlayerCharacter.js",
+			"require": "./dist/nonPlayerCharacter.js",
+			"types": "./dist/nonPlayerCharacter.d.ts"
+		},
+		"./quests": {
+			"import": "./dist/quest.js",
+			"require": "./dist/quest.js",
+			"types": "./dist/quest.d.ts"
+		},
+		"./sessions": {
+			"import": "./dist/session.js",
+			"require": "./dist/session.js",
+			"types": "./dist/session.d.ts"
+		},
+		"./user": {
+			"import": "./dist/user.js",
+			"require": "./dist/user.js",
+			"types": "./dist/user.d.ts"
+		}
+	},
+	"module": "src/index.ts",
+	"name": "@planner/schemas",
+	"peerDependencies": {
+		"typescript": "catalog:"
+	},
+	"scripts": {
+		"build": "bun run build.ts",
+		"format": "biome check --linter-enabled=false --write .",
+		"lint": "biome lint --write .",
+		"prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc --noEmit"
+	},
+	"type": "module"
 }

@@ -1,29 +1,29 @@
 {
-  "dependencies": {
-    "@planner/schemas": "workspace:*",
-    "jose": "6.1.0"
-  },
-  "devDependencies": {
-    "@planner/enums": "workspace:*",
-    "@types/bun": "catalog:",
-    "typescript": "catalog:"
-  },
-  "exports": {
-    "./auth": {
-      "import": "./dist/auth.js",
-      "require": "./dist/auth.js",
-      "types": "./dist/auth.d.ts"
-    }
-  },
-  "name": "@planner/security",
-  "private": true,
-  "scripts": {
-    "build": "bun run build.ts",
-    "format": "biome check --linter-enabled=false --write .",
-    "lint": "biome lint --write .",
-    "prebuild": "rm -rf dist tsconfig.tsbuildinfo",
-    "typecheck": "tsc --noEmit"
-  },
-  "type": "module",
-  "types": "./dist/index.d.ts"
+	"dependencies": {
+		"@planner/schemas": "workspace:*",
+		"jose": "6.1.0"
+	},
+	"devDependencies": {
+		"@planner/enums": "workspace:*",
+		"@types/bun": "catalog:",
+		"typescript": "catalog:"
+	},
+	"exports": {
+		"./auth": {
+			"import": "./dist/auth.js",
+			"require": "./dist/auth.js",
+			"types": "./dist/auth.d.ts"
+		}
+	},
+	"name": "@planner/security",
+	"private": true,
+	"scripts": {
+		"build": "bun run build.ts",
+		"format": "biome check --linter-enabled=false --write .",
+		"lint": "biome lint --write .",
+		"prebuild": "rm -rf dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc --noEmit"
+	},
+	"type": "module",
+	"types": "./dist/index.d.ts"
 }
