@@ -34,7 +34,7 @@ const getCharacter = privateProcedure
 			throw new ORPCError("NOT_FOUND", { message: "Character not found" });
 		}
 
-		return characterRow[0];
+		return { character: characterRow[0] };
 	});
 
 const listCharacters = privateProcedure
@@ -59,7 +59,7 @@ const listCharacters = privateProcedure
 			.from(charactersTable)
 			.where(listOptions[by]);
 
-		return charactersRow;
+		return { characters: charactersRow };
 	});
 
 export const characterRouter = {

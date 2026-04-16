@@ -1,18 +1,16 @@
 {
-  "extends": "//",
-  "overrides": [
-    {
-      "includes": [
-        "src/db/**/*.ts"
-      ],
-      "linter": {
-        "rules": {
-          "suspicious": {
-            "noImportCycles": "off"
-          }
-        }
-      }
-    }
-  ],
-  "root": false
+	"extends": "//",
+	"overrides": [
+		{
+			"includes": ["src/db/**/*.ts"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noImportCycles": "off"
+					}
+				}
+			}
+		}
+	],
+	"root": false
 }

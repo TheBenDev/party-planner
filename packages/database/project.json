@@ -1,12 +1,12 @@
 {
-  "name": "@planner/database",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/database/src",
-  "targets": {
-    "build": {
-      "cache": true,
-      "dependsOn": ["^build"],
-      "outputs": ["{projectRoot}/dist"]
-    }
-  }
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"name": "@planner/database",
+	"sourceRoot": "packages/database/src",
+	"targets": {
+		"build": {
+			"cache": true,
+			"dependsOn": ["^build"],
+			"outputs": ["{projectRoot}/dist"]
+		}
+	}
 }

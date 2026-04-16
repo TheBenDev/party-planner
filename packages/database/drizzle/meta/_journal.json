@@ -1,125 +1,125 @@
 {
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "breakpoints": true,
-      "idx": 0,
-      "tag": "0000_db_init",
-      "version": "7",
-      "when": 1764792937108
-    },
-    {
-      "breakpoints": true,
-      "idx": 1,
-      "tag": "0001_invitations_table",
-      "version": "7",
-      "when": 1767197409783
-    },
-    {
-      "breakpoints": true,
-      "idx": 2,
-      "tag": "0002_add_campaign_to_npc",
-      "version": "7",
-      "when": 1767564959808
-    },
-    {
-      "breakpoints": true,
-      "idx": 3,
-      "tag": "0003_add_updated_at_to_campaign_table",
-      "version": "7",
-      "when": 1767662039515
-    },
-    {
-      "breakpoints": true,
-      "idx": 4,
-      "tag": "0004_remove_npc_nullable_last_name",
-      "version": "7",
-      "when": 1767663998946
-    },
-    {
-      "breakpoints": true,
-      "idx": 5,
-      "tag": "0005_fix_npc_campaign_id",
-      "version": "7",
-      "when": 1767664236815
-    },
-    {
-      "breakpoints": true,
-      "idx": 6,
-      "tag": "0006_add_campaign_integration_table",
-      "version": "7",
-      "when": 1767995376643
-    },
-    {
-      "breakpoints": true,
-      "idx": 7,
-      "tag": "0007_add external id to integrations table",
-      "version": "7",
-      "when": 1768429616863
-    },
-    {
-      "breakpoints": true,
-      "idx": 8,
-      "tag": "0008_user_availability",
-      "version": "7",
-      "when": 1769723350640
-    },
-    {
-      "breakpoints": true,
-      "idx": 9,
-      "tag": "0009_user_integration",
-      "version": "7",
-      "when": 1770155001067
-    },
-    {
-      "breakpoints": true,
-      "idx": 10,
-      "tag": "0010_updated_at_added_to_tables",
-      "version": "7",
-      "when": 1771275041721
-    },
-    {
-      "breakpoints": true,
-      "idx": 11,
-      "tag": "0011_npc_columns",
-      "version": "7",
-      "when": 1771621529502
-    },
-    {
-      "breakpoints": true,
-      "idx": 12,
-      "tag": "0012_fix id name consistency",
-      "version": "7",
-      "when": 1771623253356
-    },
-    {
-      "idx": 13,
-      "version": "7",
-      "when": 1772668893742,
-      "tag": "0013_update_npc_table",
-      "breakpoints": true
-    },
-    {
-      "idx": 14,
-      "version": "7",
-      "when": 1773178100355,
-      "tag": "0014_user_names_nullable",
-      "breakpoints": true
-    },
-    {
-      "idx": 15,
-      "version": "7",
-      "when": 1775175943632,
-      "tag": "0015_campaign_invitations_adjusted",
-      "breakpoints": true
-    },
-    {
-      "idx": 16,
-      "version": "7",
-      "when": 1776128944840,
-      "tag": "0016_unique_email_if_active",
-      "breakpoints": true
-    }
-  ],
-  "version": "7"
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"breakpoints": true,
+			"idx": 0,
+			"tag": "0000_db_init",
+			"version": "7",
+			"when": 1764792937108
+		},
+		{
+			"breakpoints": true,
+			"idx": 1,
+			"tag": "0001_invitations_table",
+			"version": "7",
+			"when": 1767197409783
+		},
+		{
+			"breakpoints": true,
+			"idx": 2,
+			"tag": "0002_add_campaign_to_npc",
+			"version": "7",
+			"when": 1767564959808
+		},
+		{
+			"breakpoints": true,
+			"idx": 3,
+			"tag": "0003_add_updated_at_to_campaign_table",
+			"version": "7",
+			"when": 1767662039515
+		},
+		{
+			"breakpoints": true,
+			"idx": 4,
+			"tag": "0004_remove_npc_nullable_last_name",
+			"version": "7",
+			"when": 1767663998946
+		},
+		{
+			"breakpoints": true,
+			"idx": 5,
+			"tag": "0005_fix_npc_campaign_id",
+			"version": "7",
+			"when": 1767664236815
+		},
+		{
+			"breakpoints": true,
+			"idx": 6,
+			"tag": "0006_add_campaign_integration_table",
+			"version": "7",
+			"when": 1767995376643
+		},
+		{
+			"breakpoints": true,
+			"idx": 7,
+			"tag": "0007_add external id to integrations table",
+			"version": "7",
+			"when": 1768429616863
+		},
+		{
+			"breakpoints": true,
+			"idx": 8,
+			"tag": "0008_user_availability",
+			"version": "7",
+			"when": 1769723350640
+		},
+		{
+			"breakpoints": true,
+			"idx": 9,
+			"tag": "0009_user_integration",
+			"version": "7",
+			"when": 1770155001067
+		},
+		{
+			"breakpoints": true,
+			"idx": 10,
+			"tag": "0010_updated_at_added_to_tables",
+			"version": "7",
+			"when": 1771275041721
+		},
+		{
+			"breakpoints": true,
+			"idx": 11,
+			"tag": "0011_npc_columns",
+			"version": "7",
+			"when": 1771621529502
+		},
+		{
+			"breakpoints": true,
+			"idx": 12,
+			"tag": "0012_fix id name consistency",
+			"version": "7",
+			"when": 1771623253356
+		},
+		{
+			"breakpoints": true,
+			"idx": 13,
+			"tag": "0013_update_npc_table",
+			"version": "7",
+			"when": 1772668893742
+		},
+		{
+			"breakpoints": true,
+			"idx": 14,
+			"tag": "0014_user_names_nullable",
+			"version": "7",
+			"when": 1773178100355
+		},
+		{
+			"breakpoints": true,
+			"idx": 15,
+			"tag": "0015_campaign_invitations_adjusted",
+			"version": "7",
+			"when": 1775175943632
+		},
+		{
+			"breakpoints": true,
+			"idx": 16,
+			"tag": "0016_unique_email_if_active",
+			"version": "7",
+			"when": 1776128944840
+		}
+	],
+	"version": "7"
 }

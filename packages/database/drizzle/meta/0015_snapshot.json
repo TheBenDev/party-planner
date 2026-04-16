@@ -1,1721 +1,1600 @@
 {
-  "_meta": {
-    "columns": {},
-    "schemas": {},
-    "tables": {}
-  },
-  "dialect": "postgresql",
-  "enums": {
-    "public.character_status_enum": {
-      "name": "character_status_enum",
-      "schema": "public",
-      "values": [
-        "ALIVE",
-        "DEAD",
-        "MISSING",
-        "UNKNOWN"
-      ]
-    },
-    "public.integration_source": {
-      "name": "integration_source",
-      "schema": "public",
-      "values": [
-        "DISCORD"
-      ]
-    },
-    "public.quest_status": {
-      "name": "quest_status",
-      "schema": "public",
-      "values": [
-        "ACTIVE",
-        "COMPLETED",
-        "FAILED"
-      ]
-    },
-    "public.relation_to_party_enum": {
-      "name": "relation_to_party_enum",
-      "schema": "public",
-      "values": [
-        "ALLY",
-        "NEUTRAL",
-        "SUSPICIOUS",
-        "HOSTILE",
-        "UNKNOWN"
-      ]
-    },
-    "public.status": {
-      "name": "status",
-      "schema": "public",
-      "values": [
-        "PENDING",
-        "ACCEPTED",
-        "REVOKED",
-        "DECLINED",
-        "EXPIRED"
-      ]
-    },
-    "public.user_role": {
-      "name": "user_role",
-      "schema": "public",
-      "values": [
-        "DUNGEON_MASTER",
-        "PLAYER"
-      ]
-    }
-  },
-  "id": "24f994c8-f459-42f3-a47b-b6620db53d76",
-  "policies": {},
-  "prevId": "0bfe902f-be72-4306-99e5-fd2dcf673f43",
-  "roles": {},
-  "schemas": {},
-  "sequences": {},
-  "tables": {
-    "public.campaign_integrations": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "external_id": {
-          "name": "external_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "metadata": {
-          "name": "metadata",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "jsonb"
-        },
-        "settings": {
-          "name": "settings",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "jsonb"
-        },
-        "source": {
-          "name": "source",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "integration_source",
-          "typeSchema": "public"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_integration_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_integration_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_integrations",
-          "tableTo": "campaigns"
-        }
-      },
-      "indexes": {
-        "idx_integrations_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_integrations_campaign_id",
-          "with": {}
-        },
-        "idx_integrations_source": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "source",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_integrations_source",
-          "with": {}
-        },
-        "unique_campaign_source": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "source",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": true,
-          "method": "btree",
-          "name": "unique_campaign_source",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "campaign_integrations",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.campaign_invitations": {
-      "checkConstraints": {},
-      "columns": {
-        "accepted_at": {
-          "name": "accepted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "campaign_invitation_id": {
-          "default": "gen_random_uuid()",
-          "name": "campaign_invitation_id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "invitee_email": {
-          "name": "invitee_email",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "inviter_id": {
-          "name": "inviter_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "role": {
-          "name": "role",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "user_role",
-          "typeSchema": "public"
-        },
-        "status": {
-          "default": "'PENDING'",
-          "name": "status",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "status",
-          "typeSchema": "public"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_invitation_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_invitation_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_invitations",
-          "tableTo": "campaigns"
-        },
-        "fk_invitation_invitee_email": {
-          "columnsFrom": [
-            "invitee_email"
-          ],
-          "columnsTo": [
-            "email"
-          ],
-          "name": "fk_invitation_invitee_email",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_invitations",
-          "tableTo": "users"
-        },
-        "fk_invitation_inviter_id": {
-          "columnsFrom": [
-            "inviter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_invitation_inviter_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_invitations",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "one_pending_invite_per_email": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "invitee_email",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": true,
-          "method": "btree",
-          "name": "one_pending_invite_per_email",
-          "where": "\"campaign_invitations\".\"status\" = 'PENDING'",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "campaign_invitations",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.campaign_users": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "role": {
-          "name": "role",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "user_role",
-          "typeSchema": "public"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "user_id": {
-          "name": "user_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        }
-      },
-      "compositePrimaryKeys": {
-        "campaign_users_user_id_campaign_id_pk": {
-          "columns": [
-            "user_id",
-            "campaign_id"
-          ],
-          "name": "campaign_users_user_id_campaign_id_pk"
-        }
-      },
-      "foreignKeys": {
-        "fk_campaign_user_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_campaign_user_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_users",
-          "tableTo": "campaigns"
-        },
-        "fk_campaign_user_user_id": {
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_campaign_user_user_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaign_users",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "unique_campaign_user": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": true,
-          "method": "btree",
-          "name": "unique_campaign_user",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "campaign_users",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.campaigns": {
-      "checkConstraints": {},
-      "columns": {
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "description": {
-          "name": "description",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "tags": {
-          "name": "tags",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar[]"
-        },
-        "title": {
-          "name": "title",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "user_id": {
-          "name": "user_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_campaign_user_id": {
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_campaign_user_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "campaigns",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "idx_campaign_user_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_campaign_user_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "campaigns",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.location": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "description": {
-          "name": "description",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "dm_notes": {
-          "name": "dm_notes",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "name": {
-          "name": "name",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "notes": {
-          "name": "notes",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {},
-      "indexes": {},
-      "isRLSEnabled": false,
-      "name": "location",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.non_player_character": {
-      "checkConstraints": {},
-      "columns": {
-        "age": {
-          "name": "age",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "aliases": {
-          "name": "aliases",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar[]"
-        },
-        "appearance": {
-          "name": "appearance",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "avatar": {
-          "name": "avatar",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "backstory": {
-          "name": "backstory",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "current_location_id": {
-          "name": "current_location_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "dm_notes": {
-          "name": "dm_notes",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "foundry_actor_id": {
-          "name": "foundry_actor_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "is_known_to_party": {
-          "default": false,
-          "name": "is_known_to_party",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "boolean"
-        },
-        "known_name": {
-          "name": "known_name",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "last_foundry_sync_at": {
-          "name": "last_foundry_sync_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "name": {
-          "name": "name",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "origin_location_id": {
-          "name": "origin_location_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "personality": {
-          "name": "personality",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "player_notes": {
-          "name": "player_notes",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "race": {
-          "name": "race",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "relation_to_party_status": {
-          "default": "'UNKNOWN'",
-          "name": "relation_to_party_status",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "relation_to_party_enum"
-        },
-        "session_encountered_id": {
-          "name": "session_encountered_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "status": {
-          "default": "'UNKNOWN'",
-          "name": "status",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "character_status_enum"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_npc_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_npc_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "non_player_character",
-          "tableTo": "campaigns"
-        },
-        "fk_npc_current_location_id": {
-          "columnsFrom": [
-            "current_location_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_npc_current_location_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "non_player_character",
-          "tableTo": "location"
-        },
-        "fk_npc_origin_location_id": {
-          "columnsFrom": [
-            "origin_location_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_npc_origin_location_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "non_player_character",
-          "tableTo": "location"
-        },
-        "fk_npc_session_encountered_id": {
-          "columnsFrom": [
-            "session_encountered_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_npc_session_encountered_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "non_player_character",
-          "tableTo": "session"
-        }
-      },
-      "indexes": {
-        "idx_npc_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_npc_campaign_id",
-          "with": {}
-        },
-        "idx_npc_current_location_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "current_location_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_npc_current_location_id",
-          "with": {}
-        },
-        "idx_npc_origin_location_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "origin_location_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_npc_origin_location_id",
-          "with": {}
-        },
-        "idx_npc_session_encountered_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "session_encountered_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_npc_session_encountered_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "non_player_character",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.player_character": {
-      "checkConstraints": {},
-      "columns": {
-        "avatar": {
-          "name": "avatar",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "character_sheet": {
-          "name": "character_sheet",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "jsonb"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "first_name": {
-          "name": "first_name",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "last_name": {
-          "name": "last_name",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "origin_id": {
-          "name": "origin_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "user_id": {
-          "name": "user_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_character_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_character_campaign_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "player_character",
-          "tableTo": "campaigns"
-        },
-        "fk_character_location_id": {
-          "columnsFrom": [
-            "origin_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_character_location_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "player_character",
-          "tableTo": "location"
-        },
-        "fk_character_user_id": {
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_character_user_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "player_character",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "idx_character_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_character_campaign_id",
-          "with": {}
-        },
-        "idx_character_location_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "origin_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_character_location_id",
-          "with": {}
-        },
-        "idx_character_user_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_character_user_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "player_character",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.quest": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "completed_at": {
-          "name": "completed_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "description": {
-          "name": "description",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "quest_giver_id": {
-          "name": "quest_giver_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "reward": {
-          "name": "reward",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "jsonb"
-        },
-        "status": {
-          "name": "status",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "quest_status",
-          "typeSchema": "public"
-        },
-        "title": {
-          "name": "title",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_quest_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_quest_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "quest",
-          "tableTo": "campaigns"
-        },
-        "fk_quest_quest_giver_id": {
-          "columnsFrom": [
-            "quest_giver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_quest_quest_giver_id",
-          "onDelete": "set null",
-          "onUpdate": "no action",
-          "tableFrom": "quest",
-          "tableTo": "non_player_character"
-        }
-      },
-      "indexes": {
-        "idx_quest_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_quest_campaign_id",
-          "with": {}
-        },
-        "idx_quest_giver_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "quest_giver_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_quest_giver_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "quest",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.session": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "description": {
-          "name": "description",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "starts_at": {
-          "name": "starts_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "title": {
-          "name": "title",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_session_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_session_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "session",
-          "tableTo": "campaigns"
-        }
-      },
-      "indexes": {
-        "idx_session_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_session_campaign_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "session",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.user_availabilities": {
-      "checkConstraints": {
-        "day_of_week_valid": {
-          "name": "day_of_week_valid",
-          "value": "\"user_availabilities\".\"day_of_week\" >= 0 AND \"user_availabilities\".\"day_of_week\" <= 6"
-        },
-        "effective_until_valid": {
-          "name": "effective_until_valid",
-          "value": "\"user_availabilities\".\"effective_until\" = null OR \"user_availabilities\".\"effective_until\" > \"user_availabilities\".\"effective_from\""
-        },
-        "interval_valid": {
-          "name": "interval_valid",
-          "value": "\"user_availabilities\".\"interval\" > 0 AND \"user_availabilities\".\"interval\" <= 2"
-        }
-      },
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "day_of_week": {
-          "name": "day_of_week",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "integer"
-        },
-        "effective_from": {
-          "default": "now()",
-          "name": "effective_from",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "effective_until": {
-          "name": "effective_until",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "end_time": {
-          "default": "'23:59:59'",
-          "name": "end_time",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "time"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "interval": {
-          "default": 1,
-          "name": "interval",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "integer"
-        },
-        "start_time": {
-          "name": "start_time",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "time"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "user_id": {
-          "name": "user_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_user_availability_campaign_id": {
-          "columnsFrom": [
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_user_availability_campaign_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "user_availabilities",
-          "tableTo": "campaigns"
-        },
-        "fk_user_availability_user_id": {
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_user_availability_user_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "user_availabilities",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "idx_user_availability_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_availability_campaign_id",
-          "with": {}
-        },
-        "idx_user_availability_lookup": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "day_of_week",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_availability_lookup",
-          "with": {}
-        },
-        "idx_user_availability_user_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_availability_user_id",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "user_availabilities",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {}
-    },
-    "public.user_integrations": {
-      "checkConstraints": {},
-      "columns": {
-        "campaign_id": {
-          "name": "campaign_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "external_id": {
-          "name": "external_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "source": {
-          "name": "source",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "integration_source",
-          "typeSchema": "public"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "user_id": {
-          "name": "user_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "uuid"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {
-        "fk_integrations_org_user": {
-          "columnsFrom": [
-            "user_id",
-            "campaign_id"
-          ],
-          "columnsTo": [
-            "user_id",
-            "campaign_id"
-          ],
-          "name": "fk_integrations_org_user",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "user_integrations",
-          "tableTo": "campaign_users"
-        },
-        "fk_integrations_user_id": {
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "name": "fk_integrations_user_id",
-          "onDelete": "cascade",
-          "onUpdate": "no action",
-          "tableFrom": "user_integrations",
-          "tableTo": "users"
-        }
-      },
-      "indexes": {
-        "idx_user_integrations_campaign_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_integrations_campaign_id",
-          "with": {}
-        },
-        "idx_user_integrations_external_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "external_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_integrations_external_id",
-          "with": {}
-        },
-        "idx_user_integrations_user_id": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": false,
-          "method": "btree",
-          "name": "idx_user_integrations_user_id",
-          "with": {}
-        },
-        "unique_user_campaign_source": {
-          "columns": [
-            {
-              "asc": true,
-              "expression": "campaign_id",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "source",
-              "isExpression": false,
-              "nulls": "last"
-            },
-            {
-              "asc": true,
-              "expression": "user_id",
-              "isExpression": false,
-              "nulls": "last"
-            }
-          ],
-          "concurrently": false,
-          "isUnique": true,
-          "method": "btree",
-          "name": "unique_user_campaign_source",
-          "with": {}
-        }
-      },
-      "isRLSEnabled": false,
-      "name": "user_integrations",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {
-        "user_integrations_external_id_unique": {
-          "columns": [
-            "external_id"
-          ],
-          "name": "user_integrations_external_id_unique",
-          "nullsNotDistinct": false
-        }
-      }
-    },
-    "public.users": {
-      "checkConstraints": {},
-      "columns": {
-        "avatar": {
-          "name": "avatar",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "created_at": {
-          "default": "now()",
-          "name": "created_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "timestamp"
-        },
-        "email": {
-          "name": "email",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "external_id": {
-          "name": "external_id",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "first_name": {
-          "name": "first_name",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "id": {
-          "default": "gen_random_uuid()",
-          "name": "id",
-          "notNull": true,
-          "primaryKey": true,
-          "type": "uuid"
-        },
-        "last_name": {
-          "name": "last_name",
-          "notNull": false,
-          "primaryKey": false,
-          "type": "varchar"
-        },
-        "updated_at": {
-          "default": "now()",
-          "name": "updated_at",
-          "notNull": true,
-          "primaryKey": false,
-          "type": "timestamp"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "foreignKeys": {},
-      "indexes": {},
-      "isRLSEnabled": false,
-      "name": "users",
-      "policies": {},
-      "schema": "",
-      "uniqueConstraints": {
-        "users_email_unique": {
-          "columns": [
-            "email"
-          ],
-          "name": "users_email_unique",
-          "nullsNotDistinct": false
-        },
-        "users_external_id_unique": {
-          "columns": [
-            "external_id"
-          ],
-          "name": "users_external_id_unique",
-          "nullsNotDistinct": false
-        }
-      }
-    }
-  },
-  "version": "7",
-  "views": {}
+	"_meta": {
+		"columns": {},
+		"schemas": {},
+		"tables": {}
+	},
+	"dialect": "postgresql",
+	"enums": {
+		"public.character_status_enum": {
+			"name": "character_status_enum",
+			"schema": "public",
+			"values": ["ALIVE", "DEAD", "MISSING", "UNKNOWN"]
+		},
+		"public.integration_source": {
+			"name": "integration_source",
+			"schema": "public",
+			"values": ["DISCORD"]
+		},
+		"public.quest_status": {
+			"name": "quest_status",
+			"schema": "public",
+			"values": ["ACTIVE", "COMPLETED", "FAILED"]
+		},
+		"public.relation_to_party_enum": {
+			"name": "relation_to_party_enum",
+			"schema": "public",
+			"values": ["ALLY", "NEUTRAL", "SUSPICIOUS", "HOSTILE", "UNKNOWN"]
+		},
+		"public.status": {
+			"name": "status",
+			"schema": "public",
+			"values": ["PENDING", "ACCEPTED", "REVOKED", "DECLINED", "EXPIRED"]
+		},
+		"public.user_role": {
+			"name": "user_role",
+			"schema": "public",
+			"values": ["DUNGEON_MASTER", "PLAYER"]
+		}
+	},
+	"id": "24f994c8-f459-42f3-a47b-b6620db53d76",
+	"policies": {},
+	"prevId": "0bfe902f-be72-4306-99e5-fd2dcf673f43",
+	"roles": {},
+	"schemas": {},
+	"sequences": {},
+	"tables": {
+		"public.campaign_integrations": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"external_id": {
+					"name": "external_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"metadata": {
+					"name": "metadata",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "jsonb"
+				},
+				"settings": {
+					"name": "settings",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "jsonb"
+				},
+				"source": {
+					"name": "source",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "integration_source",
+					"typeSchema": "public"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_integration_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_integration_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_integrations",
+					"tableTo": "campaigns"
+				}
+			},
+			"indexes": {
+				"idx_integrations_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_integrations_campaign_id",
+					"with": {}
+				},
+				"idx_integrations_source": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "source",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_integrations_source",
+					"with": {}
+				},
+				"unique_campaign_source": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "source",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": true,
+					"method": "btree",
+					"name": "unique_campaign_source",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "campaign_integrations",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.campaign_invitations": {
+			"checkConstraints": {},
+			"columns": {
+				"accepted_at": {
+					"name": "accepted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"campaign_invitation_id": {
+					"default": "gen_random_uuid()",
+					"name": "campaign_invitation_id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"expires_at": {
+					"name": "expires_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"invitee_email": {
+					"name": "invitee_email",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"inviter_id": {
+					"name": "inviter_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"role": {
+					"name": "role",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "user_role",
+					"typeSchema": "public"
+				},
+				"status": {
+					"default": "'PENDING'",
+					"name": "status",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "status",
+					"typeSchema": "public"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_invitation_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_invitation_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_invitations",
+					"tableTo": "campaigns"
+				},
+				"fk_invitation_invitee_email": {
+					"columnsFrom": ["invitee_email"],
+					"columnsTo": ["email"],
+					"name": "fk_invitation_invitee_email",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_invitations",
+					"tableTo": "users"
+				},
+				"fk_invitation_inviter_id": {
+					"columnsFrom": ["inviter_id"],
+					"columnsTo": ["id"],
+					"name": "fk_invitation_inviter_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_invitations",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"one_pending_invite_per_email": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "invitee_email",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": true,
+					"method": "btree",
+					"name": "one_pending_invite_per_email",
+					"where": "\"campaign_invitations\".\"status\" = 'PENDING'",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "campaign_invitations",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.campaign_users": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"role": {
+					"name": "role",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "user_role",
+					"typeSchema": "public"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"user_id": {
+					"name": "user_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				}
+			},
+			"compositePrimaryKeys": {
+				"campaign_users_user_id_campaign_id_pk": {
+					"columns": ["user_id", "campaign_id"],
+					"name": "campaign_users_user_id_campaign_id_pk"
+				}
+			},
+			"foreignKeys": {
+				"fk_campaign_user_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_campaign_user_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_users",
+					"tableTo": "campaigns"
+				},
+				"fk_campaign_user_user_id": {
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"name": "fk_campaign_user_user_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaign_users",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"unique_campaign_user": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": true,
+					"method": "btree",
+					"name": "unique_campaign_user",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "campaign_users",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.campaigns": {
+			"checkConstraints": {},
+			"columns": {
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"deleted_at": {
+					"name": "deleted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"description": {
+					"name": "description",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"tags": {
+					"name": "tags",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar[]"
+				},
+				"title": {
+					"name": "title",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"user_id": {
+					"name": "user_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_campaign_user_id": {
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"name": "fk_campaign_user_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "campaigns",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"idx_campaign_user_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_campaign_user_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "campaigns",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.location": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"deleted_at": {
+					"name": "deleted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"description": {
+					"name": "description",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"dm_notes": {
+					"name": "dm_notes",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"name": {
+					"name": "name",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"notes": {
+					"name": "notes",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {},
+			"indexes": {},
+			"isRLSEnabled": false,
+			"name": "location",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.non_player_character": {
+			"checkConstraints": {},
+			"columns": {
+				"age": {
+					"name": "age",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"aliases": {
+					"name": "aliases",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar[]"
+				},
+				"appearance": {
+					"name": "appearance",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"avatar": {
+					"name": "avatar",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"backstory": {
+					"name": "backstory",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"current_location_id": {
+					"name": "current_location_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"dm_notes": {
+					"name": "dm_notes",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"foundry_actor_id": {
+					"name": "foundry_actor_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"is_known_to_party": {
+					"default": false,
+					"name": "is_known_to_party",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "boolean"
+				},
+				"known_name": {
+					"name": "known_name",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"last_foundry_sync_at": {
+					"name": "last_foundry_sync_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"name": {
+					"name": "name",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"origin_location_id": {
+					"name": "origin_location_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"personality": {
+					"name": "personality",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"player_notes": {
+					"name": "player_notes",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"race": {
+					"name": "race",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"relation_to_party_status": {
+					"default": "'UNKNOWN'",
+					"name": "relation_to_party_status",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "relation_to_party_enum"
+				},
+				"session_encountered_id": {
+					"name": "session_encountered_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"status": {
+					"default": "'UNKNOWN'",
+					"name": "status",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "character_status_enum"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_npc_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_npc_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "non_player_character",
+					"tableTo": "campaigns"
+				},
+				"fk_npc_current_location_id": {
+					"columnsFrom": ["current_location_id"],
+					"columnsTo": ["id"],
+					"name": "fk_npc_current_location_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "non_player_character",
+					"tableTo": "location"
+				},
+				"fk_npc_origin_location_id": {
+					"columnsFrom": ["origin_location_id"],
+					"columnsTo": ["id"],
+					"name": "fk_npc_origin_location_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "non_player_character",
+					"tableTo": "location"
+				},
+				"fk_npc_session_encountered_id": {
+					"columnsFrom": ["session_encountered_id"],
+					"columnsTo": ["id"],
+					"name": "fk_npc_session_encountered_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "non_player_character",
+					"tableTo": "session"
+				}
+			},
+			"indexes": {
+				"idx_npc_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_npc_campaign_id",
+					"with": {}
+				},
+				"idx_npc_current_location_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "current_location_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_npc_current_location_id",
+					"with": {}
+				},
+				"idx_npc_origin_location_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "origin_location_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_npc_origin_location_id",
+					"with": {}
+				},
+				"idx_npc_session_encountered_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "session_encountered_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_npc_session_encountered_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "non_player_character",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.player_character": {
+			"checkConstraints": {},
+			"columns": {
+				"avatar": {
+					"name": "avatar",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"character_sheet": {
+					"name": "character_sheet",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "jsonb"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"deleted_at": {
+					"name": "deleted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"first_name": {
+					"name": "first_name",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"last_name": {
+					"name": "last_name",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"origin_id": {
+					"name": "origin_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"user_id": {
+					"name": "user_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_character_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_character_campaign_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "player_character",
+					"tableTo": "campaigns"
+				},
+				"fk_character_location_id": {
+					"columnsFrom": ["origin_id"],
+					"columnsTo": ["id"],
+					"name": "fk_character_location_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "player_character",
+					"tableTo": "location"
+				},
+				"fk_character_user_id": {
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"name": "fk_character_user_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "player_character",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"idx_character_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_character_campaign_id",
+					"with": {}
+				},
+				"idx_character_location_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "origin_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_character_location_id",
+					"with": {}
+				},
+				"idx_character_user_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_character_user_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "player_character",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.quest": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"completed_at": {
+					"name": "completed_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"deleted_at": {
+					"name": "deleted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"description": {
+					"name": "description",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"quest_giver_id": {
+					"name": "quest_giver_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"reward": {
+					"name": "reward",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "jsonb"
+				},
+				"status": {
+					"name": "status",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "quest_status",
+					"typeSchema": "public"
+				},
+				"title": {
+					"name": "title",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_quest_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_quest_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "quest",
+					"tableTo": "campaigns"
+				},
+				"fk_quest_quest_giver_id": {
+					"columnsFrom": ["quest_giver_id"],
+					"columnsTo": ["id"],
+					"name": "fk_quest_quest_giver_id",
+					"onDelete": "set null",
+					"onUpdate": "no action",
+					"tableFrom": "quest",
+					"tableTo": "non_player_character"
+				}
+			},
+			"indexes": {
+				"idx_quest_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_quest_campaign_id",
+					"with": {}
+				},
+				"idx_quest_giver_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "quest_giver_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_quest_giver_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "quest",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.session": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"description": {
+					"name": "description",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"starts_at": {
+					"name": "starts_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"title": {
+					"name": "title",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_session_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_session_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "session",
+					"tableTo": "campaigns"
+				}
+			},
+			"indexes": {
+				"idx_session_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_session_campaign_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "session",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.user_availabilities": {
+			"checkConstraints": {
+				"day_of_week_valid": {
+					"name": "day_of_week_valid",
+					"value": "\"user_availabilities\".\"day_of_week\" >= 0 AND \"user_availabilities\".\"day_of_week\" <= 6"
+				},
+				"effective_until_valid": {
+					"name": "effective_until_valid",
+					"value": "\"user_availabilities\".\"effective_until\" = null OR \"user_availabilities\".\"effective_until\" > \"user_availabilities\".\"effective_from\""
+				},
+				"interval_valid": {
+					"name": "interval_valid",
+					"value": "\"user_availabilities\".\"interval\" > 0 AND \"user_availabilities\".\"interval\" <= 2"
+				}
+			},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"day_of_week": {
+					"name": "day_of_week",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "integer"
+				},
+				"effective_from": {
+					"default": "now()",
+					"name": "effective_from",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"effective_until": {
+					"name": "effective_until",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"end_time": {
+					"default": "'23:59:59'",
+					"name": "end_time",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "time"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"interval": {
+					"default": 1,
+					"name": "interval",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "integer"
+				},
+				"start_time": {
+					"name": "start_time",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "time"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"user_id": {
+					"name": "user_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_user_availability_campaign_id": {
+					"columnsFrom": ["campaign_id"],
+					"columnsTo": ["id"],
+					"name": "fk_user_availability_campaign_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "user_availabilities",
+					"tableTo": "campaigns"
+				},
+				"fk_user_availability_user_id": {
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"name": "fk_user_availability_user_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "user_availabilities",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"idx_user_availability_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_availability_campaign_id",
+					"with": {}
+				},
+				"idx_user_availability_lookup": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "day_of_week",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_availability_lookup",
+					"with": {}
+				},
+				"idx_user_availability_user_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_availability_user_id",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "user_availabilities",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {}
+		},
+		"public.user_integrations": {
+			"checkConstraints": {},
+			"columns": {
+				"campaign_id": {
+					"name": "campaign_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"external_id": {
+					"name": "external_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"source": {
+					"name": "source",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "integration_source",
+					"typeSchema": "public"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"user_id": {
+					"name": "user_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "uuid"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {
+				"fk_integrations_org_user": {
+					"columnsFrom": ["user_id", "campaign_id"],
+					"columnsTo": ["user_id", "campaign_id"],
+					"name": "fk_integrations_org_user",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "user_integrations",
+					"tableTo": "campaign_users"
+				},
+				"fk_integrations_user_id": {
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"name": "fk_integrations_user_id",
+					"onDelete": "cascade",
+					"onUpdate": "no action",
+					"tableFrom": "user_integrations",
+					"tableTo": "users"
+				}
+			},
+			"indexes": {
+				"idx_user_integrations_campaign_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_integrations_campaign_id",
+					"with": {}
+				},
+				"idx_user_integrations_external_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "external_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_integrations_external_id",
+					"with": {}
+				},
+				"idx_user_integrations_user_id": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": false,
+					"method": "btree",
+					"name": "idx_user_integrations_user_id",
+					"with": {}
+				},
+				"unique_user_campaign_source": {
+					"columns": [
+						{
+							"asc": true,
+							"expression": "campaign_id",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "source",
+							"isExpression": false,
+							"nulls": "last"
+						},
+						{
+							"asc": true,
+							"expression": "user_id",
+							"isExpression": false,
+							"nulls": "last"
+						}
+					],
+					"concurrently": false,
+					"isUnique": true,
+					"method": "btree",
+					"name": "unique_user_campaign_source",
+					"with": {}
+				}
+			},
+			"isRLSEnabled": false,
+			"name": "user_integrations",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {
+				"user_integrations_external_id_unique": {
+					"columns": ["external_id"],
+					"name": "user_integrations_external_id_unique",
+					"nullsNotDistinct": false
+				}
+			}
+		},
+		"public.users": {
+			"checkConstraints": {},
+			"columns": {
+				"avatar": {
+					"name": "avatar",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"created_at": {
+					"default": "now()",
+					"name": "created_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"deleted_at": {
+					"name": "deleted_at",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "timestamp"
+				},
+				"email": {
+					"name": "email",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"external_id": {
+					"name": "external_id",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"first_name": {
+					"name": "first_name",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"id": {
+					"default": "gen_random_uuid()",
+					"name": "id",
+					"notNull": true,
+					"primaryKey": true,
+					"type": "uuid"
+				},
+				"last_name": {
+					"name": "last_name",
+					"notNull": false,
+					"primaryKey": false,
+					"type": "varchar"
+				},
+				"updated_at": {
+					"default": "now()",
+					"name": "updated_at",
+					"notNull": true,
+					"primaryKey": false,
+					"type": "timestamp"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"foreignKeys": {},
+			"indexes": {},
+			"isRLSEnabled": false,
+			"name": "users",
+			"policies": {},
+			"schema": "",
+			"uniqueConstraints": {
+				"users_email_unique": {
+					"columns": ["email"],
+					"name": "users_email_unique",
+					"nullsNotDistinct": false
+				},
+				"users_external_id_unique": {
+					"columns": ["external_id"],
+					"name": "users_external_id_unique",
+					"nullsNotDistinct": false
+				}
+			}
+		}
+	},
+	"version": "7",
+	"views": {}
 }
