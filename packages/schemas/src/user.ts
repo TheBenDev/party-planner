@@ -22,7 +22,7 @@ export const GetAuthRequestSchema = z.object({
 export const GetAuthResponseSchema = z.object({
 	campaign: CampaignSchema.nullable(),
 	role: z.enum(UserRole).nullable(),
-	user: UserSchema.omit({ createdAt: true, deletedAt: true, updatedAt: true }),
+	user: UserSchema,
 });
 
 export type GetAuthRequest = z.infer<typeof GetAuthRequestSchema>;

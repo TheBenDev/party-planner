@@ -1,5 +1,5 @@
 import type { CreateCampaignRequest } from "@planner/schemas/campaigns";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -22,16 +22,19 @@ function CreateCampaignForm() {
 	const [tagInput, setTagInput] = useState("");
 	const navigate = useNavigate();
 	const { user } = useAuth();
+	const queryClient = useQueryClient();
 
 	const { mutate: createCampaign } = useMutation({
 		mutationFn: (c: CreateCampaignRequest) => client.campaign.createCampaign(c),
+		mutationKey: ["campaign"],
 		onError: (error) => {
 			toast.error("something went wrong creating campaign.", {
 				description: error.message,
 			});
 		},
-		onSuccess: (res) => {
-			navigate({ to: `/campaign/${res.campaign.id}` });
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+			navigate({ to: "/dashboard" });
 		},
 	});
 

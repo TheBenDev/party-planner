@@ -1,11 +1,19 @@
 import { ORPCError } from "@orpc/server";
+import { deleteCookie, getCookie } from "@orpc/server/helpers";
 import {
 	CreateCamapaignResponseSchema,
 	CreateCampaignRequestSchema,
 	GetActiveCampaignResponseSchema,
 } from "@planner/schemas/campaigns";
+import { decryptAuthCookie } from "@planner/security/auth";
+import { env } from "@/env";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import {
+	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
+	AUTH_COOKIE_NAME,
+	privateProcedure,
+	updateAuthCookie,
+} from "../orpc";
 import { protoToCampaign } from "./util/proto/campaign";
 
 const createCampaign = privateProcedure
@@ -30,13 +38,41 @@ const createCampaign = privateProcedure
 
 		try {
 			const result = await api.campaign.createCampaign(values);
-			const campaign = result.campaign;
-			if (campaign === undefined)
+			const campaignProto = result.campaign;
+			if (campaignProto === undefined)
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to create campaign",
 				});
+			const campaign = protoToCampaign(campaignProto);
+			const encryptedAuthCookie = getCookie(
+				context.reqHeaders,
+				AUTH_COOKIE_NAME,
+			);
+			try {
+				if (encryptedAuthCookie) {
+					const rawCookie = await decryptAuthCookie(
+						encryptedAuthCookie,
+						env.AUTH_PRIVATE_KEY_PEM,
+					);
+					await updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {
+						campaign,
+						role: context.role,
+						user: rawCookie.user,
+					});
+				} else {
+					deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+					context.logger?.warn(
+						"Failed to get and update auth cookie creating new campaign",
+					);
+				}
+			} catch (error) {
+				context.logger?.error(
+					{ err: error },
+					"Failed to set auth cookie after creating campaign",
+				);
+			}
 			return {
-				campaign: protoToCampaign(campaign),
+				campaign,
 			};
 		} catch (err) {
 			handleError(err, "failed to create campaign", { userId }, context.logger);
@@ -57,10 +93,16 @@ const getActiveCampaign = privateProcedure
 
 		try {
 			const result = await api.campaign.getCampaign({ id: campaignId });
-			const campaign = result.campaign;
-			if (campaign === undefined) return null;
+			if (result.campaign === undefined) {
+				context.logger?.error(
+					{ campaignId },
+					"Failed to find active campaign despite having active campaign cookie in user context.",
+				);
+				throw new ORPCError("NOT_FOUND", { message: "Campaign not found" });
+			}
+			const campaign = protoToCampaign(result.campaign);
 			return {
-				campaign: protoToCampaign(campaign),
+				campaign,
 			};
 		} catch (err) {
 			handleError(
