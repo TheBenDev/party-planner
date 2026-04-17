@@ -9,7 +9,9 @@ import type {
 	ResponseHeadersPluginContext,
 } from "@orpc/server/plugins";
 import { type Client, createDb } from "@planner/database";
-import type { GetAuthResponse } from "@planner/schemas/user";
+import type { UserRole } from "@planner/enums/user";
+import type { Campaign } from "@planner/schemas/campaigns";
+import type { GetAuthResponse, User } from "@planner/schemas/user";
 import {
 	type AuthCookiePayload,
 	decryptAuthCookie,
@@ -92,6 +94,47 @@ function getSessionToken(headers: Headers): string | undefined {
 		}
 	}
 	return undefined;
+}
+
+export async function updateAuthCookie(
+	publicKey: string,
+	context: Context,
+	{
+		campaign,
+		role,
+		user,
+	}: {
+		campaign: Campaign | null;
+		role: UserRole | null;
+		user: User;
+	},
+) {
+	const encryptedCookie = await encryptAuthCookie(
+		{
+			campaign,
+			role,
+			user,
+		},
+		publicKey,
+		COOKIE_MAX_AGE,
+	);
+	if (campaign) {
+		setCookie(context.resHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME, campaign.id, {
+			httpOnly: true,
+			maxAge: COOKIE_MAX_AGE,
+			path: "/",
+			sameSite: "lax",
+			secure: env.NODE_ENV === "production",
+		});
+	}
+
+	setCookie(context.resHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
+		httpOnly: true,
+		maxAge: COOKIE_MAX_AGE,
+		path: "/",
+		sameSite: "lax",
+		secure: env.NODE_ENV === "production",
+	});
 }
 
 export const authMiddleware = os
@@ -257,25 +300,13 @@ export const authMiddleware = os
 			}
 
 			try {
-				const encryptedCookie = await encryptAuthCookie(
-					{
-						campaign: authPayload.campaign,
-						role: authPayload.role,
-						user: authPayload.user,
-					},
-					publicKey,
-					COOKIE_MAX_AGE,
-				);
-
-				setCookie(c.resHeaders, AUTH_COOKIE_NAME, encryptedCookie, {
-					httpOnly: true,
-					maxAge: COOKIE_MAX_AGE,
-					path: "/",
-					sameSite: "lax",
-					secure: env.NODE_ENV === "production",
+				await updateAuthCookie(publicKey, c, {
+					campaign: authPayload.campaign,
+					role: authPayload.role,
+					user: authPayload.user,
 				});
 			} catch (error) {
-				getLogger(c)?.error({ err: error }, "Failed to set auth cookie");
+				c.logger?.error({ err: error }, "Failed to set auth cookie");
 			}
 		}
 

@@ -8,19 +8,21 @@ import { client } from "@/lib/client";
 
 export type AuthContextValue = {
 	user: GetUserResponse | null;
+	userIsLoading: boolean;
 	campaign: GetActiveCampaignResponse | null;
+	campaignIsLoading: boolean;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const clerkAuth = useClerkAuth();
-	const { data: user = null } = useQuery({
+	const { data: user = null, isLoading: userIsLoading } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => await client.user.getUser(),
 		queryKey: ["auth", "user"],
 	});
-	const { data: campaign = null } = useQuery({
+	const { data: campaign = null, isLoading: campaignIsLoading } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => await client.campaign.getActiveCampaign(),
@@ -30,9 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const value = useMemo(() => {
 		return {
 			campaign,
+			campaignIsLoading,
 			user,
+			userIsLoading,
 		};
-	}, [user, campaign]);
+	}, [user, userIsLoading, campaign, campaignIsLoading]);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
