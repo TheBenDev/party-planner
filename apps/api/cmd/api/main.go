@@ -63,10 +63,6 @@ func main() {
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(userPath, userHandler)
 
-	healthServer := &rpc.HealthServer{}
-	path, healthHandler := plannerv1connect.NewHealthServiceHandler(healthServer, interceptors)
-	mux.Handle(path, healthHandler)
-
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -86,7 +82,7 @@ func main() {
 		}
 	}()
 
-	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, mux)
+	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, middleware.WithInternalAPIKey(cfg.InternalAPIKey, logger.Logger, mux))
 
 	srv := server.New(cfg.Port, handler)
 	go server.Start(srv)

@@ -93,13 +93,11 @@ func (db *DB) DeleteUser(clerkId string) (*model.User, error) {
 
 func (db *DB) GetUserByClerkId(userId string) (*model.User, error) {
 	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE external_id = $1 LIMIT 1`, userId)
-
 	return scanUser(row)
 }
 
 func (db *DB) GetUserByEmail(email string) (*model.User, error) {
 	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE email = $1 LIMIT 1`, email)
-
 	return scanUser(row)
 }
 
