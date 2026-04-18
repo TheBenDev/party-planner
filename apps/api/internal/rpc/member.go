@@ -42,7 +42,7 @@ func (s *MemberServer) CreateMember(ctx context.Context, req *connect.Request[v1
 		Role:       role,
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create member")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create member")
 	}
 
 	return connect.NewResponse(&v1.CreateMemberResponse{
@@ -59,7 +59,7 @@ func (s *MemberServer) GetMember(ctx context.Context, req *connect.Request[v1.Ge
 
 	member, err := s.Member.Get(req.Msg.CampaignId, req.Msg.UserId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get campaign user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get campaign user")
 	}
 
 	return connect.NewResponse(&v1.GetMemberResponse{
@@ -72,7 +72,7 @@ func (s *MemberServer) ListMembersByCampaign(ctx context.Context, req *connect.R
 	}
 	members, err := s.Member.ListByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list campaign users by campaign")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign users by campaign")
 	}
 
 	return connect.NewResponse(&v1.ListMembersByCampaignResponse{Members: Map(members, memberToProto)}), nil
@@ -84,7 +84,7 @@ func (s *MemberServer) ListMembersByUser(ctx context.Context, req *connect.Reque
 	}
 	members, err := s.Member.ListByUser(req.Msg.UserId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list campaign users by user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign users by user")
 	}
 
 	return connect.NewResponse(&v1.ListMembersByUserResponse{Members: Map(members, memberToProto)}), nil
@@ -100,7 +100,7 @@ func (s *MemberServer) RemoveMember(ctx context.Context, req *connect.Request[v1
 
 	err := s.Member.Remove(req.Msg.CampaignId, req.Msg.UserId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to remove campaign user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove campaign user")
 	}
 
 	return connect.NewResponse(&v1.RemoveMemberResponse{}), nil
@@ -114,7 +114,7 @@ func (s *MemberServer) AcceptCampaignInvitation(ctx context.Context, req *connec
 	}
 	res, err := s.Member.AcceptInvitation(req.Msg.CampaignId, req.Msg.InviteeEmail)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to accept campaign invitation")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to accept campaign invitation")
 	}
 	return connect.NewResponse(&v1.AcceptCampaignInvitationResponse{
 		Invitation: campaignInvitationToProto(res.Invitation),
@@ -132,7 +132,7 @@ func (s *MemberServer) DeclineCampaignInvitation(ctx context.Context, req *conne
 	inv, err := s.Member.DeclineInvitation(req.Msg.CampaignId, req.Msg.InviteeEmail)
 
 	if err != nil {
-		return nil, mapServiceError(err, "failed to decline campaign invitation")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to decline campaign invitation")
 	}
 	return connect.NewResponse(&v1.DeclineCampaignInvitationResponse{Invitation: campaignInvitationToProto(inv.Invitation)}), nil
 }

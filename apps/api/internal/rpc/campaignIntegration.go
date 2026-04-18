@@ -35,7 +35,7 @@ func (s *CampaignIntegrationServer) GetCampaignIntegration(ctx context.Context, 
 	}
 	campaignIntegration, err := s.CampaignIntegration.GetByCampaign(req.Msg.CampaignId, source)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get campaign integration")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get campaign integration")
 	}
 	return connect.NewResponse(&v1.GetCampaignIntegrationResponse{Integration: campaignIntegrationToProto(campaignIntegration)}), nil
 }
@@ -80,7 +80,7 @@ func (s *CampaignIntegrationServer) CreateCampaignIntegration(ctx context.Contex
 		Settings:   settings,
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create campaign integration")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create campaign integration")
 	}
 
 	return connect.NewResponse(&v1.CreateCampaignIntegrationResponse{
