@@ -29,6 +29,7 @@ export const env = createEnv({
 			),
 		DISCORD_API_KEY: z.string(),
 		DISCORD_TOKEN: z.string(),
+		INTERNAL_API_KEY: z.string(),
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),

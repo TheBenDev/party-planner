@@ -16,6 +16,7 @@ type Config struct {
 	DatabaseUrl        string
 	DiscordToken       string
 	Environment        string
+	InternalAPIKey     string
 	Port               string
 }
 
@@ -44,6 +45,7 @@ func Load() (*Config, error) {
 		DatabaseUrl:        os.Getenv("DATABASE_URL"),
 		DiscordToken:       os.Getenv("DISCORD_TOKEN"),
 		Environment:        os.Getenv("ENVIRONMENT"),
+		InternalAPIKey:     os.Getenv("INTERNAL_API_KEY"),
 		Port:               os.Getenv("PORT"),
 	}
 

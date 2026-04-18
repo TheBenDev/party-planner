@@ -14,14 +14,16 @@ const API_BASE_URL = env.VITE_API_URL || "http://localhost:8000";
 export function createApiTransport(accessToken?: string) {
 	return createConnectTransport({
 		baseUrl: API_BASE_URL,
-		interceptors: accessToken
-			? [
-					(next) => async (req) => {
-						req.header.set("Authorization", `Bearer ${accessToken}`);
-						return await next(req);
-					},
-				]
-			: [],
+		interceptors: [
+			(next) => async (req) => {
+				req.header.set("X-Internal-Api-Key", env.INTERNAL_API_KEY);
+				// attach access token if present
+				if (accessToken) {
+					req.header.set("Authorization", `Bearer ${accessToken}`);
+				}
+				return await next(req);
+			},
+		],
 		useBinaryFormat: false,
 	});
 }
