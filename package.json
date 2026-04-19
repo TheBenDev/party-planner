@@ -10,12 +10,13 @@
   "packageManager": "bun@1.3.10",
   "private": true,
   "scripts": {
-    "build": "nx run-many -t build",
+    "build": "nx run-many -t build && cd apps/api && make build",
     "build:packages": "nx run-many -t build --projects packages/*",
     "dev": "bun run dev:next",
     "format": "nx run-many -t format",
     "gen:proto": "rm -rf apps/api/gen apps/web/src/gen/proto && cd packages/proto && buf generate",
-    "lint": "nx run-many -t lint",
+    "lint": "nx run-many -t lint && cd apps/api && make lint",
+    "test": "nx run-many -t test && cd apps/api && make test",
     "typecheck": "nx run-many -t typecheck"
   },
   "version": "0.0.0",

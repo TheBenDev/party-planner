@@ -1,13 +1,14 @@
 package rpc
 
 import (
-	"errors"
+	"context"
+	"log/slog"
 
 	"connectrpc.com/connect"
 	"github.com/BBruington/party-planner/api/internal/service"
 )
 
-func mapServiceError(err error, fallbackMsg string) error {
+func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackMsg string) error {
 	switch err {
 	// Campaign
 	case service.ErrCampaignNotFound:
@@ -80,6 +81,6 @@ func mapServiceError(err error, fallbackMsg string) error {
 	case service.ErrUserExternalIdTaken:
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	default:
-		return connect.NewError(connect.CodeInternal, errors.New(fallbackMsg))
+		return internalErr(ctx, log, fallbackMsg, err)
 	}
 }

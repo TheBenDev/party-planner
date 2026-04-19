@@ -66,7 +66,9 @@ func main() {
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok","service":"party-planner-api"}`))
+		if _, err := w.Write([]byte(`{"status":"ok","service":"party-planner-api"}`)); err != nil {
+			slog.Error("failed to write health check response", "error", err)
+		}
 	})
 
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
@@ -81,7 +83,6 @@ func main() {
 			slog.Error("Failed to close Discord session", "error", err)
 		}
 	}()
-
 	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, middleware.WithInternalAPIKey(cfg.InternalAPIKey, logger.Logger, mux))
 
 	srv := server.New(cfg.Port, handler)

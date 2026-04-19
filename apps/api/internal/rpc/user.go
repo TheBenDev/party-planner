@@ -35,7 +35,7 @@ func (s *UserServer) CreateUser(ctx context.Context, req *connect.Request[v1.Cre
 		LastName:   sqlNullString(req.Msg.LastName),
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create user")
 	}
 
 	return connect.NewResponse(&v1.CreateUserResponse{User: userToProto(user)}), nil
@@ -50,7 +50,7 @@ func (s *UserServer) DeleteUser(ctx context.Context, req *connect.Request[v1.Del
 		if errors.Is(err, service.ErrUserNotFound) {
 			return connect.NewResponse(&v1.DeleteUserResponse{}), nil
 		}
-		return nil, mapServiceError(err, "failed to create user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create user")
 	}
 	return connect.NewResponse(&v1.DeleteUserResponse{}), nil
 }
@@ -62,7 +62,7 @@ func (s *UserServer) GetUser(ctx context.Context, req *connect.Request[v1.GetUse
 
 	user, err := s.User.GetByClerkId(req.Msg.ExternalId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get user")
 	}
 	return connect.NewResponse(&v1.GetUserResponse{User: userToProto(user)}), nil
 }
@@ -74,7 +74,7 @@ func (s *UserServer) GetAuth(ctx context.Context, req *connect.Request[v1.GetAut
 
 	auth, err := s.User.GetAuth(req.Msg.ClerkId, req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get user")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get user")
 	}
 
 	var role *v1.MemberRole
@@ -92,7 +92,7 @@ func (s *UserServer) GetUserByEmail(ctx context.Context, req *connect.Request[v1
 
 	user, err := s.User.GetByEmail(req.Msg.Email)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get user by email")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get user by email")
 	}
 
 	return connect.NewResponse(&v1.GetUserByEmailResponse{User: userToProto(user)}), nil

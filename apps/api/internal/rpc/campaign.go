@@ -34,7 +34,7 @@ func (s *CampaignServer) CreateCampaign(ctx context.Context, req *connect.Reques
 	})
 
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create campaign")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create campaign")
 	}
 	return connect.NewResponse(&v1.CreateCampaignResponse{Campaign: campaignToProto(campaign)}), nil
 }
@@ -45,7 +45,7 @@ func (s *CampaignServer) GetCampaign(ctx context.Context, req *connect.Request[v
 	}
 	campaign, err := s.Campaign.GetById(req.Msg.Id)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get campaign")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get campaign")
 	}
 	return connect.NewResponse(&v1.GetCampaignResponse{Campaign: campaignToProto(campaign)}), nil
 }

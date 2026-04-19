@@ -39,7 +39,7 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create session")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create session")
 	}
 
 	return connect.NewResponse(&v1.CreateSessionResponse{
@@ -54,7 +54,7 @@ func (s *SessionServer) GetSession(ctx context.Context, req *connect.Request[v1.
 
 	session, err := s.Session.Get(req.Msg.Id)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get session")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get session")
 	}
 
 	return connect.NewResponse(&v1.GetSessionResponse{
@@ -69,7 +69,7 @@ func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect
 
 	sessions, err := s.Session.ListByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list sessions")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list sessions")
 	}
 
 	protoSessions := make([]*v1.Session, len(sessions))

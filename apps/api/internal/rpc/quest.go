@@ -54,7 +54,7 @@ func (s *QuestServer) CreateQuest(ctx context.Context, req *connect.Request[v1.C
 		Reward:       reward,
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create quest")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create quest")
 	}
 
 	return connect.NewResponse(&v1.CreateQuestResponse{
@@ -69,7 +69,7 @@ func (s *QuestServer) GetQuest(ctx context.Context, req *connect.Request[v1.GetQ
 
 	quest, err := s.Quest.Get(req.Msg.Id)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get quest")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get quest")
 	}
 
 	return connect.NewResponse(&v1.GetQuestResponse{
@@ -84,7 +84,7 @@ func (s *QuestServer) ListQuestsByCampaign(ctx context.Context, req *connect.Req
 
 	quests, err := s.Quest.ListByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list quests")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list quests")
 	}
 
 	protoQuests := make([]*v1.Quest, len(quests))

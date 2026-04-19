@@ -65,7 +65,7 @@ func (s *NpcServer) CreateNpc(ctx context.Context, req *connect.Request[v1.Creat
 		Aliases:               req.Msg.Aliases,
 	})
 	if err != nil {
-		return nil, mapServiceError(err, "failed to create npc")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create npc")
 	}
 
 	return connect.NewResponse(&v1.CreateNpcResponse{
@@ -80,7 +80,7 @@ func (s *NpcServer) GetNpc(ctx context.Context, req *connect.Request[v1.GetNpcRe
 
 	npc, err := s.Npc.Get(req.Msg.Id)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to get npc")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get npc")
 	}
 
 	return connect.NewResponse(&v1.GetNpcResponse{
@@ -95,7 +95,7 @@ func (s *NpcServer) ListNpcsByCampaign(ctx context.Context, req *connect.Request
 
 	npcs, err := s.Npc.ListByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(err, "failed to list npcs")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list npcs")
 	}
 
 	protoNpcs := make([]*v1.Npc, len(npcs))
