@@ -76,12 +76,21 @@ jobs:
         run: cd apps/api && make build
 
   deploy-staging:
-    needs: [ci-js, ci-api]
-    if: always() && !contains(needs.*.result, 'failure') &&
-      !contains(needs.*.result, 'cancelled')
+    needs: [detect-changes, ci-js, ci-api]
+    if: |
+      always() &&
+      !cancelled() &&
+      (
+        (needs.detect-changes.outputs.js == 'true'  && needs.ci-js.result  == 'success') ||
+        (needs.detect-changes.outputs.api == 'true' && needs.ci-api.result == 'success')
+      )
     strategy:
       matrix:
-        service: [party-planner-web, party-planner-api]
+        include:
+          - service: party-planner-web
+            changed: ${{ needs.detect-changes.outputs.js }}
+          - service: party-planner-api
+            changed: ${{ needs.detect-changes.outputs.api }}
     runs-on: ubuntu-latest
     environment: party-planner-staging
     steps:
@@ -92,6 +101,7 @@ jobs:
       - name: Install Railway CLI
         run: bun add -g @railway/cli
       - name: Deploy to Staging
+        if: matrix.changed == 'true'
         run: railway up --service ${{ matrix.service }} --environment staging --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
