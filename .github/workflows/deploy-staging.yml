@@ -47,7 +47,7 @@ jobs:
               - 'packages/proto/**'
 
   deploy-staging-web:
-    needs: [detect-changes, ci-js]
+    needs: [detect-changes]
     if: |
       always() &&
       !cancelled() &&
@@ -68,7 +68,7 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy-staging-api:
-    needs: [detect-changes, ci-api]
+    needs: [detect-changes]
     if: |
       always() &&
       !cancelled() &&
