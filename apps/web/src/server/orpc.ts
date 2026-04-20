@@ -309,12 +309,17 @@ export const authMiddleware = os
 				c.logger?.error({ err: error }, "Failed to set auth cookie");
 			}
 		}
+		const requestLogger = c.logger?.child({
+			campaignId: authPayload.campaign?.id ?? null,
+			userId: authPayload.user.id,
+		});
 
 		return next({
 			context: {
 				campaignId: authPayload.campaign?.id ?? null,
 				clerkClient,
 				clerkUserId,
+				logger: requestLogger,
 				resend,
 				role: authPayload.role,
 				userId: authPayload.user.id,
