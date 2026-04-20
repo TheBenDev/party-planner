@@ -1,0 +1,89 @@
+name: Deploy staging
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/web/**'
+      - 'packages/**'
+      - 'package.json'
+      - 'bun.lock'
+      - 'biome.json'
+      - 'nx.json'
+      - 'apps/api/**'
+      - 'packages/proto/**'
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      js: ${{ steps.changes.outputs.js }}
+      api: ${{ steps.changes.outputs.api }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            js:
+              - 'apps/web/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'bun.lock'
+              - 'biome.json'
+              - 'nx.json'
+            api:
+              - 'apps/api/**'
+              - 'packages/proto/**'
+
+  deploy-staging-web:
+    needs: [detect-changes, ci-js]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.detect-changes.outputs.js == 'true' &&
+      needs.ci-js.result == 'success'
+    runs-on: ubuntu-latest
+    environment: party-planner-staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+      - name: Install Railway CLI
+        run: bun add -g @railway/cli
+      - name: Deploy web to staging
+        run: railway up --service party-planner-web --environment staging --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  deploy-staging-api:
+    needs: [detect-changes, ci-api]
+    if: |
+      always() &&
+      !cancelled() &&
+      needs.detect-changes.outputs.api == 'true' &&
+      needs.ci-api.result == 'success'
+    runs-on: ubuntu-latest
+    environment: party-planner-staging
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+      - name: Install Railway CLI
+        run: bun add -g @railway/cli
+      - name: Deploy api to staging
+        run: railway up --service party-planner-api --environment staging --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

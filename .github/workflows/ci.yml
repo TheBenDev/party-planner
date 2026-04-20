@@ -45,15 +45,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: ${{ env.BUN_VERSION }}
+          bun-version-file: "package.json"
           cache: "bun"
       - run: bun install --frozen-lockfile
       - name: Build packages
         if: matrix.target == 'typecheck' || matrix.target == 'build'
         run: bun run build:packages
       - run: bun nx affected -t ${{ matrix.target }} --base=origin/main --head=HEAD
-        env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
 
   ci-api:
     needs: detect-changes
@@ -66,42 +64,11 @@ jobs:
         with:
           go-version-file: apps/api/go.mod
           cache-dependency-path: apps/api/go.sum
-      - name: Install golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-      - name: Lint
-        run: cd apps/api && make lint
+      - uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.0
+          working-directory: apps/api
       - name: Test
         run: cd apps/api && make test
       - name: Build
         run: cd apps/api && make build
-
-  deploy-staging:
-    needs: [detect-changes, ci-js, ci-api]
-    if: |
-      always() &&
-      !cancelled() &&
-      (
-        (needs.detect-changes.outputs.js == 'true'  && needs.ci-js.result  == 'success') ||
-        (needs.detect-changes.outputs.api == 'true' && needs.ci-api.result == 'success')
-      )
-    strategy:
-      matrix:
-        include:
-          - service: party-planner-web
-            changed: ${{ needs.detect-changes.outputs.js }}
-          - service: party-planner-api
-            changed: ${{ needs.detect-changes.outputs.api }}
-    runs-on: ubuntu-latest
-    environment: party-planner-staging
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: ${{ env.BUN_VERSION }}
-      - name: Install Railway CLI
-        run: bun add -g @railway/cli
-      - name: Deploy to Staging
-        if: matrix.changed == 'true'
-        run: railway up --service ${{ matrix.service }} --environment staging --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
