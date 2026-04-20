@@ -44,6 +44,13 @@ type CreateUserRequest struct {
 	LastName   sql.NullString
 }
 
+type UpdateUserRequest struct {
+	ExternalId string
+	Avatar     sql.NullString
+	FirstName  sql.NullString
+	LastName   sql.NullString
+}
+
 type GetAuthResponse struct {
 	User     *User
 	Campaign *Campaign

@@ -98,6 +98,24 @@ func (s *UserServer) GetUserByEmail(ctx context.Context, req *connect.Request[v1
 	return connect.NewResponse(&v1.GetUserByEmailResponse{User: userToProto(user)}), nil
 }
 
+func (s *UserServer) UpdateUser(ctx context.Context, req *connect.Request[v1.UpdateUserRequest]) (*connect.Response[v1.UpdateUserResponse], error) {
+	if req.Msg.ExternalId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
+	}
+
+	user, err := s.User.Update(&model.UpdateUserRequest{
+		ExternalId: req.Msg.ExternalId,
+		Avatar:     sqlNullString(req.Msg.Avatar),
+		FirstName:  sqlNullString(req.Msg.FirstName),
+		LastName:   sqlNullString(req.Msg.LastName),
+	})
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update user")
+	}
+
+	return connect.NewResponse(&v1.UpdateUserResponse{User: userToProto(user)}), nil
+}
+
 func userToProto(user *model.User) *v1.User {
 	if user == nil {
 		return nil

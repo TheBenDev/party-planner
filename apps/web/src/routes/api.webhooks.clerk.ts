@@ -43,6 +43,27 @@ export const Route = createFileRoute("/api/webhooks/clerk")({
 							return new Response("Failed to create user", { status: 500 });
 						}
 					}
+					case "user.updated": {
+						if (!evt.data.id) {
+							return new Response("No clerk id found updating user", {
+								status: 400,
+							});
+						}
+						try {
+							const api = createApiClients();
+							await api.user.updateUser({
+								avatar: evt.data.image_url,
+								externalId: evt.data.id,
+								firstName: evt.data.first_name ?? undefined,
+								lastName: evt.data.last_name ?? undefined,
+							});
+							return Response.json({ received: true });
+						} catch (error) {
+							// biome-ignore lint/suspicious/noConsole: This is ok for now
+							console.error(error);
+							return new Response("Failed to update user", { status: 500 });
+						}
+					}
 					case "user.deleted": {
 						if (!evt.data.id) {
 							return new Response("No clerk id found deleting user", {

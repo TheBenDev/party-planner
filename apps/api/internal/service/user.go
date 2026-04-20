@@ -115,6 +115,17 @@ func (s *UserService) GetAuth(clerkId string, campaignId *string) (*model.GetAut
 	}, nil
 }
 
+func (s *UserService) Update(user *model.UpdateUserRequest) (*model.User, error) {
+	updated, err := s.DB.UpdateUserByClerkId(user)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, fmt.Errorf("update user error: %w", err)
+	}
+	return updated, nil
+}
+
 func mapUserPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		switch pgConstraint(err) {
