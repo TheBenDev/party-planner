@@ -24,14 +24,14 @@ type CampaignIntegrationServer struct {
 
 func (s *CampaignIntegrationServer) GetCampaignIntegration(ctx context.Context, req *connect.Request[v1.GetCampaignIntegrationRequest]) (*connect.Response[v1.GetCampaignIntegrationResponse], error) {
 	if req.Msg.CampaignId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Integration Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign integration required"))
 	}
 	source, err := protoToIntegrationSource(req.Msg.Source)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Invalid Campaign Integration"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid campaign integration"))
 	}
 	campaignIntegration, err := s.CampaignIntegration.GetByCampaign(req.Msg.CampaignId, source)
 	if err != nil {
@@ -42,13 +42,13 @@ func (s *CampaignIntegrationServer) GetCampaignIntegration(ctx context.Context, 
 
 func (s *CampaignIntegrationServer) CreateCampaignIntegration(ctx context.Context, req *connect.Request[v1.CreateCampaignIntegrationRequest]) (*connect.Response[v1.CreateCampaignIntegrationResponse], error) {
 	if req.Msg.ExternalId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Integration Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("integration id required"))
 	}
 	if req.Msg.CampaignId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Integration Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign integration required"))
 	}
 	source, err := protoToIntegrationSource(req.Msg.Source)
 	if err != nil {

@@ -44,6 +44,8 @@ const (
 	UserServiceGetUserByEmailProcedure = "/planner.v1.UserService/GetUserByEmail"
 	// UserServiceGetAuthProcedure is the fully-qualified name of the UserService's GetAuth RPC.
 	UserServiceGetAuthProcedure = "/planner.v1.UserService/GetAuth"
+	// UserServiceUpdateUserProcedure is the fully-qualified name of the UserService's UpdateUser RPC.
+	UserServiceUpdateUserProcedure = "/planner.v1.UserService/UpdateUser"
 )
 
 // UserServiceClient is a client for the planner.v1.UserService service.
@@ -53,6 +55,7 @@ type UserServiceClient interface {
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 	GetAuth(context.Context, *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error)
+	UpdateUser(context.Context, *connect.Request[v1.UpdateUserRequest]) (*connect.Response[v1.UpdateUserResponse], error)
 }
 
 // NewUserServiceClient constructs a client for the planner.v1.UserService service. By default, it
@@ -96,6 +99,12 @@ func NewUserServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			connect.WithSchema(userServiceMethods.ByName("GetAuth")),
 			connect.WithClientOptions(opts...),
 		),
+		updateUser: connect.NewClient[v1.UpdateUserRequest, v1.UpdateUserResponse](
+			httpClient,
+			baseURL+UserServiceUpdateUserProcedure,
+			connect.WithSchema(userServiceMethods.ByName("UpdateUser")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -106,6 +115,7 @@ type userServiceClient struct {
 	getUser        *connect.Client[v1.GetUserRequest, v1.GetUserResponse]
 	getUserByEmail *connect.Client[v1.GetUserByEmailRequest, v1.GetUserByEmailResponse]
 	getAuth        *connect.Client[v1.GetAuthRequest, v1.GetAuthResponse]
+	updateUser     *connect.Client[v1.UpdateUserRequest, v1.UpdateUserResponse]
 }
 
 // CreateUser calls planner.v1.UserService.CreateUser.
@@ -133,6 +143,11 @@ func (c *userServiceClient) GetAuth(ctx context.Context, req *connect.Request[v1
 	return c.getAuth.CallUnary(ctx, req)
 }
 
+// UpdateUser calls planner.v1.UserService.UpdateUser.
+func (c *userServiceClient) UpdateUser(ctx context.Context, req *connect.Request[v1.UpdateUserRequest]) (*connect.Response[v1.UpdateUserResponse], error) {
+	return c.updateUser.CallUnary(ctx, req)
+}
+
 // UserServiceHandler is an implementation of the planner.v1.UserService service.
 type UserServiceHandler interface {
 	CreateUser(context.Context, *connect.Request[v1.CreateUserRequest]) (*connect.Response[v1.CreateUserResponse], error)
@@ -140,6 +155,7 @@ type UserServiceHandler interface {
 	GetUser(context.Context, *connect.Request[v1.GetUserRequest]) (*connect.Response[v1.GetUserResponse], error)
 	GetUserByEmail(context.Context, *connect.Request[v1.GetUserByEmailRequest]) (*connect.Response[v1.GetUserByEmailResponse], error)
 	GetAuth(context.Context, *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error)
+	UpdateUser(context.Context, *connect.Request[v1.UpdateUserRequest]) (*connect.Response[v1.UpdateUserResponse], error)
 }
 
 // NewUserServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -179,6 +195,12 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 		connect.WithSchema(userServiceMethods.ByName("GetAuth")),
 		connect.WithHandlerOptions(opts...),
 	)
+	userServiceUpdateUserHandler := connect.NewUnaryHandler(
+		UserServiceUpdateUserProcedure,
+		svc.UpdateUser,
+		connect.WithSchema(userServiceMethods.ByName("UpdateUser")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.UserService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case UserServiceCreateUserProcedure:
@@ -191,6 +213,8 @@ func NewUserServiceHandler(svc UserServiceHandler, opts ...connect.HandlerOption
 			userServiceGetUserByEmailHandler.ServeHTTP(w, r)
 		case UserServiceGetAuthProcedure:
 			userServiceGetAuthHandler.ServeHTTP(w, r)
+		case UserServiceUpdateUserProcedure:
+			userServiceUpdateUserHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -218,4 +242,8 @@ func (UnimplementedUserServiceHandler) GetUserByEmail(context.Context, *connect.
 
 func (UnimplementedUserServiceHandler) GetAuth(context.Context, *connect.Request[v1.GetAuthRequest]) (*connect.Response[v1.GetAuthResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.GetAuth is not implemented"))
+}
+
+func (UnimplementedUserServiceHandler) UpdateUser(context.Context, *connect.Request[v1.UpdateUserRequest]) (*connect.Response[v1.UpdateUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.UserService.UpdateUser is not implemented"))
 }

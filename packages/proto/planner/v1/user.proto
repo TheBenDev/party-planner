@@ -12,6 +12,7 @@ service UserService {
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
   rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
 }
 
 message User {
@@ -67,5 +68,15 @@ message GetUserRequest {
 }
 
 message GetUserResponse {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  string external_id = 1;
+  optional string avatar = 2;
+  optional string first_name = 3;
+  optional string last_name = 4;
+}
+message UpdateUserResponse {
   User user = 1;
 }

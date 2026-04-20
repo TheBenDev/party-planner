@@ -21,10 +21,10 @@ type CampaignServer struct {
 
 func (s *CampaignServer) CreateCampaign(ctx context.Context, req *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error) {
 	if req.Msg.UserId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("User Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
 	if req.Msg.Title == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Title Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign title required"))
 	}
 	campaign, err := s.Campaign.Create(&model.CreateCampaignRequest{
 		UserID:      req.Msg.UserId,
@@ -41,7 +41,7 @@ func (s *CampaignServer) CreateCampaign(ctx context.Context, req *connect.Reques
 
 func (s *CampaignServer) GetCampaign(ctx context.Context, req *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error) {
 	if req.Msg.Id == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("Campaign Id Required"))
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 	campaign, err := s.Campaign.GetById(req.Msg.Id)
 	if err != nil {

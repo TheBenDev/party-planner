@@ -101,6 +101,16 @@ func (db *DB) GetUserByEmail(email string) (*model.User, error) {
 	return scanUser(row)
 }
 
+func (db *DB) UpdateUserByClerkId(user *model.UpdateUserRequest) (*model.User, error) {
+	row := db.conn.QueryRow(`
+		UPDATE users SET avatar = $1, first_name = $2, last_name = $3, updated_at = NOW()
+		WHERE external_id = $4 AND deleted_at IS NULL
+		RETURNING `+userColumns,
+		user.Avatar, user.FirstName, user.LastName, user.ExternalId,
+	)
+	return scanUser(row)
+}
+
 const campaignColumns = `id, user_id, title, description, tags, created_at, updated_at, deleted_at`
 
 func scanCampaign(row interface{ Scan(...any) error }) (*model.Campaign, error) {
@@ -155,7 +165,7 @@ func isValidIntegrationSource(s model.IntegrationSource) bool {
 
 func (db *DB) GetCampaignIntegration(id string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(source) {
-		return nil, fmt.Errorf("Invalid Campaign integration source: %q", source)
+		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
 	}
 	row := db.conn.QueryRow(`SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1 AND source = $2 LIMIT 1`, id, source)
 	return scanCampaignIntegration(row)
@@ -194,7 +204,11 @@ func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, e
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
 	var members []*model.Member
 	for rows.Next() {
 		member, err := scanCampaignUser(rows)
@@ -214,7 +228,11 @@ func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
 	var members []*model.Member
 	for rows.Next() {
 		member, err := scanCampaignUser(rows)
@@ -370,7 +388,11 @@ func (db *DB) ListNpcsByCampaign(campaignId string) ([]*model.Npc, error) {
 	if err != nil {
 		return nil, fmt.Errorf("list npcs: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
 
 	var npcs []*model.Npc
 	for rows.Next() {
@@ -417,7 +439,11 @@ func (db *DB) ListQuestsByCampaign(campaignId string) ([]*model.Quest, error) {
 	if err != nil {
 		return nil, fmt.Errorf("list quests: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
 
 	var quests []*model.Quest
 	for rows.Next() {
@@ -464,7 +490,11 @@ func (db *DB) ListSessionsByCampaign(campaignId string) ([]*model.Session, error
 	if err != nil {
 		return nil, fmt.Errorf("list sessions: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
 
 	var sessions []*model.Session
 	for rows.Next() {
