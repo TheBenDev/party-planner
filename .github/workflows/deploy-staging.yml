@@ -17,10 +17,6 @@ permissions:
   actions: read
   contents: read
 
-concurrency:
-  group: deploy-staging
-  cancel-in-progress: false
-
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
@@ -47,12 +43,11 @@ jobs:
               - 'packages/proto/**'
 
   deploy-staging-web:
-    needs: [detect-changes]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.detect-changes.outputs.js == 'true' &&
-      needs.ci-js.result == 'success'
+    concurrency:
+      group: deploy-staging-web
+      cancel-in-progress: false
+    needs: detect-changes
+    if: needs.detect-changes.outputs.js == 'true'
     runs-on: ubuntu-latest
     environment: party-planner-staging
     steps:
@@ -68,12 +63,11 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy-staging-api:
-    needs: [detect-changes]
-    if: |
-      always() &&
-      !cancelled() &&
-      needs.detect-changes.outputs.api == 'true' &&
-      needs.ci-api.result == 'success'
+    concurrency:
+      group: deploy-staging-api
+      cancel-in-progress: false
+    needs: detect-changes
+    if: needs.detect-changes.outputs.api == 'true'
     runs-on: ubuntu-latest
     environment: party-planner-staging
     steps:
