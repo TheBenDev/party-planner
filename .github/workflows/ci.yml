@@ -54,6 +54,9 @@ jobs:
       - run: bun nx affected -t ${{ matrix.target }} --base=origin/main --head=HEAD
 
   ci-api:
+    defaults:
+      run:
+        working-directory: apps/api
     needs: detect-changes
     if: needs.detect-changes.outputs.api == 'true'
     runs-on: ubuntu-latest
@@ -69,6 +72,6 @@ jobs:
           version: v2.11.4
           working-directory: apps/api
       - name: Test
-        run: cd apps/api && make test
+        run: make test
       - name: Build
-        run: cd apps/api && make build
+        run: make build
