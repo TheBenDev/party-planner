@@ -2,6 +2,17 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
+const clientRuntime = {
+	VITE_API_URL: import.meta.env.VITE_API_URL,
+	VITE_APP_URL: import.meta.env.VITE_APP_URL,
+	VITE_AUTH_PUBLIC_KEY_PEM: import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM,
+	VITE_CLERK_AFTER_SIGN_IN_URL: import.meta.env.VITE_CLERK_AFTER_SIGN_IN_URL,
+	VITE_CLERK_AFTER_SIGN_UP_URL: import.meta.env.VITE_CLERK_AFTER_SIGN_UP_URL,
+	VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
+	VITE_CLERK_SIGN_IN_URL: import.meta.env.VITE_CLERK_SIGN_IN_URL,
+	VITE_CLERK_SIGN_UP_URL: import.meta.env.VITE_CLERK_SIGN_UP_URL,
+};
+
 export const env = createEnv({
 	client: {
 		VITE_API_URL: z.url().default("http://localhost:8000"),
@@ -15,7 +26,10 @@ export const env = createEnv({
 	},
 	clientPrefix: "VITE_",
 	emptyStringAsUndefined: true,
-	runtimeEnv: process.env,
+	runtimeEnv: {
+		...process.env,
+		...clientRuntime,
+	},
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
