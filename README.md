@@ -175,19 +175,21 @@ make dev
 | Variable | Description |
 |---|---|
 | `VITE_APP_URL` | Web app base URL (e.g. `http://localhost:3000`) |
-| `NODE_ENV` | `development` or `production` |
+| `VITE_API_URL` | Api app base URL (e.g. `"http://localhost:8000"`) |
 | `VITE_CLERK_PUBLISHABLE_KEY` | Clerk publishable key |
 | `VITE_CLERK_SIGN_IN_URL` | Clerk sign-in route |
 | `VITE_CLERK_SIGN_UP_URL` | Clerk sign-up route |
 | `VITE_CLERK_AFTER_SIGN_IN_URL` | Redirect after sign-in |
 | `VITE_CLERK_AFTER_SIGN_UP_URL` | Redirect after sign-up (e.g. `/onboarding`) |
+| `NODE_ENV` | `development` or `production` |
 | `VITE_AUTH_PUBLIC_KEY_PEM` | Public key for auth cookie encryption |
 | `DATABASE_URL` | Neon/Postgres connection string |
 | `CLERK_SECRET_KEY` | Clerk secret key |
 | `CLERK_WEBHOOK_SIGNING_SECRET` | Svix webhook signing secret |
 | `RESEND_API_KEY` | Resend email API key |
 | `DISCORD_TOKEN` | Discord bot token |
-| `DISCORD_API_KEY` | Internal API key for Beny Bot → oRPC requests |
+| `DISCORD_API_KEY` | API key for Beny Bot → oRPC requests |
+| `Internal_API_KEY` | API key for web → api requests |
 | `AUTH_PRIVATE_KEY_PEM` | Private key for auth cookie decryption |
 
 ### Go API (`apps/api/.env`)
@@ -200,6 +202,7 @@ make dev
 | `DATABASE_URL` | Postgres connection string |
 | `DISCORD_TOKEN` | Discord bot token |
 | `ENVIRONMENT` | `development` or `production` |
+| `INTERNAL_API_KEY` | API key for web → api requests |
 | `PORT` | Port for the ConnectRPC HTTP server (default `8000`) |
 
 ---
