@@ -257,5 +257,6 @@ type CreateCampaignInvitationRequest struct {
 	InviterID    string
 	InviteeEmail string
 	Role         MemberRole
+	Token        string
 	ExpiresAt    time.Time
 }

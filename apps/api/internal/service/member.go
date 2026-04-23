@@ -158,6 +158,42 @@ func (s *MemberService) DeclineInvitation(campaignId, inviteeEmail string) (*mod
 	}, nil
 }
 
+func (s *MemberService) CreateInvitation(req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
+	if req.ExpiresAt.IsZero() {
+		req.ExpiresAt = time.Now().Add(7 * 24 * time.Hour)
+	}
+	inv, err := s.DB.CreateCampaignInvitation(req)
+	if err != nil {
+		if mapped := mapCampaignInvitationPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("create campaign invitation error: %w", err)
+	}
+	return inv, nil
+}
+
+func (s *MemberService) ListInvitations(campaignId string) ([]*model.CampaignInvitation, error) {
+	invitations, err := s.DB.ListCampaignInvitations(campaignId)
+	if err != nil {
+		return nil, fmt.Errorf("list campaign invitations error: %w", err)
+	}
+	return invitations, nil
+}
+
+func (s *MemberService) RevokeInvitation(id, campaignId string) (*model.CampaignInvitation, error) {
+	inv, err := s.DB.RevokeCampaignInvitation(id, campaignId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignInvitationNotFound
+		}
+		if mapped := mapCampaignInvitationPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("revoke campaign invitation error: %w", err)
+	}
+	return inv, nil
+}
+
 func mapCampaignInvitationPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		return ErrCampaignInvitationAlreadyExists

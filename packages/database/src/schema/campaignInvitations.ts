@@ -28,6 +28,7 @@ export const campaignInvitationsTable = pgTable(
 		inviterId: uuid("inviter_id").notNull(),
 		role: userRoleEnum("role").notNull(),
 		status: statusEnum("status").notNull().default(StatusEnum.PENDING),
+		token: varchar("token").notNull().unique(),
 		updatedAt: timestamp("updated_at", { mode: "date" })
 			.defaultNow()
 			.notNull()
@@ -38,11 +39,6 @@ export const campaignInvitationsTable = pgTable(
 			columns: [t.campaignId],
 			foreignColumns: [campaignsTable.id],
 			name: "fk_invitation_campaign_id",
-		}).onDelete("cascade"),
-		foreignKey({
-			columns: [t.inviteeEmail],
-			foreignColumns: [usersTable.email],
-			name: "fk_invitation_invitee_email",
 		}).onDelete("cascade"),
 		foreignKey({
 			columns: [t.inviterId],

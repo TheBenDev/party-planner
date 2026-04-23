@@ -36,15 +36,15 @@ const (
 	// DiscordServiceCheckNextSessionProcedure is the fully-qualified name of the DiscordService's
 	// CheckNextSession RPC.
 	DiscordServiceCheckNextSessionProcedure = "/planner.v1.DiscordService/CheckNextSession"
+	// DiscordServiceScheduleSessionProcedure is the fully-qualified name of the DiscordService's
+	// ScheduleSession RPC.
+	DiscordServiceScheduleSessionProcedure = "/planner.v1.DiscordService/ScheduleSession"
 	// DiscordServiceCheckRemindersProcedure is the fully-qualified name of the DiscordService's
 	// CheckReminders RPC.
 	DiscordServiceCheckRemindersProcedure = "/planner.v1.DiscordService/CheckReminders"
 	// DiscordServiceGetDiscordNpcProcedure is the fully-qualified name of the DiscordService's
 	// GetDiscordNpc RPC.
 	DiscordServiceGetDiscordNpcProcedure = "/planner.v1.DiscordService/GetDiscordNpc"
-	// DiscordServiceScheduleSessionProcedure is the fully-qualified name of the DiscordService's
-	// ScheduleSession RPC.
-	DiscordServiceScheduleSessionProcedure = "/planner.v1.DiscordService/ScheduleSession"
 	// DiscordServiceSendMessageProcedure is the fully-qualified name of the DiscordService's
 	// SendMessage RPC.
 	DiscordServiceSendMessageProcedure = "/planner.v1.DiscordService/SendMessage"
@@ -64,11 +64,16 @@ const (
 
 // DiscordServiceClient is a client for the planner.v1.DiscordService service.
 type DiscordServiceClient interface {
+	// Session RPCs
 	CheckNextSession(context.Context, *connect.Request[v1.CheckNextSessionRequest]) (*connect.Response[v1.CheckNextSessionResponse], error)
-	CheckReminders(context.Context, *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error)
-	GetDiscordNpc(context.Context, *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error)
 	ScheduleSession(context.Context, *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error)
+	// Reminder RPCs
+	CheckReminders(context.Context, *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error)
+	// NPC RPCs
+	GetDiscordNpc(context.Context, *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error)
+	// Messaging RPCs
 	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
+	// Availability RPCs
 	SetAvailability(context.Context, *connect.Request[v1.SetAvailabilityRequest]) (*connect.Response[v1.SetAvailabilityResponse], error)
 	GetAvailabilities(context.Context, *connect.Request[v1.GetAvailabilitiesRequest]) (*connect.Response[v1.GetAvailabilitiesResponse], error)
 	RemoveAvailability(context.Context, *connect.Request[v1.RemoveAvailabilityRequest]) (*connect.Response[v1.RemoveAvailabilityResponse], error)
@@ -92,6 +97,12 @@ func NewDiscordServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(discordServiceMethods.ByName("CheckNextSession")),
 			connect.WithClientOptions(opts...),
 		),
+		scheduleSession: connect.NewClient[v1.ScheduleSessionRequest, v1.ScheduleSessionResponse](
+			httpClient,
+			baseURL+DiscordServiceScheduleSessionProcedure,
+			connect.WithSchema(discordServiceMethods.ByName("ScheduleSession")),
+			connect.WithClientOptions(opts...),
+		),
 		checkReminders: connect.NewClient[v1.CheckRemindersRequest, v1.CheckRemindersResponse](
 			httpClient,
 			baseURL+DiscordServiceCheckRemindersProcedure,
@@ -102,12 +113,6 @@ func NewDiscordServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			httpClient,
 			baseURL+DiscordServiceGetDiscordNpcProcedure,
 			connect.WithSchema(discordServiceMethods.ByName("GetDiscordNpc")),
-			connect.WithClientOptions(opts...),
-		),
-		scheduleSession: connect.NewClient[v1.ScheduleSessionRequest, v1.ScheduleSessionResponse](
-			httpClient,
-			baseURL+DiscordServiceScheduleSessionProcedure,
-			connect.WithSchema(discordServiceMethods.ByName("ScheduleSession")),
 			connect.WithClientOptions(opts...),
 		),
 		sendMessage: connect.NewClient[v1.SendMessageRequest, v1.SendMessageResponse](
@@ -146,9 +151,9 @@ func NewDiscordServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 // discordServiceClient implements DiscordServiceClient.
 type discordServiceClient struct {
 	checkNextSession   *connect.Client[v1.CheckNextSessionRequest, v1.CheckNextSessionResponse]
+	scheduleSession    *connect.Client[v1.ScheduleSessionRequest, v1.ScheduleSessionResponse]
 	checkReminders     *connect.Client[v1.CheckRemindersRequest, v1.CheckRemindersResponse]
 	getDiscordNpc      *connect.Client[v1.GetDiscordNpcRequest, v1.GetDiscordNpcResponse]
-	scheduleSession    *connect.Client[v1.ScheduleSessionRequest, v1.ScheduleSessionResponse]
 	sendMessage        *connect.Client[v1.SendMessageRequest, v1.SendMessageResponse]
 	setAvailability    *connect.Client[v1.SetAvailabilityRequest, v1.SetAvailabilityResponse]
 	getAvailabilities  *connect.Client[v1.GetAvailabilitiesRequest, v1.GetAvailabilitiesResponse]
@@ -161,6 +166,11 @@ func (c *discordServiceClient) CheckNextSession(ctx context.Context, req *connec
 	return c.checkNextSession.CallUnary(ctx, req)
 }
 
+// ScheduleSession calls planner.v1.DiscordService.ScheduleSession.
+func (c *discordServiceClient) ScheduleSession(ctx context.Context, req *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error) {
+	return c.scheduleSession.CallUnary(ctx, req)
+}
+
 // CheckReminders calls planner.v1.DiscordService.CheckReminders.
 func (c *discordServiceClient) CheckReminders(ctx context.Context, req *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error) {
 	return c.checkReminders.CallUnary(ctx, req)
@@ -169,11 +179,6 @@ func (c *discordServiceClient) CheckReminders(ctx context.Context, req *connect.
 // GetDiscordNpc calls planner.v1.DiscordService.GetDiscordNpc.
 func (c *discordServiceClient) GetDiscordNpc(ctx context.Context, req *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error) {
 	return c.getDiscordNpc.CallUnary(ctx, req)
-}
-
-// ScheduleSession calls planner.v1.DiscordService.ScheduleSession.
-func (c *discordServiceClient) ScheduleSession(ctx context.Context, req *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error) {
-	return c.scheduleSession.CallUnary(ctx, req)
 }
 
 // SendMessage calls planner.v1.DiscordService.SendMessage.
@@ -203,11 +208,16 @@ func (c *discordServiceClient) ClearAvailability(ctx context.Context, req *conne
 
 // DiscordServiceHandler is an implementation of the planner.v1.DiscordService service.
 type DiscordServiceHandler interface {
+	// Session RPCs
 	CheckNextSession(context.Context, *connect.Request[v1.CheckNextSessionRequest]) (*connect.Response[v1.CheckNextSessionResponse], error)
-	CheckReminders(context.Context, *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error)
-	GetDiscordNpc(context.Context, *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error)
 	ScheduleSession(context.Context, *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error)
+	// Reminder RPCs
+	CheckReminders(context.Context, *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error)
+	// NPC RPCs
+	GetDiscordNpc(context.Context, *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error)
+	// Messaging RPCs
 	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
+	// Availability RPCs
 	SetAvailability(context.Context, *connect.Request[v1.SetAvailabilityRequest]) (*connect.Response[v1.SetAvailabilityResponse], error)
 	GetAvailabilities(context.Context, *connect.Request[v1.GetAvailabilitiesRequest]) (*connect.Response[v1.GetAvailabilitiesResponse], error)
 	RemoveAvailability(context.Context, *connect.Request[v1.RemoveAvailabilityRequest]) (*connect.Response[v1.RemoveAvailabilityResponse], error)
@@ -227,6 +237,12 @@ func NewDiscordServiceHandler(svc DiscordServiceHandler, opts ...connect.Handler
 		connect.WithSchema(discordServiceMethods.ByName("CheckNextSession")),
 		connect.WithHandlerOptions(opts...),
 	)
+	discordServiceScheduleSessionHandler := connect.NewUnaryHandler(
+		DiscordServiceScheduleSessionProcedure,
+		svc.ScheduleSession,
+		connect.WithSchema(discordServiceMethods.ByName("ScheduleSession")),
+		connect.WithHandlerOptions(opts...),
+	)
 	discordServiceCheckRemindersHandler := connect.NewUnaryHandler(
 		DiscordServiceCheckRemindersProcedure,
 		svc.CheckReminders,
@@ -237,12 +253,6 @@ func NewDiscordServiceHandler(svc DiscordServiceHandler, opts ...connect.Handler
 		DiscordServiceGetDiscordNpcProcedure,
 		svc.GetDiscordNpc,
 		connect.WithSchema(discordServiceMethods.ByName("GetDiscordNpc")),
-		connect.WithHandlerOptions(opts...),
-	)
-	discordServiceScheduleSessionHandler := connect.NewUnaryHandler(
-		DiscordServiceScheduleSessionProcedure,
-		svc.ScheduleSession,
-		connect.WithSchema(discordServiceMethods.ByName("ScheduleSession")),
 		connect.WithHandlerOptions(opts...),
 	)
 	discordServiceSendMessageHandler := connect.NewUnaryHandler(
@@ -279,12 +289,12 @@ func NewDiscordServiceHandler(svc DiscordServiceHandler, opts ...connect.Handler
 		switch r.URL.Path {
 		case DiscordServiceCheckNextSessionProcedure:
 			discordServiceCheckNextSessionHandler.ServeHTTP(w, r)
+		case DiscordServiceScheduleSessionProcedure:
+			discordServiceScheduleSessionHandler.ServeHTTP(w, r)
 		case DiscordServiceCheckRemindersProcedure:
 			discordServiceCheckRemindersHandler.ServeHTTP(w, r)
 		case DiscordServiceGetDiscordNpcProcedure:
 			discordServiceGetDiscordNpcHandler.ServeHTTP(w, r)
-		case DiscordServiceScheduleSessionProcedure:
-			discordServiceScheduleSessionHandler.ServeHTTP(w, r)
 		case DiscordServiceSendMessageProcedure:
 			discordServiceSendMessageHandler.ServeHTTP(w, r)
 		case DiscordServiceSetAvailabilityProcedure:
@@ -308,16 +318,16 @@ func (UnimplementedDiscordServiceHandler) CheckNextSession(context.Context, *con
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.DiscordService.CheckNextSession is not implemented"))
 }
 
+func (UnimplementedDiscordServiceHandler) ScheduleSession(context.Context, *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.DiscordService.ScheduleSession is not implemented"))
+}
+
 func (UnimplementedDiscordServiceHandler) CheckReminders(context.Context, *connect.Request[v1.CheckRemindersRequest]) (*connect.Response[v1.CheckRemindersResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.DiscordService.CheckReminders is not implemented"))
 }
 
 func (UnimplementedDiscordServiceHandler) GetDiscordNpc(context.Context, *connect.Request[v1.GetDiscordNpcRequest]) (*connect.Response[v1.GetDiscordNpcResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.DiscordService.GetDiscordNpc is not implemented"))
-}
-
-func (UnimplementedDiscordServiceHandler) ScheduleSession(context.Context, *connect.Request[v1.ScheduleSessionRequest]) (*connect.Response[v1.ScheduleSessionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.DiscordService.ScheduleSession is not implemented"))
 }
 
 func (UnimplementedDiscordServiceHandler) SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error) {

@@ -137,6 +137,74 @@ func (s *MemberServer) DeclineCampaignInvitation(ctx context.Context, req *conne
 	return connect.NewResponse(&v1.DeclineCampaignInvitationResponse{Invitation: campaignInvitationToProto(inv.Invitation)}), nil
 }
 
+func (s *MemberServer) CreateCampaignInvitation(ctx context.Context, req *connect.Request[v1.CreateCampaignInvitationRequest]) (*connect.Response[v1.CreateCampaignInvitationResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.InviteeEmail == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitee email required"))
+	}
+	if req.Msg.InviterId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("inviter id required"))
+	}
+	if req.Msg.Role == v1.MemberRole_MEMBER_ROLE_UNSPECIFIED {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("role required"))
+	}
+
+	role, err := protoToMemberRole(req.Msg.Role)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	inv, err := s.Member.CreateInvitation(&model.CreateCampaignInvitationRequest{
+		CampaignID:   req.Msg.CampaignId,
+		InviteeEmail: req.Msg.InviteeEmail,
+		InviterID:    req.Msg.InviterId,
+		Token:        req.Msg.Token,
+		Role:         role,
+	})
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create campaign invitation")
+	}
+
+	return connect.NewResponse(&v1.CreateCampaignInvitationResponse{
+		Invitation: campaignInvitationToProto(inv),
+	}), nil
+}
+
+func (s *MemberServer) ListCampaignInvitations(ctx context.Context, req *connect.Request[v1.ListCampaignInvitationsRequest]) (*connect.Response[v1.ListCampaignInvitationsResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	invitations, err := s.Member.ListInvitations(req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign invitations")
+	}
+
+	return connect.NewResponse(&v1.ListCampaignInvitationsResponse{
+		Invitations: Map(invitations, campaignInvitationToProto),
+	}), nil
+}
+
+func (s *MemberServer) RevokeCampaignInvitation(ctx context.Context, req *connect.Request[v1.RevokeCampaignInvitationRequest]) (*connect.Response[v1.RevokeCampaignInvitationResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitation id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	inv, err := s.Member.RevokeInvitation(req.Msg.Id, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to revoke campaign invitation")
+	}
+
+	return connect.NewResponse(&v1.RevokeCampaignInvitationResponse{
+		Invitation: campaignInvitationToProto(inv),
+	}), nil
+}
+
 func protoToMemberRole(role v1.MemberRole) (model.MemberRole, error) {
 	switch role {
 	case v1.MemberRole_MEMBER_ROLE_PLAYER:
@@ -185,8 +253,12 @@ func invitationStatusToProto(status model.InvitationStatus) v1.InvitationStatus 
 		return v1.InvitationStatus_INVITATION_STATUS_DECLINED
 	case model.InvitationStatusExpired:
 		return v1.InvitationStatus_INVITATION_STATUS_EXPIRED
+	case model.InvitationStatusRevoked:
+		return v1.InvitationStatus_INVITATION_STATUS_REVOKED
 	default:
-		return v1.InvitationStatus_INVITATION_STATUS_UNSPECIFIED
+		{
+			return v1.InvitationStatus_INVITATION_STATUS_UNSPECIFIED
+		}
 	}
 }
 

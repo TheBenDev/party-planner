@@ -291,11 +291,11 @@ func scanCampaignInvitation(row interface{ Scan(...any) error }) (*model.Campaig
 
 func (db *DB) CreateCampaignInvitation(invitation *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO campaign_invitations (campaign_id, inviter_id, invitee_email, role, status, expires_at)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO campaign_invitations (campaign_id, inviter_id, invitee_email, role, status, expires_at, token)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING `+campaignInvitationColumns,
 		invitation.CampaignID, invitation.InviterID, invitation.InviteeEmail, invitation.Role,
-		model.InvitationStatusPending, invitation.ExpiresAt,
+		model.InvitationStatusPending, invitation.ExpiresAt, invitation.Token,
 	)
 	return scanCampaignInvitation(row)
 }
@@ -307,13 +307,13 @@ func (db *DB) GetCampaignInvitationByEmail(campaignId, invitee_email string, sta
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) RevokeCampaignInvitation(campaignId, inviteeEmail string) (*model.CampaignInvitation, error) {
+func (db *DB) RevokeCampaignInvitation(invitationId, campaignId string) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
         UPDATE campaign_invitations
         SET status = $1
-        WHERE campaign_id = $2 AND invitee_email = $3 AND status = $4
+        WHERE campaign_invitation_id = $2 AND status = $3 AND campaign_id = $4
         RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusRevoked, campaignId, inviteeEmail, model.InvitationStatusPending,
+		model.InvitationStatusRevoked, invitationId, model.InvitationStatusPending, campaignId,
 	)
 	return scanCampaignInvitation(row)
 }
@@ -338,6 +338,29 @@ func (db *DB) AcceptCampaignInvitation(campaignId, inviteeEmail string, role mod
 		model.InvitationStatusAccepted, role, campaignId, inviteeEmail, model.InvitationStatusPending,
 	)
 	return scanCampaignInvitation(row)
+}
+
+func (db *DB) ListCampaignInvitations(campaignId string) ([]*model.CampaignInvitation, error) {
+	rows, err := db.conn.Query(`SELECT `+campaignInvitationColumns+` FROM campaign_invitations
+		WHERE campaign_id = $1 AND status = $2`, campaignId, model.InvitationStatusPending)
+	if err != nil {
+		return nil, fmt.Errorf("list campaign invitations: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var invitations []*model.CampaignInvitation
+	for rows.Next() {
+		invitation, err := scanCampaignInvitation(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan campaign invitation: %w", err)
+		}
+		invitations = append(invitations, invitation)
+	}
+	return invitations, rows.Err()
 }
 
 const npcColumns = `id, campaign_id, name, status, relation_to_party_status, is_known_to_party, ` +
