@@ -4,11 +4,9 @@ package planner.v1;
 
 import "google/protobuf/timestamp.proto";
 
-service SessionService {
-  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
-  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
-  rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);
-}
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
 
 message Session {
   string id = 1;
@@ -19,6 +17,10 @@ message Session {
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
 }
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
 
 message CreateSessionRequest {
   string campaign_id = 1;
@@ -45,4 +47,14 @@ message ListSessionsByCampaignRequest {
 
 message ListSessionsByCampaignResponse {
   repeated Session sessions = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service SessionService {
+  rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
+  rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);
 }

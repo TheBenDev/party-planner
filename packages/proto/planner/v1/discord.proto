@@ -4,19 +4,9 @@ package planner.v1;
 
 import "planner/v1/non_player_character.proto";
 
-service DiscordService {
-  rpc CheckNextSession(CheckNextSessionRequest) returns (CheckNextSessionResponse);
-  rpc CheckReminders(CheckRemindersRequest) returns (CheckRemindersResponse);
-  rpc GetDiscordNpc(GetDiscordNpcRequest) returns (GetDiscordNpcResponse);
-  rpc ScheduleSession(ScheduleSessionRequest) returns (ScheduleSessionResponse);
-  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
-  rpc SetAvailability(SetAvailabilityRequest) returns (SetAvailabilityResponse);
-  rpc GetAvailabilities(GetAvailabilitiesRequest) returns (GetAvailabilitiesResponse);
-  rpc RemoveAvailability(RemoveAvailabilityRequest) returns (RemoveAvailabilityResponse);
-  rpc ClearAvailability(ClearAvailabilityRequest) returns (ClearAvailabilityResponse);
-}
-
-// ---- Shared ----
+// -----------------------------------------------------------------------------
+// Shared Messages
+// -----------------------------------------------------------------------------
 
 message TimeSlot {
   int32 day_of_week = 1;
@@ -24,7 +14,9 @@ message TimeSlot {
   string end_time = 3;
 }
 
-// ---- CheckNextSession ----
+// -----------------------------------------------------------------------------
+// RPC Messages — Session
+// -----------------------------------------------------------------------------
 
 message CheckNextSessionRequest {
   string server_id = 1;
@@ -33,25 +25,6 @@ message CheckNextSessionRequest {
 message CheckNextSessionResponse {
   string message = 1;
 }
-
-// ---- CheckReminders ----
-
-message CheckRemindersRequest {}
-
-message CheckRemindersResponse {}
-
-// ---- GetNpc ----
-
-message GetDiscordNpcRequest {
-  string server_id = 1;
-  string npc_name = 2;
-}
-
-message GetDiscordNpcResponse {
-  Npc npc = 1;
-}
-
-// ---- ScheduleSession ----
 
 message SessionTime {
   string date = 1;
@@ -68,7 +41,30 @@ message ScheduleSessionResponse {
   repeated string available_users = 1;
 }
 
-// ---- SendMessage ----
+// -----------------------------------------------------------------------------
+// RPC Messages — Reminders
+// -----------------------------------------------------------------------------
+
+message CheckRemindersRequest {}
+
+message CheckRemindersResponse {}
+
+// -----------------------------------------------------------------------------
+// RPC Messages — NPC
+// -----------------------------------------------------------------------------
+
+message GetDiscordNpcRequest {
+  string server_id = 1;
+  string npc_name = 2;
+}
+
+message GetDiscordNpcResponse {
+  Npc npc = 1;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages — Messaging
+// -----------------------------------------------------------------------------
 
 message SendMessageRequest {
   string channel_id = 1;
@@ -77,7 +73,9 @@ message SendMessageRequest {
 
 message SendMessageResponse {}
 
-// ---- Availability ----
+// -----------------------------------------------------------------------------
+// RPC Messages — Availability
+// -----------------------------------------------------------------------------
 
 message SetAvailabilityRequest {
   string server_id = 1;
@@ -109,3 +107,28 @@ message ClearAvailabilityRequest {
 }
 
 message ClearAvailabilityResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service DiscordService {
+  // Session RPCs
+  rpc CheckNextSession(CheckNextSessionRequest) returns (CheckNextSessionResponse);
+  rpc ScheduleSession(ScheduleSessionRequest) returns (ScheduleSessionResponse);
+
+  // Reminder RPCs
+  rpc CheckReminders(CheckRemindersRequest) returns (CheckRemindersResponse);
+
+  // NPC RPCs
+  rpc GetDiscordNpc(GetDiscordNpcRequest) returns (GetDiscordNpcResponse);
+
+  // Messaging RPCs
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+
+  // Availability RPCs
+  rpc SetAvailability(SetAvailabilityRequest) returns (SetAvailabilityResponse);
+  rpc GetAvailabilities(GetAvailabilitiesRequest) returns (GetAvailabilitiesResponse);
+  rpc RemoveAvailability(RemoveAvailabilityRequest) returns (RemoveAvailabilityResponse);
+  rpc ClearAvailability(ClearAvailabilityRequest) returns (ClearAvailabilityResponse);
+}

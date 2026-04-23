@@ -4,10 +4,9 @@ package planner.v1;
 
 import "google/protobuf/timestamp.proto";
 
-service CampaignService {
-  rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
-  rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
-}
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
 
 message Campaign {
   string id = 1;
@@ -19,6 +18,10 @@ message Campaign {
   google.protobuf.Timestamp updated_at = 7;
   optional google.protobuf.Timestamp deleted_at = 8;
 }
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
 
 message CreateCampaignRequest {
   string user_id = 1;
@@ -37,4 +40,13 @@ message GetCampaignRequest {
 
 message GetCampaignResponse {
   Campaign campaign = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service CampaignService {
+  rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+  rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
 }

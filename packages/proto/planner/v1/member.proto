@@ -4,14 +4,14 @@ package planner.v1;
 
 import "google/protobuf/timestamp.proto";
 
-service MemberService {
-  rpc AcceptCampaignInvitation(AcceptCampaignInvitationRequest) returns (AcceptCampaignInvitationResponse);
-  rpc CreateMember(CreateMemberRequest) returns (CreateMemberResponse);
-  rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
-  rpc GetMember(GetMemberRequest) returns (GetMemberResponse);
-  rpc ListMembersByCampaign(ListMembersByCampaignRequest) returns (ListMembersByCampaignResponse);
-  rpc ListMembersByUser(ListMembersByUserRequest) returns (ListMembersByUserResponse);
-  rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse);
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+enum MemberRole {
+  MEMBER_ROLE_UNSPECIFIED = 0;
+  MEMBER_ROLE_PLAYER = 1;
+  MEMBER_ROLE_DUNGEON_MASTER = 2;
 }
 
 enum InvitationStatus {
@@ -23,10 +23,16 @@ enum InvitationStatus {
   INVITATION_STATUS_REVOKED = 5;
 }
 
-enum MemberRole {
-  MEMBER_ROLE_UNSPECIFIED = 0;
-  MEMBER_ROLE_PLAYER = 1;
-  MEMBER_ROLE_DUNGEON_MASTER = 2;
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message Member {
+  string campaign_id = 1;
+  string user_id = 2;
+  MemberRole role = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
 }
 
 message CampaignInvitation {
@@ -42,13 +48,9 @@ message CampaignInvitation {
   google.protobuf.Timestamp updated_at = 10;
 }
 
-message Member {
-  string campaign_id = 1;
-  string user_id = 2;
-  MemberRole role = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
-}
+// -----------------------------------------------------------------------------
+// RPC Messages — Member
+// -----------------------------------------------------------------------------
 
 message CreateMemberRequest {
   string campaign_id = 1;
@@ -92,6 +94,10 @@ message RemoveMemberRequest {
 
 message RemoveMemberResponse {}
 
+// -----------------------------------------------------------------------------
+// RPC Messages — Campaign Invitation
+// -----------------------------------------------------------------------------
+
 message AcceptCampaignInvitationRequest {
   string campaign_id = 1;
   string invitee_email = 2;
@@ -109,4 +115,21 @@ message DeclineCampaignInvitationRequest {
 
 message DeclineCampaignInvitationResponse {
   CampaignInvitation invitation = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service MemberService {
+  // Member RPCs
+  rpc CreateMember(CreateMemberRequest) returns (CreateMemberResponse);
+  rpc GetMember(GetMemberRequest) returns (GetMemberResponse);
+  rpc ListMembersByCampaign(ListMembersByCampaignRequest) returns (ListMembersByCampaignResponse);
+  rpc ListMembersByUser(ListMembersByUserRequest) returns (ListMembersByUserResponse);
+  rpc RemoveMember(RemoveMemberRequest) returns (RemoveMemberResponse);
+
+  // Campaign Invitation RPCs
+  rpc AcceptCampaignInvitation(AcceptCampaignInvitationRequest) returns (AcceptCampaignInvitationResponse);
+  rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
 }
