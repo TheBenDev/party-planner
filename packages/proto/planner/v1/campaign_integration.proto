@@ -5,16 +5,18 @@ package planner.v1;
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
-service CampaignIntegrationService {
-  rpc CreateCampaignIntegration(CreateCampaignIntegrationRequest) returns (CreateCampaignIntegrationResponse);
-  rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
-  rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
-}
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
 
 enum IntegrationSource {
   INTEGRATION_SOURCE_UNSPECIFIED = 0;
   INTEGRATION_SOURCE_DISCORD = 1;
 }
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
 
 message CampaignIntegration {
   string id = 1;
@@ -26,6 +28,10 @@ message CampaignIntegration {
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
 }
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
 
 message CreateCampaignIntegrationRequest {
   string campaign_id = 1;
@@ -54,3 +60,13 @@ message RemoveCampaignIntegrationRequest {
 }
 
 message RemoveCampaignIntegrationResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service CampaignIntegrationService {
+  rpc CreateCampaignIntegration(CreateCampaignIntegrationRequest) returns (CreateCampaignIntegrationResponse);
+  rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
+  rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
+}

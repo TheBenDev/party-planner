@@ -6,14 +6,9 @@ import "google/protobuf/timestamp.proto";
 import "planner/v1/campaign.proto";
 import "planner/v1/member.proto";
 
-service UserService {
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
-  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
-  rpc GetUser(GetUserRequest) returns (GetUserResponse);
-  rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
-  rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
-  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
-}
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
 
 message User {
   string id = 1;
@@ -27,15 +22,9 @@ message User {
   optional google.protobuf.Timestamp deleted_at = 9;
 }
 
-message GetAuthRequest {
-  string clerk_id = 1;
-  optional string campaign_id = 2;
-}
-message GetAuthResponse {
-  User user = 1;
-  optional Campaign campaign = 2;
-  optional MemberRole role = 3;
-}
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
 
 message CreateUserRequest {
   string email = 1;
@@ -49,11 +38,13 @@ message CreateUserResponse {
   User user = 1;
 }
 
-message DeleteUserRequest {
+message GetUserRequest {
   string external_id = 1;
 }
 
-message DeleteUserResponse {}
+message GetUserResponse {
+  User user = 1;
+}
 
 message GetUserByEmailRequest {
   string email = 1;
@@ -63,12 +54,15 @@ message GetUserByEmailResponse {
   User user = 1;
 }
 
-message GetUserRequest {
-  string external_id = 1;
+message GetAuthRequest {
+  string clerk_id = 1;
+  optional string campaign_id = 2;
 }
 
-message GetUserResponse {
+message GetAuthResponse {
   User user = 1;
+  optional Campaign campaign = 2;
+  optional MemberRole role = 3;
 }
 
 message UpdateUserRequest {
@@ -77,6 +71,26 @@ message UpdateUserRequest {
   optional string first_name = 3;
   optional string last_name = 4;
 }
+
 message UpdateUserResponse {
   User user = 1;
+}
+
+message DeleteUserRequest {
+  string external_id = 1;
+}
+
+message DeleteUserResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserByEmailResponse);
+  rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
 }

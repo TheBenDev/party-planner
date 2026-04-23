@@ -4,11 +4,9 @@ package planner.v1;
 
 import "google/protobuf/timestamp.proto";
 
-service NonPlayerCharacterService {
-  rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
-  rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
-  rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
-}
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
 
 enum CharacterStatus {
   CHARACTER_STATUS_UNSPECIFIED = 0;
@@ -27,6 +25,10 @@ enum RelationToParty {
   RELATION_TO_PARTY_NEUTRAL = 4;
   RELATION_TO_PARTY_SUSPICIOUS = 5;
 }
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
 
 message Npc {
   string id = 1;
@@ -53,6 +55,10 @@ message Npc {
   google.protobuf.Timestamp created_at = 22;
   google.protobuf.Timestamp updated_at = 23;
 }
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
 
 message CreateNpcRequest {
   string campaign_id = 1;
@@ -94,4 +100,14 @@ message ListNpcsByCampaignRequest {
 
 message ListNpcsByCampaignResponse {
   repeated Npc npcs = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service NonPlayerCharacterService {
+  rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
+  rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
+  rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
 }
