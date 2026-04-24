@@ -169,174 +169,6 @@ func (x *CheckNextSessionResponse) GetMessage() string {
 	return ""
 }
 
-type CheckRemindersRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CheckRemindersRequest) Reset() {
-	*x = CheckRemindersRequest{}
-	mi := &file_planner_v1_discord_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CheckRemindersRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckRemindersRequest) ProtoMessage() {}
-
-func (x *CheckRemindersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckRemindersRequest.ProtoReflect.Descriptor instead.
-func (*CheckRemindersRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{3}
-}
-
-type CheckRemindersResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CheckRemindersResponse) Reset() {
-	*x = CheckRemindersResponse{}
-	mi := &file_planner_v1_discord_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CheckRemindersResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CheckRemindersResponse) ProtoMessage() {}
-
-func (x *CheckRemindersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CheckRemindersResponse.ProtoReflect.Descriptor instead.
-func (*CheckRemindersResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{4}
-}
-
-type GetDiscordNpcRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
-	NpcName       string                 `protobuf:"bytes,2,opt,name=npc_name,json=npcName,proto3" json:"npc_name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetDiscordNpcRequest) Reset() {
-	*x = GetDiscordNpcRequest{}
-	mi := &file_planner_v1_discord_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDiscordNpcRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDiscordNpcRequest) ProtoMessage() {}
-
-func (x *GetDiscordNpcRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetDiscordNpcRequest.ProtoReflect.Descriptor instead.
-func (*GetDiscordNpcRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *GetDiscordNpcRequest) GetServerId() string {
-	if x != nil {
-		return x.ServerId
-	}
-	return ""
-}
-
-func (x *GetDiscordNpcRequest) GetNpcName() string {
-	if x != nil {
-		return x.NpcName
-	}
-	return ""
-}
-
-type GetDiscordNpcResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetDiscordNpcResponse) Reset() {
-	*x = GetDiscordNpcResponse{}
-	mi := &file_planner_v1_discord_proto_msgTypes[6]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetDiscordNpcResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetDiscordNpcResponse) ProtoMessage() {}
-
-func (x *GetDiscordNpcResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[6]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetDiscordNpcResponse.ProtoReflect.Descriptor instead.
-func (*GetDiscordNpcResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{6}
-}
-
-func (x *GetDiscordNpcResponse) GetNpc() *Npc {
-	if x != nil {
-		return x.Npc
-	}
-	return nil
-}
-
 type SessionTime struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Date          string                 `protobuf:"bytes,1,opt,name=date,proto3" json:"date,omitempty"`
@@ -348,7 +180,7 @@ type SessionTime struct {
 
 func (x *SessionTime) Reset() {
 	*x = SessionTime{}
-	mi := &file_planner_v1_discord_proto_msgTypes[7]
+	mi := &file_planner_v1_discord_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -360,7 +192,7 @@ func (x *SessionTime) String() string {
 func (*SessionTime) ProtoMessage() {}
 
 func (x *SessionTime) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[7]
+	mi := &file_planner_v1_discord_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -373,7 +205,7 @@ func (x *SessionTime) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SessionTime.ProtoReflect.Descriptor instead.
 func (*SessionTime) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SessionTime) GetDate() string {
@@ -407,7 +239,7 @@ type ScheduleSessionRequest struct {
 
 func (x *ScheduleSessionRequest) Reset() {
 	*x = ScheduleSessionRequest{}
-	mi := &file_planner_v1_discord_proto_msgTypes[8]
+	mi := &file_planner_v1_discord_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -419,7 +251,7 @@ func (x *ScheduleSessionRequest) String() string {
 func (*ScheduleSessionRequest) ProtoMessage() {}
 
 func (x *ScheduleSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[8]
+	mi := &file_planner_v1_discord_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -432,7 +264,7 @@ func (x *ScheduleSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScheduleSessionRequest.ProtoReflect.Descriptor instead.
 func (*ScheduleSessionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ScheduleSessionRequest) GetServerId() string {
@@ -458,7 +290,7 @@ type ScheduleSessionResponse struct {
 
 func (x *ScheduleSessionResponse) Reset() {
 	*x = ScheduleSessionResponse{}
-	mi := &file_planner_v1_discord_proto_msgTypes[9]
+	mi := &file_planner_v1_discord_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -470,7 +302,7 @@ func (x *ScheduleSessionResponse) String() string {
 func (*ScheduleSessionResponse) ProtoMessage() {}
 
 func (x *ScheduleSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_discord_proto_msgTypes[9]
+	mi := &file_planner_v1_discord_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -483,12 +315,180 @@ func (x *ScheduleSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ScheduleSessionResponse.ProtoReflect.Descriptor instead.
 func (*ScheduleSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_discord_proto_rawDescGZIP(), []int{9}
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ScheduleSessionResponse) GetAvailableUsers() []string {
 	if x != nil {
 		return x.AvailableUsers
+	}
+	return nil
+}
+
+type CheckRemindersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckRemindersRequest) Reset() {
+	*x = CheckRemindersRequest{}
+	mi := &file_planner_v1_discord_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckRemindersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckRemindersRequest) ProtoMessage() {}
+
+func (x *CheckRemindersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_discord_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckRemindersRequest.ProtoReflect.Descriptor instead.
+func (*CheckRemindersRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{6}
+}
+
+type CheckRemindersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckRemindersResponse) Reset() {
+	*x = CheckRemindersResponse{}
+	mi := &file_planner_v1_discord_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckRemindersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckRemindersResponse) ProtoMessage() {}
+
+func (x *CheckRemindersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_discord_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckRemindersResponse.ProtoReflect.Descriptor instead.
+func (*CheckRemindersResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{7}
+}
+
+type GetDiscordNpcRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ServerId      string                 `protobuf:"bytes,1,opt,name=server_id,json=serverId,proto3" json:"server_id,omitempty"`
+	NpcName       string                 `protobuf:"bytes,2,opt,name=npc_name,json=npcName,proto3" json:"npc_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDiscordNpcRequest) Reset() {
+	*x = GetDiscordNpcRequest{}
+	mi := &file_planner_v1_discord_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDiscordNpcRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDiscordNpcRequest) ProtoMessage() {}
+
+func (x *GetDiscordNpcRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_discord_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDiscordNpcRequest.ProtoReflect.Descriptor instead.
+func (*GetDiscordNpcRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetDiscordNpcRequest) GetServerId() string {
+	if x != nil {
+		return x.ServerId
+	}
+	return ""
+}
+
+func (x *GetDiscordNpcRequest) GetNpcName() string {
+	if x != nil {
+		return x.NpcName
+	}
+	return ""
+}
+
+type GetDiscordNpcResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDiscordNpcResponse) Reset() {
+	*x = GetDiscordNpcResponse{}
+	mi := &file_planner_v1_discord_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDiscordNpcResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDiscordNpcResponse) ProtoMessage() {}
+
+func (x *GetDiscordNpcResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_discord_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDiscordNpcResponse.ProtoReflect.Descriptor instead.
+func (*GetDiscordNpcResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_discord_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetDiscordNpcResponse) GetNpc() *Npc {
+	if x != nil {
+		return x.Npc
 	}
 	return nil
 }
@@ -963,14 +963,7 @@ const file_planner_v1_discord_proto_rawDesc = "" +
 	"\x17CheckNextSessionRequest\x12\x1b\n" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\"4\n" +
 	"\x18CheckNextSessionResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage\"\x17\n" +
-	"\x15CheckRemindersRequest\"\x18\n" +
-	"\x16CheckRemindersResponse\"N\n" +
-	"\x14GetDiscordNpcRequest\x12\x1b\n" +
-	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x19\n" +
-	"\bnpc_name\x18\x02 \x01(\tR\anpcName\":\n" +
-	"\x15GetDiscordNpcResponse\x12!\n" +
-	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"M\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"M\n" +
 	"\vSessionTime\x12\x12\n" +
 	"\x04date\x18\x01 \x01(\tR\x04date\x12\x12\n" +
 	"\x04hour\x18\x02 \x01(\tR\x04hour\x12\x16\n" +
@@ -979,7 +972,14 @@ const file_planner_v1_discord_proto_rawDesc = "" +
 	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12+\n" +
 	"\x04time\x18\x02 \x01(\v2\x17.planner.v1.SessionTimeR\x04time\"B\n" +
 	"\x17ScheduleSessionResponse\x12'\n" +
-	"\x0favailable_users\x18\x01 \x03(\tR\x0eavailableUsers\"M\n" +
+	"\x0favailable_users\x18\x01 \x03(\tR\x0eavailableUsers\"\x17\n" +
+	"\x15CheckRemindersRequest\"\x18\n" +
+	"\x16CheckRemindersResponse\"N\n" +
+	"\x14GetDiscordNpcRequest\x12\x1b\n" +
+	"\tserver_id\x18\x01 \x01(\tR\bserverId\x12\x19\n" +
+	"\bnpc_name\x18\x02 \x01(\tR\anpcName\":\n" +
+	"\x15GetDiscordNpcResponse\x12!\n" +
+	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"M\n" +
 	"\x12SendMessageRequest\x12\x1d\n" +
 	"\n" +
 	"channel_id\x18\x01 \x01(\tR\tchannelId\x12\x18\n" +
@@ -1006,10 +1006,10 @@ const file_planner_v1_discord_proto_rawDesc = "" +
 	"\x10user_external_id\x18\x01 \x01(\tR\x0euserExternalId\"\x1b\n" +
 	"\x19ClearAvailabilityResponse2\xcf\x06\n" +
 	"\x0eDiscordService\x12]\n" +
-	"\x10CheckNextSession\x12#.planner.v1.CheckNextSessionRequest\x1a$.planner.v1.CheckNextSessionResponse\x12W\n" +
+	"\x10CheckNextSession\x12#.planner.v1.CheckNextSessionRequest\x1a$.planner.v1.CheckNextSessionResponse\x12Z\n" +
+	"\x0fScheduleSession\x12\".planner.v1.ScheduleSessionRequest\x1a#.planner.v1.ScheduleSessionResponse\x12W\n" +
 	"\x0eCheckReminders\x12!.planner.v1.CheckRemindersRequest\x1a\".planner.v1.CheckRemindersResponse\x12T\n" +
-	"\rGetDiscordNpc\x12 .planner.v1.GetDiscordNpcRequest\x1a!.planner.v1.GetDiscordNpcResponse\x12Z\n" +
-	"\x0fScheduleSession\x12\".planner.v1.ScheduleSessionRequest\x1a#.planner.v1.ScheduleSessionResponse\x12N\n" +
+	"\rGetDiscordNpc\x12 .planner.v1.GetDiscordNpcRequest\x1a!.planner.v1.GetDiscordNpcResponse\x12N\n" +
 	"\vSendMessage\x12\x1e.planner.v1.SendMessageRequest\x1a\x1f.planner.v1.SendMessageResponse\x12Z\n" +
 	"\x0fSetAvailability\x12\".planner.v1.SetAvailabilityRequest\x1a#.planner.v1.SetAvailabilityResponse\x12`\n" +
 	"\x11GetAvailabilities\x12$.planner.v1.GetAvailabilitiesRequest\x1a%.planner.v1.GetAvailabilitiesResponse\x12c\n" +
@@ -1036,13 +1036,13 @@ var file_planner_v1_discord_proto_goTypes = []any{
 	(*TimeSlot)(nil),                   // 0: planner.v1.TimeSlot
 	(*CheckNextSessionRequest)(nil),    // 1: planner.v1.CheckNextSessionRequest
 	(*CheckNextSessionResponse)(nil),   // 2: planner.v1.CheckNextSessionResponse
-	(*CheckRemindersRequest)(nil),      // 3: planner.v1.CheckRemindersRequest
-	(*CheckRemindersResponse)(nil),     // 4: planner.v1.CheckRemindersResponse
-	(*GetDiscordNpcRequest)(nil),       // 5: planner.v1.GetDiscordNpcRequest
-	(*GetDiscordNpcResponse)(nil),      // 6: planner.v1.GetDiscordNpcResponse
-	(*SessionTime)(nil),                // 7: planner.v1.SessionTime
-	(*ScheduleSessionRequest)(nil),     // 8: planner.v1.ScheduleSessionRequest
-	(*ScheduleSessionResponse)(nil),    // 9: planner.v1.ScheduleSessionResponse
+	(*SessionTime)(nil),                // 3: planner.v1.SessionTime
+	(*ScheduleSessionRequest)(nil),     // 4: planner.v1.ScheduleSessionRequest
+	(*ScheduleSessionResponse)(nil),    // 5: planner.v1.ScheduleSessionResponse
+	(*CheckRemindersRequest)(nil),      // 6: planner.v1.CheckRemindersRequest
+	(*CheckRemindersResponse)(nil),     // 7: planner.v1.CheckRemindersResponse
+	(*GetDiscordNpcRequest)(nil),       // 8: planner.v1.GetDiscordNpcRequest
+	(*GetDiscordNpcResponse)(nil),      // 9: planner.v1.GetDiscordNpcResponse
 	(*SendMessageRequest)(nil),         // 10: planner.v1.SendMessageRequest
 	(*SendMessageResponse)(nil),        // 11: planner.v1.SendMessageResponse
 	(*SetAvailabilityRequest)(nil),     // 12: planner.v1.SetAvailabilityRequest
@@ -1056,23 +1056,23 @@ var file_planner_v1_discord_proto_goTypes = []any{
 	(*Npc)(nil),                        // 20: planner.v1.Npc
 }
 var file_planner_v1_discord_proto_depIdxs = []int32{
-	20, // 0: planner.v1.GetDiscordNpcResponse.npc:type_name -> planner.v1.Npc
-	7,  // 1: planner.v1.ScheduleSessionRequest.time:type_name -> planner.v1.SessionTime
+	3,  // 0: planner.v1.ScheduleSessionRequest.time:type_name -> planner.v1.SessionTime
+	20, // 1: planner.v1.GetDiscordNpcResponse.npc:type_name -> planner.v1.Npc
 	0,  // 2: planner.v1.SetAvailabilityRequest.time:type_name -> planner.v1.TimeSlot
 	0,  // 3: planner.v1.GetAvailabilitiesResponse.availabilities:type_name -> planner.v1.TimeSlot
 	1,  // 4: planner.v1.DiscordService.CheckNextSession:input_type -> planner.v1.CheckNextSessionRequest
-	3,  // 5: planner.v1.DiscordService.CheckReminders:input_type -> planner.v1.CheckRemindersRequest
-	5,  // 6: planner.v1.DiscordService.GetDiscordNpc:input_type -> planner.v1.GetDiscordNpcRequest
-	8,  // 7: planner.v1.DiscordService.ScheduleSession:input_type -> planner.v1.ScheduleSessionRequest
+	4,  // 5: planner.v1.DiscordService.ScheduleSession:input_type -> planner.v1.ScheduleSessionRequest
+	6,  // 6: planner.v1.DiscordService.CheckReminders:input_type -> planner.v1.CheckRemindersRequest
+	8,  // 7: planner.v1.DiscordService.GetDiscordNpc:input_type -> planner.v1.GetDiscordNpcRequest
 	10, // 8: planner.v1.DiscordService.SendMessage:input_type -> planner.v1.SendMessageRequest
 	12, // 9: planner.v1.DiscordService.SetAvailability:input_type -> planner.v1.SetAvailabilityRequest
 	14, // 10: planner.v1.DiscordService.GetAvailabilities:input_type -> planner.v1.GetAvailabilitiesRequest
 	16, // 11: planner.v1.DiscordService.RemoveAvailability:input_type -> planner.v1.RemoveAvailabilityRequest
 	18, // 12: planner.v1.DiscordService.ClearAvailability:input_type -> planner.v1.ClearAvailabilityRequest
 	2,  // 13: planner.v1.DiscordService.CheckNextSession:output_type -> planner.v1.CheckNextSessionResponse
-	4,  // 14: planner.v1.DiscordService.CheckReminders:output_type -> planner.v1.CheckRemindersResponse
-	6,  // 15: planner.v1.DiscordService.GetDiscordNpc:output_type -> planner.v1.GetDiscordNpcResponse
-	9,  // 16: planner.v1.DiscordService.ScheduleSession:output_type -> planner.v1.ScheduleSessionResponse
+	5,  // 14: planner.v1.DiscordService.ScheduleSession:output_type -> planner.v1.ScheduleSessionResponse
+	7,  // 15: planner.v1.DiscordService.CheckReminders:output_type -> planner.v1.CheckRemindersResponse
+	9,  // 16: planner.v1.DiscordService.GetDiscordNpc:output_type -> planner.v1.GetDiscordNpcResponse
 	11, // 17: planner.v1.DiscordService.SendMessage:output_type -> planner.v1.SendMessageResponse
 	13, // 18: planner.v1.DiscordService.SetAvailability:output_type -> planner.v1.SetAvailabilityResponse
 	15, // 19: planner.v1.DiscordService.GetAvailabilities:output_type -> planner.v1.GetAvailabilitiesResponse

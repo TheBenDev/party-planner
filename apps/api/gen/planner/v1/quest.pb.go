@@ -83,7 +83,7 @@ type Quest struct {
 	Status        QuestStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	QuestGiverId  *string                `protobuf:"bytes,6,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
-	Reward        *structpb.Struct       `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
+	Reward        *structpb.Struct       `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"` // TODO: fill out schema for reward
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
@@ -200,14 +200,13 @@ func (x *Quest) GetUpdatedAt() *timestamppb.Timestamp {
 }
 
 type CreateQuestRequest struct {
-	state        protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId   string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Title        string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Status       QuestStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
-	Description  *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	QuestGiverId *string                `protobuf:"bytes,5,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
-	// TODO: fill out schema for reward
-	Reward        *structpb.Struct `protobuf:"bytes,6,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Status        QuestStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
+	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	QuestGiverId  *string                `protobuf:"bytes,5,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
+	Reward        *structpb.Struct       `protobuf:"bytes,6,opt,name=reward,proto3,oneof" json:"reward,omitempty"` // TODO: fill out schema for reward
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

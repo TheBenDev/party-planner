@@ -21,19 +21,20 @@ function CreateCampaignForm() {
 	const [tags, setTags] = useState<string[]>([]);
 	const [tagInput, setTagInput] = useState("");
 	const navigate = useNavigate();
-	const { user } = useAuth();
+	const { userIsLoading } = useAuth();
 	const queryClient = useQueryClient();
 
 	const { mutate: createCampaign } = useMutation({
-		mutationFn: (c: CreateCampaignRequest) => client.campaign.createCampaign(c),
+		mutationFn: async (c: CreateCampaignRequest) =>
+			await client.campaign.createCampaign(c),
 		mutationKey: ["campaign"],
 		onError: (error) => {
 			toast.error("something went wrong creating campaign.", {
 				description: error.message,
 			});
 		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
 			navigate({ to: "/dashboard" });
 		},
 	});
@@ -49,8 +50,8 @@ function CreateCampaignForm() {
 		},
 	});
 
-	if (!user) {
-		return <div>Must be signed in to create a campaign</div>;
+	if (userIsLoading) {
+		return <div>loading</div>;
 	}
 
 	const addTag = (e: React.MouseEvent | React.KeyboardEvent) => {

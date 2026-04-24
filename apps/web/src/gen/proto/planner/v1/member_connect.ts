@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AcceptCampaignInvitationRequest, AcceptCampaignInvitationResponse, CreateMemberRequest, CreateMemberResponse, DeclineCampaignInvitationRequest, DeclineCampaignInvitationResponse, GetMemberRequest, GetMemberResponse, ListMembersByCampaignRequest, ListMembersByCampaignResponse, ListMembersByUserRequest, ListMembersByUserResponse, RemoveMemberRequest, RemoveMemberResponse } from "./member_pb.js";
+import { AcceptCampaignInvitationRequest, AcceptCampaignInvitationResponse, CreateCampaignInvitationRequest, CreateCampaignInvitationResponse, CreateMemberRequest, CreateMemberResponse, DeclineCampaignInvitationRequest, DeclineCampaignInvitationResponse, GetMemberRequest, GetMemberResponse, ListCampaignInvitationsRequest, ListCampaignInvitationsResponse, ListMembersByCampaignRequest, ListMembersByCampaignResponse, ListMembersByUserRequest, ListMembersByUserResponse, RemoveMemberRequest, RemoveMemberResponse, RevokeCampaignInvitationRequest, RevokeCampaignInvitationResponse } from "./member_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -13,30 +13,14 @@ export const MemberService = {
   typeName: "planner.v1.MemberService",
   methods: {
     /**
-     * @generated from rpc planner.v1.MemberService.AcceptCampaignInvitation
-     */
-    acceptCampaignInvitation: {
-      name: "AcceptCampaignInvitation",
-      I: AcceptCampaignInvitationRequest,
-      O: AcceptCampaignInvitationResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
+     * Member RPCs
+     *
      * @generated from rpc planner.v1.MemberService.CreateMember
      */
     createMember: {
       name: "CreateMember",
       I: CreateMemberRequest,
       O: CreateMemberResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.MemberService.DeclineCampaignInvitation
-     */
-    declineCampaignInvitation: {
-      name: "DeclineCampaignInvitation",
-      I: DeclineCampaignInvitationRequest,
-      O: DeclineCampaignInvitationResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -73,6 +57,53 @@ export const MemberService = {
       name: "RemoveMember",
       I: RemoveMemberRequest,
       O: RemoveMemberResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Campaign Invitation RPCs
+     *
+     * @generated from rpc planner.v1.MemberService.AcceptCampaignInvitation
+     */
+    acceptCampaignInvitation: {
+      name: "AcceptCampaignInvitation",
+      I: AcceptCampaignInvitationRequest,
+      O: AcceptCampaignInvitationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.MemberService.CreateCampaignInvitation
+     */
+    createCampaignInvitation: {
+      name: "CreateCampaignInvitation",
+      I: CreateCampaignInvitationRequest,
+      O: CreateCampaignInvitationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.MemberService.DeclineCampaignInvitation
+     */
+    declineCampaignInvitation: {
+      name: "DeclineCampaignInvitation",
+      I: DeclineCampaignInvitationRequest,
+      O: DeclineCampaignInvitationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.MemberService.ListCampaignInvitations
+     */
+    listCampaignInvitations: {
+      name: "ListCampaignInvitations",
+      I: ListCampaignInvitationsRequest,
+      O: ListCampaignInvitationsResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.MemberService.RevokeCampaignInvitation
+     */
+    revokeCampaignInvitation: {
+      name: "RevokeCampaignInvitation",
+      I: RevokeCampaignInvitationRequest,
+      O: RevokeCampaignInvitationResponse,
       kind: MethodKind.Unary,
     },
   }

@@ -20,11 +20,31 @@ export const AcceptCampaignInvitationResponseSchema = z.object({
 	member: CampaignUserSchema,
 });
 
+export const CreateCampaignInvitationRequestSchema = z.object({
+	inviteeEmail: z.email(),
+	role: z.enum(UserRole),
+});
+
+export const CreateCampaignInvitationResponseSchema = z.object({
+	invitation: CampaignInvitationSchema,
+});
+
 export const DeclineCampaignInvitationRequestSchema = z.object({
 	campaignId: z.uuid(),
 	inviteeEmail: z.email(),
 });
 export const DeclineCampaignInvitationResponseSchema = CampaignInvitationSchema;
+
+export const ListCampaignInvitationsResponseSchema = z.object({
+	invitations: z.array(CampaignInvitationSchema),
+});
+
+export const RevokeCampaignInvitationRequestSchema = z.object({
+	id: z.uuid(),
+});
+export const RevokeCampaignInvitationResponseSchema = z.object({
+	invitation: CampaignInvitationSchema,
+});
 
 export const CreateMemberRequestSchema = z.object({
 	campaignId: z.uuid(),

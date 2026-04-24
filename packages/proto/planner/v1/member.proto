@@ -108,12 +108,41 @@ message AcceptCampaignInvitationResponse {
   CampaignInvitation invitation = 2;
 }
 
+message CreateCampaignInvitationRequest {
+  string campaign_id = 1;
+  string invitee_email = 2;
+  string inviter_id = 3;
+  MemberRole role = 4;
+  string token = 5;
+}
+
+message CreateCampaignInvitationResponse {
+  CampaignInvitation invitation = 1;
+}
+
 message DeclineCampaignInvitationRequest {
   string campaign_id = 1;
   string invitee_email = 2;
 }
 
 message DeclineCampaignInvitationResponse {
+  CampaignInvitation invitation = 1;
+}
+
+message ListCampaignInvitationsRequest {
+  string campaign_id = 1;
+}
+
+message ListCampaignInvitationsResponse {
+  repeated CampaignInvitation invitations = 1;
+}
+
+message RevokeCampaignInvitationRequest {
+  string id = 1;
+  string campaign_id = 2;
+}
+
+message RevokeCampaignInvitationResponse {
   CampaignInvitation invitation = 1;
 }
 
@@ -131,5 +160,8 @@ service MemberService {
 
   // Campaign Invitation RPCs
   rpc AcceptCampaignInvitation(AcceptCampaignInvitationRequest) returns (AcceptCampaignInvitationResponse);
+  rpc CreateCampaignInvitation(CreateCampaignInvitationRequest) returns (CreateCampaignInvitationResponse);
   rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
+  rpc ListCampaignInvitations(ListCampaignInvitationsRequest) returns (ListCampaignInvitationsResponse);
+  rpc RevokeCampaignInvitation(RevokeCampaignInvitationRequest) returns (RevokeCampaignInvitationResponse);
 }

@@ -33,15 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// MemberServiceAcceptCampaignInvitationProcedure is the fully-qualified name of the MemberService's
-	// AcceptCampaignInvitation RPC.
-	MemberServiceAcceptCampaignInvitationProcedure = "/planner.v1.MemberService/AcceptCampaignInvitation"
 	// MemberServiceCreateMemberProcedure is the fully-qualified name of the MemberService's
 	// CreateMember RPC.
 	MemberServiceCreateMemberProcedure = "/planner.v1.MemberService/CreateMember"
-	// MemberServiceDeclineCampaignInvitationProcedure is the fully-qualified name of the
-	// MemberService's DeclineCampaignInvitation RPC.
-	MemberServiceDeclineCampaignInvitationProcedure = "/planner.v1.MemberService/DeclineCampaignInvitation"
 	// MemberServiceGetMemberProcedure is the fully-qualified name of the MemberService's GetMember RPC.
 	MemberServiceGetMemberProcedure = "/planner.v1.MemberService/GetMember"
 	// MemberServiceListMembersByCampaignProcedure is the fully-qualified name of the MemberService's
@@ -53,17 +47,37 @@ const (
 	// MemberServiceRemoveMemberProcedure is the fully-qualified name of the MemberService's
 	// RemoveMember RPC.
 	MemberServiceRemoveMemberProcedure = "/planner.v1.MemberService/RemoveMember"
+	// MemberServiceAcceptCampaignInvitationProcedure is the fully-qualified name of the MemberService's
+	// AcceptCampaignInvitation RPC.
+	MemberServiceAcceptCampaignInvitationProcedure = "/planner.v1.MemberService/AcceptCampaignInvitation"
+	// MemberServiceCreateCampaignInvitationProcedure is the fully-qualified name of the MemberService's
+	// CreateCampaignInvitation RPC.
+	MemberServiceCreateCampaignInvitationProcedure = "/planner.v1.MemberService/CreateCampaignInvitation"
+	// MemberServiceDeclineCampaignInvitationProcedure is the fully-qualified name of the
+	// MemberService's DeclineCampaignInvitation RPC.
+	MemberServiceDeclineCampaignInvitationProcedure = "/planner.v1.MemberService/DeclineCampaignInvitation"
+	// MemberServiceListCampaignInvitationsProcedure is the fully-qualified name of the MemberService's
+	// ListCampaignInvitations RPC.
+	MemberServiceListCampaignInvitationsProcedure = "/planner.v1.MemberService/ListCampaignInvitations"
+	// MemberServiceRevokeCampaignInvitationProcedure is the fully-qualified name of the MemberService's
+	// RevokeCampaignInvitation RPC.
+	MemberServiceRevokeCampaignInvitationProcedure = "/planner.v1.MemberService/RevokeCampaignInvitation"
 )
 
 // MemberServiceClient is a client for the planner.v1.MemberService service.
 type MemberServiceClient interface {
-	AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error)
+	// Member RPCs
 	CreateMember(context.Context, *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error)
-	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
 	GetMember(context.Context, *connect.Request[v1.GetMemberRequest]) (*connect.Response[v1.GetMemberResponse], error)
 	ListMembersByCampaign(context.Context, *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error)
 	ListMembersByUser(context.Context, *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error)
 	RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error)
+	// Campaign Invitation RPCs
+	AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error)
+	CreateCampaignInvitation(context.Context, *connect.Request[v1.CreateCampaignInvitationRequest]) (*connect.Response[v1.CreateCampaignInvitationResponse], error)
+	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
+	ListCampaignInvitations(context.Context, *connect.Request[v1.ListCampaignInvitationsRequest]) (*connect.Response[v1.ListCampaignInvitationsResponse], error)
+	RevokeCampaignInvitation(context.Context, *connect.Request[v1.RevokeCampaignInvitationRequest]) (*connect.Response[v1.RevokeCampaignInvitationResponse], error)
 }
 
 // NewMemberServiceClient constructs a client for the planner.v1.MemberService service. By default,
@@ -77,22 +91,10 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 	baseURL = strings.TrimRight(baseURL, "/")
 	memberServiceMethods := v1.File_planner_v1_member_proto.Services().ByName("MemberService").Methods()
 	return &memberServiceClient{
-		acceptCampaignInvitation: connect.NewClient[v1.AcceptCampaignInvitationRequest, v1.AcceptCampaignInvitationResponse](
-			httpClient,
-			baseURL+MemberServiceAcceptCampaignInvitationProcedure,
-			connect.WithSchema(memberServiceMethods.ByName("AcceptCampaignInvitation")),
-			connect.WithClientOptions(opts...),
-		),
 		createMember: connect.NewClient[v1.CreateMemberRequest, v1.CreateMemberResponse](
 			httpClient,
 			baseURL+MemberServiceCreateMemberProcedure,
 			connect.WithSchema(memberServiceMethods.ByName("CreateMember")),
-			connect.WithClientOptions(opts...),
-		),
-		declineCampaignInvitation: connect.NewClient[v1.DeclineCampaignInvitationRequest, v1.DeclineCampaignInvitationResponse](
-			httpClient,
-			baseURL+MemberServiceDeclineCampaignInvitationProcedure,
-			connect.WithSchema(memberServiceMethods.ByName("DeclineCampaignInvitation")),
 			connect.WithClientOptions(opts...),
 		),
 		getMember: connect.NewClient[v1.GetMemberRequest, v1.GetMemberResponse](
@@ -119,33 +121,56 @@ func NewMemberServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 			connect.WithSchema(memberServiceMethods.ByName("RemoveMember")),
 			connect.WithClientOptions(opts...),
 		),
+		acceptCampaignInvitation: connect.NewClient[v1.AcceptCampaignInvitationRequest, v1.AcceptCampaignInvitationResponse](
+			httpClient,
+			baseURL+MemberServiceAcceptCampaignInvitationProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("AcceptCampaignInvitation")),
+			connect.WithClientOptions(opts...),
+		),
+		createCampaignInvitation: connect.NewClient[v1.CreateCampaignInvitationRequest, v1.CreateCampaignInvitationResponse](
+			httpClient,
+			baseURL+MemberServiceCreateCampaignInvitationProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("CreateCampaignInvitation")),
+			connect.WithClientOptions(opts...),
+		),
+		declineCampaignInvitation: connect.NewClient[v1.DeclineCampaignInvitationRequest, v1.DeclineCampaignInvitationResponse](
+			httpClient,
+			baseURL+MemberServiceDeclineCampaignInvitationProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("DeclineCampaignInvitation")),
+			connect.WithClientOptions(opts...),
+		),
+		listCampaignInvitations: connect.NewClient[v1.ListCampaignInvitationsRequest, v1.ListCampaignInvitationsResponse](
+			httpClient,
+			baseURL+MemberServiceListCampaignInvitationsProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("ListCampaignInvitations")),
+			connect.WithClientOptions(opts...),
+		),
+		revokeCampaignInvitation: connect.NewClient[v1.RevokeCampaignInvitationRequest, v1.RevokeCampaignInvitationResponse](
+			httpClient,
+			baseURL+MemberServiceRevokeCampaignInvitationProcedure,
+			connect.WithSchema(memberServiceMethods.ByName("RevokeCampaignInvitation")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // memberServiceClient implements MemberServiceClient.
 type memberServiceClient struct {
-	acceptCampaignInvitation  *connect.Client[v1.AcceptCampaignInvitationRequest, v1.AcceptCampaignInvitationResponse]
 	createMember              *connect.Client[v1.CreateMemberRequest, v1.CreateMemberResponse]
-	declineCampaignInvitation *connect.Client[v1.DeclineCampaignInvitationRequest, v1.DeclineCampaignInvitationResponse]
 	getMember                 *connect.Client[v1.GetMemberRequest, v1.GetMemberResponse]
 	listMembersByCampaign     *connect.Client[v1.ListMembersByCampaignRequest, v1.ListMembersByCampaignResponse]
 	listMembersByUser         *connect.Client[v1.ListMembersByUserRequest, v1.ListMembersByUserResponse]
 	removeMember              *connect.Client[v1.RemoveMemberRequest, v1.RemoveMemberResponse]
-}
-
-// AcceptCampaignInvitation calls planner.v1.MemberService.AcceptCampaignInvitation.
-func (c *memberServiceClient) AcceptCampaignInvitation(ctx context.Context, req *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error) {
-	return c.acceptCampaignInvitation.CallUnary(ctx, req)
+	acceptCampaignInvitation  *connect.Client[v1.AcceptCampaignInvitationRequest, v1.AcceptCampaignInvitationResponse]
+	createCampaignInvitation  *connect.Client[v1.CreateCampaignInvitationRequest, v1.CreateCampaignInvitationResponse]
+	declineCampaignInvitation *connect.Client[v1.DeclineCampaignInvitationRequest, v1.DeclineCampaignInvitationResponse]
+	listCampaignInvitations   *connect.Client[v1.ListCampaignInvitationsRequest, v1.ListCampaignInvitationsResponse]
+	revokeCampaignInvitation  *connect.Client[v1.RevokeCampaignInvitationRequest, v1.RevokeCampaignInvitationResponse]
 }
 
 // CreateMember calls planner.v1.MemberService.CreateMember.
 func (c *memberServiceClient) CreateMember(ctx context.Context, req *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error) {
 	return c.createMember.CallUnary(ctx, req)
-}
-
-// DeclineCampaignInvitation calls planner.v1.MemberService.DeclineCampaignInvitation.
-func (c *memberServiceClient) DeclineCampaignInvitation(ctx context.Context, req *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error) {
-	return c.declineCampaignInvitation.CallUnary(ctx, req)
 }
 
 // GetMember calls planner.v1.MemberService.GetMember.
@@ -168,15 +193,45 @@ func (c *memberServiceClient) RemoveMember(ctx context.Context, req *connect.Req
 	return c.removeMember.CallUnary(ctx, req)
 }
 
+// AcceptCampaignInvitation calls planner.v1.MemberService.AcceptCampaignInvitation.
+func (c *memberServiceClient) AcceptCampaignInvitation(ctx context.Context, req *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error) {
+	return c.acceptCampaignInvitation.CallUnary(ctx, req)
+}
+
+// CreateCampaignInvitation calls planner.v1.MemberService.CreateCampaignInvitation.
+func (c *memberServiceClient) CreateCampaignInvitation(ctx context.Context, req *connect.Request[v1.CreateCampaignInvitationRequest]) (*connect.Response[v1.CreateCampaignInvitationResponse], error) {
+	return c.createCampaignInvitation.CallUnary(ctx, req)
+}
+
+// DeclineCampaignInvitation calls planner.v1.MemberService.DeclineCampaignInvitation.
+func (c *memberServiceClient) DeclineCampaignInvitation(ctx context.Context, req *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error) {
+	return c.declineCampaignInvitation.CallUnary(ctx, req)
+}
+
+// ListCampaignInvitations calls planner.v1.MemberService.ListCampaignInvitations.
+func (c *memberServiceClient) ListCampaignInvitations(ctx context.Context, req *connect.Request[v1.ListCampaignInvitationsRequest]) (*connect.Response[v1.ListCampaignInvitationsResponse], error) {
+	return c.listCampaignInvitations.CallUnary(ctx, req)
+}
+
+// RevokeCampaignInvitation calls planner.v1.MemberService.RevokeCampaignInvitation.
+func (c *memberServiceClient) RevokeCampaignInvitation(ctx context.Context, req *connect.Request[v1.RevokeCampaignInvitationRequest]) (*connect.Response[v1.RevokeCampaignInvitationResponse], error) {
+	return c.revokeCampaignInvitation.CallUnary(ctx, req)
+}
+
 // MemberServiceHandler is an implementation of the planner.v1.MemberService service.
 type MemberServiceHandler interface {
-	AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error)
+	// Member RPCs
 	CreateMember(context.Context, *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error)
-	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
 	GetMember(context.Context, *connect.Request[v1.GetMemberRequest]) (*connect.Response[v1.GetMemberResponse], error)
 	ListMembersByCampaign(context.Context, *connect.Request[v1.ListMembersByCampaignRequest]) (*connect.Response[v1.ListMembersByCampaignResponse], error)
 	ListMembersByUser(context.Context, *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error)
 	RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error)
+	// Campaign Invitation RPCs
+	AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error)
+	CreateCampaignInvitation(context.Context, *connect.Request[v1.CreateCampaignInvitationRequest]) (*connect.Response[v1.CreateCampaignInvitationResponse], error)
+	DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error)
+	ListCampaignInvitations(context.Context, *connect.Request[v1.ListCampaignInvitationsRequest]) (*connect.Response[v1.ListCampaignInvitationsResponse], error)
+	RevokeCampaignInvitation(context.Context, *connect.Request[v1.RevokeCampaignInvitationRequest]) (*connect.Response[v1.RevokeCampaignInvitationResponse], error)
 }
 
 // NewMemberServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -186,22 +241,10 @@ type MemberServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	memberServiceMethods := v1.File_planner_v1_member_proto.Services().ByName("MemberService").Methods()
-	memberServiceAcceptCampaignInvitationHandler := connect.NewUnaryHandler(
-		MemberServiceAcceptCampaignInvitationProcedure,
-		svc.AcceptCampaignInvitation,
-		connect.WithSchema(memberServiceMethods.ByName("AcceptCampaignInvitation")),
-		connect.WithHandlerOptions(opts...),
-	)
 	memberServiceCreateMemberHandler := connect.NewUnaryHandler(
 		MemberServiceCreateMemberProcedure,
 		svc.CreateMember,
 		connect.WithSchema(memberServiceMethods.ByName("CreateMember")),
-		connect.WithHandlerOptions(opts...),
-	)
-	memberServiceDeclineCampaignInvitationHandler := connect.NewUnaryHandler(
-		MemberServiceDeclineCampaignInvitationProcedure,
-		svc.DeclineCampaignInvitation,
-		connect.WithSchema(memberServiceMethods.ByName("DeclineCampaignInvitation")),
 		connect.WithHandlerOptions(opts...),
 	)
 	memberServiceGetMemberHandler := connect.NewUnaryHandler(
@@ -228,14 +271,40 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 		connect.WithSchema(memberServiceMethods.ByName("RemoveMember")),
 		connect.WithHandlerOptions(opts...),
 	)
+	memberServiceAcceptCampaignInvitationHandler := connect.NewUnaryHandler(
+		MemberServiceAcceptCampaignInvitationProcedure,
+		svc.AcceptCampaignInvitation,
+		connect.WithSchema(memberServiceMethods.ByName("AcceptCampaignInvitation")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceCreateCampaignInvitationHandler := connect.NewUnaryHandler(
+		MemberServiceCreateCampaignInvitationProcedure,
+		svc.CreateCampaignInvitation,
+		connect.WithSchema(memberServiceMethods.ByName("CreateCampaignInvitation")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceDeclineCampaignInvitationHandler := connect.NewUnaryHandler(
+		MemberServiceDeclineCampaignInvitationProcedure,
+		svc.DeclineCampaignInvitation,
+		connect.WithSchema(memberServiceMethods.ByName("DeclineCampaignInvitation")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceListCampaignInvitationsHandler := connect.NewUnaryHandler(
+		MemberServiceListCampaignInvitationsProcedure,
+		svc.ListCampaignInvitations,
+		connect.WithSchema(memberServiceMethods.ByName("ListCampaignInvitations")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memberServiceRevokeCampaignInvitationHandler := connect.NewUnaryHandler(
+		MemberServiceRevokeCampaignInvitationProcedure,
+		svc.RevokeCampaignInvitation,
+		connect.WithSchema(memberServiceMethods.ByName("RevokeCampaignInvitation")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.MemberService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case MemberServiceAcceptCampaignInvitationProcedure:
-			memberServiceAcceptCampaignInvitationHandler.ServeHTTP(w, r)
 		case MemberServiceCreateMemberProcedure:
 			memberServiceCreateMemberHandler.ServeHTTP(w, r)
-		case MemberServiceDeclineCampaignInvitationProcedure:
-			memberServiceDeclineCampaignInvitationHandler.ServeHTTP(w, r)
 		case MemberServiceGetMemberProcedure:
 			memberServiceGetMemberHandler.ServeHTTP(w, r)
 		case MemberServiceListMembersByCampaignProcedure:
@@ -244,6 +313,16 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 			memberServiceListMembersByUserHandler.ServeHTTP(w, r)
 		case MemberServiceRemoveMemberProcedure:
 			memberServiceRemoveMemberHandler.ServeHTTP(w, r)
+		case MemberServiceAcceptCampaignInvitationProcedure:
+			memberServiceAcceptCampaignInvitationHandler.ServeHTTP(w, r)
+		case MemberServiceCreateCampaignInvitationProcedure:
+			memberServiceCreateCampaignInvitationHandler.ServeHTTP(w, r)
+		case MemberServiceDeclineCampaignInvitationProcedure:
+			memberServiceDeclineCampaignInvitationHandler.ServeHTTP(w, r)
+		case MemberServiceListCampaignInvitationsProcedure:
+			memberServiceListCampaignInvitationsHandler.ServeHTTP(w, r)
+		case MemberServiceRevokeCampaignInvitationProcedure:
+			memberServiceRevokeCampaignInvitationHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -253,16 +332,8 @@ func NewMemberServiceHandler(svc MemberServiceHandler, opts ...connect.HandlerOp
 // UnimplementedMemberServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedMemberServiceHandler struct{}
 
-func (UnimplementedMemberServiceHandler) AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.AcceptCampaignInvitation is not implemented"))
-}
-
 func (UnimplementedMemberServiceHandler) CreateMember(context.Context, *connect.Request[v1.CreateMemberRequest]) (*connect.Response[v1.CreateMemberResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.CreateMember is not implemented"))
-}
-
-func (UnimplementedMemberServiceHandler) DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.DeclineCampaignInvitation is not implemented"))
 }
 
 func (UnimplementedMemberServiceHandler) GetMember(context.Context, *connect.Request[v1.GetMemberRequest]) (*connect.Response[v1.GetMemberResponse], error) {
@@ -279,4 +350,24 @@ func (UnimplementedMemberServiceHandler) ListMembersByUser(context.Context, *con
 
 func (UnimplementedMemberServiceHandler) RemoveMember(context.Context, *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.RemoveMember is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) AcceptCampaignInvitation(context.Context, *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.AcceptCampaignInvitation is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) CreateCampaignInvitation(context.Context, *connect.Request[v1.CreateCampaignInvitationRequest]) (*connect.Response[v1.CreateCampaignInvitationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.CreateCampaignInvitation is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) DeclineCampaignInvitation(context.Context, *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.DeclineCampaignInvitation is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) ListCampaignInvitations(context.Context, *connect.Request[v1.ListCampaignInvitationsRequest]) (*connect.Response[v1.ListCampaignInvitationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.ListCampaignInvitations is not implemented"))
+}
+
+func (UnimplementedMemberServiceHandler) RevokeCampaignInvitation(context.Context, *connect.Request[v1.RevokeCampaignInvitationRequest]) (*connect.Response[v1.RevokeCampaignInvitationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.MemberService.RevokeCampaignInvitation is not implemented"))
 }

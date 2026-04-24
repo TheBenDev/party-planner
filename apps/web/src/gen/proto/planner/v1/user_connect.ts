@@ -22,15 +22,6 @@ export const UserService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc planner.v1.UserService.DeleteUser
-     */
-    deleteUser: {
-      name: "DeleteUser",
-      I: DeleteUserRequest,
-      O: DeleteUserResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
      * @generated from rpc planner.v1.UserService.GetUser
      */
     getUser: {
@@ -64,6 +55,15 @@ export const UserService = {
       name: "UpdateUser",
       I: UpdateUserRequest,
       O: UpdateUserResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.UserService.DeleteUser
+     */
+    deleteUser: {
+      name: "DeleteUser",
+      I: DeleteUserRequest,
+      O: DeleteUserResponse,
       kind: MethodKind.Unary,
     },
   }

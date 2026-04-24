@@ -94,7 +94,7 @@ const getActiveCampaign = privateProcedure
 		try {
 			const result = await api.campaign.getCampaign({ id: campaignId });
 			if (result.campaign === undefined) {
-				context.logger?.error(
+				context.logger?.warn(
 					{ campaignId },
 					"Failed to find active campaign despite having active campaign cookie in user context.",
 				);

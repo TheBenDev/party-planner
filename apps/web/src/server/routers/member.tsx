@@ -2,19 +2,27 @@ import { ORPCError } from "@orpc/client";
 import {
 	AcceptCampaignInvitationRequestSchema,
 	AcceptCampaignInvitationResponseSchema,
+	CreateCampaignInvitationRequestSchema,
+	CreateCampaignInvitationResponseSchema,
 	CreateMemberRequestSchema,
 	CreateMemberResponseSchema,
 	DeclineCampaignInvitationRequestSchema,
 	DeclineCampaignInvitationResponseSchema,
 	GetMemberRequestSchema,
 	GetMemberResponseSchema,
+	ListCampaignInvitationsResponseSchema,
 	ListMembersByCampaignResponseSchema,
 	ListMembersByUserResponseSchema,
 	RemoveMemberRequestSchema,
 	RemoveMemberResponseSchema,
+	RevokeCampaignInvitationRequestSchema,
+	RevokeCampaignInvitationResponseSchema,
 } from "@planner/schemas/member";
+import DndInviteEmail from "@/components/email-invite-template";
+import { env } from "@/env";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
+import { generateToken } from "./util/helpers";
 import {
 	protoToCampaignInvitation,
 	protoToMember,
@@ -93,6 +101,154 @@ const declineCampaignInvitation = privateProcedure
 			);
 		}
 	});
+
+const createInvitation = privateProcedure
+	.route({
+		method: "POST",
+		path: "/member/createInvitation",
+		summary: "List initations of pending invitations to a campaign",
+	})
+	.input(CreateCampaignInvitationRequestSchema)
+	.output(CreateCampaignInvitationResponseSchema)
+	.handler(async ({ context, input }) => {
+		const { inviteeEmail, role } = input;
+		const { campaignId, userId, clerkUserId, api, resend } = context;
+
+		if (campaignId === null) {
+			throw new ORPCError("CONFLICT", {
+				message:
+					"failed to create invitation. Could not find active campaign id.",
+			});
+		}
+
+		try {
+			const [campaignRes, inviterRes] = await Promise.all([
+				api.campaign.getCampaign({ id: campaignId }),
+				api.user.getUser({ externalId: clerkUserId }),
+			]);
+
+			if (!(campaignRes.campaign && inviterRes.user)) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "user and campaign not found",
+				});
+			}
+
+			const { text, hash } = generateToken();
+
+			const res = await api.member.createCampaignInvitation({
+				campaignId,
+				inviteeEmail,
+				inviterId: userId,
+				role: userRoleToProtoRole(role),
+				token: hash,
+			});
+
+			if (!res.invitation) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create invitation",
+				});
+			}
+
+			const { error } = await resend.emails.send({
+				from: env.VITE_APP_FROM_EMAIL,
+				react: (
+					<DndInviteEmail
+						acceptLink={`${env.VITE_APP_URL}/accept?token=${text}`}
+						campaignName={campaignRes.campaign.title}
+						dmName={`${inviterRes.user.firstName} ${inviterRes.user.lastName}`}
+					/>
+				),
+				subject: "Invitation to Dungeons and Dragons Campaign",
+				to: [inviteeEmail],
+			});
+
+			if (error) {
+				context.logger?.error({ resendError: error }, "resend email failed");
+				try {
+					await api.member.revokeCampaignInvitation({ id: res.invitation.id });
+				} catch (revokeErr) {
+					context.logger?.error(
+						{ invitationId: res.invitation.id, revokeErr },
+						"failed to revoke invitation after email failure",
+					);
+				}
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "invitation email failed to send",
+				});
+			}
+
+			return { invitation: protoToCampaignInvitation(res.invitation) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to create invitation",
+				{ campaignId },
+				context.logger,
+			);
+		}
+	});
+const listInvitations = privateProcedure
+	.route({
+		method: "POST",
+		path: "/member/listInvitations",
+		summary: "List invitations of pending invitations to a campaign",
+	})
+	.output(ListCampaignInvitationsResponseSchema)
+	.handler(async ({ context }) => {
+		const campaignId = context.campaignId;
+		const api = context.api;
+		if (campaignId === null) return { invitations: [] };
+		try {
+			const res = await api.member.listCampaignInvitations({ campaignId });
+			const invitations = res.invitations.map(protoToCampaignInvitation);
+			return { invitations };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to list invitations",
+				{ campaignId },
+				context.logger,
+			);
+		}
+	});
+
+const revokeInvitation = privateProcedure
+	.route({
+		method: "POST",
+		path: "/member/revokeInvitation",
+		summary: "Revoke the invitation to a campaign",
+	})
+	.input(RevokeCampaignInvitationRequestSchema)
+	.output(RevokeCampaignInvitationResponseSchema)
+	.handler(async ({ context, input }) => {
+		const { id } = input;
+		const campaignId = context.campaignId;
+		const api = context.api;
+		if (campaignId === null) {
+			throw new ORPCError("CONFLICT", {
+				message:
+					"failed to revoke invitation. Could not find active campaign id.",
+			});
+		}
+		try {
+			const res = await api.member.revokeCampaignInvitation({ campaignId, id });
+			if (res.invitation === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to revoke invitation",
+				});
+			}
+			const invitation = protoToCampaignInvitation(res.invitation);
+			return { invitation };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to revoke invitations",
+				{ campaignId, invitationId: id },
+				context.logger,
+			);
+		}
+	});
+
 const createMember = privateProcedure
 	.route({
 		method: "POST",
@@ -204,10 +360,13 @@ const removeMember = privateProcedure
 
 export const memberRouter = {
 	acceptCampaignInvitation,
+	createInvitation,
 	createMember,
 	declineCampaignInvitation,
 	getMember,
+	listInvitations,
 	listMembersByCampaign,
 	listMembersByUser,
 	removeMember,
+	revokeInvitation,
 };

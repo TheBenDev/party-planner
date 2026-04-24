@@ -13,30 +13,14 @@ export const DiscordService = {
   typeName: "planner.v1.DiscordService",
   methods: {
     /**
+     * Session RPCs
+     *
      * @generated from rpc planner.v1.DiscordService.CheckNextSession
      */
     checkNextSession: {
       name: "CheckNextSession",
       I: CheckNextSessionRequest,
       O: CheckNextSessionResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.DiscordService.CheckReminders
-     */
-    checkReminders: {
-      name: "CheckReminders",
-      I: CheckRemindersRequest,
-      O: CheckRemindersResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.DiscordService.GetDiscordNpc
-     */
-    getDiscordNpc: {
-      name: "GetDiscordNpc",
-      I: GetDiscordNpcRequest,
-      O: GetDiscordNpcResponse,
       kind: MethodKind.Unary,
     },
     /**
@@ -49,6 +33,30 @@ export const DiscordService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Reminder RPCs
+     *
+     * @generated from rpc planner.v1.DiscordService.CheckReminders
+     */
+    checkReminders: {
+      name: "CheckReminders",
+      I: CheckRemindersRequest,
+      O: CheckRemindersResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * NPC RPCs
+     *
+     * @generated from rpc planner.v1.DiscordService.GetDiscordNpc
+     */
+    getDiscordNpc: {
+      name: "GetDiscordNpc",
+      I: GetDiscordNpcRequest,
+      O: GetDiscordNpcResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * Messaging RPCs
+     *
      * @generated from rpc planner.v1.DiscordService.SendMessage
      */
     sendMessage: {
@@ -58,6 +66,8 @@ export const DiscordService = {
       kind: MethodKind.Unary,
     },
     /**
+     * Availability RPCs
+     *
      * @generated from rpc planner.v1.DiscordService.SetAvailability
      */
     setAvailability: {

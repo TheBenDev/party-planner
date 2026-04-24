@@ -120,6 +120,7 @@ export function protoToCampaignInvitation(
 		campaignId: proto.campaignId,
 		createdAt: timestampDate(proto.createdAt),
 		expiresAt: timestampDate(proto.expiresAt),
+		id: proto.id,
 		inviteeEmail: proto.inviteeEmail,
 		inviterId: proto.inviterId,
 		role: protoRoleToUserRole(proto.role),
