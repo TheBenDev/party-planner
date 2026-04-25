@@ -91,8 +91,13 @@ func (db *DB) DeleteUser(clerkId string) (*model.User, error) {
 	return scanUser(row)
 }
 
-func (db *DB) GetUserByClerkId(userId string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE external_id = $1 LIMIT 1`, userId)
+func (db *DB) GetUserByClerkId(clerkId string) (*model.User, error) {
+	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE external_id = $1 LIMIT 1`, clerkId)
+	return scanUser(row)
+}
+
+func (db *DB) GetUserById(userId string) (*model.User, error) {
+	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE id = $1 LIMIT 1`, userId)
 	return scanUser(row)
 }
 
@@ -289,6 +294,35 @@ func scanCampaignInvitation(row interface{ Scan(...any) error }) (*model.Campaig
 	return &ci, nil
 }
 
+func scanCampaignInvitationByToken(row interface{ Scan(...any) error }) (*model.GetCampaignInvitationResponse, error) {
+	var res model.GetCampaignInvitationResponse
+	var firstName, lastName sql.NullString
+	var campaignTitle string
+	ci := &model.CampaignInvitation{}
+	err := row.Scan(
+		&ci.ID, &ci.CampaignID, &ci.InviterID, &ci.InviteeEmail, &ci.Role, &ci.Status,
+		&ci.AcceptedAt, &ci.ExpiresAt, &ci.CreatedAt, &ci.UpdatedAt,
+		&firstName, &lastName, &campaignTitle,
+	)
+	if err != nil {
+		return nil, err
+	}
+	parts := make([]string, 0, 2)
+	if firstName.Valid && firstName.String != "" {
+		parts = append(parts, firstName.String)
+	}
+	if lastName.Valid && lastName.String != "" {
+		parts = append(parts, lastName.String)
+	}
+	res.Invitation = ci
+	if len(parts) > 0 {
+		from := strings.Join(parts, " ")
+		res.From = &from
+	}
+	res.CampaignTitle = campaignTitle
+	return &res, nil
+}
+
 func (db *DB) CreateCampaignInvitation(invitation *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
 		INSERT INTO campaign_invitations (campaign_id, inviter_id, invitee_email, role, status, expires_at, token)
@@ -307,6 +341,21 @@ func (db *DB) GetCampaignInvitationByEmail(campaignId, invitee_email string, sta
 	return scanCampaignInvitation(row)
 }
 
+const campaignInvitationByTokenColumns = `ci.campaign_invitation_id, ci.campaign_id, ci.inviter_id, ci.invitee_email, ci.role, ci.status, ci.accepted_at, ci.expires_at, ci.created_at, ci.updated_at, u.first_name, u.last_name, c.title`
+
+func (db *DB) GetCampaignInvitationByToken(token string) (*model.GetCampaignInvitationResponse, error) {
+	row := db.conn.QueryRow(`
+		SELECT `+campaignInvitationByTokenColumns+`
+		FROM campaign_invitations ci
+		JOIN users u ON u.id = ci.inviter_id
+		JOIN campaigns c ON c.id = ci.campaign_id
+		WHERE ci.token = $1
+		  AND ci.status = 'PENDING'
+		  AND ci.expires_at > NOW()
+		LIMIT 1`, token)
+	return scanCampaignInvitationByToken(row)
+}
+
 func (db *DB) RevokeCampaignInvitation(invitationId, campaignId string) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
         UPDATE campaign_invitations
@@ -318,24 +367,24 @@ func (db *DB) RevokeCampaignInvitation(invitationId, campaignId string) (*model.
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) DeclineCampaignInvitation(campaignId, inviteeEmail string) (*model.CampaignInvitation, error) {
+func (db *DB) DeclineCampaignInvitation(token string) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
         UPDATE campaign_invitations
         SET status = $1
-        WHERE campaign_id = $2 AND invitee_email = $3 AND status = $4
+        WHERE token = $2 AND status = $3 AND expires_at > NOW()
         RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusDeclined, campaignId, inviteeEmail, model.InvitationStatusPending,
+		model.InvitationStatusDeclined, token, model.InvitationStatusPending,
 	)
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) AcceptCampaignInvitation(campaignId, inviteeEmail string, role model.MemberRole) (*model.CampaignInvitation, error) {
+func (db *DB) AcceptCampaignInvitation(token string, role model.MemberRole) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
         UPDATE campaign_invitations
         SET status = $1, accepted_at = NOW(), role = $2
-        WHERE campaign_id = $3 AND invitee_email = $4 AND status = $5 AND expires_at > NOW()
+        WHERE token = $3 AND status = $4 AND expires_at > NOW()
         RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusAccepted, role, campaignId, inviteeEmail, model.InvitationStatusPending,
+		model.InvitationStatusAccepted, role, token, model.InvitationStatusPending,
 	)
 	return scanCampaignInvitation(row)
 }

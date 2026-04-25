@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AcceptCampaignInvitationRequest, AcceptCampaignInvitationResponse, CreateCampaignInvitationRequest, CreateCampaignInvitationResponse, CreateMemberRequest, CreateMemberResponse, DeclineCampaignInvitationRequest, DeclineCampaignInvitationResponse, GetMemberRequest, GetMemberResponse, ListCampaignInvitationsRequest, ListCampaignInvitationsResponse, ListMembersByCampaignRequest, ListMembersByCampaignResponse, ListMembersByUserRequest, ListMembersByUserResponse, RemoveMemberRequest, RemoveMemberResponse, RevokeCampaignInvitationRequest, RevokeCampaignInvitationResponse } from "./member_pb.js";
+import { AcceptCampaignInvitationRequest, AcceptCampaignInvitationResponse, CreateCampaignInvitationRequest, CreateCampaignInvitationResponse, CreateMemberRequest, CreateMemberResponse, DeclineCampaignInvitationRequest, DeclineCampaignInvitationResponse, GetCampaignInvitationByTokenRequest, GetCampaignInvitationByTokenResponse, GetMemberRequest, GetMemberResponse, ListCampaignInvitationsRequest, ListCampaignInvitationsResponse, ListMembersByCampaignRequest, ListMembersByCampaignResponse, ListMembersByUserRequest, ListMembersByUserResponse, RemoveMemberRequest, RemoveMemberResponse, RevokeCampaignInvitationRequest, RevokeCampaignInvitationResponse } from "./member_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -86,6 +86,15 @@ export const MemberService = {
       name: "DeclineCampaignInvitation",
       I: DeclineCampaignInvitationRequest,
       O: DeclineCampaignInvitationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.MemberService.GetCampaignInvitationByToken
+     */
+    getCampaignInvitationByToken: {
+      name: "GetCampaignInvitationByToken",
+      I: GetCampaignInvitationByTokenRequest,
+      O: GetCampaignInvitationByTokenResponse,
       kind: MethodKind.Unary,
     },
     /**

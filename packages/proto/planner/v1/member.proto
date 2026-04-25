@@ -99,8 +99,7 @@ message RemoveMemberResponse {}
 // -----------------------------------------------------------------------------
 
 message AcceptCampaignInvitationRequest {
-  string campaign_id = 1;
-  string invitee_email = 2;
+  string token = 1;
 }
 
 message AcceptCampaignInvitationResponse {
@@ -120,9 +119,18 @@ message CreateCampaignInvitationResponse {
   CampaignInvitation invitation = 1;
 }
 
+message GetCampaignInvitationByTokenRequest {
+  string token = 1;
+}
+
+message GetCampaignInvitationByTokenResponse {
+  CampaignInvitation invitation = 1;
+  optional string sent_by = 2;
+  string campaign_title = 3;
+}
+
 message DeclineCampaignInvitationRequest {
-  string campaign_id = 1;
-  string invitee_email = 2;
+  string token = 1;
 }
 
 message DeclineCampaignInvitationResponse {
@@ -162,6 +170,7 @@ service MemberService {
   rpc AcceptCampaignInvitation(AcceptCampaignInvitationRequest) returns (AcceptCampaignInvitationResponse);
   rpc CreateCampaignInvitation(CreateCampaignInvitationRequest) returns (CreateCampaignInvitationResponse);
   rpc DeclineCampaignInvitation(DeclineCampaignInvitationRequest) returns (DeclineCampaignInvitationResponse);
+  rpc GetCampaignInvitationByToken(GetCampaignInvitationByTokenRequest) returns (GetCampaignInvitationByTokenResponse);
   rpc ListCampaignInvitations(ListCampaignInvitationsRequest) returns (ListCampaignInvitationsResponse);
   rpc RevokeCampaignInvitation(RevokeCampaignInvitationRequest) returns (RevokeCampaignInvitationResponse);
 }

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { ORPCError } from "@orpc/client";
 import {
 	AcceptCampaignInvitationRequestSchema,
@@ -8,6 +9,8 @@ import {
 	CreateMemberResponseSchema,
 	DeclineCampaignInvitationRequestSchema,
 	DeclineCampaignInvitationResponseSchema,
+	GetCampaignInvitationByTokenRequestSchema,
+	GetCampaignInvitationByTokenResponseSchema,
 	GetMemberRequestSchema,
 	GetMemberResponseSchema,
 	ListCampaignInvitationsResponseSchema,
@@ -21,13 +24,16 @@ import {
 import DndInviteEmail from "@/components/email-invite-template";
 import { env } from "@/env";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, updateAuthCookie } from "../orpc";
 import { generateToken } from "./util/helpers";
+import { protoToCampaign } from "./util/proto/campaign";
 import {
+	protoRoleToUserRole,
 	protoToCampaignInvitation,
 	protoToMember,
 	userRoleToProtoRole,
 } from "./util/proto/member";
+import { protoToUser } from "./util/proto/user";
 
 const acceptCampaignInvitation = privateProcedure
 	.route({
@@ -38,13 +44,14 @@ const acceptCampaignInvitation = privateProcedure
 	.input(AcceptCampaignInvitationRequestSchema)
 	.output(AcceptCampaignInvitationResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { campaignId, inviteeEmail } = input;
+		const { token } = input;
 		const api = context.api;
+		const userId = context.userId;
 
 		try {
+			const hash = createHash("sha256").update(token).digest("hex");
 			const res = await api.member.acceptCampaignInvitation({
-				campaignId,
-				inviteeEmail,
+				token: hash,
 			});
 			if (res.member === undefined) {
 				throw new ORPCError("NOT_FOUND", { message: "could not find user" });
@@ -53,6 +60,29 @@ const acceptCampaignInvitation = privateProcedure
 				throw new ORPCError("NOT_FOUND", {
 					message: "could not find invitation",
 				});
+			}
+			try {
+				const authRes = await api.user.getAuth({
+					campaignId: res.invitation.campaignId,
+					clerkId: context.clerkUserId,
+				});
+
+				if (authRes.user) {
+					const campaign = authRes.campaign
+						? protoToCampaign(authRes.campaign)
+						: null;
+					const role = authRes.role ? protoRoleToUserRole(authRes.role) : null;
+					await updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {
+						campaign,
+						role,
+						user: protoToUser(authRes.user),
+					});
+				}
+			} catch {
+				context.logger?.warn(
+					{ userId },
+					"failed to update auth cookie while accepting invitation",
+				);
 			}
 
 			return {
@@ -63,7 +93,7 @@ const acceptCampaignInvitation = privateProcedure
 			handleError(
 				err,
 				"failed to accept campaign invitation",
-				{ campaignId },
+				{ userId },
 				context.logger,
 			);
 		}
@@ -78,13 +108,13 @@ const declineCampaignInvitation = privateProcedure
 	.input(DeclineCampaignInvitationRequestSchema)
 	.output(DeclineCampaignInvitationResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { campaignId, inviteeEmail } = input;
+		const { token } = input;
 		const api = context.api;
-
+		const userId = context.userId;
+		const hash = createHash("sha256").update(token).digest("hex");
 		try {
 			const inv = await api.member.declineCampaignInvitation({
-				campaignId,
-				inviteeEmail,
+				token: hash,
 			});
 			if (inv.invitation === undefined) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -96,7 +126,7 @@ const declineCampaignInvitation = privateProcedure
 			handleError(
 				err,
 				"Failed to decline campaign invitation",
-				{ campaignId },
+				{ userId },
 				context.logger,
 			);
 		}
@@ -358,11 +388,45 @@ const removeMember = privateProcedure
 		}
 	});
 
+const getInvitationByToken = privateProcedure
+	.route({
+		method: "POST",
+		path: "/member/getInvitation",
+		summary: "Get a campaign invitation by token",
+	})
+	.input(GetCampaignInvitationByTokenRequestSchema)
+	.output(GetCampaignInvitationByTokenResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { token } = input;
+		const api = context.api;
+		const userId = context.userId;
+		try {
+			const hash = createHash("sha256").update(token).digest("hex");
+			const res = await api.member.getCampaignInvitationByToken({
+				token: hash,
+			});
+
+			if (res.invitation === undefined) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "could not find invitation",
+				});
+			}
+			return {
+				campaignTitle: res.campaignTitle,
+				invitation: protoToCampaignInvitation(res.invitation),
+				sentBy: res.sentBy,
+			};
+		} catch (err) {
+			handleError(err, "failed to get invitation", { userId }, context.logger);
+		}
+	});
+
 export const memberRouter = {
 	acceptCampaignInvitation,
 	createInvitation,
 	createMember,
 	declineCampaignInvitation,
+	getInvitationByToken,
 	getMember,
 	listInvitations,
 	listMembersByCampaign,

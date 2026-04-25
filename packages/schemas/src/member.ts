@@ -11,8 +11,7 @@ export const CampaignUserSchema = z.object({
 });
 
 export const AcceptCampaignInvitationRequestSchema = z.object({
-	campaignId: z.uuid(),
-	inviteeEmail: z.email(),
+  token: z.string()
 });
 
 export const AcceptCampaignInvitationResponseSchema = z.object({
@@ -30,8 +29,7 @@ export const CreateCampaignInvitationResponseSchema = z.object({
 });
 
 export const DeclineCampaignInvitationRequestSchema = z.object({
-	campaignId: z.uuid(),
-	inviteeEmail: z.email(),
+  token: z.string()
 });
 export const DeclineCampaignInvitationResponseSchema = CampaignInvitationSchema;
 
@@ -63,6 +61,15 @@ export const GetMemberRequestSchema = z.object({
 
 export const GetMemberResponseSchema = z.object({ member: CampaignUserSchema });
 
+export const GetCampaignInvitationByTokenRequestSchema = z.object({
+	token: z.string(),
+});
+export const GetCampaignInvitationByTokenResponseSchema = z.object({
+	campaignTitle: z.string(),
+	invitation: CampaignInvitationSchema,
+	sentBy: z.string().optional(),
+});
+
 export const ListMembersByCampaignResponseSchema = z.object({
 	members: z.array(CampaignUserSchema),
 });
@@ -80,3 +87,4 @@ export const RemoveMemberResponseSchema = z.object({});
 
 export type CampaignUser = z.infer<typeof CampaignUserSchema>;
 export type CampaignInvitation = z.infer<typeof CampaignInvitationSchema>;
+export type GetCampaignInvitationByTokenResponse = z.infer<typeof GetCampaignInvitationByTokenResponseSchema>

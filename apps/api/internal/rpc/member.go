@@ -106,13 +106,10 @@ func (s *MemberServer) RemoveMember(ctx context.Context, req *connect.Request[v1
 	return connect.NewResponse(&v1.RemoveMemberResponse{}), nil
 }
 func (s *MemberServer) AcceptCampaignInvitation(ctx context.Context, req *connect.Request[v1.AcceptCampaignInvitationRequest]) (*connect.Response[v1.AcceptCampaignInvitationResponse], error) {
-	if req.Msg.CampaignId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	if req.Msg.Token == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitation token required"))
 	}
-	if req.Msg.InviteeEmail == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitee email required"))
-	}
-	res, err := s.Member.AcceptInvitation(req.Msg.CampaignId, req.Msg.InviteeEmail)
+	res, err := s.Member.AcceptInvitation(req.Msg.Token)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to accept campaign invitation")
 	}
@@ -123,13 +120,10 @@ func (s *MemberServer) AcceptCampaignInvitation(ctx context.Context, req *connec
 }
 
 func (s *MemberServer) DeclineCampaignInvitation(ctx context.Context, req *connect.Request[v1.DeclineCampaignInvitationRequest]) (*connect.Response[v1.DeclineCampaignInvitationResponse], error) {
-	if req.Msg.CampaignId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	if req.Msg.Token == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitation token required"))
 	}
-	if req.Msg.InviteeEmail == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitee email required"))
-	}
-	inv, err := s.Member.DeclineInvitation(req.Msg.CampaignId, req.Msg.InviteeEmail)
+	inv, err := s.Member.DeclineInvitation(req.Msg.Token)
 
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to decline campaign invitation")
@@ -169,6 +163,23 @@ func (s *MemberServer) CreateCampaignInvitation(ctx context.Context, req *connec
 
 	return connect.NewResponse(&v1.CreateCampaignInvitationResponse{
 		Invitation: campaignInvitationToProto(inv),
+	}), nil
+}
+
+func (s *MemberServer) GetCampaignInvitationByToken(ctx context.Context, req *connect.Request[v1.GetCampaignInvitationByTokenRequest]) (*connect.Response[v1.GetCampaignInvitationByTokenResponse], error) {
+	if req.Msg.Token == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("token required"))
+	}
+
+	res, err := s.Member.GetInvitation(req.Msg.Token)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get campaign invitation")
+	}
+
+	return connect.NewResponse(&v1.GetCampaignInvitationByTokenResponse{
+		Invitation:    campaignInvitationToProto(res.Invitation),
+		SentBy:        res.From,
+		CampaignTitle: res.CampaignTitle,
 	}), nil
 }
 

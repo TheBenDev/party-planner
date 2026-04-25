@@ -62,7 +62,18 @@ export function InvitePlayerPage() {
 			mutationFn: async () =>
 				await client.member.createInvitation({ inviteeEmail: email, role }),
 			mutationKey: ["invitation"],
-			onError: () => {
+			onError: (err) => {
+				// TODO: improve error handling for toasts
+				if (err.message === "[already_exists] campaign user already exists") {
+					toast.error("This player is already in the campaign.");
+					return;
+				}
+				if (
+					err.message === "[already_exists] campaign invitation already exists"
+				) {
+					toast.error("This player already has a pending invitation.");
+					return;
+				}
 				toast.error(
 					"Something went wrong trying to send invitation. Please try again.",
 				);
