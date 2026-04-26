@@ -252,6 +252,12 @@ type CampaignInvitation struct {
 	UpdatedAt    time.Time
 }
 
+type GetCampaignInvitationResponse struct {
+	Invitation    *CampaignInvitation
+	From          *string
+	CampaignTitle string
+}
+
 type CreateCampaignInvitationRequest struct {
 	CampaignID   string
 	InviterID    string

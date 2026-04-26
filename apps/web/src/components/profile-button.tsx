@@ -67,11 +67,7 @@ export default function ProfileButtonComponent() {
 				)}
 				<DropdownMenuItem className="w-full justify-center">
 					{campaign ? (
-						<Link
-							className="w-full text-center"
-							params={{ campaignId: campaign.id }}
-							to="/campaign/$campaignId"
-						>
+						<Link className="w-full text-center" to="/campaign">
 							{campaign.title}
 						</Link>
 					) : (

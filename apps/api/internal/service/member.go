@@ -78,34 +78,36 @@ func (s *MemberService) Remove(campaignId, userId string) error {
 	return nil
 }
 
-func (s *MemberService) AcceptInvitation(campaignId, inviteeEmail string) (*model.InvitationResponse, error) {
-	user, err := s.DB.GetUserByEmail(inviteeEmail)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrUserNotFound
-		}
-		if mapped := mapUserPgError(err); mapped != err {
-			return nil, mapped
-		}
-		return nil, fmt.Errorf("get user error: %w", err)
-	}
+func (s *MemberService) AcceptInvitation(token string) (*model.InvitationResponse, error) {
 	var inv *model.CampaignInvitation
 	var member *model.Member
 
-	err = s.DB.RunInTx(func(tx *db.DB) error {
+	err := s.DB.RunInTx(func(tx *db.DB) error {
 		var err error
-		i, err := tx.GetCampaignInvitationByEmail(campaignId, inviteeEmail, model.InvitationStatusPending)
+
+		i, err := tx.GetCampaignInvitationByToken(token)
 		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return ErrCampaignInvitationNotFound
+			}
 			if mapped := mapCampaignInvitationPgError(err); mapped != err {
 				return mapped
 			}
 			return fmt.Errorf("get invitation error: %w", err)
 		}
-		if i.ExpiresAt.Before(time.Now()) {
-			return ErrInvitationExpired
+
+		user, err := tx.GetUserByEmail(i.Invitation.InviteeEmail)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return ErrUserNotFound
+			}
+			if mapped := mapUserPgError(err); mapped != err {
+				return mapped
+			}
+			return fmt.Errorf("get user error: %w", err)
 		}
 
-		inv, err = tx.AcceptCampaignInvitation(campaignId, inviteeEmail, i.Role)
+		inv, err = tx.AcceptCampaignInvitation(token, i.Invitation.Role)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return ErrCampaignInvitationNotFound
@@ -117,7 +119,7 @@ func (s *MemberService) AcceptInvitation(campaignId, inviteeEmail string) (*mode
 		}
 
 		member, err = tx.CreateCampaignUser(&model.CreateMemberRequest{
-			CampaignID: campaignId,
+			CampaignID: inv.CampaignID,
 			UserID:     user.ID,
 			Role:       model.MemberRole(inv.Role),
 		})
@@ -141,8 +143,8 @@ func (s *MemberService) AcceptInvitation(campaignId, inviteeEmail string) (*mode
 	}, nil
 }
 
-func (s *MemberService) DeclineInvitation(campaignId, inviteeEmail string) (*model.InvitationResponse, error) {
-	inv, err := s.DB.DeclineCampaignInvitation(campaignId, inviteeEmail)
+func (s *MemberService) DeclineInvitation(token string) (*model.InvitationResponse, error) {
+	inv, err := s.DB.DeclineCampaignInvitation(token)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &model.InvitationResponse{}, nil // no invitation, nothing to do
@@ -159,6 +161,16 @@ func (s *MemberService) DeclineInvitation(campaignId, inviteeEmail string) (*mod
 }
 
 func (s *MemberService) CreateInvitation(req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
+	user, err := s.DB.GetUserByEmail(req.InviteeEmail)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		s.Log.Warn("could not check existing membership", "email", req.InviteeEmail, "error", err)
+	}
+	if user != nil {
+		member, _ := s.DB.GetCampaignUser(req.CampaignID, user.ID)
+		if member != nil {
+			return nil, ErrCampaignUserAlreadyExists
+		}
+	}
 	if req.ExpiresAt.IsZero() {
 		req.ExpiresAt = time.Now().Add(7 * 24 * time.Hour)
 	}
@@ -192,6 +204,17 @@ func (s *MemberService) RevokeInvitation(id, campaignId string) (*model.Campaign
 		return nil, fmt.Errorf("revoke campaign invitation error: %w", err)
 	}
 	return inv, nil
+}
+
+func (s *MemberService) GetInvitation(token string) (*model.GetCampaignInvitationResponse, error) {
+	res, err := s.DB.GetCampaignInvitationByToken(token)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignInvitationNotFound
+		}
+		return nil, fmt.Errorf("get campaign invitation error: %w", err)
+	}
+	return res, nil
 }
 
 func mapCampaignInvitationPgError(err error) error {

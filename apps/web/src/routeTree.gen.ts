@@ -12,12 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
+import { Route as AuthenticatedJoinRouteImport } from './routes/_authenticated/join'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
+import { Route as AuthAcceptRouteImport } from './routes/_auth/accept'
 import { Route as AuthenticatedCampaignIndexRouteImport } from './routes/_authenticated/campaign/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
-import { Route as AuthenticatedCampaignCampaignIdRouteImport } from './routes/_authenticated/campaign/$campaignId'
 import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
 import { Route as AuthenticatedCampaignInviteIndexRouteImport } from './routes/_authenticated/campaign/invite/index'
 import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
@@ -36,6 +37,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   path: '/api/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedJoinRoute = AuthenticatedJoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -51,6 +57,11 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthAcceptRoute = AuthAcceptRouteImport.update({
+  id: '/_auth/accept',
+  path: '/accept',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCampaignIndexRoute =
   AuthenticatedCampaignIndexRouteImport.update({
     id: '/campaign/',
@@ -62,12 +73,6 @@ const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   path: '/api/webhooks/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedCampaignCampaignIdRoute =
-  AuthenticatedCampaignCampaignIdRouteImport.update({
-    id: '/campaign/$campaignId',
-    path: '/campaign/$campaignId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedCampaignNpcsIndexRoute =
   AuthenticatedCampaignNpcsIndexRouteImport.update({
     id: '/campaign/npcs/',
@@ -89,11 +94,12 @@ const AuthenticatedCampaignCreateIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/accept': typeof AuthAcceptRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/$campaignId': typeof AuthenticatedCampaignCampaignIdRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
@@ -102,11 +108,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/accept': typeof AuthAcceptRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-up': typeof AuthSignUpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/campaign/$campaignId': typeof AuthenticatedCampaignCampaignIdRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
@@ -117,11 +124,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_auth/accept': typeof AuthAcceptRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-up': typeof AuthSignUpRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/_authenticated/campaign/$campaignId': typeof AuthenticatedCampaignCampaignIdRoute
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
@@ -132,11 +140,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/accept'
     | '/sign-in'
     | '/sign-up'
     | '/dashboard'
+    | '/join'
     | '/api/$'
-    | '/campaign/$campaignId'
     | '/api/webhooks/clerk'
     | '/campaign/'
     | '/campaign/create/'
@@ -145,11 +154,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/accept'
     | '/sign-in'
     | '/sign-up'
     | '/dashboard'
+    | '/join'
     | '/api/$'
-    | '/campaign/$campaignId'
     | '/api/webhooks/clerk'
     | '/campaign'
     | '/campaign/create'
@@ -159,11 +169,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/_auth/accept'
     | '/_auth/sign-in'
     | '/_auth/sign-up'
     | '/_authenticated/dashboard'
+    | '/_authenticated/join'
     | '/api/$'
-    | '/_authenticated/campaign/$campaignId'
     | '/api/webhooks/clerk'
     | '/_authenticated/campaign/'
     | '/_authenticated/campaign/create/'
@@ -174,6 +185,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthAcceptRoute: typeof AuthAcceptRoute
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   ApiSplatRoute: typeof ApiSplatRoute
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/join': {
+      id: '/_authenticated/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof AuthenticatedJoinRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -224,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/accept': {
+      id: '/_auth/accept'
+      path: '/accept'
+      fullPath: '/accept'
+      preLoaderRoute: typeof AuthAcceptRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/campaign/': {
       id: '/_authenticated/campaign/'
       path: '/campaign'
@@ -237,13 +263,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/webhooks/clerk'
       preLoaderRoute: typeof ApiWebhooksClerkRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/campaign/$campaignId': {
-      id: '/_authenticated/campaign/$campaignId'
-      path: '/campaign/$campaignId'
-      fullPath: '/campaign/$campaignId'
-      preLoaderRoute: typeof AuthenticatedCampaignCampaignIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/campaign/npcs/': {
       id: '/_authenticated/campaign/npcs/'
@@ -271,7 +290,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedCampaignCampaignIdRoute: typeof AuthenticatedCampaignCampaignIdRoute
+  AuthenticatedJoinRoute: typeof AuthenticatedJoinRoute
   AuthenticatedCampaignIndexRoute: typeof AuthenticatedCampaignIndexRoute
   AuthenticatedCampaignCreateIndexRoute: typeof AuthenticatedCampaignCreateIndexRoute
   AuthenticatedCampaignInviteIndexRoute: typeof AuthenticatedCampaignInviteIndexRoute
@@ -280,7 +299,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedCampaignCampaignIdRoute: AuthenticatedCampaignCampaignIdRoute,
+  AuthenticatedJoinRoute: AuthenticatedJoinRoute,
   AuthenticatedCampaignIndexRoute: AuthenticatedCampaignIndexRoute,
   AuthenticatedCampaignCreateIndexRoute: AuthenticatedCampaignCreateIndexRoute,
   AuthenticatedCampaignInviteIndexRoute: AuthenticatedCampaignInviteIndexRoute,
@@ -294,6 +313,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthAcceptRoute: AuthAcceptRoute,
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   ApiSplatRoute: ApiSplatRoute,

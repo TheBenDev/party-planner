@@ -33,7 +33,7 @@ export function handleError(
 		const logMessage = err.message || fallbackMessage;
 		log?.error({ ...params, err }, logMessage);
 		throw new ORPCError(CONNECT_TO_ORPC_CODE[err.code], {
-			message: fallbackMessage,
+			message: err.message,
 		});
 	}
 	if (err instanceof ZodError) {

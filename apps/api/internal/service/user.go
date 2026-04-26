@@ -73,6 +73,7 @@ func (s *UserService) GetAuth(clerkId string, campaignId *string) (*model.GetAut
 		return nil, err
 	}
 	if campaignId != nil {
+		s.Log.Info("GETTING CAMPAIGN WITH GIVEN ID")
 		campaign, err := s.DB.GetCampaign(*campaignId)
 		if err != nil {
 			return nil, fmt.Errorf("get campaign error: %w", err)

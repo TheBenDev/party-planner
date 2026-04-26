@@ -170,7 +170,6 @@ export const authMiddleware = os
 				message: "Invalid Clerk session token",
 			});
 		}
-
 		const activeCampaignIdCookie = getCookie(
 			c.reqHeaders,
 			ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
@@ -179,6 +178,10 @@ export const authMiddleware = os
 		// Use clerk external id to fetch user information for cookie
 		async function getAuth(): Promise<GetAuthResponse> {
 			let activeCampaignId = activeCampaignIdCookie;
+			c.logger?.info(
+				{ activecid: activeCampaignId },
+				"FETCHING AUTH WITH CAMPAIGNID",
+			);
 			async function fetchAuth(
 				campaignId: string | undefined,
 			): Promise<GetAuthResponse> {
