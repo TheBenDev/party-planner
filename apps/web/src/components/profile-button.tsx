@@ -11,10 +11,11 @@ import {
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { Skeleton } from "./ui/skeleton";
 
 export default function ProfileButtonComponent() {
 	const { signOut } = useClerk();
-	const { campaign: campaignAuth, user: userAuth } = useAuth();
+	const { campaign: campaignAuth, user: userAuth, userIsLoading } = useAuth();
 	const user = userAuth?.user;
 	const campaign = campaignAuth?.campaign;
 	async function handleSignOut() {
@@ -25,20 +26,31 @@ export default function ProfileButtonComponent() {
 			toast.error("Something went wrong when trying to sign out");
 		}
 	}
-	if (!user) return <div>Must be signed in</div>;
+	if (userIsLoading)
+		return (
+			<div className="flex items-center space-x-4">
+				<Skeleton className="h-8 w-8 rounded-full bg-muted-foreground/20" />{" "}
+			</div>
+		);
+	if (!user)
+		return (
+			<button onClick={handleSignOut} type="button">
+				Sign Out
+			</button>
+		);
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<button
 					aria-label="Open profile menu"
-					className="rounded-md hover:cursor-pointer"
+					className="hover:cursor-pointer"
 					type="button"
 				>
 					{user?.avatar ? (
 						<img
 							alt="Profile"
-							className="rounded-md"
+							className="rounded-full"
 							height={30}
 							src={user.avatar}
 							width={30}
