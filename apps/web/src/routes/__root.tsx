@@ -45,12 +45,19 @@ function RootDocument() {
 			<body className="antialiased">
 				<AppClerkProvider>
 					<TanStackQueryProvider>
-						<header className="flex justify-end items-center p-4 gap-4 h-16">
+						<header className="flex justify-end items-center px-4 py-1 gap-4 h-14 border-b border-muted-foreground/20">
 							<SignedOut>
-								<SignInButton />
+								<SignInButton>
+									<button
+										className="h-8 px-3 text-sm font-medium border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+										type="button"
+									>
+										Sign In
+									</button>
+								</SignInButton>
 								<SignUpButton>
 									<button
-										className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer"
+										className="h-8 px-3 text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors cursor-pointer"
 										type="button"
 									>
 										Sign Up
