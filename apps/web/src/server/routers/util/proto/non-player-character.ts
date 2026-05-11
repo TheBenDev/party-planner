@@ -4,7 +4,7 @@ import {
 	CharacterStatusEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
-import { NonPlayerCharactersSchema } from "@planner/schemas/nonPlayerCharacters";
+import { NonPlayerCharacterSchema } from "@planner/schemas/nonPlayerCharacters";
 import {
 	CharacterStatus,
 	type Npc,
@@ -93,7 +93,7 @@ export function protoToNpc(proto: Npc) {
 		});
 	}
 
-	return NonPlayerCharactersSchema.parse({
+	return NonPlayerCharacterSchema.parse({
 		age: proto.age ?? null,
 		aliases: proto.aliases,
 		appearance: proto.appearance ?? null,

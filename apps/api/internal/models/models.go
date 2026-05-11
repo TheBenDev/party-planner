@@ -6,23 +6,9 @@ import (
 	"time"
 )
 
-type Campaign struct {
-	ID          string
-	UserID      string
-	Title       string
-	Description sql.NullString
-	Tags        []string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   sql.NullTime
-}
-
-type CreateCampaignRequest struct {
-	UserID      string
-	Title       string
-	Description sql.NullString
-	Tags        []string
-}
+// -----------------------------------------------------------------------------
+// Users
+// -----------------------------------------------------------------------------
 
 type User struct {
 	ID         string
@@ -57,6 +43,32 @@ type GetAuthResponse struct {
 	Role     *MemberRole
 }
 
+// -----------------------------------------------------------------------------
+// Campaigns
+// -----------------------------------------------------------------------------
+
+type Campaign struct {
+	ID          string
+	UserID      string
+	Title       string
+	Description sql.NullString
+	Tags        []string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   sql.NullTime
+}
+
+type CreateCampaignRequest struct {
+	UserID      string
+	Title       string
+	Description sql.NullString
+	Tags        []string
+}
+
+// -----------------------------------------------------------------------------
+// Campaign Integrations
+// -----------------------------------------------------------------------------
+
 type IntegrationSource string
 
 const (
@@ -84,11 +96,62 @@ type CreateCampaignIntegrationRequest struct {
 	Settings   json.RawMessage
 }
 
+// -----------------------------------------------------------------------------
+// Campaign Invitations
+// -----------------------------------------------------------------------------
+
+type InvitationStatus string
+
+const (
+	InvitationStatusAccepted InvitationStatus = "ACCEPTED"
+	InvitationStatusDeclined InvitationStatus = "DECLINED"
+	InvitationStatusExpired  InvitationStatus = "EXPIRED"
+	InvitationStatusPending  InvitationStatus = "PENDING"
+	InvitationStatusRevoked  InvitationStatus = "REVOKED"
+)
+
+type CampaignInvitation struct {
+	ID           string
+	CampaignID   string
+	InviterID    string
+	InviteeEmail string
+	Role         MemberRole
+	Status       InvitationStatus
+	AcceptedAt   sql.NullTime
+	ExpiresAt    time.Time
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+}
+
+type CreateCampaignInvitationRequest struct {
+	CampaignID   string
+	InviterID    string
+	InviteeEmail string
+	Role         MemberRole
+	Token        string
+	ExpiresAt    time.Time
+}
+
+type GetCampaignInvitationResponse struct {
+	Invitation    *CampaignInvitation
+	From          *string
+	CampaignTitle string
+}
+
+type InvitationResponse struct {
+	Member     *Member
+	Invitation *CampaignInvitation
+}
+
+// -----------------------------------------------------------------------------
+// Members
+// -----------------------------------------------------------------------------
+
 type MemberRole string
 
 const (
-	MemberRolePlayer        MemberRole = "PLAYER"
 	MemberRoleDungeonMaster MemberRole = "DUNGEON_MASTER"
+	MemberRolePlayer        MemberRole = "PLAYER"
 )
 
 type Member struct {
@@ -99,37 +162,36 @@ type Member struct {
 	UpdatedAt  time.Time
 }
 
-type InvitationResponse struct {
-	Member     *Member
-	Invitation *CampaignInvitation
-}
-
 type CreateMemberRequest struct {
 	CampaignID string
 	Role       MemberRole
 	UserID     string
 }
 
+// -----------------------------------------------------------------------------
+// NPCs
+// -----------------------------------------------------------------------------
+
 type CharacterStatus string
 
 const (
-	CharacterStatusUnspecified CharacterStatus = "UNSPECIFIED"
-	CharacterStatusUnknown     CharacterStatus = "UNKNOWN"
 	CharacterStatusAlive       CharacterStatus = "ALIVE"
 	CharacterStatusDead        CharacterStatus = "DEAD"
 	CharacterStatusMissing     CharacterStatus = "MISSING"
 	CharacterStatusSuspicious  CharacterStatus = "SUSPICIOUS"
+	CharacterStatusUnknown     CharacterStatus = "UNKNOWN"
+	CharacterStatusUnspecified CharacterStatus = "UNSPECIFIED"
 )
 
 type RelationToParty string
 
 const (
-	RelationToPartyUnspecified RelationToParty = "UNSPECIFIED"
-	RelationToPartyUnknown     RelationToParty = "UNKNOWN"
 	RelationToPartyAlly        RelationToParty = "ALLY"
 	RelationToPartyEnemy       RelationToParty = "ENEMY"
 	RelationToPartyNeutral     RelationToParty = "NEUTRAL"
 	RelationToPartySuspicious  RelationToParty = "SUSPICIOUS"
+	RelationToPartyUnknown     RelationToParty = "UNKNOWN"
+	RelationToPartyUnspecified RelationToParty = "UNSPECIFIED"
 )
 
 type Npc struct {
@@ -180,13 +242,39 @@ type CreateNpcRequest struct {
 	Aliases               []string
 }
 
+type UpdateNpcRequest struct {
+	ID                    string
+	Name                  *string
+	Status                *CharacterStatus
+	RelationToPartyStatus *RelationToParty
+	IsKnownToParty        *bool
+	Age                   sql.NullString
+	Appearance            sql.NullString
+	Avatar                sql.NullString
+	Backstory             sql.NullString
+	DmNotes               sql.NullString
+	FoundryActorID        sql.NullString
+	KnownName             sql.NullString
+	Personality           sql.NullString
+	PlayerNotes           sql.NullString
+	Race                  sql.NullString
+	CurrentLocationID     sql.NullString
+	OriginLocationID      sql.NullString
+	SessionEncounteredID  sql.NullString
+	Aliases               []string
+}
+
+// -----------------------------------------------------------------------------
+// Quests
+// -----------------------------------------------------------------------------
+
 type QuestStatus string
 
 const (
-	QuestStatusUnspecified QuestStatus = "UNSPECIFIED"
 	QuestStatusActive      QuestStatus = "ACTIVE"
 	QuestStatusCompleted   QuestStatus = "COMPLETED"
 	QuestStatusFailed      QuestStatus = "FAILED"
+	QuestStatusUnspecified QuestStatus = "UNSPECIFIED"
 )
 
 type Quest struct {
@@ -212,6 +300,10 @@ type CreateQuestRequest struct {
 	Reward       json.RawMessage
 }
 
+// -----------------------------------------------------------------------------
+// Sessions
+// -----------------------------------------------------------------------------
+
 type Session struct {
 	ID          string
 	CampaignID  string
@@ -227,42 +319,4 @@ type CreateSessionRequest struct {
 	Title       string
 	Description sql.NullString
 	StartsAt    sql.NullTime
-}
-
-type InvitationStatus string
-
-const (
-	InvitationStatusPending  InvitationStatus = "PENDING"
-	InvitationStatusAccepted InvitationStatus = "ACCEPTED"
-	InvitationStatusRevoked  InvitationStatus = "REVOKED"
-	InvitationStatusDeclined InvitationStatus = "DECLINED"
-	InvitationStatusExpired  InvitationStatus = "EXPIRED"
-)
-
-type CampaignInvitation struct {
-	ID           string
-	CampaignID   string
-	InviterID    string
-	InviteeEmail string
-	Role         MemberRole
-	Status       InvitationStatus
-	AcceptedAt   sql.NullTime
-	ExpiresAt    time.Time
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-}
-
-type GetCampaignInvitationResponse struct {
-	Invitation    *CampaignInvitation
-	From          *string
-	CampaignTitle string
-}
-
-type CreateCampaignInvitationRequest struct {
-	CampaignID   string
-	InviterID    string
-	InviteeEmail string
-	Role         MemberRole
-	Token        string
-	ExpiresAt    time.Time
 }

@@ -766,6 +766,318 @@ func (x *ListNpcsByCampaignResponse) GetNpcs() []*Npc {
 	return nil
 }
 
+type UpdateNpcRequest struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Id                    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                  *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Status                *CharacterStatus       `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.CharacterStatus,oneof" json:"status,omitempty"`
+	RelationToPartyStatus *RelationToParty       `protobuf:"varint,4,opt,name=relation_to_party_status,json=relationToPartyStatus,proto3,enum=planner.v1.RelationToParty,oneof" json:"relation_to_party_status,omitempty"`
+	IsKnownToParty        *bool                  `protobuf:"varint,5,opt,name=is_known_to_party,json=isKnownToParty,proto3,oneof" json:"is_known_to_party,omitempty"`
+	Age                   *string                `protobuf:"bytes,6,opt,name=age,proto3,oneof" json:"age,omitempty"`
+	Appearance            *string                `protobuf:"bytes,7,opt,name=appearance,proto3,oneof" json:"appearance,omitempty"`
+	Avatar                *string                `protobuf:"bytes,8,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	Backstory             *string                `protobuf:"bytes,9,opt,name=backstory,proto3,oneof" json:"backstory,omitempty"`
+	DmNotes               *string                `protobuf:"bytes,10,opt,name=dm_notes,json=dmNotes,proto3,oneof" json:"dm_notes,omitempty"`
+	FoundryActorId        *string                `protobuf:"bytes,11,opt,name=foundry_actor_id,json=foundryActorId,proto3,oneof" json:"foundry_actor_id,omitempty"`
+	KnownName             *string                `protobuf:"bytes,12,opt,name=known_name,json=knownName,proto3,oneof" json:"known_name,omitempty"`
+	Personality           *string                `protobuf:"bytes,13,opt,name=personality,proto3,oneof" json:"personality,omitempty"`
+	PlayerNotes           *string                `protobuf:"bytes,14,opt,name=player_notes,json=playerNotes,proto3,oneof" json:"player_notes,omitempty"`
+	Race                  *string                `protobuf:"bytes,15,opt,name=race,proto3,oneof" json:"race,omitempty"`
+	CurrentLocationId     *string                `protobuf:"bytes,16,opt,name=current_location_id,json=currentLocationId,proto3,oneof" json:"current_location_id,omitempty"`
+	OriginLocationId      *string                `protobuf:"bytes,17,opt,name=origin_location_id,json=originLocationId,proto3,oneof" json:"origin_location_id,omitempty"`
+	SessionEncounteredId  *string                `protobuf:"bytes,18,opt,name=session_encountered_id,json=sessionEncounteredId,proto3,oneof" json:"session_encountered_id,omitempty"`
+	Aliases               []string               `protobuf:"bytes,19,rep,name=aliases,proto3" json:"aliases,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *UpdateNpcRequest) Reset() {
+	*x = UpdateNpcRequest{}
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNpcRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNpcRequest) ProtoMessage() {}
+
+func (x *UpdateNpcRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateNpcRequest.ProtoReflect.Descriptor instead.
+func (*UpdateNpcRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UpdateNpcRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetName() string {
+	if x != nil && x.Name != nil {
+		return *x.Name
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetStatus() CharacterStatus {
+	if x != nil && x.Status != nil {
+		return *x.Status
+	}
+	return CharacterStatus_CHARACTER_STATUS_UNSPECIFIED
+}
+
+func (x *UpdateNpcRequest) GetRelationToPartyStatus() RelationToParty {
+	if x != nil && x.RelationToPartyStatus != nil {
+		return *x.RelationToPartyStatus
+	}
+	return RelationToParty_RELATION_TO_PARTY_UNSPECIFIED
+}
+
+func (x *UpdateNpcRequest) GetIsKnownToParty() bool {
+	if x != nil && x.IsKnownToParty != nil {
+		return *x.IsKnownToParty
+	}
+	return false
+}
+
+func (x *UpdateNpcRequest) GetAge() string {
+	if x != nil && x.Age != nil {
+		return *x.Age
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetAppearance() string {
+	if x != nil && x.Appearance != nil {
+		return *x.Appearance
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetBackstory() string {
+	if x != nil && x.Backstory != nil {
+		return *x.Backstory
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetDmNotes() string {
+	if x != nil && x.DmNotes != nil {
+		return *x.DmNotes
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetFoundryActorId() string {
+	if x != nil && x.FoundryActorId != nil {
+		return *x.FoundryActorId
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetKnownName() string {
+	if x != nil && x.KnownName != nil {
+		return *x.KnownName
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetPersonality() string {
+	if x != nil && x.Personality != nil {
+		return *x.Personality
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetPlayerNotes() string {
+	if x != nil && x.PlayerNotes != nil {
+		return *x.PlayerNotes
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetRace() string {
+	if x != nil && x.Race != nil {
+		return *x.Race
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetCurrentLocationId() string {
+	if x != nil && x.CurrentLocationId != nil {
+		return *x.CurrentLocationId
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetOriginLocationId() string {
+	if x != nil && x.OriginLocationId != nil {
+		return *x.OriginLocationId
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetSessionEncounteredId() string {
+	if x != nil && x.SessionEncounteredId != nil {
+		return *x.SessionEncounteredId
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetAliases() []string {
+	if x != nil {
+		return x.Aliases
+	}
+	return nil
+}
+
+type UpdateNpcResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateNpcResponse) Reset() {
+	*x = UpdateNpcResponse{}
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateNpcResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateNpcResponse) ProtoMessage() {}
+
+func (x *UpdateNpcResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateNpcResponse.ProtoReflect.Descriptor instead.
+func (*UpdateNpcResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateNpcResponse) GetNpc() *Npc {
+	if x != nil {
+		return x.Npc
+	}
+	return nil
+}
+
+type RemoveNpcRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveNpcRequest) Reset() {
+	*x = RemoveNpcRequest{}
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveNpcRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveNpcRequest) ProtoMessage() {}
+
+func (x *RemoveNpcRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveNpcRequest.ProtoReflect.Descriptor instead.
+func (*RemoveNpcRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *RemoveNpcRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type RemoveNpcResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveNpcResponse) Reset() {
+	*x = RemoveNpcResponse{}
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveNpcResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveNpcResponse) ProtoMessage() {}
+
+func (x *RemoveNpcResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_non_player_character_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveNpcResponse.ProtoReflect.Descriptor instead.
+func (*RemoveNpcResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{10}
+}
+
 var File_planner_v1_non_player_character_proto protoreflect.FileDescriptor
 
 const file_planner_v1_non_player_character_proto_rawDesc = "" +
@@ -869,7 +1181,55 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"A\n" +
 	"\x1aListNpcsByCampaignResponse\x12#\n" +
-	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs*\xc7\x01\n" +
+	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xb0\b\n" +
+	"\x10UpdateNpcRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x128\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x1b.planner.v1.CharacterStatusH\x01R\x06status\x88\x01\x01\x12Y\n" +
+	"\x18relation_to_party_status\x18\x04 \x01(\x0e2\x1b.planner.v1.RelationToPartyH\x02R\x15relationToPartyStatus\x88\x01\x01\x12.\n" +
+	"\x11is_known_to_party\x18\x05 \x01(\bH\x03R\x0eisKnownToParty\x88\x01\x01\x12\x15\n" +
+	"\x03age\x18\x06 \x01(\tH\x04R\x03age\x88\x01\x01\x12#\n" +
+	"\n" +
+	"appearance\x18\a \x01(\tH\x05R\n" +
+	"appearance\x88\x01\x01\x12\x1b\n" +
+	"\x06avatar\x18\b \x01(\tH\x06R\x06avatar\x88\x01\x01\x12!\n" +
+	"\tbackstory\x18\t \x01(\tH\aR\tbackstory\x88\x01\x01\x12\x1e\n" +
+	"\bdm_notes\x18\n" +
+	" \x01(\tH\bR\admNotes\x88\x01\x01\x12-\n" +
+	"\x10foundry_actor_id\x18\v \x01(\tH\tR\x0efoundryActorId\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"known_name\x18\f \x01(\tH\n" +
+	"R\tknownName\x88\x01\x01\x12%\n" +
+	"\vpersonality\x18\r \x01(\tH\vR\vpersonality\x88\x01\x01\x12&\n" +
+	"\fplayer_notes\x18\x0e \x01(\tH\fR\vplayerNotes\x88\x01\x01\x12\x17\n" +
+	"\x04race\x18\x0f \x01(\tH\rR\x04race\x88\x01\x01\x123\n" +
+	"\x13current_location_id\x18\x10 \x01(\tH\x0eR\x11currentLocationId\x88\x01\x01\x121\n" +
+	"\x12origin_location_id\x18\x11 \x01(\tH\x0fR\x10originLocationId\x88\x01\x01\x129\n" +
+	"\x16session_encountered_id\x18\x12 \x01(\tH\x10R\x14sessionEncounteredId\x88\x01\x01\x12\x18\n" +
+	"\aaliases\x18\x13 \x03(\tR\aaliasesB\a\n" +
+	"\x05_nameB\t\n" +
+	"\a_statusB\x1b\n" +
+	"\x19_relation_to_party_statusB\x14\n" +
+	"\x12_is_known_to_partyB\x06\n" +
+	"\x04_ageB\r\n" +
+	"\v_appearanceB\t\n" +
+	"\a_avatarB\f\n" +
+	"\n" +
+	"_backstoryB\v\n" +
+	"\t_dm_notesB\x13\n" +
+	"\x11_foundry_actor_idB\r\n" +
+	"\v_known_nameB\x0e\n" +
+	"\f_personalityB\x0f\n" +
+	"\r_player_notesB\a\n" +
+	"\x05_raceB\x16\n" +
+	"\x14_current_location_idB\x15\n" +
+	"\x13_origin_location_idB\x19\n" +
+	"\x17_session_encountered_id\"6\n" +
+	"\x11UpdateNpcResponse\x12!\n" +
+	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"\"\n" +
+	"\x10RemoveNpcRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x13\n" +
+	"\x11RemoveNpcResponse*\xc7\x01\n" +
 	"\x0fCharacterStatus\x12 \n" +
 	"\x1cCHARACTER_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18CHARACTER_STATUS_UNKNOWN\x10\x01\x12\x1a\n" +
@@ -883,11 +1243,13 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x16RELATION_TO_PARTY_ALLY\x10\x02\x12\x1b\n" +
 	"\x17RELATION_TO_PARTY_ENEMY\x10\x03\x12\x1d\n" +
 	"\x19RELATION_TO_PARTY_NEUTRAL\x10\x04\x12 \n" +
-	"\x1cRELATION_TO_PARTY_SUSPICIOUS\x10\x052\x8b\x02\n" +
+	"\x1cRELATION_TO_PARTY_SUSPICIOUS\x10\x052\x9f\x03\n" +
 	"\x19NonPlayerCharacterService\x12H\n" +
 	"\tCreateNpc\x12\x1c.planner.v1.CreateNpcRequest\x1a\x1d.planner.v1.CreateNpcResponse\x12?\n" +
 	"\x06GetNpc\x12\x19.planner.v1.GetNpcRequest\x1a\x1a.planner.v1.GetNpcResponse\x12c\n" +
-	"\x12ListNpcsByCampaign\x12%.planner.v1.ListNpcsByCampaignRequest\x1a&.planner.v1.ListNpcsByCampaignResponseB\xb4\x01\n" +
+	"\x12ListNpcsByCampaign\x12%.planner.v1.ListNpcsByCampaignRequest\x1a&.planner.v1.ListNpcsByCampaignResponse\x12H\n" +
+	"\tUpdateNpc\x12\x1c.planner.v1.UpdateNpcRequest\x1a\x1d.planner.v1.UpdateNpcResponse\x12H\n" +
+	"\tRemoveNpc\x12\x1c.planner.v1.RemoveNpcRequest\x1a\x1d.planner.v1.RemoveNpcResponseB\xb4\x01\n" +
 	"\x0ecom.planner.v1B\x17NonPlayerCharacterProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
@@ -905,7 +1267,7 @@ func file_planner_v1_non_player_character_proto_rawDescGZIP() []byte {
 }
 
 var file_planner_v1_non_player_character_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_planner_v1_non_player_character_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_planner_v1_non_player_character_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_non_player_character_proto_goTypes = []any{
 	(CharacterStatus)(0),               // 0: planner.v1.CharacterStatus
 	(RelationToParty)(0),               // 1: planner.v1.RelationToParty
@@ -916,30 +1278,41 @@ var file_planner_v1_non_player_character_proto_goTypes = []any{
 	(*GetNpcResponse)(nil),             // 6: planner.v1.GetNpcResponse
 	(*ListNpcsByCampaignRequest)(nil),  // 7: planner.v1.ListNpcsByCampaignRequest
 	(*ListNpcsByCampaignResponse)(nil), // 8: planner.v1.ListNpcsByCampaignResponse
-	(*timestamppb.Timestamp)(nil),      // 9: google.protobuf.Timestamp
+	(*UpdateNpcRequest)(nil),           // 9: planner.v1.UpdateNpcRequest
+	(*UpdateNpcResponse)(nil),          // 10: planner.v1.UpdateNpcResponse
+	(*RemoveNpcRequest)(nil),           // 11: planner.v1.RemoveNpcRequest
+	(*RemoveNpcResponse)(nil),          // 12: planner.v1.RemoveNpcResponse
+	(*timestamppb.Timestamp)(nil),      // 13: google.protobuf.Timestamp
 }
 var file_planner_v1_non_player_character_proto_depIdxs = []int32{
 	0,  // 0: planner.v1.Npc.status:type_name -> planner.v1.CharacterStatus
 	1,  // 1: planner.v1.Npc.relation_to_party_status:type_name -> planner.v1.RelationToParty
-	9,  // 2: planner.v1.Npc.last_foundry_sync_at:type_name -> google.protobuf.Timestamp
-	9,  // 3: planner.v1.Npc.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 4: planner.v1.Npc.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 2: planner.v1.Npc.last_foundry_sync_at:type_name -> google.protobuf.Timestamp
+	13, // 3: planner.v1.Npc.created_at:type_name -> google.protobuf.Timestamp
+	13, // 4: planner.v1.Npc.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: planner.v1.CreateNpcRequest.status:type_name -> planner.v1.CharacterStatus
 	1,  // 6: planner.v1.CreateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
 	2,  // 7: planner.v1.CreateNpcResponse.npc:type_name -> planner.v1.Npc
 	2,  // 8: planner.v1.GetNpcResponse.npc:type_name -> planner.v1.Npc
 	2,  // 9: planner.v1.ListNpcsByCampaignResponse.npcs:type_name -> planner.v1.Npc
-	3,  // 10: planner.v1.NonPlayerCharacterService.CreateNpc:input_type -> planner.v1.CreateNpcRequest
-	5,  // 11: planner.v1.NonPlayerCharacterService.GetNpc:input_type -> planner.v1.GetNpcRequest
-	7,  // 12: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:input_type -> planner.v1.ListNpcsByCampaignRequest
-	4,  // 13: planner.v1.NonPlayerCharacterService.CreateNpc:output_type -> planner.v1.CreateNpcResponse
-	6,  // 14: planner.v1.NonPlayerCharacterService.GetNpc:output_type -> planner.v1.GetNpcResponse
-	8,  // 15: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:output_type -> planner.v1.ListNpcsByCampaignResponse
-	13, // [13:16] is the sub-list for method output_type
-	10, // [10:13] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	0,  // 10: planner.v1.UpdateNpcRequest.status:type_name -> planner.v1.CharacterStatus
+	1,  // 11: planner.v1.UpdateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
+	2,  // 12: planner.v1.UpdateNpcResponse.npc:type_name -> planner.v1.Npc
+	3,  // 13: planner.v1.NonPlayerCharacterService.CreateNpc:input_type -> planner.v1.CreateNpcRequest
+	5,  // 14: planner.v1.NonPlayerCharacterService.GetNpc:input_type -> planner.v1.GetNpcRequest
+	7,  // 15: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:input_type -> planner.v1.ListNpcsByCampaignRequest
+	9,  // 16: planner.v1.NonPlayerCharacterService.UpdateNpc:input_type -> planner.v1.UpdateNpcRequest
+	11, // 17: planner.v1.NonPlayerCharacterService.RemoveNpc:input_type -> planner.v1.RemoveNpcRequest
+	4,  // 18: planner.v1.NonPlayerCharacterService.CreateNpc:output_type -> planner.v1.CreateNpcResponse
+	6,  // 19: planner.v1.NonPlayerCharacterService.GetNpc:output_type -> planner.v1.GetNpcResponse
+	8,  // 20: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:output_type -> planner.v1.ListNpcsByCampaignResponse
+	10, // 21: planner.v1.NonPlayerCharacterService.UpdateNpc:output_type -> planner.v1.UpdateNpcResponse
+	12, // 22: planner.v1.NonPlayerCharacterService.RemoveNpc:output_type -> planner.v1.RemoveNpcResponse
+	18, // [18:23] is the sub-list for method output_type
+	13, // [13:18] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_non_player_character_proto_init() }
@@ -949,13 +1322,14 @@ func file_planner_v1_non_player_character_proto_init() {
 	}
 	file_planner_v1_non_player_character_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_non_player_character_proto_msgTypes[1].OneofWrappers = []any{}
+	file_planner_v1_non_player_character_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_non_player_character_proto_rawDesc), len(file_planner_v1_non_player_character_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -1,8 +1,8 @@
 import { ORPCError } from "@orpc/server";
 import { deleteCookie, getCookie } from "@orpc/server/helpers";
 import {
-	CreateCamapaignResponseSchema,
 	CreateCampaignRequestSchema,
+	CreateCampaignResponseSchema,
 	GetActiveCampaignResponseSchema,
 } from "@planner/schemas/campaigns";
 import { decryptAuthCookie } from "@planner/security/auth";
@@ -23,7 +23,7 @@ const createCampaign = privateProcedure
 		summary: "Creates a campaign",
 	})
 	.input(CreateCampaignRequestSchema)
-	.output(CreateCamapaignResponseSchema)
+	.output(CreateCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { tags, title, description } = input;
 		const api = context.api;

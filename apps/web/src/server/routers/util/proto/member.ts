@@ -2,9 +2,9 @@ import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/client";
 import { StatusEnum } from "@planner/enums/common";
 import { UserRole } from "@planner/enums/user";
-import { CampaignInvitationSchema } from "@planner/schemas/campaigns";
 import {
 	type CampaignInvitation,
+	CampaignInvitationSchema,
 	type CampaignUser,
 	CampaignUserSchema,
 } from "@planner/schemas/member";
