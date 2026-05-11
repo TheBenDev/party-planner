@@ -1,6 +1,9 @@
+import { StatusEnum } from "@planner/enums/common";
 import { UserRole } from "@planner/enums/user";
 import z from "zod";
-import { CampaignInvitationSchema } from "./campaign";
+import { BaseEntitySchema } from "./common";
+
+// ─── Core Entities ────────────────────────────────────────────────────────────
 
 export const CampaignUserSchema = z.object({
 	campaignId: z.uuid(),
@@ -10,8 +13,23 @@ export const CampaignUserSchema = z.object({
 	userId: z.uuid(),
 });
 
+export const CampaignInvitationSchema = BaseEntitySchema.extend({
+	acceptedAt: z.date().nullable(),
+	campaignId: z.uuid(),
+	expiresAt: z.date(),
+	inviteeEmail: z.email(),
+	inviterId: z.uuid(),
+	role: z.enum(UserRole),
+	status: z.enum(StatusEnum),
+});
+
+export type CampaignUser = z.infer<typeof CampaignUserSchema>;
+export type CampaignInvitation = z.infer<typeof CampaignInvitationSchema>;
+
+// ─── Invitations ──────────────────────────────────────────────────────────────
+
 export const AcceptCampaignInvitationRequestSchema = z.object({
-  token: z.string()
+	token: z.string().trim().min(1),
 });
 
 export const AcceptCampaignInvitationResponseSchema = z.object({
@@ -29,9 +47,24 @@ export const CreateCampaignInvitationResponseSchema = z.object({
 });
 
 export const DeclineCampaignInvitationRequestSchema = z.object({
-  token: z.string()
+	token: z.string(),
 });
+
 export const DeclineCampaignInvitationResponseSchema = CampaignInvitationSchema;
+
+export const GetCampaignInvitationByTokenRequestSchema = z.object({
+	token: z.string(),
+});
+
+export const GetCampaignInvitationByTokenResponseSchema = z.object({
+	campaignTitle: z.string(),
+	invitation: CampaignInvitationSchema,
+	sentBy: z.string().optional(),
+});
+
+export type GetCampaignInvitationByTokenResponse = z.infer<
+	typeof GetCampaignInvitationByTokenResponseSchema
+>;
 
 export const ListCampaignInvitationsResponseSchema = z.object({
 	invitations: z.array(CampaignInvitationSchema),
@@ -40,9 +73,12 @@ export const ListCampaignInvitationsResponseSchema = z.object({
 export const RevokeCampaignInvitationRequestSchema = z.object({
 	id: z.uuid(),
 });
+
 export const RevokeCampaignInvitationResponseSchema = z.object({
 	invitation: CampaignInvitationSchema,
 });
+
+// ─── Members ──────────────────────────────────────────────────────────────────
 
 export const CreateMemberRequestSchema = z.object({
 	campaignId: z.uuid(),
@@ -59,15 +95,8 @@ export const GetMemberRequestSchema = z.object({
 	userId: z.uuid(),
 });
 
-export const GetMemberResponseSchema = z.object({ member: CampaignUserSchema });
-
-export const GetCampaignInvitationByTokenRequestSchema = z.object({
-	token: z.string(),
-});
-export const GetCampaignInvitationByTokenResponseSchema = z.object({
-	campaignTitle: z.string(),
-	invitation: CampaignInvitationSchema,
-	sentBy: z.string().optional(),
+export const GetMemberResponseSchema = z.object({
+	member: CampaignUserSchema,
 });
 
 export const ListMembersByCampaignResponseSchema = z.object({
@@ -84,7 +113,3 @@ export const RemoveMemberRequestSchema = z.object({
 });
 
 export const RemoveMemberResponseSchema = z.object({});
-
-export type CampaignUser = z.infer<typeof CampaignUserSchema>;
-export type CampaignInvitation = z.infer<typeof CampaignInvitationSchema>;
-export type GetCampaignInvitationByTokenResponse = z.infer<typeof GetCampaignInvitationByTokenResponseSchema>

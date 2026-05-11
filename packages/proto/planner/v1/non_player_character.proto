@@ -1,5 +1,4 @@
 syntax = "proto3";
-
 package planner.v1;
 
 import "google/protobuf/timestamp.proto";
@@ -102,6 +101,38 @@ message ListNpcsByCampaignResponse {
   repeated Npc npcs = 1;
 }
 
+message UpdateNpcRequest {
+  string id = 1;
+  optional string name = 2;
+  optional CharacterStatus status = 3;
+  optional RelationToParty relation_to_party_status = 4;
+  optional bool is_known_to_party = 5;
+  optional string age = 6;
+  optional string appearance = 7;
+  optional string avatar = 8;
+  optional string backstory = 9;
+  optional string dm_notes = 10;
+  optional string foundry_actor_id = 11;
+  optional string known_name = 12;
+  optional string personality = 13;
+  optional string player_notes = 14;
+  optional string race = 15;
+  optional string current_location_id = 16;
+  optional string origin_location_id = 17;
+  optional string session_encountered_id = 18;
+  repeated string aliases = 19;
+}
+
+message UpdateNpcResponse {
+  Npc npc = 1;
+}
+
+message RemoveNpcRequest {
+  string id = 1;
+}
+
+message RemoveNpcResponse {}
+
 // -----------------------------------------------------------------------------
 // Service
 // -----------------------------------------------------------------------------
@@ -110,4 +141,6 @@ service NonPlayerCharacterService {
   rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
   rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
   rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
+  rpc UpdateNpc(UpdateNpcRequest) returns (UpdateNpcResponse);
+  rpc RemoveNpc(RemoveNpcRequest) returns (RemoveNpcResponse);
 }

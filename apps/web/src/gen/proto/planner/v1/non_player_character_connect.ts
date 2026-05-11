@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateNpcRequest, CreateNpcResponse, GetNpcRequest, GetNpcResponse, ListNpcsByCampaignRequest, ListNpcsByCampaignResponse } from "./non_player_character_pb.js";
+import { CreateNpcRequest, CreateNpcResponse, GetNpcRequest, GetNpcResponse, ListNpcsByCampaignRequest, ListNpcsByCampaignResponse, RemoveNpcRequest, RemoveNpcResponse, UpdateNpcRequest, UpdateNpcResponse } from "./non_player_character_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,24 @@ export const NonPlayerCharacterService = {
       name: "ListNpcsByCampaign",
       I: ListNpcsByCampaignRequest,
       O: ListNpcsByCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.NonPlayerCharacterService.UpdateNpc
+     */
+    updateNpc: {
+      name: "UpdateNpc",
+      I: UpdateNpcRequest,
+      O: UpdateNpcResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.NonPlayerCharacterService.RemoveNpc
+     */
+    removeNpc: {
+      name: "RemoveNpc",
+      I: RemoveNpcRequest,
+      O: RemoveNpcResponse,
       kind: MethodKind.Unary,
     },
   }

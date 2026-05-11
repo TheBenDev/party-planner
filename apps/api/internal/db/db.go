@@ -11,6 +11,10 @@ import (
 	"github.com/lib/pq"
 )
 
+// -----------------------------------------------------------------------------
+// Core
+// -----------------------------------------------------------------------------
+
 type sqlQuerier interface {
 	Exec(query string, args ...any) (sql.Result, error)
 	QueryRow(query string, args ...any) *sql.Row
@@ -62,6 +66,10 @@ func (db *DB) RunInTx(fn func(*DB) error) error {
 	return tx.Commit()
 }
 
+// -----------------------------------------------------------------------------
+// Users
+// -----------------------------------------------------------------------------
+
 const userColumns = `id, external_id, email, avatar, first_name, last_name, deleted_at, created_at, updated_at`
 
 func scanUser(row interface{ Scan(...any) error }) (*model.User, error) {
@@ -87,7 +95,10 @@ func (db *DB) CreateUser(user *model.CreateUserRequest) (*model.User, error) {
 }
 
 func (db *DB) DeleteUser(clerkId string) (*model.User, error) {
-	row := db.conn.QueryRow(`UPDATE users SET deleted_at = NOW() WHERE external_id = $1 AND deleted_at IS NULL RETURNING `+userColumns, clerkId)
+	row := db.conn.QueryRow(`
+		UPDATE users SET deleted_at = NOW()
+		WHERE external_id = $1 AND deleted_at IS NULL
+		RETURNING `+userColumns, clerkId)
 	return scanUser(row)
 }
 
@@ -96,13 +107,13 @@ func (db *DB) GetUserByClerkId(clerkId string) (*model.User, error) {
 	return scanUser(row)
 }
 
-func (db *DB) GetUserById(userId string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE id = $1 LIMIT 1`, userId)
+func (db *DB) GetUserByEmail(email string) (*model.User, error) {
+	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE email = $1 LIMIT 1`, email)
 	return scanUser(row)
 }
 
-func (db *DB) GetUserByEmail(email string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE email = $1 LIMIT 1`, email)
+func (db *DB) GetUserById(userId string) (*model.User, error) {
+	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE id = $1 LIMIT 1`, userId)
 	return scanUser(row)
 }
 
@@ -115,6 +126,10 @@ func (db *DB) UpdateUserByClerkId(user *model.UpdateUserRequest) (*model.User, e
 	)
 	return scanUser(row)
 }
+
+// -----------------------------------------------------------------------------
+// Campaigns
+// -----------------------------------------------------------------------------
 
 const campaignColumns = `id, user_id, title, description, tags, created_at, updated_at, deleted_at`
 
@@ -145,6 +160,10 @@ func (db *DB) GetCampaign(id string) (*model.Campaign, error) {
 	return scanCampaign(row)
 }
 
+// -----------------------------------------------------------------------------
+// Campaign Integrations
+// -----------------------------------------------------------------------------
+
 const campaignIntegrationColumns = `id, campaign_id, external_id, source, metadata, settings, created_at, updated_at`
 
 func scanCampaignIntegration(row interface{ Scan(...any) error }) (*model.CampaignIntegration, error) {
@@ -168,14 +187,6 @@ func isValidIntegrationSource(s model.IntegrationSource) bool {
 	}
 }
 
-func (db *DB) GetCampaignIntegration(id string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
-	if !isValidIntegrationSource(source) {
-		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
-	}
-	row := db.conn.QueryRow(`SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1 AND source = $2 LIMIT 1`, id, source)
-	return scanCampaignIntegration(row)
-}
-
 func (db *DB) CreateCampaignIntegration(campaign *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
 	row := db.conn.QueryRow(`
 		INSERT INTO campaign_integrations (campaign_id, external_id, source, metadata, settings)
@@ -186,101 +197,24 @@ func (db *DB) CreateCampaignIntegration(campaign *model.CreateCampaignIntegratio
 	return scanCampaignIntegration(row)
 }
 
-const campaignUserColumns = `campaign_id, created_at, role, updated_at, user_id`
-
-func scanCampaignUser(row interface{ Scan(...any) error }) (*model.Member, error) {
-	var ci model.Member
-	err := row.Scan(
-		&ci.CampaignID, &ci.CreatedAt, &ci.Role, &ci.UpdatedAt, &ci.UserID,
-	)
-	if err != nil {
-		return nil, err
+func (db *DB) GetCampaignIntegration(id string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+	if !isValidIntegrationSource(source) {
+		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
 	}
-	return &ci, nil
-}
-
-func (db *DB) GetCampaignUser(campaignId, userId string) (*model.Member, error) {
-	row := db.conn.QueryRow(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE campaign_id = $1 AND user_id = $2 LIMIT 1`, campaignId, userId)
-	return scanCampaignUser(row)
-}
-
-func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE campaign_id = $1`, campaignId)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			slog.Error("failed to close rows", "error", err)
-		}
-	}()
-	var members []*model.Member
-	for rows.Next() {
-		member, err := scanCampaignUser(rows)
-		if err != nil {
-			return nil, err
-		}
-		members = append(members, member)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return members, nil
-}
-
-func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE user_id = $1`, userId)
-	if err != nil {
-		return nil, err
-	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			slog.Error("failed to close rows", "error", err)
-		}
-	}()
-	var members []*model.Member
-	for rows.Next() {
-		member, err := scanCampaignUser(rows)
-		if err != nil {
-			return nil, err
-		}
-		members = append(members, member)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return members, nil
-}
-
-func (db *DB) CreateCampaignUser(campaignUser *model.CreateMemberRequest) (*model.Member, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO campaign_users (campaign_id, user_id, role)
-		VALUES ($1, $2, $3)
-		RETURNING `+campaignUserColumns,
-		campaignUser.CampaignID, campaignUser.UserID, campaignUser.Role,
-	)
-	return scanCampaignUser(row)
+		SELECT `+campaignIntegrationColumns+` FROM campaign_integrations
+		WHERE campaign_id = $1 AND source = $2
+		LIMIT 1`, id, source)
+	return scanCampaignIntegration(row)
 }
 
-func (db *DB) UpdateCampaignUserRole(campaignId, userId string, role model.MemberRole) (*model.Member, error) {
-	row := db.conn.QueryRow(`
-		UPDATE campaign_users SET role = $1
-		WHERE campaign_id = $2 AND user_id = $3
-		RETURNING `+campaignUserColumns,
-		role, campaignId, userId,
-	)
-	return scanCampaignUser(row)
-}
-
-func (db *DB) RemoveCampaignUser(campaignId, userId string) error {
-	_, err := db.conn.Exec(`DELETE FROM campaign_users WHERE campaign_id = $1 AND user_id = $2`, campaignId, userId)
-	if err != nil {
-		return fmt.Errorf("remove campaign user: %w", err)
-	}
-	return nil
-}
+// -----------------------------------------------------------------------------
+// Campaign Invitations
+// -----------------------------------------------------------------------------
 
 const campaignInvitationColumns = `campaign_invitation_id, campaign_id, inviter_id, invitee_email, role, status, accepted_at, expires_at, created_at, updated_at`
+
+const campaignInvitationByTokenColumns = `ci.campaign_invitation_id, ci.campaign_id, ci.inviter_id, ci.invitee_email, ci.role, ci.status, ci.accepted_at, ci.expires_at, ci.created_at, ci.updated_at, u.first_name, u.last_name, c.title`
 
 func scanCampaignInvitation(row interface{ Scan(...any) error }) (*model.CampaignInvitation, error) {
 	var ci model.CampaignInvitation
@@ -323,6 +257,17 @@ func scanCampaignInvitationByToken(row interface{ Scan(...any) error }) (*model.
 	return &res, nil
 }
 
+func (db *DB) AcceptCampaignInvitation(token string, role model.MemberRole) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaign_invitations
+		SET status = $1, accepted_at = NOW(), role = $2
+		WHERE token = $3 AND status = $4 AND expires_at > NOW()
+		RETURNING `+campaignInvitationColumns,
+		model.InvitationStatusAccepted, role, token, model.InvitationStatusPending,
+	)
+	return scanCampaignInvitation(row)
+}
+
 func (db *DB) CreateCampaignInvitation(invitation *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
 	row := db.conn.QueryRow(`
 		INSERT INTO campaign_invitations (campaign_id, inviter_id, invitee_email, role, status, expires_at, token)
@@ -334,14 +279,24 @@ func (db *DB) CreateCampaignInvitation(invitation *model.CreateCampaignInvitatio
 	return scanCampaignInvitation(row)
 }
 
+func (db *DB) DeclineCampaignInvitation(token string) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaign_invitations
+		SET status = $1
+		WHERE token = $2 AND status = $3 AND expires_at > NOW()
+		RETURNING `+campaignInvitationColumns,
+		model.InvitationStatusDeclined, token, model.InvitationStatusPending,
+	)
+	return scanCampaignInvitation(row)
+}
+
 func (db *DB) GetCampaignInvitationByEmail(campaignId, invitee_email string, status model.InvitationStatus) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`SELECT `+campaignInvitationColumns+` FROM campaign_invitations
+	row := db.conn.QueryRow(`
+		SELECT `+campaignInvitationColumns+` FROM campaign_invitations
 		WHERE campaign_id = $1 AND invitee_email = $2 AND status = $3
 		LIMIT 1`, campaignId, invitee_email, status)
 	return scanCampaignInvitation(row)
 }
-
-const campaignInvitationByTokenColumns = `ci.campaign_invitation_id, ci.campaign_id, ci.inviter_id, ci.invitee_email, ci.role, ci.status, ci.accepted_at, ci.expires_at, ci.created_at, ci.updated_at, u.first_name, u.last_name, c.title`
 
 func (db *DB) GetCampaignInvitationByToken(token string) (*model.GetCampaignInvitationResponse, error) {
 	row := db.conn.QueryRow(`
@@ -356,41 +311,9 @@ func (db *DB) GetCampaignInvitationByToken(token string) (*model.GetCampaignInvi
 	return scanCampaignInvitationByToken(row)
 }
 
-func (db *DB) RevokeCampaignInvitation(invitationId, campaignId string) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
-        UPDATE campaign_invitations
-        SET status = $1
-        WHERE campaign_invitation_id = $2 AND status = $3 AND campaign_id = $4
-        RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusRevoked, invitationId, model.InvitationStatusPending, campaignId,
-	)
-	return scanCampaignInvitation(row)
-}
-
-func (db *DB) DeclineCampaignInvitation(token string) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
-        UPDATE campaign_invitations
-        SET status = $1
-        WHERE token = $2 AND status = $3 AND expires_at > NOW()
-        RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusDeclined, token, model.InvitationStatusPending,
-	)
-	return scanCampaignInvitation(row)
-}
-
-func (db *DB) AcceptCampaignInvitation(token string, role model.MemberRole) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
-        UPDATE campaign_invitations
-        SET status = $1, accepted_at = NOW(), role = $2
-        WHERE token = $3 AND status = $4 AND expires_at > NOW()
-        RETURNING `+campaignInvitationColumns,
-		model.InvitationStatusAccepted, role, token, model.InvitationStatusPending,
-	)
-	return scanCampaignInvitation(row)
-}
-
 func (db *DB) ListCampaignInvitations(campaignId string) ([]*model.CampaignInvitation, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignInvitationColumns+` FROM campaign_invitations
+	rows, err := db.conn.Query(`
+		SELECT `+campaignInvitationColumns+` FROM campaign_invitations
 		WHERE campaign_id = $1 AND status = $2`, campaignId, model.InvitationStatusPending)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign invitations: %w", err)
@@ -411,6 +334,124 @@ func (db *DB) ListCampaignInvitations(campaignId string) ([]*model.CampaignInvit
 	}
 	return invitations, rows.Err()
 }
+
+func (db *DB) RevokeCampaignInvitation(invitationId, campaignId string) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaign_invitations
+		SET status = $1
+		WHERE campaign_invitation_id = $2 AND status = $3 AND campaign_id = $4
+		RETURNING `+campaignInvitationColumns,
+		model.InvitationStatusRevoked, invitationId, model.InvitationStatusPending, campaignId,
+	)
+	return scanCampaignInvitation(row)
+}
+
+// -----------------------------------------------------------------------------
+// Campaign Users (Members)
+// -----------------------------------------------------------------------------
+
+const campaignUserColumns = `campaign_id, created_at, role, updated_at, user_id`
+
+func scanCampaignUser(row interface{ Scan(...any) error }) (*model.Member, error) {
+	var ci model.Member
+	err := row.Scan(
+		&ci.CampaignID, &ci.CreatedAt, &ci.Role, &ci.UpdatedAt, &ci.UserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &ci, nil
+}
+
+func (db *DB) CreateCampaignUser(campaignUser *model.CreateMemberRequest) (*model.Member, error) {
+	row := db.conn.QueryRow(`
+		INSERT INTO campaign_users (campaign_id, user_id, role)
+		VALUES ($1, $2, $3)
+		RETURNING `+campaignUserColumns,
+		campaignUser.CampaignID, campaignUser.UserID, campaignUser.Role,
+	)
+	return scanCampaignUser(row)
+}
+
+func (db *DB) GetCampaignUser(campaignId, userId string) (*model.Member, error) {
+	row := db.conn.QueryRow(`
+		SELECT `+campaignUserColumns+` FROM campaign_users
+		WHERE campaign_id = $1 AND user_id = $2
+		LIMIT 1`, campaignId, userId)
+	return scanCampaignUser(row)
+}
+
+func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, error) {
+	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE campaign_id = $1`, campaignId)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var members []*model.Member
+	for rows.Next() {
+		member, err := scanCampaignUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, member)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return members, nil
+}
+
+func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
+	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE user_id = $1`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var members []*model.Member
+	for rows.Next() {
+		member, err := scanCampaignUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, member)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return members, nil
+}
+
+func (db *DB) RemoveCampaignUser(campaignId, userId string) error {
+	_, err := db.conn.Exec(`DELETE FROM campaign_users WHERE campaign_id = $1 AND user_id = $2`, campaignId, userId)
+	if err != nil {
+		return fmt.Errorf("remove campaign user: %w", err)
+	}
+	return nil
+}
+
+func (db *DB) UpdateCampaignUserRole(campaignId, userId string, role model.MemberRole) (*model.Member, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaign_users SET role = $1
+		WHERE campaign_id = $2 AND user_id = $3
+		RETURNING `+campaignUserColumns,
+		role, campaignId, userId,
+	)
+	return scanCampaignUser(row)
+}
+
+// -----------------------------------------------------------------------------
+// NPCs
+// -----------------------------------------------------------------------------
 
 const npcColumns = `id, campaign_id, name, status, relation_to_party_status, is_known_to_party, ` +
 	`age, appearance, avatar, backstory, dm_notes, foundry_actor_id, known_name, personality, ` +
@@ -435,11 +476,12 @@ func scanNpc(row interface{ Scan(...any) error }) (*model.Npc, error) {
 
 func (db *DB) CreateNpc(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO non_player_character (campaign_id, name, status, relation_to_party_status, is_known_to_party,
+		INSERT INTO non_player_character (
+			campaign_id, name, status, relation_to_party_status, is_known_to_party,
 			age, appearance, avatar, backstory, dm_notes, foundry_actor_id, known_name,
 			personality, player_notes, race, current_location_id, origin_location_id,
-			session_encountered_id, aliases)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+			session_encountered_id, aliases
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
 		RETURNING `+npcColumns,
 		npc.CampaignID, npc.Name, npc.Status, npc.RelationToPartyStatus, npc.IsKnownToParty,
 		npc.Age, npc.Appearance, npc.Avatar, npc.Backstory, npc.DmNotes, npc.FoundryActorID,
@@ -476,6 +518,52 @@ func (db *DB) ListNpcsByCampaign(campaignId string) ([]*model.Npc, error) {
 	}
 	return npcs, rows.Err()
 }
+
+func (db *DB) UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error) {
+	row := db.conn.QueryRow(`
+		UPDATE non_player_character SET
+			name                  = COALESCE($1, name),
+			status                = COALESCE($2, status),
+			relation_to_party_status = COALESCE($3, relation_to_party_status),
+			is_known_to_party     = COALESCE($4, is_known_to_party),
+			age                   = $5,
+			appearance            = $6,
+			avatar                = $7,
+			backstory             = $8,
+			dm_notes              = $9,
+			foundry_actor_id      = $10,
+			known_name            = $11,
+			personality           = $12,
+			player_notes          = $13,
+			race                  = $14,
+			current_location_id   = $15,
+			origin_location_id    = $16,
+			session_encountered_id = $17,
+			aliases               = $18,
+			updated_at            = NOW()
+		WHERE id = $19
+		RETURNING `+npcColumns,
+		npc.Name, npc.Status, npc.RelationToPartyStatus, npc.IsKnownToParty,
+		npc.Age, npc.Appearance, npc.Avatar, npc.Backstory, npc.DmNotes, npc.FoundryActorID,
+		npc.KnownName, npc.Personality, npc.PlayerNotes, npc.Race,
+		npc.CurrentLocationID, npc.OriginLocationID, npc.SessionEncounteredID,
+		pq.Array(npc.Aliases),
+		npc.ID,
+	)
+	return scanNpc(row)
+}
+
+func (db *DB) RemoveNpc(id string) error {
+	_, err := db.conn.Exec(`DELETE FROM non_player_character WHERE id = $1`, id)
+	if err != nil {
+		return fmt.Errorf("remove npc: %w", err)
+	}
+	return nil
+}
+
+// -----------------------------------------------------------------------------
+// Quests
+// -----------------------------------------------------------------------------
 
 const questColumns = `id, campaign_id, title, status, description, quest_giver_id, reward, completed_at, deleted_at, created_at, updated_at`
 
@@ -527,6 +615,10 @@ func (db *DB) ListQuestsByCampaign(campaignId string) ([]*model.Quest, error) {
 	}
 	return quests, rows.Err()
 }
+
+// -----------------------------------------------------------------------------
+// Sessions
+// -----------------------------------------------------------------------------
 
 const sessionColumns = `id, campaign_id, title, description, starts_at, created_at, updated_at`
 

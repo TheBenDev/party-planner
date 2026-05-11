@@ -20,6 +20,10 @@ type NpcServer struct {
 	Log *slog.Logger
 }
 
+// -----------------------------------------------------------------------------
+// RPCs
+// -----------------------------------------------------------------------------
+
 func (s *NpcServer) CreateNpc(ctx context.Context, req *connect.Request[v1.CreateNpcRequest]) (*connect.Response[v1.CreateNpcResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
@@ -108,6 +112,81 @@ func (s *NpcServer) ListNpcsByCampaign(ctx context.Context, req *connect.Request
 	}), nil
 }
 
+func (s *NpcServer) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	var status *model.CharacterStatus
+	if req.Msg.Status != nil {
+		if *req.Msg.Status == v1.CharacterStatus_CHARACTER_STATUS_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("status cannot be unspecified"))
+		}
+		s, err := protoToCharacterStatus(*req.Msg.Status)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+		status = &s
+	}
+
+	var relation *model.RelationToParty
+	if req.Msg.RelationToPartyStatus != nil {
+		if *req.Msg.RelationToPartyStatus == v1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("relation to party status cannot be unspecified"))
+		}
+		r, err := protoToRelationToParty(*req.Msg.RelationToPartyStatus)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+		relation = &r
+	}
+
+	npc, err := s.Npc.Update(&model.UpdateNpcRequest{
+		ID:                    req.Msg.Id,
+		Name:                  req.Msg.Name,
+		Status:                status,
+		RelationToPartyStatus: relation,
+		IsKnownToParty:        req.Msg.IsKnownToParty,
+		Age:                   sqlNullString(req.Msg.Age),
+		Appearance:            sqlNullString(req.Msg.Appearance),
+		Avatar:                sqlNullString(req.Msg.Avatar),
+		Backstory:             sqlNullString(req.Msg.Backstory),
+		DmNotes:               sqlNullString(req.Msg.DmNotes),
+		FoundryActorID:        sqlNullString(req.Msg.FoundryActorId),
+		KnownName:             sqlNullString(req.Msg.KnownName),
+		Personality:           sqlNullString(req.Msg.Personality),
+		PlayerNotes:           sqlNullString(req.Msg.PlayerNotes),
+		Race:                  sqlNullString(req.Msg.Race),
+		CurrentLocationID:     sqlNullString(req.Msg.CurrentLocationId),
+		OriginLocationID:      sqlNullString(req.Msg.OriginLocationId),
+		SessionEncounteredID:  sqlNullString(req.Msg.SessionEncounteredId),
+		Aliases:               req.Msg.Aliases,
+	})
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update npc")
+	}
+
+	return connect.NewResponse(&v1.UpdateNpcResponse{
+		Npc: npcToProto(npc),
+	}), nil
+}
+
+func (s *NpcServer) RemoveNpc(ctx context.Context, req *connect.Request[v1.RemoveNpcRequest]) (*connect.Response[v1.RemoveNpcResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	if err := s.Npc.Remove(req.Msg.Id); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove npc")
+	}
+
+	return connect.NewResponse(&v1.RemoveNpcResponse{}), nil
+}
+
+// -----------------------------------------------------------------------------
+// Converters — Proto ↔ Model
+// -----------------------------------------------------------------------------
+
 func protoToCharacterStatus(s v1.CharacterStatus) (model.CharacterStatus, error) {
 	switch s {
 	case v1.CharacterStatus_CHARACTER_STATUS_UNKNOWN:
@@ -148,6 +227,8 @@ func protoToRelationToParty(r v1.RelationToParty) (model.RelationToParty, error)
 		return model.RelationToPartyEnemy, nil
 	case v1.RelationToParty_RELATION_TO_PARTY_NEUTRAL:
 		return model.RelationToPartyNeutral, nil
+	case v1.RelationToParty_RELATION_TO_PARTY_SUSPICIOUS:
+		return model.RelationToPartySuspicious, nil
 	default:
 		return "", fmt.Errorf("unknown relation to party: %v", r)
 	}
@@ -163,6 +244,8 @@ func relationToPartyToProto(r model.RelationToParty) v1.RelationToParty {
 		return v1.RelationToParty_RELATION_TO_PARTY_ENEMY
 	case model.RelationToPartyNeutral:
 		return v1.RelationToParty_RELATION_TO_PARTY_NEUTRAL
+	case model.RelationToPartySuspicious:
+		return v1.RelationToParty_RELATION_TO_PARTY_SUSPICIOUS
 	default:
 		return v1.RelationToParty_RELATION_TO_PARTY_UNSPECIFIED
 	}

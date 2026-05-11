@@ -10,19 +10,31 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
+// -----------------------------------------------------------------------------
+// Errors
+// -----------------------------------------------------------------------------
+
 var (
-	ErrNpcNotFound                  = errors.New("npc not found")
 	ErrNpcAlreadyExists             = errors.New("npc already exists")
 	ErrNpcInvalidCampaign           = errors.New("campaign does not exist")
-	ErrNpcInvalidOriginLocation     = errors.New("origin location does not exist")
 	ErrNpcInvalidCurrentLocation    = errors.New("current location does not exist")
+	ErrNpcInvalidOriginLocation     = errors.New("origin location does not exist")
 	ErrNpcInvalidSessionEncountered = errors.New("session encountered does not exist")
+	ErrNpcNotFound                  = errors.New("npc not found")
 )
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
 
 type NpcService struct {
 	DB  *db.DB
 	Log *slog.Logger
 }
+
+// -----------------------------------------------------------------------------
+// Methods
+// -----------------------------------------------------------------------------
 
 func (s *NpcService) Create(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	created, err := s.DB.CreateNpc(npc)
@@ -53,6 +65,38 @@ func (s *NpcService) ListByCampaign(campaignId string) ([]*model.Npc, error) {
 	}
 	return npcs, nil
 }
+
+func (s *NpcService) Update(req *model.UpdateNpcRequest) (*model.Npc, error) {
+	_, err := s.Get(req.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	updated, err := s.DB.UpdateNpc(req)
+	if err != nil {
+		if mapped := mapNonPlayerCharacterPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("update npc error: %w", err)
+	}
+	return updated, nil
+}
+
+func (s *NpcService) Remove(id string) error {
+	_, err := s.Get(id)
+	if err != nil {
+		return err
+	}
+
+	if err := s.DB.RemoveNpc(id); err != nil {
+		return fmt.Errorf("remove npc error: %w", err)
+	}
+	return nil
+}
+
+// -----------------------------------------------------------------------------
+// Helpers
+// -----------------------------------------------------------------------------
 
 func mapNonPlayerCharacterPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {

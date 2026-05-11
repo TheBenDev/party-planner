@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/non_player_character.proto.
  */
 export const file_planner_v1_non_player_character: GenFile = /*@__PURE__*/
-  fileDesc("CiVwbGFubmVyL3YxL25vbl9wbGF5ZXJfY2hhcmFjdGVyLnByb3RvEgpwbGFubmVyLnYxIrAHCgNOcGMSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDAoEbmFtZRgDIAEoCRIrCgZzdGF0dXMYBCABKA4yGy5wbGFubmVyLnYxLkNoYXJhY3RlclN0YXR1cxI9ChhyZWxhdGlvbl90b19wYXJ0eV9zdGF0dXMYBSABKA4yGy5wbGFubmVyLnYxLlJlbGF0aW9uVG9QYXJ0eRIZChFpc19rbm93bl90b19wYXJ0eRgGIAEoCBIQCgNhZ2UYByABKAlIAIgBARIXCgphcHBlYXJhbmNlGAggASgJSAGIAQESEwoGYXZhdGFyGAkgASgJSAKIAQESFgoJYmFja3N0b3J5GAogASgJSAOIAQESFQoIZG1fbm90ZXMYCyABKAlIBIgBARIdChBmb3VuZHJ5X2FjdG9yX2lkGAwgASgJSAWIAQESFwoKa25vd25fbmFtZRgNIAEoCUgGiAEBEhgKC3BlcnNvbmFsaXR5GA4gASgJSAeIAQESGQoMcGxheWVyX25vdGVzGA8gASgJSAiIAQESEQoEcmFjZRgQIAEoCUgJiAEBEiAKE2N1cnJlbnRfbG9jYXRpb25faWQYESABKAlICogBARIfChJvcmlnaW5fbG9jYXRpb25faWQYEiABKAlIC4gBARIjChZzZXNzaW9uX2VuY291bnRlcmVkX2lkGBMgASgJSAyIAQESDwoHYWxpYXNlcxgUIAMoCRI9ChRsYXN0X2ZvdW5kcnlfc3luY19hdBgVIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIDYgBARIuCgpjcmVhdGVkX2F0GBYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GBcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIGCgRfYWdlQg0KC19hcHBlYXJhbmNlQgkKB19hdmF0YXJCDAoKX2JhY2tzdG9yeUILCglfZG1fbm90ZXNCEwoRX2ZvdW5kcnlfYWN0b3JfaWRCDQoLX2tub3duX25hbWVCDgoMX3BlcnNvbmFsaXR5Qg8KDV9wbGF5ZXJfbm90ZXNCBwoFX3JhY2VCFgoUX2N1cnJlbnRfbG9jYXRpb25faWRCFQoTX29yaWdpbl9sb2NhdGlvbl9pZEIZChdfc2Vzc2lvbl9lbmNvdW50ZXJlZF9pZEIXChVfbGFzdF9mb3VuZHJ5X3N5bmNfYXQi+QUKEENyZWF0ZU5wY1JlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDAoEbmFtZRgCIAEoCRIrCgZzdGF0dXMYAyABKA4yGy5wbGFubmVyLnYxLkNoYXJhY3RlclN0YXR1cxI9ChhyZWxhdGlvbl90b19wYXJ0eV9zdGF0dXMYBCABKA4yGy5wbGFubmVyLnYxLlJlbGF0aW9uVG9QYXJ0eRIZChFpc19rbm93bl90b19wYXJ0eRgFIAEoCBIQCgNhZ2UYBiABKAlIAIgBARIXCgphcHBlYXJhbmNlGAcgASgJSAGIAQESEwoGYXZhdGFyGAggASgJSAKIAQESFgoJYmFja3N0b3J5GAkgASgJSAOIAQESFQoIZG1fbm90ZXMYCiABKAlIBIgBARIXCgprbm93bl9uYW1lGAsgASgJSAWIAQESGAoLcGVyc29uYWxpdHkYDCABKAlIBogBARIZCgxwbGF5ZXJfbm90ZXMYDSABKAlIB4gBARIRCgRyYWNlGA4gASgJSAiIAQESIAoTY3VycmVudF9sb2NhdGlvbl9pZBgPIAEoCUgJiAEBEh8KEm9yaWdpbl9sb2NhdGlvbl9pZBgQIAEoCUgKiAEBEiMKFnNlc3Npb25fZW5jb3VudGVyZWRfaWQYESABKAlIC4gBARIPCgdhbGlhc2VzGBIgAygJEh0KEGZvdW5kcnlfYWN0b3JfaWQYEyABKAlIDIgBAUIGCgRfYWdlQg0KC19hcHBlYXJhbmNlQgkKB19hdmF0YXJCDAoKX2JhY2tzdG9yeUILCglfZG1fbm90ZXNCDQoLX2tub3duX25hbWVCDgoMX3BlcnNvbmFsaXR5Qg8KDV9wbGF5ZXJfbm90ZXNCBwoFX3JhY2VCFgoUX2N1cnJlbnRfbG9jYXRpb25faWRCFQoTX29yaWdpbl9sb2NhdGlvbl9pZEIZChdfc2Vzc2lvbl9lbmNvdW50ZXJlZF9pZEITChFfZm91bmRyeV9hY3Rvcl9pZCIxChFDcmVhdGVOcGNSZXNwb25zZRIcCgNucGMYASABKAsyDy5wbGFubmVyLnYxLk5wYyIbCg1HZXROcGNSZXF1ZXN0EgoKAmlkGAEgASgJIi4KDkdldE5wY1Jlc3BvbnNlEhwKA25wYxgBIAEoCzIPLnBsYW5uZXIudjEuTnBjIjAKGUxpc3ROcGNzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiOwoaTGlzdE5wY3NCeUNhbXBhaWduUmVzcG9uc2USHQoEbnBjcxgBIAMoCzIPLnBsYW5uZXIudjEuTnBjKscBCg9DaGFyYWN0ZXJTdGF0dXMSIAocQ0hBUkFDVEVSX1NUQVRVU19VTlNQRUNJRklFRBAAEhwKGENIQVJBQ1RFUl9TVEFUVVNfVU5LTk9XThABEhoKFkNIQVJBQ1RFUl9TVEFUVVNfQUxJVkUQAhIZChVDSEFSQUNURVJfU1RBVFVTX0RFQUQQAxIcChhDSEFSQUNURVJfU1RBVFVTX01JU1NJTkcQBBIfChtDSEFSQUNURVJfU1RBVFVTX1NVU1BJQ0lPVVMQBSrNAQoPUmVsYXRpb25Ub1BhcnR5EiEKHVJFTEFUSU9OX1RPX1BBUlRZX1VOU1BFQ0lGSUVEEAASHQoZUkVMQVRJT05fVE9fUEFSVFlfVU5LTk9XThABEhoKFlJFTEFUSU9OX1RPX1BBUlRZX0FMTFkQAhIbChdSRUxBVElPTl9UT19QQVJUWV9FTkVNWRADEh0KGVJFTEFUSU9OX1RPX1BBUlRZX05FVVRSQUwQBBIgChxSRUxBVElPTl9UT19QQVJUWV9TVVNQSUNJT1VTEAUyiwIKGU5vblBsYXllckNoYXJhY3RlclNlcnZpY2USSAoJQ3JlYXRlTnBjEhwucGxhbm5lci52MS5DcmVhdGVOcGNSZXF1ZXN0Gh0ucGxhbm5lci52MS5DcmVhdGVOcGNSZXNwb25zZRI/CgZHZXROcGMSGS5wbGFubmVyLnYxLkdldE5wY1JlcXVlc3QaGi5wbGFubmVyLnYxLkdldE5wY1Jlc3BvbnNlEmMKEkxpc3ROcGNzQnlDYW1wYWlnbhIlLnBsYW5uZXIudjEuTGlzdE5wY3NCeUNhbXBhaWduUmVxdWVzdBomLnBsYW5uZXIudjEuTGlzdE5wY3NCeUNhbXBhaWduUmVzcG9uc2VCtAEKDmNvbS5wbGFubmVyLnYxQhdOb25QbGF5ZXJDaGFyYWN0ZXJQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("CiVwbGFubmVyL3YxL25vbl9wbGF5ZXJfY2hhcmFjdGVyLnByb3RvEgpwbGFubmVyLnYxIrAHCgNOcGMSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDAoEbmFtZRgDIAEoCRIrCgZzdGF0dXMYBCABKA4yGy5wbGFubmVyLnYxLkNoYXJhY3RlclN0YXR1cxI9ChhyZWxhdGlvbl90b19wYXJ0eV9zdGF0dXMYBSABKA4yGy5wbGFubmVyLnYxLlJlbGF0aW9uVG9QYXJ0eRIZChFpc19rbm93bl90b19wYXJ0eRgGIAEoCBIQCgNhZ2UYByABKAlIAIgBARIXCgphcHBlYXJhbmNlGAggASgJSAGIAQESEwoGYXZhdGFyGAkgASgJSAKIAQESFgoJYmFja3N0b3J5GAogASgJSAOIAQESFQoIZG1fbm90ZXMYCyABKAlIBIgBARIdChBmb3VuZHJ5X2FjdG9yX2lkGAwgASgJSAWIAQESFwoKa25vd25fbmFtZRgNIAEoCUgGiAEBEhgKC3BlcnNvbmFsaXR5GA4gASgJSAeIAQESGQoMcGxheWVyX25vdGVzGA8gASgJSAiIAQESEQoEcmFjZRgQIAEoCUgJiAEBEiAKE2N1cnJlbnRfbG9jYXRpb25faWQYESABKAlICogBARIfChJvcmlnaW5fbG9jYXRpb25faWQYEiABKAlIC4gBARIjChZzZXNzaW9uX2VuY291bnRlcmVkX2lkGBMgASgJSAyIAQESDwoHYWxpYXNlcxgUIAMoCRI9ChRsYXN0X2ZvdW5kcnlfc3luY19hdBgVIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIDYgBARIuCgpjcmVhdGVkX2F0GBYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GBcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIGCgRfYWdlQg0KC19hcHBlYXJhbmNlQgkKB19hdmF0YXJCDAoKX2JhY2tzdG9yeUILCglfZG1fbm90ZXNCEwoRX2ZvdW5kcnlfYWN0b3JfaWRCDQoLX2tub3duX25hbWVCDgoMX3BlcnNvbmFsaXR5Qg8KDV9wbGF5ZXJfbm90ZXNCBwoFX3JhY2VCFgoUX2N1cnJlbnRfbG9jYXRpb25faWRCFQoTX29yaWdpbl9sb2NhdGlvbl9pZEIZChdfc2Vzc2lvbl9lbmNvdW50ZXJlZF9pZEIXChVfbGFzdF9mb3VuZHJ5X3N5bmNfYXQi+QUKEENyZWF0ZU5wY1JlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDAoEbmFtZRgCIAEoCRIrCgZzdGF0dXMYAyABKA4yGy5wbGFubmVyLnYxLkNoYXJhY3RlclN0YXR1cxI9ChhyZWxhdGlvbl90b19wYXJ0eV9zdGF0dXMYBCABKA4yGy5wbGFubmVyLnYxLlJlbGF0aW9uVG9QYXJ0eRIZChFpc19rbm93bl90b19wYXJ0eRgFIAEoCBIQCgNhZ2UYBiABKAlIAIgBARIXCgphcHBlYXJhbmNlGAcgASgJSAGIAQESEwoGYXZhdGFyGAggASgJSAKIAQESFgoJYmFja3N0b3J5GAkgASgJSAOIAQESFQoIZG1fbm90ZXMYCiABKAlIBIgBARIXCgprbm93bl9uYW1lGAsgASgJSAWIAQESGAoLcGVyc29uYWxpdHkYDCABKAlIBogBARIZCgxwbGF5ZXJfbm90ZXMYDSABKAlIB4gBARIRCgRyYWNlGA4gASgJSAiIAQESIAoTY3VycmVudF9sb2NhdGlvbl9pZBgPIAEoCUgJiAEBEh8KEm9yaWdpbl9sb2NhdGlvbl9pZBgQIAEoCUgKiAEBEiMKFnNlc3Npb25fZW5jb3VudGVyZWRfaWQYESABKAlIC4gBARIPCgdhbGlhc2VzGBIgAygJEh0KEGZvdW5kcnlfYWN0b3JfaWQYEyABKAlIDIgBAUIGCgRfYWdlQg0KC19hcHBlYXJhbmNlQgkKB19hdmF0YXJCDAoKX2JhY2tzdG9yeUILCglfZG1fbm90ZXNCDQoLX2tub3duX25hbWVCDgoMX3BlcnNvbmFsaXR5Qg8KDV9wbGF5ZXJfbm90ZXNCBwoFX3JhY2VCFgoUX2N1cnJlbnRfbG9jYXRpb25faWRCFQoTX29yaWdpbl9sb2NhdGlvbl9pZEIZChdfc2Vzc2lvbl9lbmNvdW50ZXJlZF9pZEITChFfZm91bmRyeV9hY3Rvcl9pZCIxChFDcmVhdGVOcGNSZXNwb25zZRIcCgNucGMYASABKAsyDy5wbGFubmVyLnYxLk5wYyIbCg1HZXROcGNSZXF1ZXN0EgoKAmlkGAEgASgJIi4KDkdldE5wY1Jlc3BvbnNlEhwKA25wYxgBIAEoCzIPLnBsYW5uZXIudjEuTnBjIjAKGUxpc3ROcGNzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiOwoaTGlzdE5wY3NCeUNhbXBhaWduUmVzcG9uc2USHQoEbnBjcxgBIAMoCzIPLnBsYW5uZXIudjEuTnBjIssGChBVcGRhdGVOcGNSZXF1ZXN0EgoKAmlkGAEgASgJEhEKBG5hbWUYAiABKAlIAIgBARIwCgZzdGF0dXMYAyABKA4yGy5wbGFubmVyLnYxLkNoYXJhY3RlclN0YXR1c0gBiAEBEkIKGHJlbGF0aW9uX3RvX3BhcnR5X3N0YXR1cxgEIAEoDjIbLnBsYW5uZXIudjEuUmVsYXRpb25Ub1BhcnR5SAKIAQESHgoRaXNfa25vd25fdG9fcGFydHkYBSABKAhIA4gBARIQCgNhZ2UYBiABKAlIBIgBARIXCgphcHBlYXJhbmNlGAcgASgJSAWIAQESEwoGYXZhdGFyGAggASgJSAaIAQESFgoJYmFja3N0b3J5GAkgASgJSAeIAQESFQoIZG1fbm90ZXMYCiABKAlICIgBARIdChBmb3VuZHJ5X2FjdG9yX2lkGAsgASgJSAmIAQESFwoKa25vd25fbmFtZRgMIAEoCUgKiAEBEhgKC3BlcnNvbmFsaXR5GA0gASgJSAuIAQESGQoMcGxheWVyX25vdGVzGA4gASgJSAyIAQESEQoEcmFjZRgPIAEoCUgNiAEBEiAKE2N1cnJlbnRfbG9jYXRpb25faWQYECABKAlIDogBARIfChJvcmlnaW5fbG9jYXRpb25faWQYESABKAlID4gBARIjChZzZXNzaW9uX2VuY291bnRlcmVkX2lkGBIgASgJSBCIAQESDwoHYWxpYXNlcxgTIAMoCUIHCgVfbmFtZUIJCgdfc3RhdHVzQhsKGV9yZWxhdGlvbl90b19wYXJ0eV9zdGF0dXNCFAoSX2lzX2tub3duX3RvX3BhcnR5QgYKBF9hZ2VCDQoLX2FwcGVhcmFuY2VCCQoHX2F2YXRhckIMCgpfYmFja3N0b3J5QgsKCV9kbV9ub3Rlc0ITChFfZm91bmRyeV9hY3Rvcl9pZEINCgtfa25vd25fbmFtZUIOCgxfcGVyc29uYWxpdHlCDwoNX3BsYXllcl9ub3Rlc0IHCgVfcmFjZUIWChRfY3VycmVudF9sb2NhdGlvbl9pZEIVChNfb3JpZ2luX2xvY2F0aW9uX2lkQhkKF19zZXNzaW9uX2VuY291bnRlcmVkX2lkIjEKEVVwZGF0ZU5wY1Jlc3BvbnNlEhwKA25wYxgBIAEoCzIPLnBsYW5uZXIudjEuTnBjIh4KEFJlbW92ZU5wY1JlcXVlc3QSCgoCaWQYASABKAkiEwoRUmVtb3ZlTnBjUmVzcG9uc2UqxwEKD0NoYXJhY3RlclN0YXR1cxIgChxDSEFSQUNURVJfU1RBVFVTX1VOU1BFQ0lGSUVEEAASHAoYQ0hBUkFDVEVSX1NUQVRVU19VTktOT1dOEAESGgoWQ0hBUkFDVEVSX1NUQVRVU19BTElWRRACEhkKFUNIQVJBQ1RFUl9TVEFUVVNfREVBRBADEhwKGENIQVJBQ1RFUl9TVEFUVVNfTUlTU0lORxAEEh8KG0NIQVJBQ1RFUl9TVEFUVVNfU1VTUElDSU9VUxAFKs0BCg9SZWxhdGlvblRvUGFydHkSIQodUkVMQVRJT05fVE9fUEFSVFlfVU5TUEVDSUZJRUQQABIdChlSRUxBVElPTl9UT19QQVJUWV9VTktOT1dOEAESGgoWUkVMQVRJT05fVE9fUEFSVFlfQUxMWRACEhsKF1JFTEFUSU9OX1RPX1BBUlRZX0VORU1ZEAMSHQoZUkVMQVRJT05fVE9fUEFSVFlfTkVVVFJBTBAEEiAKHFJFTEFUSU9OX1RPX1BBUlRZX1NVU1BJQ0lPVVMQBTKfAwoZTm9uUGxheWVyQ2hhcmFjdGVyU2VydmljZRJICglDcmVhdGVOcGMSHC5wbGFubmVyLnYxLkNyZWF0ZU5wY1JlcXVlc3QaHS5wbGFubmVyLnYxLkNyZWF0ZU5wY1Jlc3BvbnNlEj8KBkdldE5wYxIZLnBsYW5uZXIudjEuR2V0TnBjUmVxdWVzdBoaLnBsYW5uZXIudjEuR2V0TnBjUmVzcG9uc2USYwoSTGlzdE5wY3NCeUNhbXBhaWduEiUucGxhbm5lci52MS5MaXN0TnBjc0J5Q2FtcGFpZ25SZXF1ZXN0GiYucGxhbm5lci52MS5MaXN0TnBjc0J5Q2FtcGFpZ25SZXNwb25zZRJICglVcGRhdGVOcGMSHC5wbGFubmVyLnYxLlVwZGF0ZU5wY1JlcXVlc3QaHS5wbGFubmVyLnYxLlVwZGF0ZU5wY1Jlc3BvbnNlEkgKCVJlbW92ZU5wYxIcLnBsYW5uZXIudjEuUmVtb3ZlTnBjUmVxdWVzdBodLnBsYW5uZXIudjEuUmVtb3ZlTnBjUmVzcG9uc2VCtAEKDmNvbS5wbGFubmVyLnYxQhdOb25QbGF5ZXJDaGFyYWN0ZXJQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Npc
@@ -334,6 +334,160 @@ export const ListNpcsByCampaignResponseSchema: GenMessage<ListNpcsByCampaignResp
   messageDesc(file_planner_v1_non_player_character, 6);
 
 /**
+ * @generated from message planner.v1.UpdateNpcRequest
+ */
+export type UpdateNpcRequest = Message<"planner.v1.UpdateNpcRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: optional string name = 2;
+   */
+  name?: string | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.CharacterStatus status = 3;
+   */
+  status?: CharacterStatus | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.RelationToParty relation_to_party_status = 4;
+   */
+  relationToPartyStatus?: RelationToParty | undefined;
+
+  /**
+   * @generated from field: optional bool is_known_to_party = 5;
+   */
+  isKnownToParty?: boolean | undefined;
+
+  /**
+   * @generated from field: optional string age = 6;
+   */
+  age?: string | undefined;
+
+  /**
+   * @generated from field: optional string appearance = 7;
+   */
+  appearance?: string | undefined;
+
+  /**
+   * @generated from field: optional string avatar = 8;
+   */
+  avatar?: string | undefined;
+
+  /**
+   * @generated from field: optional string backstory = 9;
+   */
+  backstory?: string | undefined;
+
+  /**
+   * @generated from field: optional string dm_notes = 10;
+   */
+  dmNotes?: string | undefined;
+
+  /**
+   * @generated from field: optional string foundry_actor_id = 11;
+   */
+  foundryActorId?: string | undefined;
+
+  /**
+   * @generated from field: optional string known_name = 12;
+   */
+  knownName?: string | undefined;
+
+  /**
+   * @generated from field: optional string personality = 13;
+   */
+  personality?: string | undefined;
+
+  /**
+   * @generated from field: optional string player_notes = 14;
+   */
+  playerNotes?: string | undefined;
+
+  /**
+   * @generated from field: optional string race = 15;
+   */
+  race?: string | undefined;
+
+  /**
+   * @generated from field: optional string current_location_id = 16;
+   */
+  currentLocationId?: string | undefined;
+
+  /**
+   * @generated from field: optional string origin_location_id = 17;
+   */
+  originLocationId?: string | undefined;
+
+  /**
+   * @generated from field: optional string session_encountered_id = 18;
+   */
+  sessionEncounteredId?: string | undefined;
+
+  /**
+   * @generated from field: repeated string aliases = 19;
+   */
+  aliases: string[];
+};
+
+/**
+ * Describes the message planner.v1.UpdateNpcRequest.
+ * Use `create(UpdateNpcRequestSchema)` to create a new message.
+ */
+export const UpdateNpcRequestSchema: GenMessage<UpdateNpcRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_non_player_character, 7);
+
+/**
+ * @generated from message planner.v1.UpdateNpcResponse
+ */
+export type UpdateNpcResponse = Message<"planner.v1.UpdateNpcResponse"> & {
+  /**
+   * @generated from field: planner.v1.Npc npc = 1;
+   */
+  npc?: Npc | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateNpcResponse.
+ * Use `create(UpdateNpcResponseSchema)` to create a new message.
+ */
+export const UpdateNpcResponseSchema: GenMessage<UpdateNpcResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_non_player_character, 8);
+
+/**
+ * @generated from message planner.v1.RemoveNpcRequest
+ */
+export type RemoveNpcRequest = Message<"planner.v1.RemoveNpcRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * Describes the message planner.v1.RemoveNpcRequest.
+ * Use `create(RemoveNpcRequestSchema)` to create a new message.
+ */
+export const RemoveNpcRequestSchema: GenMessage<RemoveNpcRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_non_player_character, 9);
+
+/**
+ * @generated from message planner.v1.RemoveNpcResponse
+ */
+export type RemoveNpcResponse = Message<"planner.v1.RemoveNpcResponse"> & {
+};
+
+/**
+ * Describes the message planner.v1.RemoveNpcResponse.
+ * Use `create(RemoveNpcResponseSchema)` to create a new message.
+ */
+export const RemoveNpcResponseSchema: GenMessage<RemoveNpcResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_non_player_character, 10);
+
+/**
  * @generated from enum planner.v1.CharacterStatus
  */
 export enum CharacterStatus {
@@ -442,6 +596,22 @@ export const NonPlayerCharacterService: GenService<{
     methodKind: "unary";
     input: typeof ListNpcsByCampaignRequestSchema;
     output: typeof ListNpcsByCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.NonPlayerCharacterService.UpdateNpc
+   */
+  updateNpc: {
+    methodKind: "unary";
+    input: typeof UpdateNpcRequestSchema;
+    output: typeof UpdateNpcResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.NonPlayerCharacterService.RemoveNpc
+   */
+  removeNpc: {
+    methodKind: "unary";
+    input: typeof RemoveNpcRequestSchema;
+    output: typeof RemoveNpcResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_non_player_character, 0);

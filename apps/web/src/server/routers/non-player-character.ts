@@ -6,6 +6,10 @@ import {
 	GetNonPlayerCharacterResponseSchema,
 	ListNonPlayerCharactersRequestSchema,
 	ListNonPlayerCharactersResponseSchema,
+	RemoveNpcRequestSchema,
+	RemoveNpcResponseSchema,
+	UpdateNpcRequestSchema,
+	UpdateNpcResponseSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
@@ -92,8 +96,86 @@ const listNonPlayerCharacters = privateProcedure
 		}
 	});
 
+const removeNpc = privateProcedure
+	.route({
+		method: "POST",
+		path: "/npc/remove",
+		summary: "Remove non-player character from a campaign",
+	})
+	.input(RemoveNpcRequestSchema)
+	.output(RemoveNpcResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id } = input;
+		const api = context.api;
+		try {
+			await api.npc.removeNpc({
+				id,
+			});
+			return {};
+		} catch (err) {
+			handleError(err, "failed to remove npc", { npcId: id }, context.logger);
+		}
+	});
+
+const updateNpc = privateProcedure
+	.route({
+		method: "POST",
+		path: "/npc/update",
+		summary: "Update a non-player character",
+	})
+	.input(UpdateNpcRequestSchema)
+	.output(UpdateNpcResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+
+		try {
+			const res = await api.npc.updateNpc({
+				age: input.age,
+				aliases: input.aliases,
+				appearance: input.appearance,
+				avatar: input.avatar,
+				backstory: input.backstory,
+				currentLocationId: input.currentLocationId,
+				dmNotes: input.dmNotes,
+				foundryActorId: input.foundryActorId,
+				id: input.id,
+				isKnownToParty: input.isKnownToParty,
+				knownName: input.knownName,
+				name: input.name,
+				originLocationId: input.originLocationId,
+				personality: input.personality,
+				playerNotes: input.playerNotes,
+				race: input.race,
+				relationToPartyStatus: input.relationToPartyStatus
+					? relationToPartyToProto(input.relationToPartyStatus)
+					: undefined,
+				sessionEncounteredId: input.sessionEncounteredId,
+				status: input.status ? characterStatusToProto(input.status) : undefined,
+			});
+
+			if (!res.npc) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update npc",
+				});
+			}
+
+			return {
+				npc: protoToNpc(res.npc),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update npc",
+				{ npcId: input.id },
+				context.logger,
+			);
+		}
+	});
+
 export const nonPlayerCharacterRouter = {
 	createNpc,
 	getNonPlayerCharacter,
 	listNonPlayerCharacters,
+	removeNpc,
+	updateNpc,
 };
