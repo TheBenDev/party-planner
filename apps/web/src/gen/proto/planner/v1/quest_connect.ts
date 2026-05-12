@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateQuestRequest, CreateQuestResponse, GetQuestRequest, GetQuestResponse, ListQuestsByCampaignRequest, ListQuestsByCampaignResponse } from "./quest_pb.js";
+import { CreateQuestRequest, CreateQuestResponse, GetQuestRequest, GetQuestResponse, ListQuestsByCampaignRequest, ListQuestsByCampaignResponse, RemoveQuestRequest, RemoveQuestResponse, UpdateQuestRequest, UpdateQuestResponse } from "./quest_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,24 @@ export const QuestService = {
       name: "ListQuestsByCampaign",
       I: ListQuestsByCampaignRequest,
       O: ListQuestsByCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.QuestService.UpdateQuest
+     */
+    updateQuest: {
+      name: "UpdateQuest",
+      I: UpdateQuestRequest,
+      O: UpdateQuestResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.QuestService.RemoveQuest
+     */
+    removeQuest: {
+      name: "RemoveQuest",
+      I: RemoveQuestRequest,
+      O: RemoveQuestResponse,
       kind: MethodKind.Unary,
     },
   }
