@@ -60,6 +60,9 @@ func main() {
 	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(sessionPath, sessionHandler)
 
+	locationPath, locationHandler := plannerv1connect.NewLocationServiceHandler(&rpc.LocationServer{Location: &service.LocationService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
+	mux.Handle(locationPath, locationHandler)
+
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(&rpc.UserServer{User: &service.UserService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(userPath, userHandler)
 
