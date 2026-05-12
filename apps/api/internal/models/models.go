@@ -300,6 +300,13 @@ type CreateQuestRequest struct {
 	Reward       json.RawMessage
 }
 
+type UpdateQuestRequest struct {
+	ID          string
+	Title       *string
+	Status      *QuestStatus
+	Description sql.NullString
+}
+
 // -----------------------------------------------------------------------------
 // Sessions
 // -----------------------------------------------------------------------------

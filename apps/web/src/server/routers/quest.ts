@@ -6,6 +6,10 @@ import {
 	GetQuestResponseSchema,
 	ListQuestsByCampaignRequestSchema,
 	ListQuestsByCampaignResponseSchema,
+	RemoveQuestRequestSchema,
+	RemoveQuestResponseSchema,
+	UpdateQuestRequestSchema,
+	UpdateQuestResponseSchema,
 } from "@planner/schemas/quests";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
@@ -21,6 +25,7 @@ const createQuest = privateProcedure
 	.output(CreateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
 		const api = context.api;
+		context.logger?.info({ reward: input.reward }, "REWARD SHOWN HERE");
 		try {
 			const res = await api.quest.createQuest({
 				...input,
@@ -36,9 +41,7 @@ const createQuest = privateProcedure
 			handleError(
 				err,
 				"failed to create quest",
-				{
-					campaignId: input.campaignId,
-				},
+				{ campaignId: input.campaignId },
 				context.logger,
 			);
 		}
@@ -85,8 +88,64 @@ const listQuestsByCampaign = privateProcedure
 		}
 	});
 
+const updateQuest = privateProcedure
+	.route({
+		method: "POST",
+		path: "/quest/update",
+		summary: "Update a quest",
+	})
+	.input(UpdateQuestRequestSchema)
+	.output(UpdateQuestResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.quest.updateQuest({
+				...input,
+				status: input.status ? questStatusToProto(input.status) : undefined,
+			});
+			if (res.quest === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update quest",
+				});
+			}
+			return { quest: protoToQuest(res.quest) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update quest",
+				{ questId: input.id },
+				context.logger,
+			);
+		}
+	});
+
+const removeQuest = privateProcedure
+	.route({
+		method: "POST",
+		path: "/quest/remove",
+		summary: "Remove a quest",
+	})
+	.input(RemoveQuestRequestSchema)
+	.output(RemoveQuestResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			await api.quest.removeQuest({ id: input.id });
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to remove quest",
+				{ questId: input.id },
+				context.logger,
+			);
+		}
+	});
+
 export const questRouter = {
 	createQuest,
 	getQuest,
 	listQuestsByCampaign,
+	removeQuest,
+	updateQuest,
 };

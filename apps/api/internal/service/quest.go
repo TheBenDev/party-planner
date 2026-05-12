@@ -52,6 +52,32 @@ func (s *QuestService) ListByCampaign(campaignId string) ([]*model.Quest, error)
 	return quests, nil
 }
 
+func (s *QuestService) Update(req *model.UpdateQuestRequest) (*model.Quest, error) {
+	_, err := s.Get(req.ID)
+	if err != nil {
+		return nil, err
+	}
+	updated, err := s.DB.UpdateQuest(req)
+	if err != nil {
+		if mapped := mapQuestPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("update quest error: %w", err)
+	}
+	return updated, nil
+}
+
+func (s *QuestService) Remove(id string) error {
+	_, err := s.Get(id)
+	if err != nil {
+		return err
+	}
+	if err := s.DB.RemoveQuest(id); err != nil {
+		return fmt.Errorf("remove quest error: %w", err)
+	}
+	return nil
+}
+
 func mapQuestPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		return ErrQuestAlreadyExists

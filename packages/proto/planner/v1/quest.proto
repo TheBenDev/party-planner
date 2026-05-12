@@ -67,6 +67,23 @@ message ListQuestsByCampaignResponse {
   repeated Quest quests = 1;
 }
 
+message UpdateQuestRequest {
+  string id = 1;
+  optional string title = 2;
+  optional QuestStatus status = 3;
+  optional string description = 4;
+}
+
+message UpdateQuestResponse {
+  Quest quest = 1;
+}
+
+message RemoveQuestRequest {
+  string id = 1;
+}
+
+message RemoveQuestResponse {}
+
 // -----------------------------------------------------------------------------
 // Service
 // -----------------------------------------------------------------------------
@@ -75,4 +92,6 @@ service QuestService {
   rpc CreateQuest(CreateQuestRequest) returns (CreateQuestResponse);
   rpc GetQuest(GetQuestRequest) returns (GetQuestResponse);
   rpc ListQuestsByCampaign(ListQuestsByCampaignRequest) returns (ListQuestsByCampaignResponse);
+  rpc UpdateQuest(UpdateQuestRequest) returns (UpdateQuestResponse);
+  rpc RemoveQuest(RemoveQuestRequest) returns (RemoveQuestResponse);
 }

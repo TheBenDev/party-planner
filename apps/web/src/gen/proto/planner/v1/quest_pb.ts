@@ -12,7 +12,7 @@ import type { JsonObject, Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/quest.proto.
  */
 export const file_planner_v1_quest: GenFile = /*@__PURE__*/
-  fileDesc("ChZwbGFubmVyL3YxL3F1ZXN0LnByb3RvEgpwbGFubmVyLnYxIt8DCgVRdWVzdBIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRInCgZzdGF0dXMYBCABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAUgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBiABKAlIAYgBARIsCgZyZXdhcmQYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQESNQoMY29tcGxldGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgDiAEBEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkQg8KDV9jb21wbGV0ZWRfYXRCDQoLX2RlbGV0ZWRfYXQi9AEKEkNyZWF0ZVF1ZXN0UmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRInCgZzdGF0dXMYAyABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBSABKAlIAYgBARIsCgZyZXdhcmQYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQFCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkIjcKE0NyZWF0ZVF1ZXN0UmVzcG9uc2USIAoFcXVlc3QYASABKAsyES5wbGFubmVyLnYxLlF1ZXN0Ih0KD0dldFF1ZXN0UmVxdWVzdBIKCgJpZBgBIAEoCSI0ChBHZXRRdWVzdFJlc3BvbnNlEiAKBXF1ZXN0GAEgASgLMhEucGxhbm5lci52MS5RdWVzdCIyChtMaXN0UXVlc3RzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiQQocTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXNwb25zZRIhCgZxdWVzdHMYASADKAsyES5wbGFubmVyLnYxLlF1ZXN0KnkKC1F1ZXN0U3RhdHVzEhwKGFFVRVNUX1NUQVRVU19VTlNQRUNJRklFRBAAEhcKE1FVRVNUX1NUQVRVU19BQ1RJVkUQARIaChZRVUVTVF9TVEFUVVNfQ09NUExFVEVEEAISFwoTUVVFU1RfU1RBVFVTX0ZBSUxFRBADMpACCgxRdWVzdFNlcnZpY2USTgoLQ3JlYXRlUXVlc3QSHi5wbGFubmVyLnYxLkNyZWF0ZVF1ZXN0UmVxdWVzdBofLnBsYW5uZXIudjEuQ3JlYXRlUXVlc3RSZXNwb25zZRJFCghHZXRRdWVzdBIbLnBsYW5uZXIudjEuR2V0UXVlc3RSZXF1ZXN0GhwucGxhbm5lci52MS5HZXRRdWVzdFJlc3BvbnNlEmkKFExpc3RRdWVzdHNCeUNhbXBhaWduEicucGxhbm5lci52MS5MaXN0UXVlc3RzQnlDYW1wYWlnblJlcXVlc3QaKC5wbGFubmVyLnYxLkxpc3RRdWVzdHNCeUNhbXBhaWduUmVzcG9uc2VCpwEKDmNvbS5wbGFubmVyLnYxQgpRdWVzdFByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_struct, file_google_protobuf_timestamp]);
+  fileDesc("ChZwbGFubmVyL3YxL3F1ZXN0LnByb3RvEgpwbGFubmVyLnYxIt8DCgVRdWVzdBIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRInCgZzdGF0dXMYBCABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAUgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBiABKAlIAYgBARIsCgZyZXdhcmQYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQESNQoMY29tcGxldGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgDiAEBEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkQg8KDV9jb21wbGV0ZWRfYXRCDQoLX2RlbGV0ZWRfYXQi9AEKEkNyZWF0ZVF1ZXN0UmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRInCgZzdGF0dXMYAyABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBSABKAlIAYgBARIsCgZyZXdhcmQYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQFCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkIjcKE0NyZWF0ZVF1ZXN0UmVzcG9uc2USIAoFcXVlc3QYASABKAsyES5wbGFubmVyLnYxLlF1ZXN0Ih0KD0dldFF1ZXN0UmVxdWVzdBIKCgJpZBgBIAEoCSI0ChBHZXRRdWVzdFJlc3BvbnNlEiAKBXF1ZXN0GAEgASgLMhEucGxhbm5lci52MS5RdWVzdCIyChtMaXN0UXVlc3RzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiQQocTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXNwb25zZRIhCgZxdWVzdHMYASADKAsyES5wbGFubmVyLnYxLlF1ZXN0IqEBChJVcGRhdGVRdWVzdFJlcXVlc3QSCgoCaWQYASABKAkSEgoFdGl0bGUYAiABKAlIAIgBARIsCgZzdGF0dXMYAyABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzSAGIAQESGAoLZGVzY3JpcHRpb24YBCABKAlIAogBAUIICgZfdGl0bGVCCQoHX3N0YXR1c0IOCgxfZGVzY3JpcHRpb24iNwoTVXBkYXRlUXVlc3RSZXNwb25zZRIgCgVxdWVzdBgBIAEoCzIRLnBsYW5uZXIudjEuUXVlc3QiIAoSUmVtb3ZlUXVlc3RSZXF1ZXN0EgoKAmlkGAEgASgJIhUKE1JlbW92ZVF1ZXN0UmVzcG9uc2UqeQoLUXVlc3RTdGF0dXMSHAoYUVVFU1RfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTUVVFU1RfU1RBVFVTX0FDVElWRRABEhoKFlFVRVNUX1NUQVRVU19DT01QTEVURUQQAhIXChNRVUVTVF9TVEFUVVNfRkFJTEVEEAMysAMKDFF1ZXN0U2VydmljZRJOCgtDcmVhdGVRdWVzdBIeLnBsYW5uZXIudjEuQ3JlYXRlUXVlc3RSZXF1ZXN0Gh8ucGxhbm5lci52MS5DcmVhdGVRdWVzdFJlc3BvbnNlEkUKCEdldFF1ZXN0EhsucGxhbm5lci52MS5HZXRRdWVzdFJlcXVlc3QaHC5wbGFubmVyLnYxLkdldFF1ZXN0UmVzcG9uc2USaQoUTGlzdFF1ZXN0c0J5Q2FtcGFpZ24SJy5wbGFubmVyLnYxLkxpc3RRdWVzdHNCeUNhbXBhaWduUmVxdWVzdBooLnBsYW5uZXIudjEuTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXNwb25zZRJOCgtVcGRhdGVRdWVzdBIeLnBsYW5uZXIudjEuVXBkYXRlUXVlc3RSZXF1ZXN0Gh8ucGxhbm5lci52MS5VcGRhdGVRdWVzdFJlc3BvbnNlEk4KC1JlbW92ZVF1ZXN0Eh4ucGxhbm5lci52MS5SZW1vdmVRdWVzdFJlcXVlc3QaHy5wbGFubmVyLnYxLlJlbW92ZVF1ZXN0UmVzcG9uc2VCpwEKDmNvbS5wbGFubmVyLnYxQgpRdWVzdFByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_struct, file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Quest
@@ -213,6 +213,85 @@ export const ListQuestsByCampaignResponseSchema: GenMessage<ListQuestsByCampaign
   messageDesc(file_planner_v1_quest, 6);
 
 /**
+ * @generated from message planner.v1.UpdateQuestRequest
+ */
+export type UpdateQuestRequest = Message<"planner.v1.UpdateQuestRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: optional string title = 2;
+   */
+  title?: string | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.QuestStatus status = 3;
+   */
+  status?: QuestStatus | undefined;
+
+  /**
+   * @generated from field: optional string description = 4;
+   */
+  description?: string | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateQuestRequest.
+ * Use `create(UpdateQuestRequestSchema)` to create a new message.
+ */
+export const UpdateQuestRequestSchema: GenMessage<UpdateQuestRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 7);
+
+/**
+ * @generated from message planner.v1.UpdateQuestResponse
+ */
+export type UpdateQuestResponse = Message<"planner.v1.UpdateQuestResponse"> & {
+  /**
+   * @generated from field: planner.v1.Quest quest = 1;
+   */
+  quest?: Quest | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateQuestResponse.
+ * Use `create(UpdateQuestResponseSchema)` to create a new message.
+ */
+export const UpdateQuestResponseSchema: GenMessage<UpdateQuestResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 8);
+
+/**
+ * @generated from message planner.v1.RemoveQuestRequest
+ */
+export type RemoveQuestRequest = Message<"planner.v1.RemoveQuestRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * Describes the message planner.v1.RemoveQuestRequest.
+ * Use `create(RemoveQuestRequestSchema)` to create a new message.
+ */
+export const RemoveQuestRequestSchema: GenMessage<RemoveQuestRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 9);
+
+/**
+ * @generated from message planner.v1.RemoveQuestResponse
+ */
+export type RemoveQuestResponse = Message<"planner.v1.RemoveQuestResponse"> & {
+};
+
+/**
+ * Describes the message planner.v1.RemoveQuestResponse.
+ * Use `create(RemoveQuestResponseSchema)` to create a new message.
+ */
+export const RemoveQuestResponseSchema: GenMessage<RemoveQuestResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 10);
+
+/**
  * @generated from enum planner.v1.QuestStatus
  */
 export enum QuestStatus {
@@ -270,6 +349,22 @@ export const QuestService: GenService<{
     methodKind: "unary";
     input: typeof ListQuestsByCampaignRequestSchema;
     output: typeof ListQuestsByCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.QuestService.UpdateQuest
+   */
+  updateQuest: {
+    methodKind: "unary";
+    input: typeof UpdateQuestRequestSchema;
+    output: typeof UpdateQuestResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.QuestService.RemoveQuest
+   */
+  removeQuest: {
+    methodKind: "unary";
+    input: typeof RemoveQuestRequestSchema;
+    output: typeof RemoveQuestResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_quest, 0);

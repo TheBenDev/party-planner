@@ -19,12 +19,15 @@ import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthAcceptRouteImport } from './routes/_auth/accept'
 import { Route as AuthenticatedCampaignIndexRouteImport } from './routes/_authenticated/campaign/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
+import { Route as AuthenticatedCampaignQuestsIndexRouteImport } from './routes/_authenticated/campaign/quests/index'
 import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
 import { Route as AuthenticatedCampaignLocationsIndexRouteImport } from './routes/_authenticated/campaign/locations/index'
 import { Route as AuthenticatedCampaignInviteIndexRouteImport } from './routes/_authenticated/campaign/invite/index'
 import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
+import { Route as AuthenticatedCampaignQuestsQuestIdIndexRouteImport } from './routes/_authenticated/campaign/quests/$questId/index'
 import { Route as AuthenticatedCampaignNpcsNpcIdIndexRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/index'
 import { Route as AuthenticatedCampaignLocationsLocationIdIndexRouteImport } from './routes/_authenticated/campaign/locations/$locationId/index'
+import { Route as AuthenticatedCampaignQuestsQuestIdEditRouteImport } from './routes/_authenticated/campaign/quests/$questId/edit'
 import { Route as AuthenticatedCampaignNpcsNpcIdEditRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/edit'
 import { Route as AuthenticatedCampaignLocationsLocationIdEditRouteImport } from './routes/_authenticated/campaign/locations/$locationId/edit'
 
@@ -78,6 +81,12 @@ const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
   path: '/api/webhooks/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCampaignQuestsIndexRoute =
+  AuthenticatedCampaignQuestsIndexRouteImport.update({
+    id: '/campaign/quests/',
+    path: '/campaign/quests/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignNpcsIndexRoute =
   AuthenticatedCampaignNpcsIndexRouteImport.update({
     id: '/campaign/npcs/',
@@ -102,6 +111,12 @@ const AuthenticatedCampaignCreateIndexRoute =
     path: '/campaign/create/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignQuestsQuestIdIndexRoute =
+  AuthenticatedCampaignQuestsQuestIdIndexRouteImport.update({
+    id: '/campaign/quests/$questId/',
+    path: '/campaign/quests/$questId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignNpcsNpcIdIndexRoute =
   AuthenticatedCampaignNpcsNpcIdIndexRouteImport.update({
     id: '/campaign/npcs/$npcId/',
@@ -112,6 +127,12 @@ const AuthenticatedCampaignLocationsLocationIdIndexRoute =
   AuthenticatedCampaignLocationsLocationIdIndexRouteImport.update({
     id: '/campaign/locations/$locationId/',
     path: '/campaign/locations/$locationId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCampaignQuestsQuestIdEditRoute =
+  AuthenticatedCampaignQuestsQuestIdEditRouteImport.update({
+    id: '/campaign/quests/$questId/edit',
+    path: '/campaign/quests/$questId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedCampaignNpcsNpcIdEditRoute =
@@ -141,10 +162,13 @@ export interface FileRoutesByFullPath {
   '/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
   '/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
   '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
   '/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
+  '/campaign/quests/$questId/': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -160,10 +184,13 @@ export interface FileRoutesByTo {
   '/campaign/invite': typeof AuthenticatedCampaignInviteIndexRoute
   '/campaign/locations': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/campaign/quests': typeof AuthenticatedCampaignQuestsIndexRoute
   '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
   '/campaign/locations/$locationId': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
+  '/campaign/quests/$questId': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -181,10 +208,13 @@ export interface FileRoutesById {
   '/_authenticated/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
   '/_authenticated/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/_authenticated/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/_authenticated/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
   '/_authenticated/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/_authenticated/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/_authenticated/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
   '/_authenticated/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/_authenticated/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
+  '/_authenticated/campaign/quests/$questId/': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,10 +232,13 @@ export interface FileRouteTypes {
     | '/campaign/invite/'
     | '/campaign/locations/'
     | '/campaign/npcs/'
+    | '/campaign/quests/'
     | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
+    | '/campaign/quests/$questId/edit'
     | '/campaign/locations/$locationId/'
     | '/campaign/npcs/$npcId/'
+    | '/campaign/quests/$questId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -221,10 +254,13 @@ export interface FileRouteTypes {
     | '/campaign/invite'
     | '/campaign/locations'
     | '/campaign/npcs'
+    | '/campaign/quests'
     | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
+    | '/campaign/quests/$questId/edit'
     | '/campaign/locations/$locationId'
     | '/campaign/npcs/$npcId'
+    | '/campaign/quests/$questId'
   id:
     | '__root__'
     | '/'
@@ -241,10 +277,13 @@ export interface FileRouteTypes {
     | '/_authenticated/campaign/invite/'
     | '/_authenticated/campaign/locations/'
     | '/_authenticated/campaign/npcs/'
+    | '/_authenticated/campaign/quests/'
     | '/_authenticated/campaign/locations/$locationId/edit'
     | '/_authenticated/campaign/npcs/$npcId/edit'
+    | '/_authenticated/campaign/quests/$questId/edit'
     | '/_authenticated/campaign/locations/$locationId/'
     | '/_authenticated/campaign/npcs/$npcId/'
+    | '/_authenticated/campaign/quests/$questId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -329,6 +368,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksClerkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/campaign/quests/': {
+      id: '/_authenticated/campaign/quests/'
+      path: '/campaign/quests'
+      fullPath: '/campaign/quests/'
+      preLoaderRoute: typeof AuthenticatedCampaignQuestsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/npcs/': {
       id: '/_authenticated/campaign/npcs/'
       path: '/campaign/npcs'
@@ -357,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignCreateIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/quests/$questId/': {
+      id: '/_authenticated/campaign/quests/$questId/'
+      path: '/campaign/quests/$questId'
+      fullPath: '/campaign/quests/$questId/'
+      preLoaderRoute: typeof AuthenticatedCampaignQuestsQuestIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/npcs/$npcId/': {
       id: '/_authenticated/campaign/npcs/$npcId/'
       path: '/campaign/npcs/$npcId'
@@ -369,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/campaign/locations/$locationId'
       fullPath: '/campaign/locations/$locationId/'
       preLoaderRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/campaign/quests/$questId/edit': {
+      id: '/_authenticated/campaign/quests/$questId/edit'
+      path: '/campaign/quests/$questId/edit'
+      fullPath: '/campaign/quests/$questId/edit'
+      preLoaderRoute: typeof AuthenticatedCampaignQuestsQuestIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/campaign/npcs/$npcId/edit': {
@@ -396,10 +456,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCampaignInviteIndexRoute: typeof AuthenticatedCampaignInviteIndexRoute
   AuthenticatedCampaignLocationsIndexRoute: typeof AuthenticatedCampaignLocationsIndexRoute
   AuthenticatedCampaignNpcsIndexRoute: typeof AuthenticatedCampaignNpcsIndexRoute
+  AuthenticatedCampaignQuestsIndexRoute: typeof AuthenticatedCampaignQuestsIndexRoute
   AuthenticatedCampaignLocationsLocationIdEditRoute: typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   AuthenticatedCampaignNpcsNpcIdEditRoute: typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  AuthenticatedCampaignQuestsQuestIdEditRoute: typeof AuthenticatedCampaignQuestsQuestIdEditRoute
   AuthenticatedCampaignLocationsLocationIdIndexRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   AuthenticatedCampaignNpcsNpcIdIndexRoute: typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
+  AuthenticatedCampaignQuestsQuestIdIndexRoute: typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -411,14 +474,19 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCampaignLocationsIndexRoute:
     AuthenticatedCampaignLocationsIndexRoute,
   AuthenticatedCampaignNpcsIndexRoute: AuthenticatedCampaignNpcsIndexRoute,
+  AuthenticatedCampaignQuestsIndexRoute: AuthenticatedCampaignQuestsIndexRoute,
   AuthenticatedCampaignLocationsLocationIdEditRoute:
     AuthenticatedCampaignLocationsLocationIdEditRoute,
   AuthenticatedCampaignNpcsNpcIdEditRoute:
     AuthenticatedCampaignNpcsNpcIdEditRoute,
+  AuthenticatedCampaignQuestsQuestIdEditRoute:
+    AuthenticatedCampaignQuestsQuestIdEditRoute,
   AuthenticatedCampaignLocationsLocationIdIndexRoute:
     AuthenticatedCampaignLocationsLocationIdIndexRoute,
   AuthenticatedCampaignNpcsNpcIdIndexRoute:
     AuthenticatedCampaignNpcsNpcIdIndexRoute,
+  AuthenticatedCampaignQuestsQuestIdIndexRoute:
+    AuthenticatedCampaignQuestsQuestIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

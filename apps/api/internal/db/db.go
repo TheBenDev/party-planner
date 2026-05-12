@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -569,12 +570,16 @@ const questColumns = `id, campaign_id, title, status, description, quest_giver_i
 
 func scanQuest(row interface{ Scan(...any) error }) (*model.Quest, error) {
 	var q model.Quest
+	var reward []byte
 	err := row.Scan(
 		&q.ID, &q.CampaignID, &q.Title, &q.Status, &q.Description, &q.QuestGiverID,
-		&q.Reward, &q.CompletedAt, &q.DeletedAt, &q.CreatedAt, &q.UpdatedAt,
+		&reward, &q.CompletedAt, &q.DeletedAt, &q.CreatedAt, &q.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
+	}
+	if reward != nil {
+		q.Reward = json.RawMessage(reward)
 	}
 	return &q, nil
 }
@@ -590,12 +595,12 @@ func (db *DB) CreateQuest(quest *model.CreateQuestRequest) (*model.Quest, error)
 }
 
 func (db *DB) GetQuest(id string) (*model.Quest, error) {
-	row := db.conn.QueryRow(`SELECT `+questColumns+` FROM quest WHERE id = $1 LIMIT 1`, id)
+	row := db.conn.QueryRow(`SELECT `+questColumns+` FROM quest WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id)
 	return scanQuest(row)
 }
 
 func (db *DB) ListQuestsByCampaign(campaignId string) ([]*model.Quest, error) {
-	rows, err := db.conn.Query(`SELECT `+questColumns+` FROM quest WHERE campaign_id = $1`, campaignId)
+	rows, err := db.conn.Query(`SELECT `+questColumns+` FROM quest WHERE campaign_id = $1 AND deleted_at IS NULL`, campaignId)
 	if err != nil {
 		return nil, fmt.Errorf("list quests: %w", err)
 	}
@@ -614,6 +619,28 @@ func (db *DB) ListQuestsByCampaign(campaignId string) ([]*model.Quest, error) {
 		quests = append(quests, quest)
 	}
 	return quests, rows.Err()
+}
+
+func (db *DB) UpdateQuest(quest *model.UpdateQuestRequest) (*model.Quest, error) {
+	row := db.conn.QueryRow(`
+		UPDATE quest SET
+			title       = COALESCE($1, title),
+			status      = COALESCE($2, status),
+			description = $3,
+			updated_at  = NOW()
+		WHERE id = $4 AND deleted_at IS NULL
+		RETURNING `+questColumns,
+		quest.Title, quest.Status, quest.Description, quest.ID,
+	)
+	return scanQuest(row)
+}
+
+func (db *DB) RemoveQuest(id string) error {
+	_, err := db.conn.Exec(`UPDATE quest SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL`, id)
+	if err != nil {
+		return fmt.Errorf("remove quest: %w", err)
+	}
+	return nil
 }
 
 // -----------------------------------------------------------------------------

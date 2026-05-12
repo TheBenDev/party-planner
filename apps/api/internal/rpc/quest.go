@@ -97,6 +97,50 @@ func (s *QuestServer) ListQuestsByCampaign(ctx context.Context, req *connect.Req
 	}), nil
 }
 
+func (s *QuestServer) UpdateQuest(ctx context.Context, req *connect.Request[v1.UpdateQuestRequest]) (*connect.Response[v1.UpdateQuestResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	var status *model.QuestStatus
+	if req.Msg.Status != nil {
+		if *req.Msg.Status == v1.QuestStatus_QUEST_STATUS_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("status cannot be unspecified"))
+		}
+		s, err := protoToQuestStatus(*req.Msg.Status)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+		status = &s
+	}
+
+	quest, err := s.Quest.Update(&model.UpdateQuestRequest{
+		ID:          req.Msg.Id,
+		Title:       req.Msg.Title,
+		Status:      status,
+		Description: sqlNullString(req.Msg.Description),
+	})
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update quest")
+	}
+
+	return connect.NewResponse(&v1.UpdateQuestResponse{
+		Quest: questToProto(quest),
+	}), nil
+}
+
+func (s *QuestServer) RemoveQuest(ctx context.Context, req *connect.Request[v1.RemoveQuestRequest]) (*connect.Response[v1.RemoveQuestResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	if err := s.Quest.Remove(req.Msg.Id); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove quest")
+	}
+
+	return connect.NewResponse(&v1.RemoveQuestResponse{}), nil
+}
+
 func protoToQuestStatus(s v1.QuestStatus) (model.QuestStatus, error) {
 	switch s {
 	case v1.QuestStatus_QUEST_STATUS_ACTIVE:

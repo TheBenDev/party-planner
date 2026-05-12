@@ -1,0 +1,149 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Status } from "@planner/enums/quest";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { client } from "@/lib/client";
+
+export const questEditSchema = z.object({
+	description: z.string().optional(),
+	status: z.enum(Status),
+	title: z.string().min(1),
+});
+
+export type QuestEditForm = z.infer<typeof questEditSchema>;
+
+export const Route = createFileRoute(
+	"/_authenticated/campaign/quests/$questId/edit",
+)({
+	component: RouteComponent,
+});
+
+function RouteComponent() {
+	const { questId } = Route.useParams();
+
+	const { data, isPending, isError } = useQuery({
+		queryFn: () => client.quest.getQuest({ id: questId }),
+		queryKey: ["quest", questId],
+	});
+	if (isPending) return <div>Loading...</div>;
+	if (isError || !data?.quest) return <div>Quest not found.</div>;
+
+	return <QuestEditFormInner quest={data.quest} questId={questId} />;
+}
+
+type Quest = NonNullable<
+	Awaited<ReturnType<typeof client.quest.getQuest>>["quest"]
+>;
+
+function QuestEditFormInner({
+	quest,
+	questId,
+}: {
+	quest: Quest;
+	questId: string;
+}) {
+	const queryClient = useQueryClient();
+	const navigate = useNavigate();
+
+	const form = useForm<QuestEditForm>({
+		defaultValues: {
+			description: quest.description ?? "",
+			status: quest.status ?? Status.ACTIVE,
+			title: quest.title,
+		},
+		resolver: zodResolver(questEditSchema),
+	});
+
+	const updateMutation = useMutation({
+		mutationFn: (values: QuestEditForm) =>
+			client.quest.updateQuest({
+				id: questId,
+				...values,
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["quest", questId] });
+			queryClient.invalidateQueries({
+				queryKey: ["quests", quest.campaignId],
+			});
+			navigate({
+				params: { questId },
+				to: "/campaign/quests/$questId",
+			});
+		},
+	});
+
+	return (
+		<form
+			className="max-w-3xl mx-auto px-4 py-8 space-y-6"
+			onSubmit={form.handleSubmit((data) => updateMutation.mutate(data))}
+		>
+			<div>
+				<h1 className="text-2xl font-semibold">Edit Quest</h1>
+				<p className="text-sm text-muted-foreground">Update quest details</p>
+			</div>
+
+			<div className="space-y-2">
+				<Label>Title</Label>
+				<Input {...form.register("title")} />
+			</div>
+
+			<div className="space-y-2">
+				<Label>Status</Label>
+				<Controller
+					control={form.control}
+					name="status"
+					render={({ field }) => (
+						<Select onValueChange={field.onChange} value={field.value}>
+							<SelectTrigger>
+								<SelectValue placeholder="Select status" />
+							</SelectTrigger>
+							<SelectContent>
+								{Object.values(Status).map((v) => (
+									<SelectItem key={v} value={v}>
+										{v}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					)}
+				/>
+			</div>
+
+			<div className="space-y-2">
+				<Label>Description</Label>
+				<Textarea
+					{...form.register("description")}
+					placeholder="Describe the quest..."
+				/>
+			</div>
+
+			<div className="flex justify-end gap-2 pt-4">
+				<Button
+					onClick={() =>
+						navigate({ params: { questId }, to: "/campaign/quests/$questId" })
+					}
+					type="button"
+					variant="outline"
+				>
+					Cancel
+				</Button>
+				<Button disabled={updateMutation.isPending} type="submit">
+					Save Changes
+				</Button>
+			</div>
+		</form>
+	);
+}
