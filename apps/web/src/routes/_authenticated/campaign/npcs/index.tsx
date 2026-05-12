@@ -207,16 +207,11 @@ function NPCRow({
 			</div>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button
-						className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-						onClick={(e) => e.stopPropagation()}
-						size="icon"
-						variant="ghost"
-					>
+				<DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+					<div className="inline-flex items-center justify-center rounded-lg h-8 w-8 opacity-0 hover:bg-accent group-hover:opacity-100 hover:cursor-pointer transition-opacity shrink-0">
 						<MoreHorizontal className="w-4 h-4" />
 						<span className="sr-only">Options for {displayName}</span>
-					</Button>
+					</div>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end" className="w-40">
 					<DropdownMenuItem
@@ -257,6 +252,47 @@ function NPCSPage() {
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 
+	const { data: npcs = { npcs: [] }, isLoading } = useQuery({
+		enabled: Boolean(campaign),
+		queryFn: () => {
+			if (!campaign) throw new Error("campaign required");
+			return client.npc.listNonPlayerCharacters({
+				campaignId: campaign.campaign.id,
+			});
+		},
+		queryKey: ["npcs", campaign?.campaign.id],
+	});
+
+	const { mutate: deleteNpc } = useMutation({
+		mutationFn: async (c: string) => await client.npc.removeNpc({ id: c }),
+		onError: () => {
+			toast.error("Failed to delete Npc");
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ["npcs", campaign?.campaign.id],
+			});
+		},
+	});
+
+	const { mutate: createNpc, isPending: creatingNpc } = useMutation({
+		mutationFn: async () => {
+			if (!campaign) throw new Error("campaign required");
+			await client.npc.createNpc({
+				campaignId: campaign.campaign.id,
+				name: "New Npc",
+			});
+		},
+		onError: () => {
+			toast.error("Failed to create Npc");
+		},
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ["npcs", campaign?.campaign.id],
+			});
+		},
+	});
+
 	if (!campaign) {
 		return (
 			<div className="flex flex-col space-x-3 justify-center items-center">
@@ -267,43 +303,6 @@ function NPCSPage() {
 			</div>
 		);
 	}
-
-	const { data: npcs = { npcs: [] }, isLoading } = useQuery({
-		enabled: Boolean(campaign),
-		queryFn: () =>
-			client.npc.listNonPlayerCharacters({
-				campaignId: campaign.campaign.id,
-			}),
-		queryKey: ["npcs", campaign.campaign.id],
-	});
-
-	const { mutate: deleteNpc } = useMutation({
-		mutationFn: async (c: string) => await client.npc.removeNpc({ id: c }),
-		onError: () => {
-			toast.error("Failed to delete Npc");
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: ["npcs", campaign.campaign.id],
-			});
-		},
-	});
-
-	const { mutate: createNpc, isPending: creatingNpc } = useMutation({
-		mutationFn: async () =>
-			await client.npc.createNpc({
-				campaignId: campaign.campaign.id,
-				name: "New Npc",
-			}),
-		onError: () => {
-			toast.error("Failed to create Npc");
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: ["npcs", campaign.campaign.id],
-			});
-		},
-	});
 
 	//TODO: filter optimization
 	const filtered = npcs.npcs.filter((npc) => {
