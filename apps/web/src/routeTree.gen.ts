@@ -20,10 +20,13 @@ import { Route as AuthAcceptRouteImport } from './routes/_auth/accept'
 import { Route as AuthenticatedCampaignIndexRouteImport } from './routes/_authenticated/campaign/index'
 import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
 import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
+import { Route as AuthenticatedCampaignLocationsIndexRouteImport } from './routes/_authenticated/campaign/locations/index'
 import { Route as AuthenticatedCampaignInviteIndexRouteImport } from './routes/_authenticated/campaign/invite/index'
 import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
 import { Route as AuthenticatedCampaignNpcsNpcIdIndexRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/index'
+import { Route as AuthenticatedCampaignLocationsLocationIdIndexRouteImport } from './routes/_authenticated/campaign/locations/$locationId/index'
 import { Route as AuthenticatedCampaignNpcsNpcIdEditRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/edit'
+import { Route as AuthenticatedCampaignLocationsLocationIdEditRouteImport } from './routes/_authenticated/campaign/locations/$locationId/edit'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -81,6 +84,12 @@ const AuthenticatedCampaignNpcsIndexRoute =
     path: '/campaign/npcs/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignLocationsIndexRoute =
+  AuthenticatedCampaignLocationsIndexRouteImport.update({
+    id: '/campaign/locations/',
+    path: '/campaign/locations/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignInviteIndexRoute =
   AuthenticatedCampaignInviteIndexRouteImport.update({
     id: '/campaign/invite/',
@@ -99,10 +108,22 @@ const AuthenticatedCampaignNpcsNpcIdIndexRoute =
     path: '/campaign/npcs/$npcId/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignLocationsLocationIdIndexRoute =
+  AuthenticatedCampaignLocationsLocationIdIndexRouteImport.update({
+    id: '/campaign/locations/$locationId/',
+    path: '/campaign/locations/$locationId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignNpcsNpcIdEditRoute =
   AuthenticatedCampaignNpcsNpcIdEditRouteImport.update({
     id: '/campaign/npcs/$npcId/edit',
     path: '/campaign/npcs/$npcId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCampaignLocationsLocationIdEditRoute =
+  AuthenticatedCampaignLocationsLocationIdEditRouteImport.update({
+    id: '/campaign/locations/$locationId/edit',
+    path: '/campaign/locations/$locationId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -118,8 +139,11 @@ export interface FileRoutesByFullPath {
   '/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
+  '/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -134,8 +158,11 @@ export interface FileRoutesByTo {
   '/campaign': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/invite': typeof AuthenticatedCampaignInviteIndexRoute
+  '/campaign/locations': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/campaign/locations/$locationId': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
 }
 export interface FileRoutesById {
@@ -152,8 +179,11 @@ export interface FileRoutesById {
   '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/_authenticated/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
+  '/_authenticated/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/_authenticated/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
+  '/_authenticated/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/_authenticated/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  '/_authenticated/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/_authenticated/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -170,8 +200,11 @@ export interface FileRouteTypes {
     | '/campaign/'
     | '/campaign/create/'
     | '/campaign/invite/'
+    | '/campaign/locations/'
     | '/campaign/npcs/'
+    | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
+    | '/campaign/locations/$locationId/'
     | '/campaign/npcs/$npcId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -186,8 +219,11 @@ export interface FileRouteTypes {
     | '/campaign'
     | '/campaign/create'
     | '/campaign/invite'
+    | '/campaign/locations'
     | '/campaign/npcs'
+    | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
+    | '/campaign/locations/$locationId'
     | '/campaign/npcs/$npcId'
   id:
     | '__root__'
@@ -203,8 +239,11 @@ export interface FileRouteTypes {
     | '/_authenticated/campaign/'
     | '/_authenticated/campaign/create/'
     | '/_authenticated/campaign/invite/'
+    | '/_authenticated/campaign/locations/'
     | '/_authenticated/campaign/npcs/'
+    | '/_authenticated/campaign/locations/$locationId/edit'
     | '/_authenticated/campaign/npcs/$npcId/edit'
+    | '/_authenticated/campaign/locations/$locationId/'
     | '/_authenticated/campaign/npcs/$npcId/'
   fileRoutesById: FileRoutesById
 }
@@ -297,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignNpcsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/locations/': {
+      id: '/_authenticated/campaign/locations/'
+      path: '/campaign/locations'
+      fullPath: '/campaign/locations/'
+      preLoaderRoute: typeof AuthenticatedCampaignLocationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/invite/': {
       id: '/_authenticated/campaign/invite/'
       path: '/campaign/invite'
@@ -318,11 +364,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignNpcsNpcIdIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/locations/$locationId/': {
+      id: '/_authenticated/campaign/locations/$locationId/'
+      path: '/campaign/locations/$locationId'
+      fullPath: '/campaign/locations/$locationId/'
+      preLoaderRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/npcs/$npcId/edit': {
       id: '/_authenticated/campaign/npcs/$npcId/edit'
       path: '/campaign/npcs/$npcId/edit'
       fullPath: '/campaign/npcs/$npcId/edit'
       preLoaderRoute: typeof AuthenticatedCampaignNpcsNpcIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/campaign/locations/$locationId/edit': {
+      id: '/_authenticated/campaign/locations/$locationId/edit'
+      path: '/campaign/locations/$locationId/edit'
+      fullPath: '/campaign/locations/$locationId/edit'
+      preLoaderRoute: typeof AuthenticatedCampaignLocationsLocationIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -334,8 +394,11 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCampaignIndexRoute: typeof AuthenticatedCampaignIndexRoute
   AuthenticatedCampaignCreateIndexRoute: typeof AuthenticatedCampaignCreateIndexRoute
   AuthenticatedCampaignInviteIndexRoute: typeof AuthenticatedCampaignInviteIndexRoute
+  AuthenticatedCampaignLocationsIndexRoute: typeof AuthenticatedCampaignLocationsIndexRoute
   AuthenticatedCampaignNpcsIndexRoute: typeof AuthenticatedCampaignNpcsIndexRoute
+  AuthenticatedCampaignLocationsLocationIdEditRoute: typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   AuthenticatedCampaignNpcsNpcIdEditRoute: typeof AuthenticatedCampaignNpcsNpcIdEditRoute
+  AuthenticatedCampaignLocationsLocationIdIndexRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   AuthenticatedCampaignNpcsNpcIdIndexRoute: typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
 }
 
@@ -345,9 +408,15 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCampaignIndexRoute: AuthenticatedCampaignIndexRoute,
   AuthenticatedCampaignCreateIndexRoute: AuthenticatedCampaignCreateIndexRoute,
   AuthenticatedCampaignInviteIndexRoute: AuthenticatedCampaignInviteIndexRoute,
+  AuthenticatedCampaignLocationsIndexRoute:
+    AuthenticatedCampaignLocationsIndexRoute,
   AuthenticatedCampaignNpcsIndexRoute: AuthenticatedCampaignNpcsIndexRoute,
+  AuthenticatedCampaignLocationsLocationIdEditRoute:
+    AuthenticatedCampaignLocationsLocationIdEditRoute,
   AuthenticatedCampaignNpcsNpcIdEditRoute:
     AuthenticatedCampaignNpcsNpcIdEditRoute,
+  AuthenticatedCampaignLocationsLocationIdIndexRoute:
+    AuthenticatedCampaignLocationsLocationIdIndexRoute,
   AuthenticatedCampaignNpcsNpcIdIndexRoute:
     AuthenticatedCampaignNpcsNpcIdIndexRoute,
 }

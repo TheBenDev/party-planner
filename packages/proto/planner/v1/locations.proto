@@ -1,0 +1,82 @@
+syntax = "proto3";
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message Location {
+  string id = 1;
+  string campaign_id = 2;
+  string name = 3;
+  optional string description = 4;
+  optional string notes = 5;
+  optional string dm_notes = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  optional google.protobuf.Timestamp deleted_at = 9;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message CreateLocationRequest {
+  string campaign_id = 1;
+  string name = 2;
+  optional string description = 3;
+  optional string notes = 4;
+  optional string dm_notes = 5;
+}
+
+message CreateLocationResponse {
+  Location location = 1;
+}
+
+message GetLocationRequest {
+  string id = 1;
+}
+
+message GetLocationResponse {
+  Location location = 1;
+}
+
+message ListLocationsByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListLocationsByCampaignResponse {
+  repeated Location locations = 1;
+}
+
+message UpdateLocationRequest {
+  string id = 1;
+  optional string name = 2;
+  optional string description = 3;
+  optional string notes = 4;
+  optional string dm_notes = 5;
+}
+
+message UpdateLocationResponse {
+  Location location = 1;
+}
+
+message RemoveLocationRequest {
+  string id = 1;
+}
+
+message RemoveLocationResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service LocationService {
+  rpc CreateLocation(CreateLocationRequest) returns (CreateLocationResponse);
+  rpc GetLocation(GetLocationRequest) returns (GetLocationResponse);
+  rpc ListLocationsByCampaign(ListLocationsByCampaignRequest) returns (ListLocationsByCampaignResponse);
+  rpc UpdateLocation(UpdateLocationRequest) returns (UpdateLocationResponse);
+  rpc RemoveLocation(RemoveLocationRequest) returns (RemoveLocationResponse);
+}

@@ -1,58 +1,190 @@
 import { ORPCError } from "@orpc/server";
-import { schema } from "@planner/database";
 import {
+	CreateLocationRequestSchema,
+	CreateLocationResponseSchema,
 	GetLocationRequestSchema,
+	GetLocationResponseSchema,
 	ListLocationsRequestSchema,
+	ListLocationsResponseSchema,
+	RemoveLocationRequestSchema,
+	RemoveLocationResponseSchema,
+	UpdateLocationRequestSchema,
+	UpdateLocationResponseSchema,
 } from "@planner/schemas/locations";
-import { eq } from "drizzle-orm";
+import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
+import { protoToLocation } from "./util/proto/location";
 
-const { locationsTable } = schema;
+const createLocation = privateProcedure
+	.route({
+		method: "POST",
+		path: "/location/create",
+		summary: "Create a location",
+	})
+	.input(CreateLocationRequestSchema)
+	.output(CreateLocationResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+
+		try {
+			const res = await api.location.createLocation({
+				...input,
+			});
+
+			if (res.location === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create location",
+				});
+			}
+
+			return {
+				location: protoToLocation(res.location),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to create location",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
+		}
+	});
 
 const getLocationById = privateProcedure
 	.route({
-		method: "GET",
-		path: "/location",
+		method: "POST",
+		path: "/location/get",
 		summary: "Get a location by id",
 	})
 	.input(GetLocationRequestSchema)
+	.output(GetLocationResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { id } = input;
-		const db = context.db;
+		const api = context.api;
 
-		const locationRow = await db
-			.select()
-			.from(locationsTable)
-			.where(eq(locationsTable.id, id))
-			.limit(1);
+		try {
+			const res = await api.location.getLocation({ id });
 
-		if (locationRow.length === 0) {
-			throw new ORPCError("NOT_FOUND", { message: "location not found" });
+			if (res.location === undefined) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "location not found",
+				});
+			}
+
+			return {
+				location: protoToLocation(res.location),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to get location",
+				{ locationId: id },
+				context.logger,
+			);
 		}
-
-		return locationRow[0];
 	});
 
 const listLocationsByCampaignId = privateProcedure
 	.route({
-		method: "GET",
-		path: "/locations",
+		method: "POST",
+		path: "/location/list",
 		summary: "List locations by campaign",
 	})
 	.input(ListLocationsRequestSchema)
+	.output(ListLocationsResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
-		const db = context.db;
+		const api = context.api;
 
-		const locationsRow = await db
-			.select()
-			.from(locationsTable)
-			.where(eq(locationsTable.campaignId, campaignId));
+		try {
+			const res = await api.location.listLocationsByCampaign({
+				campaignId,
+			});
 
-		return locationsRow;
+			return {
+				locations: res.locations.map(protoToLocation),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to list locations",
+				{ campaignId },
+				context.logger,
+			);
+		}
+	});
+
+const removeLocation = privateProcedure
+	.route({
+		method: "POST",
+		path: "/location/remove",
+		summary: "Remove a location from a campaign",
+	})
+	.input(RemoveLocationRequestSchema)
+	.output(RemoveLocationResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id } = input;
+		const api = context.api;
+
+		try {
+			await api.location.removeLocation({
+				id,
+			});
+
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to remove location",
+				{ locationId: id },
+				context.logger,
+			);
+		}
+	});
+
+const updateLocation = privateProcedure
+	.route({
+		method: "POST",
+		path: "/location/update",
+		summary: "Update a location",
+	})
+	.input(UpdateLocationRequestSchema)
+	.output(UpdateLocationResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+
+		try {
+			const res = await api.location.updateLocation({
+				description: input.description,
+				dmNotes: input.dmNotes,
+				id: input.id,
+				name: input.name,
+				notes: input.notes,
+			});
+
+			if (!res.location) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update location",
+				});
+			}
+
+			return {
+				location: protoToLocation(res.location),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update location",
+				{ locationId: input.id },
+				context.logger,
+			);
+		}
 	});
 
 export const locationRouter = {
+	createLocation,
 	getLocationById,
 	listLocationsByCampaignId,
+	removeLocation,
+	updateLocation,
 };
