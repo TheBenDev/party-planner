@@ -209,6 +209,41 @@ func (db *DB) GetCampaignIntegration(id string, source model.IntegrationSource) 
 	return scanCampaignIntegration(row)
 }
 
+func (db *DB) ListCampaignIntegrationsByCampaign(campaignId string) ([]*model.CampaignIntegration, error) {
+	rows, err := db.conn.Query(`SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1`, campaignId)
+	if err != nil {
+		return nil, fmt.Errorf("list campaign integrations: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var integrations []*model.CampaignIntegration
+	for rows.Next() {
+		integration, err := scanCampaignIntegration(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan campaign integration: %w", err)
+		}
+		integrations = append(integrations, integration)
+	}
+	return integrations, rows.Err()
+}
+
+func (db *DB) RemoveCampaignIntegration(campaignId string, source model.IntegrationSource) error {
+	if !isValidIntegrationSource(source) {
+		return fmt.Errorf("invalid campaign integration source: %q", source)
+	}
+	_, err := db.conn.Exec(`
+		DELETE FROM campaign_integrations
+		WHERE campaign_id = $1 AND source = $2`, campaignId, source)
+	if err != nil {
+		return fmt.Errorf("remove campaign integration: %w", err)
+	}
+	return nil
+}
+
 // -----------------------------------------------------------------------------
 // Campaign Invitations
 // -----------------------------------------------------------------------------

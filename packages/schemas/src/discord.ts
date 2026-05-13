@@ -30,7 +30,7 @@ export const GetCampaignIntegrationRequestSchema = z.object({
 });
 
 export const GetCampaignIntegrationResponseSchema = z.object({
-	integration: CampaignIntegrationSchema,
+	integration: CampaignIntegrationSchema.nullable(),
 });
 
 export const CreateCampaignIntegrationRequestSchema = z.object({
@@ -49,6 +49,14 @@ export const RemoveCampaignIntegrationRequestSchema = z.object({
 });
 
 export const RemoveCampaignIntegrationResponseSchema = z.object({});
+
+export const ListCampaignIntegrationsByCampaignRequestSchema = z.object({
+	campaignId: z.uuid(),
+});
+
+export const ListCampaignIntegrationsByCampaignResponseSchema = z.object({
+	integrations: z.array(CampaignIntegrationSchema),
+});
 
 export const CheckNextSessionRequestSchema = z.object({
 	serverId: z.string(),

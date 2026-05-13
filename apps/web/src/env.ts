@@ -11,6 +11,7 @@ const clientRuntime = {
 	VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
 	VITE_CLERK_SIGN_IN_URL: import.meta.env.VITE_CLERK_SIGN_IN_URL,
 	VITE_CLERK_SIGN_UP_URL: import.meta.env.VITE_CLERK_SIGN_UP_URL,
+	VITE_DISCORD_CLIENT_ID: import.meta.env.VITE_DISCORD_CLIENT_ID,
 };
 
 export const env = createEnv({
@@ -24,6 +25,7 @@ export const env = createEnv({
 		VITE_CLERK_PUBLISHABLE_KEY: z.string(),
 		VITE_CLERK_SIGN_IN_URL: z.string().default("/sign-in"),
 		VITE_CLERK_SIGN_UP_URL: z.string().default("/sign-up"),
+		VITE_DISCORD_CLIENT_ID: z.string(),
 	},
 	clientPrefix: "VITE_",
 	emptyStringAsUndefined: true,

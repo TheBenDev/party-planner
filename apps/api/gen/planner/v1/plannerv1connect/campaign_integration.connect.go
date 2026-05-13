@@ -40,6 +40,9 @@ const (
 	// CampaignIntegrationServiceGetCampaignIntegrationProcedure is the fully-qualified name of the
 	// CampaignIntegrationService's GetCampaignIntegration RPC.
 	CampaignIntegrationServiceGetCampaignIntegrationProcedure = "/planner.v1.CampaignIntegrationService/GetCampaignIntegration"
+	// CampaignIntegrationServiceListCampaignIntegrationsByCampaignProcedure is the fully-qualified name
+	// of the CampaignIntegrationService's ListCampaignIntegrationsByCampaign RPC.
+	CampaignIntegrationServiceListCampaignIntegrationsByCampaignProcedure = "/planner.v1.CampaignIntegrationService/ListCampaignIntegrationsByCampaign"
 	// CampaignIntegrationServiceRemoveCampaignIntegrationProcedure is the fully-qualified name of the
 	// CampaignIntegrationService's RemoveCampaignIntegration RPC.
 	CampaignIntegrationServiceRemoveCampaignIntegrationProcedure = "/planner.v1.CampaignIntegrationService/RemoveCampaignIntegration"
@@ -50,6 +53,7 @@ const (
 type CampaignIntegrationServiceClient interface {
 	CreateCampaignIntegration(context.Context, *connect.Request[v1.CreateCampaignIntegrationRequest]) (*connect.Response[v1.CreateCampaignIntegrationResponse], error)
 	GetCampaignIntegration(context.Context, *connect.Request[v1.GetCampaignIntegrationRequest]) (*connect.Response[v1.GetCampaignIntegrationResponse], error)
+	ListCampaignIntegrationsByCampaign(context.Context, *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error)
 	RemoveCampaignIntegration(context.Context, *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error)
 }
 
@@ -76,6 +80,12 @@ func NewCampaignIntegrationServiceClient(httpClient connect.HTTPClient, baseURL 
 			connect.WithSchema(campaignIntegrationServiceMethods.ByName("GetCampaignIntegration")),
 			connect.WithClientOptions(opts...),
 		),
+		listCampaignIntegrationsByCampaign: connect.NewClient[v1.ListCampaignIntegrationsByCampaignRequest, v1.ListCampaignIntegrationsByCampaignResponse](
+			httpClient,
+			baseURL+CampaignIntegrationServiceListCampaignIntegrationsByCampaignProcedure,
+			connect.WithSchema(campaignIntegrationServiceMethods.ByName("ListCampaignIntegrationsByCampaign")),
+			connect.WithClientOptions(opts...),
+		),
 		removeCampaignIntegration: connect.NewClient[v1.RemoveCampaignIntegrationRequest, v1.RemoveCampaignIntegrationResponse](
 			httpClient,
 			baseURL+CampaignIntegrationServiceRemoveCampaignIntegrationProcedure,
@@ -87,9 +97,10 @@ func NewCampaignIntegrationServiceClient(httpClient connect.HTTPClient, baseURL 
 
 // campaignIntegrationServiceClient implements CampaignIntegrationServiceClient.
 type campaignIntegrationServiceClient struct {
-	createCampaignIntegration *connect.Client[v1.CreateCampaignIntegrationRequest, v1.CreateCampaignIntegrationResponse]
-	getCampaignIntegration    *connect.Client[v1.GetCampaignIntegrationRequest, v1.GetCampaignIntegrationResponse]
-	removeCampaignIntegration *connect.Client[v1.RemoveCampaignIntegrationRequest, v1.RemoveCampaignIntegrationResponse]
+	createCampaignIntegration          *connect.Client[v1.CreateCampaignIntegrationRequest, v1.CreateCampaignIntegrationResponse]
+	getCampaignIntegration             *connect.Client[v1.GetCampaignIntegrationRequest, v1.GetCampaignIntegrationResponse]
+	listCampaignIntegrationsByCampaign *connect.Client[v1.ListCampaignIntegrationsByCampaignRequest, v1.ListCampaignIntegrationsByCampaignResponse]
+	removeCampaignIntegration          *connect.Client[v1.RemoveCampaignIntegrationRequest, v1.RemoveCampaignIntegrationResponse]
 }
 
 // CreateCampaignIntegration calls planner.v1.CampaignIntegrationService.CreateCampaignIntegration.
@@ -102,6 +113,12 @@ func (c *campaignIntegrationServiceClient) GetCampaignIntegration(ctx context.Co
 	return c.getCampaignIntegration.CallUnary(ctx, req)
 }
 
+// ListCampaignIntegrationsByCampaign calls
+// planner.v1.CampaignIntegrationService.ListCampaignIntegrationsByCampaign.
+func (c *campaignIntegrationServiceClient) ListCampaignIntegrationsByCampaign(ctx context.Context, req *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error) {
+	return c.listCampaignIntegrationsByCampaign.CallUnary(ctx, req)
+}
+
 // RemoveCampaignIntegration calls planner.v1.CampaignIntegrationService.RemoveCampaignIntegration.
 func (c *campaignIntegrationServiceClient) RemoveCampaignIntegration(ctx context.Context, req *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error) {
 	return c.removeCampaignIntegration.CallUnary(ctx, req)
@@ -112,6 +129,7 @@ func (c *campaignIntegrationServiceClient) RemoveCampaignIntegration(ctx context
 type CampaignIntegrationServiceHandler interface {
 	CreateCampaignIntegration(context.Context, *connect.Request[v1.CreateCampaignIntegrationRequest]) (*connect.Response[v1.CreateCampaignIntegrationResponse], error)
 	GetCampaignIntegration(context.Context, *connect.Request[v1.GetCampaignIntegrationRequest]) (*connect.Response[v1.GetCampaignIntegrationResponse], error)
+	ListCampaignIntegrationsByCampaign(context.Context, *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error)
 	RemoveCampaignIntegration(context.Context, *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error)
 }
 
@@ -134,6 +152,12 @@ func NewCampaignIntegrationServiceHandler(svc CampaignIntegrationServiceHandler,
 		connect.WithSchema(campaignIntegrationServiceMethods.ByName("GetCampaignIntegration")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignIntegrationServiceListCampaignIntegrationsByCampaignHandler := connect.NewUnaryHandler(
+		CampaignIntegrationServiceListCampaignIntegrationsByCampaignProcedure,
+		svc.ListCampaignIntegrationsByCampaign,
+		connect.WithSchema(campaignIntegrationServiceMethods.ByName("ListCampaignIntegrationsByCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
 	campaignIntegrationServiceRemoveCampaignIntegrationHandler := connect.NewUnaryHandler(
 		CampaignIntegrationServiceRemoveCampaignIntegrationProcedure,
 		svc.RemoveCampaignIntegration,
@@ -146,6 +170,8 @@ func NewCampaignIntegrationServiceHandler(svc CampaignIntegrationServiceHandler,
 			campaignIntegrationServiceCreateCampaignIntegrationHandler.ServeHTTP(w, r)
 		case CampaignIntegrationServiceGetCampaignIntegrationProcedure:
 			campaignIntegrationServiceGetCampaignIntegrationHandler.ServeHTTP(w, r)
+		case CampaignIntegrationServiceListCampaignIntegrationsByCampaignProcedure:
+			campaignIntegrationServiceListCampaignIntegrationsByCampaignHandler.ServeHTTP(w, r)
 		case CampaignIntegrationServiceRemoveCampaignIntegrationProcedure:
 			campaignIntegrationServiceRemoveCampaignIntegrationHandler.ServeHTTP(w, r)
 		default:
@@ -163,6 +189,10 @@ func (UnimplementedCampaignIntegrationServiceHandler) CreateCampaignIntegration(
 
 func (UnimplementedCampaignIntegrationServiceHandler) GetCampaignIntegration(context.Context, *connect.Request[v1.GetCampaignIntegrationRequest]) (*connect.Response[v1.GetCampaignIntegrationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignIntegrationService.GetCampaignIntegration is not implemented"))
+}
+
+func (UnimplementedCampaignIntegrationServiceHandler) ListCampaignIntegrationsByCampaign(context.Context, *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignIntegrationService.ListCampaignIntegrationsByCampaign is not implemented"))
 }
 
 func (UnimplementedCampaignIntegrationServiceHandler) RemoveCampaignIntegration(context.Context, *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error) {

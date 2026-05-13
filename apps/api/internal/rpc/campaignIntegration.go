@@ -88,6 +88,43 @@ func (s *CampaignIntegrationServer) CreateCampaignIntegration(ctx context.Contex
 	}), nil
 }
 
+func (s *CampaignIntegrationServer) ListCampaignIntegrationsByCampaign(ctx context.Context, req *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	integrations, err := s.CampaignIntegration.ListByCampaign(req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign integrations")
+	}
+
+	proto := make([]*v1.CampaignIntegration, 0, len(integrations))
+	for _, integration := range integrations {
+		proto = append(proto, campaignIntegrationToProto(integration))
+	}
+
+	return connect.NewResponse(&v1.ListCampaignIntegrationsByCampaignResponse{
+		Integrations: proto,
+	}), nil
+}
+
+func (s *CampaignIntegrationServer) RemoveCampaignIntegration(ctx context.Context, req *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("integration source required"))
+	}
+	source, err := protoToIntegrationSource(req.Msg.Source)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid campaign integration"))
+	}
+	if err := s.CampaignIntegration.Remove(req.Msg.CampaignId, source); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove campaign integration")
+	}
+	return connect.NewResponse(&v1.RemoveCampaignIntegrationResponse{}), nil
+}
+
 func campaignIntegrationSourceToProto(source model.IntegrationSource) v1.IntegrationSource {
 	switch source {
 	case model.IntegrationSourceDiscord:
