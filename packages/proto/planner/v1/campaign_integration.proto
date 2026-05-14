@@ -54,6 +54,14 @@ message GetCampaignIntegrationResponse {
   CampaignIntegration integration = 1;
 }
 
+message ListCampaignIntegrationsByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListCampaignIntegrationsByCampaignResponse {
+  repeated CampaignIntegration integrations = 1;
+}
+
 message RemoveCampaignIntegrationRequest {
   string campaign_id = 1;
   IntegrationSource source = 2;
@@ -68,5 +76,6 @@ message RemoveCampaignIntegrationResponse {}
 service CampaignIntegrationService {
   rpc CreateCampaignIntegration(CreateCampaignIntegrationRequest) returns (CreateCampaignIntegrationResponse);
   rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
+  rpc ListCampaignIntegrationsByCampaign(ListCampaignIntegrationsByCampaignRequest) returns (ListCampaignIntegrationsByCampaignResponse);
   rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
 }

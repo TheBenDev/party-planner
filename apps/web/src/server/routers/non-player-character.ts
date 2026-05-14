@@ -174,7 +174,8 @@ const updateNpc = privateProcedure
 
 export const nonPlayerCharacterRouter = {
 	createNpc,
-	getNonPlayerCharacter,
+  getNonPlayerCharacter,
+	// TODO bycampagin
 	listNonPlayerCharacters,
 	removeNpc,
 	updateNpc,

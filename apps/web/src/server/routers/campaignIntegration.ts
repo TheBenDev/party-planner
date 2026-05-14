@@ -5,6 +5,8 @@ import {
 	CreateCampaignIntegrationResponseSchema,
 	GetCampaignIntegrationRequestSchema,
 	GetCampaignIntegrationResponseSchema,
+	ListCampaignIntegrationsByCampaignRequestSchema,
+	ListCampaignIntegrationsByCampaignResponseSchema,
 	RemoveCampaignIntegrationRequestSchema,
 	RemoveCampaignIntegrationResponseSchema,
 } from "@planner/schemas/discord";
@@ -38,7 +40,7 @@ const createCampaignIntegration = privateProcedure
 			metadata: { channelId, source: IntegrationSource.DISCORD },
 			settings: {
 				enableSessionReminders: true,
-				source,
+				source: IntegrationSource.DISCORD,
 			},
 			source,
 		};
@@ -78,9 +80,7 @@ const getCampaignIntegration = privateProcedure
 				source: integrationSourceToProto(source),
 			});
 			if (result.integration === undefined) {
-				throw new ORPCError("NOT_FOUND", {
-					message: "campaign integration not found",
-				});
+				return { integration: null };
 			}
 			return { integration: protoToCampaignIntegration(result.integration) };
 		} catch (err) {
@@ -121,8 +121,38 @@ const removeCampaignIntegration = privateProcedure
 		}
 	});
 
+const listCampaignIntegrationsByCampaign = privateProcedure
+	.route({
+		method: "POST",
+		path: "/campaignIntegration/listCampaignIntegrationsByCampaign",
+		summary: "List all integrations for a campaign",
+	})
+	.input(ListCampaignIntegrationsByCampaignRequestSchema)
+	.output(ListCampaignIntegrationsByCampaignResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { campaignId } = input;
+		const api = context.api;
+		try {
+			const result =
+				await api.campaignIntegration.listCampaignIntegrationsByCampaign({
+					campaignId,
+				});
+			return {
+				integrations: result.integrations.map(protoToCampaignIntegration),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to list campaign integrations",
+				input,
+				context.logger,
+			);
+		}
+	});
+
 export const campaignIntegrationRouter = {
 	createCampaignIntegration,
 	getCampaignIntegration,
+	listCampaignIntegrationsByCampaign,
 	removeCampaignIntegration,
 };

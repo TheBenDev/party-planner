@@ -23,13 +23,16 @@ import { Route as AuthenticatedCampaignQuestsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
 import { Route as AuthenticatedCampaignLocationsIndexRouteImport } from './routes/_authenticated/campaign/locations/index'
 import { Route as AuthenticatedCampaignInviteIndexRouteImport } from './routes/_authenticated/campaign/invite/index'
+import { Route as AuthenticatedCampaignIntegrationsIndexRouteImport } from './routes/_authenticated/campaign/integrations/index'
 import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
 import { Route as AuthenticatedCampaignQuestsQuestIdIndexRouteImport } from './routes/_authenticated/campaign/quests/$questId/index'
 import { Route as AuthenticatedCampaignNpcsNpcIdIndexRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/index'
 import { Route as AuthenticatedCampaignLocationsLocationIdIndexRouteImport } from './routes/_authenticated/campaign/locations/$locationId/index'
+import { Route as AuthenticatedCampaignIntegrationsDiscordIndexRouteImport } from './routes/_authenticated/campaign/integrations/discord/index'
 import { Route as AuthenticatedCampaignQuestsQuestIdEditRouteImport } from './routes/_authenticated/campaign/quests/$questId/edit'
 import { Route as AuthenticatedCampaignNpcsNpcIdEditRouteImport } from './routes/_authenticated/campaign/npcs/$npcId/edit'
 import { Route as AuthenticatedCampaignLocationsLocationIdEditRouteImport } from './routes/_authenticated/campaign/locations/$locationId/edit'
+import { Route as AuthenticatedCampaignIntegrationsDiscordCallbackRouteImport } from './routes/_authenticated/campaign/integrations/discord/callback'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -105,6 +108,12 @@ const AuthenticatedCampaignInviteIndexRoute =
     path: '/campaign/invite/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignIntegrationsIndexRoute =
+  AuthenticatedCampaignIntegrationsIndexRouteImport.update({
+    id: '/campaign/integrations/',
+    path: '/campaign/integrations/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignCreateIndexRoute =
   AuthenticatedCampaignCreateIndexRouteImport.update({
     id: '/campaign/create/',
@@ -129,6 +138,12 @@ const AuthenticatedCampaignLocationsLocationIdIndexRoute =
     path: '/campaign/locations/$locationId/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignIntegrationsDiscordIndexRoute =
+  AuthenticatedCampaignIntegrationsDiscordIndexRouteImport.update({
+    id: '/campaign/integrations/discord/',
+    path: '/campaign/integrations/discord/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCampaignQuestsQuestIdEditRoute =
   AuthenticatedCampaignQuestsQuestIdEditRouteImport.update({
     id: '/campaign/quests/$questId/edit',
@@ -147,6 +162,12 @@ const AuthenticatedCampaignLocationsLocationIdEditRoute =
     path: '/campaign/locations/$locationId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCampaignIntegrationsDiscordCallbackRoute =
+  AuthenticatedCampaignIntegrationsDiscordCallbackRouteImport.update({
+    id: '/campaign/integrations/discord/callback',
+    path: '/campaign/integrations/discord/callback',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,13 +180,16 @@ export interface FileRoutesByFullPath {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
+  '/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
   '/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
   '/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
   '/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
+  '/campaign/integrations/discord/callback': typeof AuthenticatedCampaignIntegrationsDiscordCallbackRoute
   '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
   '/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
+  '/campaign/integrations/discord/': typeof AuthenticatedCampaignIntegrationsDiscordIndexRoute
   '/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
   '/campaign/quests/$questId/': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
@@ -181,13 +205,16 @@ export interface FileRoutesByTo {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
+  '/campaign/integrations': typeof AuthenticatedCampaignIntegrationsIndexRoute
   '/campaign/invite': typeof AuthenticatedCampaignInviteIndexRoute
   '/campaign/locations': typeof AuthenticatedCampaignLocationsIndexRoute
   '/campaign/npcs': typeof AuthenticatedCampaignNpcsIndexRoute
   '/campaign/quests': typeof AuthenticatedCampaignQuestsIndexRoute
+  '/campaign/integrations/discord/callback': typeof AuthenticatedCampaignIntegrationsDiscordCallbackRoute
   '/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
   '/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
+  '/campaign/integrations/discord': typeof AuthenticatedCampaignIntegrationsDiscordIndexRoute
   '/campaign/locations/$locationId': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/campaign/npcs/$npcId': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
   '/campaign/quests/$questId': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
@@ -205,13 +232,16 @@ export interface FileRoutesById {
   '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
+  '/_authenticated/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
   '/_authenticated/campaign/invite/': typeof AuthenticatedCampaignInviteIndexRoute
   '/_authenticated/campaign/locations/': typeof AuthenticatedCampaignLocationsIndexRoute
   '/_authenticated/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
   '/_authenticated/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
+  '/_authenticated/campaign/integrations/discord/callback': typeof AuthenticatedCampaignIntegrationsDiscordCallbackRoute
   '/_authenticated/campaign/locations/$locationId/edit': typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   '/_authenticated/campaign/npcs/$npcId/edit': typeof AuthenticatedCampaignNpcsNpcIdEditRoute
   '/_authenticated/campaign/quests/$questId/edit': typeof AuthenticatedCampaignQuestsQuestIdEditRoute
+  '/_authenticated/campaign/integrations/discord/': typeof AuthenticatedCampaignIntegrationsDiscordIndexRoute
   '/_authenticated/campaign/locations/$locationId/': typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   '/_authenticated/campaign/npcs/$npcId/': typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
   '/_authenticated/campaign/quests/$questId/': typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
@@ -229,13 +259,16 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/campaign/'
     | '/campaign/create/'
+    | '/campaign/integrations/'
     | '/campaign/invite/'
     | '/campaign/locations/'
     | '/campaign/npcs/'
     | '/campaign/quests/'
+    | '/campaign/integrations/discord/callback'
     | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
     | '/campaign/quests/$questId/edit'
+    | '/campaign/integrations/discord/'
     | '/campaign/locations/$locationId/'
     | '/campaign/npcs/$npcId/'
     | '/campaign/quests/$questId/'
@@ -251,13 +284,16 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/campaign'
     | '/campaign/create'
+    | '/campaign/integrations'
     | '/campaign/invite'
     | '/campaign/locations'
     | '/campaign/npcs'
     | '/campaign/quests'
+    | '/campaign/integrations/discord/callback'
     | '/campaign/locations/$locationId/edit'
     | '/campaign/npcs/$npcId/edit'
     | '/campaign/quests/$questId/edit'
+    | '/campaign/integrations/discord'
     | '/campaign/locations/$locationId'
     | '/campaign/npcs/$npcId'
     | '/campaign/quests/$questId'
@@ -274,13 +310,16 @@ export interface FileRouteTypes {
     | '/api/webhooks/clerk'
     | '/_authenticated/campaign/'
     | '/_authenticated/campaign/create/'
+    | '/_authenticated/campaign/integrations/'
     | '/_authenticated/campaign/invite/'
     | '/_authenticated/campaign/locations/'
     | '/_authenticated/campaign/npcs/'
     | '/_authenticated/campaign/quests/'
+    | '/_authenticated/campaign/integrations/discord/callback'
     | '/_authenticated/campaign/locations/$locationId/edit'
     | '/_authenticated/campaign/npcs/$npcId/edit'
     | '/_authenticated/campaign/quests/$questId/edit'
+    | '/_authenticated/campaign/integrations/discord/'
     | '/_authenticated/campaign/locations/$locationId/'
     | '/_authenticated/campaign/npcs/$npcId/'
     | '/_authenticated/campaign/quests/$questId/'
@@ -396,6 +435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignInviteIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/integrations/': {
+      id: '/_authenticated/campaign/integrations/'
+      path: '/campaign/integrations'
+      fullPath: '/campaign/integrations/'
+      preLoaderRoute: typeof AuthenticatedCampaignIntegrationsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/create/': {
       id: '/_authenticated/campaign/create/'
       path: '/campaign/create'
@@ -424,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/integrations/discord/': {
+      id: '/_authenticated/campaign/integrations/discord/'
+      path: '/campaign/integrations/discord'
+      fullPath: '/campaign/integrations/discord/'
+      preLoaderRoute: typeof AuthenticatedCampaignIntegrationsDiscordIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/quests/$questId/edit': {
       id: '/_authenticated/campaign/quests/$questId/edit'
       path: '/campaign/quests/$questId/edit'
@@ -445,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignLocationsLocationIdEditRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/integrations/discord/callback': {
+      id: '/_authenticated/campaign/integrations/discord/callback'
+      path: '/campaign/integrations/discord/callback'
+      fullPath: '/campaign/integrations/discord/callback'
+      preLoaderRoute: typeof AuthenticatedCampaignIntegrationsDiscordCallbackRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -453,13 +513,16 @@ interface AuthenticatedRouteChildren {
   AuthenticatedJoinRoute: typeof AuthenticatedJoinRoute
   AuthenticatedCampaignIndexRoute: typeof AuthenticatedCampaignIndexRoute
   AuthenticatedCampaignCreateIndexRoute: typeof AuthenticatedCampaignCreateIndexRoute
+  AuthenticatedCampaignIntegrationsIndexRoute: typeof AuthenticatedCampaignIntegrationsIndexRoute
   AuthenticatedCampaignInviteIndexRoute: typeof AuthenticatedCampaignInviteIndexRoute
   AuthenticatedCampaignLocationsIndexRoute: typeof AuthenticatedCampaignLocationsIndexRoute
   AuthenticatedCampaignNpcsIndexRoute: typeof AuthenticatedCampaignNpcsIndexRoute
   AuthenticatedCampaignQuestsIndexRoute: typeof AuthenticatedCampaignQuestsIndexRoute
+  AuthenticatedCampaignIntegrationsDiscordCallbackRoute: typeof AuthenticatedCampaignIntegrationsDiscordCallbackRoute
   AuthenticatedCampaignLocationsLocationIdEditRoute: typeof AuthenticatedCampaignLocationsLocationIdEditRoute
   AuthenticatedCampaignNpcsNpcIdEditRoute: typeof AuthenticatedCampaignNpcsNpcIdEditRoute
   AuthenticatedCampaignQuestsQuestIdEditRoute: typeof AuthenticatedCampaignQuestsQuestIdEditRoute
+  AuthenticatedCampaignIntegrationsDiscordIndexRoute: typeof AuthenticatedCampaignIntegrationsDiscordIndexRoute
   AuthenticatedCampaignLocationsLocationIdIndexRoute: typeof AuthenticatedCampaignLocationsLocationIdIndexRoute
   AuthenticatedCampaignNpcsNpcIdIndexRoute: typeof AuthenticatedCampaignNpcsNpcIdIndexRoute
   AuthenticatedCampaignQuestsQuestIdIndexRoute: typeof AuthenticatedCampaignQuestsQuestIdIndexRoute
@@ -470,17 +533,23 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedJoinRoute: AuthenticatedJoinRoute,
   AuthenticatedCampaignIndexRoute: AuthenticatedCampaignIndexRoute,
   AuthenticatedCampaignCreateIndexRoute: AuthenticatedCampaignCreateIndexRoute,
+  AuthenticatedCampaignIntegrationsIndexRoute:
+    AuthenticatedCampaignIntegrationsIndexRoute,
   AuthenticatedCampaignInviteIndexRoute: AuthenticatedCampaignInviteIndexRoute,
   AuthenticatedCampaignLocationsIndexRoute:
     AuthenticatedCampaignLocationsIndexRoute,
   AuthenticatedCampaignNpcsIndexRoute: AuthenticatedCampaignNpcsIndexRoute,
   AuthenticatedCampaignQuestsIndexRoute: AuthenticatedCampaignQuestsIndexRoute,
+  AuthenticatedCampaignIntegrationsDiscordCallbackRoute:
+    AuthenticatedCampaignIntegrationsDiscordCallbackRoute,
   AuthenticatedCampaignLocationsLocationIdEditRoute:
     AuthenticatedCampaignLocationsLocationIdEditRoute,
   AuthenticatedCampaignNpcsNpcIdEditRoute:
     AuthenticatedCampaignNpcsNpcIdEditRoute,
   AuthenticatedCampaignQuestsQuestIdEditRoute:
     AuthenticatedCampaignQuestsQuestIdEditRoute,
+  AuthenticatedCampaignIntegrationsDiscordIndexRoute:
+    AuthenticatedCampaignIntegrationsDiscordIndexRoute,
   AuthenticatedCampaignLocationsLocationIdIndexRoute:
     AuthenticatedCampaignLocationsLocationIdIndexRoute,
   AuthenticatedCampaignNpcsNpcIdIndexRoute:

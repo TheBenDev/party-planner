@@ -26,7 +26,7 @@ func (s *CampaignIntegrationService) GetByCampaign(campaignId string, source mod
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrCampaignIntegrationNotFound
+			return nil, nil
 		}
 		return nil, fmt.Errorf("get campaign error: %w", err)
 	}
@@ -45,6 +45,22 @@ func (s *CampaignIntegrationService) Create(integration *model.CreateCampaignInt
 	}
 
 	return created, nil
+}
+
+func (s *CampaignIntegrationService) ListByCampaign(campaignId string) ([]*model.CampaignIntegration, error) {
+	integrations, err := s.DB.ListCampaignIntegrationsByCampaign(campaignId)
+	if err != nil {
+		return nil, fmt.Errorf("list campaign integrations error: %w", err)
+	}
+	return integrations, nil
+}
+
+func (s *CampaignIntegrationService) Remove(campaignId string, source model.IntegrationSource) error {
+	err := s.DB.RemoveCampaignIntegration(campaignId, source)
+	if err != nil {
+		return fmt.Errorf("remove campaign integration error: %w", err)
+	}
+	return nil
 }
 
 func mapCampaignIntegrationPgError(err error) error {
