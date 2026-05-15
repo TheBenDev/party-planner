@@ -499,9 +499,9 @@ export type ListCampaignInvitationsResponse = Message<"planner.v1.ListCampaignIn
 
 /**
  * Describes the message planner.v1.ListCampaignInvitationsResponse.
- * Use `create(ListCampaignInvitationsResponseSchema)` to create a new message.
+ * Use `create(ListCampaignInvitationsByCampaignResponseSchema)` to create a new message.
  */
-export const ListCampaignInvitationsResponseSchema: GenMessage<ListCampaignInvitationsResponse> = /*@__PURE__*/
+export const ListCampaignInvitationsByCampaignResponseSchema: GenMessage<ListCampaignInvitationsResponse> = /*@__PURE__*/
   messageDesc(file_planner_v1_member, 21);
 
 /**
@@ -696,7 +696,7 @@ export const MemberService: GenService<{
   listCampaignInvitations: {
     methodKind: "unary";
     input: typeof ListCampaignInvitationsRequestSchema;
-    output: typeof ListCampaignInvitationsResponseSchema;
+    output: typeof ListCampaignInvitationsByCampaignResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.MemberService.RevokeCampaignInvitation
@@ -708,4 +708,3 @@ export const MemberService: GenService<{
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_member, 0);
-

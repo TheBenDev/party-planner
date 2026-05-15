@@ -66,7 +66,7 @@ export type GetCampaignInvitationByTokenResponse = z.infer<
 	typeof GetCampaignInvitationByTokenResponseSchema
 >;
 
-export const ListCampaignInvitationsResponseSchema = z.object({
+export const ListCampaignInvitationsByCampaignResponseSchema = z.object({
 	invitations: z.array(CampaignInvitationSchema),
 });
 

@@ -6,7 +6,6 @@ dist
 .output
 tmp
 out-tsc
-.terraform
 tsconfig.tsbuildinfo
 
 # dependencies
@@ -56,7 +55,6 @@ out
 .env
 .env.*
 !.env.example
-terraform.tfvars
 
 # CLOUDFLARE
 .wrangler/

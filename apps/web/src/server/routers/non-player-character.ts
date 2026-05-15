@@ -4,8 +4,8 @@ import {
 	CreateNpcResponseSchema,
 	GetNonPlayerCharacterRequestSchema,
 	GetNonPlayerCharacterResponseSchema,
-	ListNonPlayerCharactersRequestSchema,
-	ListNonPlayerCharactersResponseSchema,
+	ListNonPlayerCharactersByCampaignRequestSchema,
+	ListNonPlayerCharactersByCampaignResponseSchema,
 	RemoveNpcRequestSchema,
 	RemoveNpcResponseSchema,
 	UpdateNpcRequestSchema,
@@ -75,14 +75,14 @@ const getNonPlayerCharacter = privateProcedure
 		}
 	});
 
-const listNonPlayerCharacters = privateProcedure
+const listNonPlayerCharactersByCampaign = privateProcedure
 	.route({
 		method: "POST",
 		path: "/npc/list",
 		summary: "List non-player characters by campaign",
 	})
-	.input(ListNonPlayerCharactersRequestSchema)
-	.output(ListNonPlayerCharactersResponseSchema)
+	.input(ListNonPlayerCharactersByCampaignRequestSchema)
+	.output(ListNonPlayerCharactersByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
 		const api = context.api;
@@ -174,9 +174,8 @@ const updateNpc = privateProcedure
 
 export const nonPlayerCharacterRouter = {
 	createNpc,
-  getNonPlayerCharacter,
-	// TODO bycampagin
-	listNonPlayerCharacters,
+	getNonPlayerCharacter,
+	listNonPlayerCharactersByCampaign,
 	removeNpc,
 	updateNpc,
 };

@@ -54,15 +54,17 @@ export const GetLocationResponseSchema = z.object({
 
 // ─── List Locations ───────────────────────────────────────────────────────────
 
-export const ListLocationsRequestSchema = z.object({
+export const ListLocationsByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 
-export const ListLocationsResponseSchema = z.object({
+export const ListLocationsByCampaignResponseSchema = z.object({
 	locations: z.array(LocationsSchema),
 });
 
-export type ListLocationsResponse = z.infer<typeof ListLocationsResponseSchema>;
+export type ListLocationsResponse = z.infer<
+	typeof ListLocationsByCampaignResponseSchema
+>;
 
 // ─── Remove Location ──────────────────────────────────────────────────────────
 
