@@ -108,20 +108,20 @@ export const GetNonPlayerCharacterResponseSchema = z.object({
 
 // ─── List NPCs ────────────────────────────────────────────────────────────────
 
-export const ListNonPlayerCharactersRequestSchema = z.object({
+export const ListNonPlayerCharactersByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 
 export type ListNonPlayerCharactersRequest = z.infer<
-	typeof ListNonPlayerCharactersRequestSchema
+	typeof ListNonPlayerCharactersByCampaignRequestSchema
 >;
 
-export const ListNonPlayerCharactersResponseSchema = z.object({
+export const ListNonPlayerCharactersByCampaignResponseSchema = z.object({
 	npcs: z.array(NonPlayerCharacterSchema),
 });
 
 export type ListNonPlayerCharactersResponse = z.infer<
-	typeof ListNonPlayerCharactersResponseSchema
+	typeof ListNonPlayerCharactersByCampaignResponseSchema
 >;
 
 // ─── Remove NPC ──────────────────────────────────────────────────────────────

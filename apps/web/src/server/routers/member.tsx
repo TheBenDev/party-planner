@@ -13,7 +13,7 @@ import {
 	GetCampaignInvitationByTokenResponseSchema,
 	GetMemberRequestSchema,
 	GetMemberResponseSchema,
-	ListCampaignInvitationsResponseSchema,
+	ListCampaignInvitationsByCampaignResponseSchema,
 	ListMembersByCampaignResponseSchema,
 	ListMembersByUserResponseSchema,
 	RemoveMemberRequestSchema,
@@ -223,7 +223,7 @@ const listInvitations = privateProcedure
 		path: "/member/listInvitations",
 		summary: "List invitations of pending invitations to a campaign",
 	})
-	.output(ListCampaignInvitationsResponseSchema)
+	.output(ListCampaignInvitationsByCampaignResponseSchema)
 	.handler(async ({ context }) => {
 		const campaignId = context.campaignId;
 		const api = context.api;

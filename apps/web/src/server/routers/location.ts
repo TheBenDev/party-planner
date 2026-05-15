@@ -4,8 +4,8 @@ import {
 	CreateLocationResponseSchema,
 	GetLocationRequestSchema,
 	GetLocationResponseSchema,
-	ListLocationsRequestSchema,
-	ListLocationsResponseSchema,
+	ListLocationsByCampaignRequestSchema,
+	ListLocationsByCampaignResponseSchema,
 	RemoveLocationRequestSchema,
 	RemoveLocationResponseSchema,
 	UpdateLocationRequestSchema,
@@ -90,8 +90,8 @@ const listLocationsByCampaignId = privateProcedure
 		path: "/location/list",
 		summary: "List locations by campaign",
 	})
-	.input(ListLocationsRequestSchema)
-	.output(ListLocationsResponseSchema)
+	.input(ListLocationsByCampaignRequestSchema)
+	.output(ListLocationsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
 		const api = context.api;

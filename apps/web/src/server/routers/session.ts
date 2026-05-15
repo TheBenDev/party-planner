@@ -5,8 +5,8 @@ import {
 	CreateSessionResponseSchema,
 	GetSessionRequestSchema,
 	GetSessionResponseSchema,
-	ListSessionsRequestSchema,
-	ListSessionsResponseSchema,
+	ListSessionsByCampaignRequestSchema,
+	ListSessionsByCampaignResponseSchema,
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
@@ -81,8 +81,8 @@ const listSessions = privateProcedure
 		path: "/session/list",
 		summary: "List sessions by campaign",
 	})
-	.input(ListSessionsRequestSchema)
-	.output(ListSessionsResponseSchema)
+	.input(ListSessionsByCampaignRequestSchema)
+	.output(ListSessionsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
 		const api = context.api;

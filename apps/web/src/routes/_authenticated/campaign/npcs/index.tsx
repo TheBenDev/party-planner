@@ -256,7 +256,7 @@ function NPCSPage() {
 		enabled: Boolean(campaign),
 		queryFn: () => {
 			if (!campaign) throw new Error("campaign required");
-			return client.npc.listNonPlayerCharacters({
+			return client.npc.listNonPlayerCharactersByCampaign({
 				campaignId: campaign.campaign.id,
 			});
 		},

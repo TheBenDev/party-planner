@@ -22,10 +22,10 @@ export const GetSessionRequestSchema = z.object({ id: z.uuid() });
 export const GetSessionResponseSchema = z.object({
 	session: SessionsSchema,
 });
-export const ListSessionsRequestSchema = z.object({
+export const ListSessionsByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
-export const ListSessionsResponseSchema = z.object({
+export const ListSessionsByCampaignResponseSchema = z.object({
 	sessions: z.array(SessionsSchema),
 });
 
