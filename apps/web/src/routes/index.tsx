@@ -1,11 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/auth";
 
 export const Route = createFileRoute("/")({
 	component: Page,
 });
 
 function Page() {
+	const { campaign, campaignIsLoading } = useAuth();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (campaignIsLoading) return;
+		if (campaign !== null) navigate({ to: "/campaign" });
+	}, [campaign, campaignIsLoading]);
+
 	return (
 		<div className="min-h-screen w-full bg-background">
 			{/* Hero */}

@@ -1,5 +1,7 @@
+import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/server";
 import { deleteCookie, getCookie } from "@orpc/server/helpers";
+import { UserRole } from "@planner/enums/user";
 import {
 	CreateCampaignRequestSchema,
 	CreateCampaignResponseSchema,
@@ -56,7 +58,7 @@ const createCampaign = privateProcedure
 					);
 					await updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {
 						campaign,
-						role: context.role,
+						role: UserRole.DUNGEON_MASTER,
 						user: rawCookie.user,
 					});
 				} else {
@@ -105,6 +107,9 @@ const getActiveCampaign = privateProcedure
 				campaign,
 			};
 		} catch (err) {
+			if (err instanceof ConnectError && err.code === Code.NotFound) {
+				return null;
+			}
 			handleError(
 				err,
 				"failed to get active campaign",

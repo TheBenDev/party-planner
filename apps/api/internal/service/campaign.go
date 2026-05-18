@@ -22,14 +22,33 @@ type CampaignService struct {
 }
 
 func (s *CampaignService) Create(campaign *model.CreateCampaignRequest) (*model.Campaign, error) {
-	created, err := s.DB.CreateCampaign(campaign)
-	if err != nil {
-		if mapped := mapCampaignPgError(err); mapped != err {
-			return nil, mapped
+	var c *model.Campaign
+	err := s.DB.RunInTx(func(tx *db.DB) error {
+		var err error
+		c, err = tx.CreateCampaign(campaign)
+		if err != nil {
+			if mapped := mapCampaignPgError(err); mapped != err {
+				return mapped
+			}
+			return fmt.Errorf("create campaign error: %w", err)
 		}
-		return nil, fmt.Errorf("create campaign error: %w", err)
+		_, err = tx.CreateCampaignUser(&model.CreateMemberRequest{
+			CampaignID: c.ID,
+			Role:       model.MemberRoleDungeonMaster,
+			UserID:     c.UserID,
+		})
+		if err != nil {
+			if mapped := mapCampaignUserPgError(err); mapped != err {
+				return mapped
+			}
+			return fmt.Errorf("create campaign user error: %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
-	return created, nil
+	return c, nil
 }
 
 func (s *CampaignService) GetById(id string) (*model.Campaign, error) {
