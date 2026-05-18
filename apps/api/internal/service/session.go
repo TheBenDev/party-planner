@@ -51,6 +51,32 @@ func (s *SessionService) ListByCampaign(campaignId string) ([]*model.Session, er
 	return sessions, nil
 }
 
+func (s *SessionService) Remove(id string) error {
+	_, err := s.Get(id)
+	if err != nil {
+		return err
+	}
+	if err := s.DB.RemoveSession(id); err != nil {
+		return fmt.Errorf("remove session error: %w", err)
+	}
+	return nil
+}
+
+func (s *SessionService) Update(req *model.UpdateSessionRequest) (*model.Session, error) {
+	_, err := s.Get(req.ID)
+	if err != nil {
+		return nil, err
+	}
+	updated, err := s.DB.UpdateSession(req)
+	if err != nil {
+		if mapped := mapSessionPgError(err); mapped != err {
+			return nil, mapped
+		}
+		return nil, fmt.Errorf("update session error: %w", err)
+	}
+	return updated, nil
+}
+
 func mapSessionPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		return ErrSessionAlreadyExists

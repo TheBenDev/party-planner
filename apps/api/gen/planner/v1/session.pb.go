@@ -402,6 +402,198 @@ func (x *ListSessionsByCampaignResponse) GetSessions() []*Session {
 	return nil
 }
 
+type RemoveSessionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveSessionRequest) Reset() {
+	*x = RemoveSessionRequest{}
+	mi := &file_planner_v1_session_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveSessionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveSessionRequest) ProtoMessage() {}
+
+func (x *RemoveSessionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveSessionRequest.ProtoReflect.Descriptor instead.
+func (*RemoveSessionRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RemoveSessionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type RemoveSessionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RemoveSessionResponse) Reset() {
+	*x = RemoveSessionResponse{}
+	mi := &file_planner_v1_session_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveSessionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveSessionResponse) ProtoMessage() {}
+
+func (x *RemoveSessionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveSessionResponse.ProtoReflect.Descriptor instead.
+func (*RemoveSessionResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{8}
+}
+
+type UpdateSessionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
+	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
+	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSessionRequest) Reset() {
+	*x = UpdateSessionRequest{}
+	mi := &file_planner_v1_session_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSessionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSessionRequest) ProtoMessage() {}
+
+func (x *UpdateSessionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSessionRequest.ProtoReflect.Descriptor instead.
+func (*UpdateSessionRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateSessionRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateSessionRequest) GetTitle() string {
+	if x != nil && x.Title != nil {
+		return *x.Title
+	}
+	return ""
+}
+
+func (x *UpdateSessionRequest) GetStartsAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartsAt
+	}
+	return nil
+}
+
+func (x *UpdateSessionRequest) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+type UpdateSessionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Session       *Session               `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSessionResponse) Reset() {
+	*x = UpdateSessionResponse{}
+	mi := &file_planner_v1_session_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSessionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSessionResponse) ProtoMessage() {}
+
+func (x *UpdateSessionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSessionResponse.ProtoReflect.Descriptor instead.
+func (*UpdateSessionResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateSessionResponse) GetSession() *Session {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
 var File_planner_v1_session_proto protoreflect.FileDescriptor
 
 const file_planner_v1_session_proto_rawDesc = "" +
@@ -441,12 +633,28 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"Q\n" +
 	"\x1eListSessionsByCampaignResponse\x12/\n" +
-	"\bsessions\x18\x01 \x03(\v2\x13.planner.v1.SessionR\bsessions2\xa4\x02\n" +
+	"\bsessions\x18\x01 \x03(\v2\x13.planner.v1.SessionR\bsessions\"&\n" +
+	"\x14RemoveSessionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x17\n" +
+	"\x15RemoveSessionResponse\"\xce\x01\n" +
+	"\x14UpdateSessionRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
+	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12<\n" +
+	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01B\b\n" +
+	"\x06_titleB\f\n" +
+	"\n" +
+	"_starts_atB\x0e\n" +
+	"\f_description\"F\n" +
+	"\x15UpdateSessionResponse\x12-\n" +
+	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession2\xd0\x03\n" +
 	"\x0eSessionService\x12T\n" +
 	"\rCreateSession\x12 .planner.v1.CreateSessionRequest\x1a!.planner.v1.CreateSessionResponse\x12K\n" +
 	"\n" +
 	"GetSession\x12\x1d.planner.v1.GetSessionRequest\x1a\x1e.planner.v1.GetSessionResponse\x12o\n" +
-	"\x16ListSessionsByCampaign\x12).planner.v1.ListSessionsByCampaignRequest\x1a*.planner.v1.ListSessionsByCampaignResponseB\xa9\x01\n" +
+	"\x16ListSessionsByCampaign\x12).planner.v1.ListSessionsByCampaignRequest\x1a*.planner.v1.ListSessionsByCampaignResponse\x12T\n" +
+	"\rRemoveSession\x12 .planner.v1.RemoveSessionRequest\x1a!.planner.v1.RemoveSessionResponse\x12T\n" +
+	"\rUpdateSession\x12 .planner.v1.UpdateSessionRequest\x1a!.planner.v1.UpdateSessionResponseB\xa9\x01\n" +
 	"\x0ecom.planner.v1B\fSessionProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
@@ -463,7 +671,7 @@ func file_planner_v1_session_proto_rawDescGZIP() []byte {
 	return file_planner_v1_session_proto_rawDescData
 }
 
-var file_planner_v1_session_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_planner_v1_session_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_session_proto_goTypes = []any{
 	(*Session)(nil),                        // 0: planner.v1.Session
 	(*CreateSessionRequest)(nil),           // 1: planner.v1.CreateSessionRequest
@@ -472,27 +680,37 @@ var file_planner_v1_session_proto_goTypes = []any{
 	(*GetSessionResponse)(nil),             // 4: planner.v1.GetSessionResponse
 	(*ListSessionsByCampaignRequest)(nil),  // 5: planner.v1.ListSessionsByCampaignRequest
 	(*ListSessionsByCampaignResponse)(nil), // 6: planner.v1.ListSessionsByCampaignResponse
-	(*timestamppb.Timestamp)(nil),          // 7: google.protobuf.Timestamp
+	(*RemoveSessionRequest)(nil),           // 7: planner.v1.RemoveSessionRequest
+	(*RemoveSessionResponse)(nil),          // 8: planner.v1.RemoveSessionResponse
+	(*UpdateSessionRequest)(nil),           // 9: planner.v1.UpdateSessionRequest
+	(*UpdateSessionResponse)(nil),          // 10: planner.v1.UpdateSessionResponse
+	(*timestamppb.Timestamp)(nil),          // 11: google.protobuf.Timestamp
 }
 var file_planner_v1_session_proto_depIdxs = []int32{
-	7,  // 0: planner.v1.Session.starts_at:type_name -> google.protobuf.Timestamp
-	7,  // 1: planner.v1.Session.created_at:type_name -> google.protobuf.Timestamp
-	7,  // 2: planner.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
-	7,  // 3: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
+	11, // 0: planner.v1.Session.starts_at:type_name -> google.protobuf.Timestamp
+	11, // 1: planner.v1.Session.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: planner.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
+	11, // 3: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
 	0,  // 5: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
 	0,  // 6: planner.v1.ListSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
-	1,  // 7: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
-	3,  // 8: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
-	5,  // 9: planner.v1.SessionService.ListSessionsByCampaign:input_type -> planner.v1.ListSessionsByCampaignRequest
-	2,  // 10: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
-	4,  // 11: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
-	6,  // 12: planner.v1.SessionService.ListSessionsByCampaign:output_type -> planner.v1.ListSessionsByCampaignResponse
-	10, // [10:13] is the sub-list for method output_type
-	7,  // [7:10] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	11, // 7: planner.v1.UpdateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: planner.v1.UpdateSessionResponse.session:type_name -> planner.v1.Session
+	1,  // 9: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
+	3,  // 10: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
+	5,  // 11: planner.v1.SessionService.ListSessionsByCampaign:input_type -> planner.v1.ListSessionsByCampaignRequest
+	7,  // 12: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
+	9,  // 13: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
+	2,  // 14: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
+	4,  // 15: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
+	6,  // 16: planner.v1.SessionService.ListSessionsByCampaign:output_type -> planner.v1.ListSessionsByCampaignResponse
+	8,  // 17: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
+	10, // 18: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_session_proto_init() }
@@ -502,13 +720,14 @@ func file_planner_v1_session_proto_init() {
 	}
 	file_planner_v1_session_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_session_proto_msgTypes[1].OneofWrappers = []any{}
+	file_planner_v1_session_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_session_proto_rawDesc), len(file_planner_v1_session_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

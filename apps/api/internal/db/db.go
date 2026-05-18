@@ -733,6 +733,23 @@ func (db *DB) ListSessionsByCampaign(campaignId string) ([]*model.Session, error
 	return sessions, rows.Err()
 }
 
+func (db *DB) RemoveSession(id string) error {
+	_, err := db.conn.Exec(`DELETE FROM session WHERE id = $1`, id)
+	if err != nil {
+		return fmt.Errorf("remove session: %w", err)
+	}
+	return nil
+}
+
+func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session, error) {
+	row := db.conn.QueryRow(`
+		UPDATE session SET title = COALESCE($1, title), description = $2, starts_at = $3
+		WHERE id = $4
+		RETURNING `+sessionColumns,
+		session.Title, session.Description, session.StartsAt, session.ID)
+	return scanSession(row)
+}
+
 // -----------------------------------------------------------------------------
 // Locations
 // -----------------------------------------------------------------------------

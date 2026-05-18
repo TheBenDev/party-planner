@@ -29,5 +29,18 @@ export const ListSessionsByCampaignResponseSchema = z.object({
 	sessions: z.array(SessionsSchema),
 });
 
+export const RemoveSessionRequestSchema = z.object({ id: z.uuid() });
+export const RemoveSessionResponseSchema = z.object({});
+
+export const UpdateSessionRequestSchema = z.object({
+	description: z.string().optional(),
+	id: z.uuid(),
+	startsAt: z.date().optional(),
+	title: z.string().optional(),
+});
+export const UpdateSessionResponseSchema = z.object({
+	session: SessionsSchema,
+});
+
 export type Session = z.infer<typeof SessionsSchema>;
 export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;

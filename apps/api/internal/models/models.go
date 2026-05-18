@@ -328,6 +328,13 @@ type CreateSessionRequest struct {
 	StartsAt    sql.NullTime
 }
 
+type UpdateSessionRequest struct {
+	ID          string
+	Title       sql.NullString
+	Description sql.NullString
+	StartsAt    sql.NullTime
+}
+
 // -----------------------------------------------------------------------------
 // Locations
 // -----------------------------------------------------------------------------

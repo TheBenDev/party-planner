@@ -82,6 +82,45 @@ func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect
 	}), nil
 }
 
+func (s *SessionServer) RemoveSession(ctx context.Context, req *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	if err := s.Session.Remove(req.Msg.Id); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove session")
+	}
+
+	return connect.NewResponse(&v1.RemoveSessionResponse{}), nil
+}
+
+func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+
+	if req.Msg.StartsAt != nil {
+		if err := req.Msg.StartsAt.CheckValid(); err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid starts_at"))
+		}
+	}
+
+	session, err := s.Session.Update(&model.UpdateSessionRequest{
+		ID:          req.Msg.Id,
+		Title:       sqlNullString(req.Msg.Title),
+		Description: sqlNullString(req.Msg.Description),
+		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
+	})
+
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update session")
+	}
+
+	return connect.NewResponse(&v1.UpdateSessionResponse{
+		Session: sessionToProto(session),
+	}), nil
+}
+
 func sessionToProto(session *model.Session) *v1.Session {
 	if session == nil {
 		return nil
