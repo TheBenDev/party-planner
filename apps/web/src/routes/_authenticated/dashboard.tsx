@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Dashboard } from "@/components/dashboard";
-import { EmptyCampaignDashboard } from "@/components/emptyCampaign";
 import { useAuth } from "@/hooks/auth";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -9,13 +9,15 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function DashboardPage() {
 	const { campaign, campaignIsLoading } = useAuth();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (campaignIsLoading) return;
+		if (campaign !== null) navigate({ to: "/campaign" });
+	}, [campaign, campaignIsLoading]);
 
 	if (campaignIsLoading) {
 		return <div>loading...</div>;
-	}
-
-	if (!campaign) {
-		return <EmptyCampaignDashboard />;
 	}
 
 	return <Dashboard />;
