@@ -42,6 +42,12 @@ const (
 	// SessionServiceListSessionsByCampaignProcedure is the fully-qualified name of the SessionService's
 	// ListSessionsByCampaign RPC.
 	SessionServiceListSessionsByCampaignProcedure = "/planner.v1.SessionService/ListSessionsByCampaign"
+	// SessionServiceRemoveSessionProcedure is the fully-qualified name of the SessionService's
+	// RemoveSession RPC.
+	SessionServiceRemoveSessionProcedure = "/planner.v1.SessionService/RemoveSession"
+	// SessionServiceUpdateSessionProcedure is the fully-qualified name of the SessionService's
+	// UpdateSession RPC.
+	SessionServiceUpdateSessionProcedure = "/planner.v1.SessionService/UpdateSession"
 )
 
 // SessionServiceClient is a client for the planner.v1.SessionService service.
@@ -49,6 +55,8 @@ type SessionServiceClient interface {
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
+	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
 
 // NewSessionServiceClient constructs a client for the planner.v1.SessionService service. By
@@ -80,6 +88,18 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
 			connect.WithClientOptions(opts...),
 		),
+		removeSession: connect.NewClient[v1.RemoveSessionRequest, v1.RemoveSessionResponse](
+			httpClient,
+			baseURL+SessionServiceRemoveSessionProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("RemoveSession")),
+			connect.WithClientOptions(opts...),
+		),
+		updateSession: connect.NewClient[v1.UpdateSessionRequest, v1.UpdateSessionResponse](
+			httpClient,
+			baseURL+SessionServiceUpdateSessionProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("UpdateSession")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -88,6 +108,8 @@ type sessionServiceClient struct {
 	createSession          *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
 	getSession             *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
 	listSessionsByCampaign *connect.Client[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse]
+	removeSession          *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
+	updateSession          *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
 }
 
 // CreateSession calls planner.v1.SessionService.CreateSession.
@@ -105,11 +127,23 @@ func (c *sessionServiceClient) ListSessionsByCampaign(ctx context.Context, req *
 	return c.listSessionsByCampaign.CallUnary(ctx, req)
 }
 
+// RemoveSession calls planner.v1.SessionService.RemoveSession.
+func (c *sessionServiceClient) RemoveSession(ctx context.Context, req *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {
+	return c.removeSession.CallUnary(ctx, req)
+}
+
+// UpdateSession calls planner.v1.SessionService.UpdateSession.
+func (c *sessionServiceClient) UpdateSession(ctx context.Context, req *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error) {
+	return c.updateSession.CallUnary(ctx, req)
+}
+
 // SessionServiceHandler is an implementation of the planner.v1.SessionService service.
 type SessionServiceHandler interface {
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
+	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
 
 // NewSessionServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -137,6 +171,18 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 		connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
 		connect.WithHandlerOptions(opts...),
 	)
+	sessionServiceRemoveSessionHandler := connect.NewUnaryHandler(
+		SessionServiceRemoveSessionProcedure,
+		svc.RemoveSession,
+		connect.WithSchema(sessionServiceMethods.ByName("RemoveSession")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionServiceUpdateSessionHandler := connect.NewUnaryHandler(
+		SessionServiceUpdateSessionProcedure,
+		svc.UpdateSession,
+		connect.WithSchema(sessionServiceMethods.ByName("UpdateSession")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.SessionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SessionServiceCreateSessionProcedure:
@@ -145,6 +191,10 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 			sessionServiceGetSessionHandler.ServeHTTP(w, r)
 		case SessionServiceListSessionsByCampaignProcedure:
 			sessionServiceListSessionsByCampaignHandler.ServeHTTP(w, r)
+		case SessionServiceRemoveSessionProcedure:
+			sessionServiceRemoveSessionHandler.ServeHTTP(w, r)
+		case SessionServiceUpdateSessionProcedure:
+			sessionServiceUpdateSessionHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -164,4 +214,12 @@ func (UnimplementedSessionServiceHandler) GetSession(context.Context, *connect.R
 
 func (UnimplementedSessionServiceHandler) ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.ListSessionsByCampaign is not implemented"))
+}
+
+func (UnimplementedSessionServiceHandler) RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.RemoveSession is not implemented"))
+}
+
+func (UnimplementedSessionServiceHandler) UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.UpdateSession is not implemented"))
 }

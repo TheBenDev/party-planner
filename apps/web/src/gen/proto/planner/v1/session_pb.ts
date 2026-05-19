@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/session.proto.
  */
 export const file_planner_v1_session: GenFile = /*@__PURE__*/
-  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEihQIKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIyCglzdGFydHNfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQgwKCl9zdGFydHNfYXQipgEKFENyZWF0ZVNlc3Npb25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEg0KBXRpdGxlGAIgASgJEhgKC2Rlc2NyaXB0aW9uGAMgASgJSACIAQESMgoJc3RhcnRzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0Ij0KFUNyZWF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIh8KEUdldFNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJIjoKEkdldFNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIjQKHUxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIkcKHkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRIlCghzZXNzaW9ucxgBIAMoCzITLnBsYW5uZXIudjEuU2Vzc2lvbjKkAgoOU2Vzc2lvblNlcnZpY2USVAoNQ3JlYXRlU2Vzc2lvbhIgLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblJlcXVlc3QaIS5wbGFubmVyLnYxLkNyZWF0ZVNlc3Npb25SZXNwb25zZRJLCgpHZXRTZXNzaW9uEh0ucGxhbm5lci52MS5HZXRTZXNzaW9uUmVxdWVzdBoeLnBsYW5uZXIudjEuR2V0U2Vzc2lvblJlc3BvbnNlEm8KFkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ24SKS5wbGFubmVyLnYxLkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0GioucGxhbm5lci52MS5MaXN0U2Vzc2lvbnNCeUNhbXBhaWduUmVzcG9uc2VCqQEKDmNvbS5wbGFubmVyLnYxQgxTZXNzaW9uUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEihQIKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIyCglzdGFydHNfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQgwKCl9zdGFydHNfYXQipgEKFENyZWF0ZVNlc3Npb25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEg0KBXRpdGxlGAIgASgJEhgKC2Rlc2NyaXB0aW9uGAMgASgJSACIAQESMgoJc3RhcnRzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0Ij0KFUNyZWF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIh8KEUdldFNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJIjoKEkdldFNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIjQKHUxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIkcKHkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRIlCghzZXNzaW9ucxgBIAMoCzITLnBsYW5uZXIudjEuU2Vzc2lvbiIiChRSZW1vdmVTZXNzaW9uUmVxdWVzdBIKCgJpZBgBIAEoCSIXChVSZW1vdmVTZXNzaW9uUmVzcG9uc2UirAEKFFVwZGF0ZVNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESMgoJc3RhcnRzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEhgKC2Rlc2NyaXB0aW9uGAQgASgJSAKIAQFCCAoGX3RpdGxlQgwKCl9zdGFydHNfYXRCDgoMX2Rlc2NyaXB0aW9uIj0KFVVwZGF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uMtADCg5TZXNzaW9uU2VydmljZRJUCg1DcmVhdGVTZXNzaW9uEiAucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uUmVxdWVzdBohLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblJlc3BvbnNlEksKCkdldFNlc3Npb24SHS5wbGFubmVyLnYxLkdldFNlc3Npb25SZXF1ZXN0Gh4ucGxhbm5lci52MS5HZXRTZXNzaW9uUmVzcG9uc2USbwoWTGlzdFNlc3Npb25zQnlDYW1wYWlnbhIpLnBsYW5uZXIudjEuTGlzdFNlc3Npb25zQnlDYW1wYWlnblJlcXVlc3QaKi5wbGFubmVyLnYxLkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRJUCg1SZW1vdmVTZXNzaW9uEiAucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uUmVxdWVzdBohLnBsYW5uZXIudjEuUmVtb3ZlU2Vzc2lvblJlc3BvbnNlElQKDVVwZGF0ZVNlc3Npb24SIC5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uUmVzcG9uc2VCqQEKDmNvbS5wbGFubmVyLnYxQgxTZXNzaW9uUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Session
@@ -179,6 +179,85 @@ export const ListSessionsByCampaignResponseSchema: GenMessage<ListSessionsByCamp
   messageDesc(file_planner_v1_session, 6);
 
 /**
+ * @generated from message planner.v1.RemoveSessionRequest
+ */
+export type RemoveSessionRequest = Message<"planner.v1.RemoveSessionRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+};
+
+/**
+ * Describes the message planner.v1.RemoveSessionRequest.
+ * Use `create(RemoveSessionRequestSchema)` to create a new message.
+ */
+export const RemoveSessionRequestSchema: GenMessage<RemoveSessionRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 7);
+
+/**
+ * @generated from message planner.v1.RemoveSessionResponse
+ */
+export type RemoveSessionResponse = Message<"planner.v1.RemoveSessionResponse"> & {
+};
+
+/**
+ * Describes the message planner.v1.RemoveSessionResponse.
+ * Use `create(RemoveSessionResponseSchema)` to create a new message.
+ */
+export const RemoveSessionResponseSchema: GenMessage<RemoveSessionResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 8);
+
+/**
+ * @generated from message planner.v1.UpdateSessionRequest
+ */
+export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: optional string title = 2;
+   */
+  title?: string | undefined;
+
+  /**
+   * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
+   */
+  startsAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: optional string description = 4;
+   */
+  description?: string | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateSessionRequest.
+ * Use `create(UpdateSessionRequestSchema)` to create a new message.
+ */
+export const UpdateSessionRequestSchema: GenMessage<UpdateSessionRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 9);
+
+/**
+ * @generated from message planner.v1.UpdateSessionResponse
+ */
+export type UpdateSessionResponse = Message<"planner.v1.UpdateSessionResponse"> & {
+  /**
+   * @generated from field: planner.v1.Session session = 1;
+   */
+  session?: Session | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateSessionResponse.
+ * Use `create(UpdateSessionResponseSchema)` to create a new message.
+ */
+export const UpdateSessionResponseSchema: GenMessage<UpdateSessionResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 10);
+
+/**
  * @generated from service planner.v1.SessionService
  */
 export const SessionService: GenService<{
@@ -205,6 +284,22 @@ export const SessionService: GenService<{
     methodKind: "unary";
     input: typeof ListSessionsByCampaignRequestSchema;
     output: typeof ListSessionsByCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.SessionService.RemoveSession
+   */
+  removeSession: {
+    methodKind: "unary";
+    input: typeof RemoveSessionRequestSchema;
+    output: typeof RemoveSessionResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.SessionService.UpdateSession
+   */
+  updateSession: {
+    methodKind: "unary";
+    input: typeof UpdateSessionRequestSchema;
+    output: typeof UpdateSessionResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_session, 0);

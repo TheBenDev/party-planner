@@ -7,6 +7,10 @@ import {
 	GetSessionResponseSchema,
 	ListSessionsByCampaignRequestSchema,
 	ListSessionsByCampaignResponseSchema,
+	RemoveSessionRequestSchema,
+	RemoveSessionResponseSchema,
+	UpdateSessionRequestSchema,
+	UpdateSessionResponseSchema,
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
@@ -99,8 +103,67 @@ const listSessions = privateProcedure
 		}
 	});
 
+const removeSession = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/remove",
+		summary: "Remove a session",
+	})
+	.input(RemoveSessionRequestSchema)
+	.output(RemoveSessionResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			await api.session.removeSession({ id: input.id });
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to remove session",
+				{ session: input.id },
+				context.logger,
+			);
+		}
+	});
+
+const updateSession = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/update",
+		summary: "Update a session",
+	})
+	.input(UpdateSessionRequestSchema)
+	.output(UpdateSessionResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		const startsAt = input.startsAt
+			? timestampFromDate(input.startsAt)
+			: undefined;
+		try {
+			const res = await api.session.updateSession({
+				...input,
+				startsAt,
+			});
+			if (res.session === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update session",
+				});
+			}
+			return { session: protoToSession(res.session) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update session",
+				{ sessiongId: input.id },
+				context.logger,
+			);
+		}
+	});
+
 export const sessionRouter = {
 	createSession,
 	getSession,
 	listSessions,
+	removeSession,
+	updateSession,
 };
