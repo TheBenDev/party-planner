@@ -311,12 +311,21 @@ type UpdateQuestRequest struct {
 // Sessions
 // -----------------------------------------------------------------------------
 
+type SessionStatus string
+
+const (
+	SessionStatusDraft     SessionStatus = "DRAFT"
+	SessionStatusPolling   SessionStatus = "POLLING"
+	SessionStatusConfirmed SessionStatus = "CONFIRMED"
+)
+
 type Session struct {
 	ID          string
 	CampaignID  string
 	Title       string
 	Description sql.NullString
 	StartsAt    sql.NullTime
+	Status      SessionStatus
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -325,6 +334,7 @@ type CreateSessionRequest struct {
 	CampaignID  string
 	Title       string
 	Description sql.NullString
+	Status      SessionStatus
 	StartsAt    sql.NullTime
 }
 
@@ -332,6 +342,7 @@ type UpdateSessionRequest struct {
 	ID          string
 	Title       sql.NullString
 	Description sql.NullString
+	Status      SessionStatus
 	StartsAt    sql.NullTime
 }
 

@@ -5,6 +5,17 @@ package planner.v1;
 import "google/protobuf/timestamp.proto";
 
 // -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+enum SessionStatus {
+  SESSION_STATUS_UNSPECIFIED = 0;
+  SESSION_STATUS_DRAFT = 1;
+  SESSION_STATUS_POLLING = 2;
+  SESSION_STATUS_CONFIRMED = 3;
+}
+
+// -----------------------------------------------------------------------------
 // Core Messages
 // -----------------------------------------------------------------------------
 
@@ -13,20 +24,29 @@ message Session {
   string campaign_id = 2;
   string title = 3;
   optional string description = 4;
-  optional google.protobuf.Timestamp starts_at = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
+  SessionStatus status = 5;
+  optional google.protobuf.Timestamp starts_at = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 // -----------------------------------------------------------------------------
 // RPC Messages
 // -----------------------------------------------------------------------------
 
+message AnnounceSessionRequest {
+  string campaign_id = 1;
+  string session_id = 2;
+}
+
+message AnnounceSessionResponse {}
+
 message CreateSessionRequest {
   string campaign_id = 1;
-  string title = 2;
-  optional string description = 3;
-  optional google.protobuf.Timestamp starts_at = 4;
+  optional string description = 2;
+  optional google.protobuf.Timestamp starts_at = 3;
+  SessionStatus status = 4;
+  string title = 5;
 }
 
 message CreateSessionResponse {
@@ -56,9 +76,10 @@ message RemoveSessionResponse {}
 
 message UpdateSessionRequest {
   string id = 1;
-  optional string title = 2;
+  optional string description = 2;
   optional google.protobuf.Timestamp starts_at = 3;
-  optional string description = 4;
+  SessionStatus status = 4;
+  optional string title = 5;
 }
 
 message UpdateSessionResponse {
@@ -70,6 +91,7 @@ message UpdateSessionResponse {
 // -----------------------------------------------------------------------------
 
 service SessionService {
+  rpc AnnounceSession(AnnounceSessionRequest) returns (AnnounceSessionResponse);
   rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
   rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);

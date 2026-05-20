@@ -1,3 +1,4 @@
+import { Status } from "@planner/enums/session";
 import z from "zod";
 import { BaseEntitySchema } from "./common";
 
@@ -5,13 +6,21 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().nullable().optional(),
 	startsAt: z.date().nullable().optional(),
+	status: z.enum(Status),
 	title: z.string(),
 });
+
+export const AnnounceSessionRequestSchema = z.object({
+	campaignId: z.uuid(),
+	sessionId: z.uuid(),
+});
+export const AnnounceSessionResponseSchema = z.object({});
 
 export const CreateSessionRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
 	startsAt: z.date().optional(),
+	status: z.enum(Status),
 	title: z.string(),
 });
 
@@ -36,6 +45,7 @@ export const UpdateSessionRequestSchema = z.object({
 	description: z.string().optional(),
 	id: z.uuid(),
 	startsAt: z.date().optional(),
+	status: z.enum(Status),
 	title: z.string().optional(),
 });
 export const UpdateSessionResponseSchema = z.object({

@@ -1,3 +1,4 @@
+import { Status } from "@planner/enums/session";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
@@ -218,6 +219,7 @@ function SessionsPage() {
 			if (!campaign) throw new Error("campaign required");
 			return client.session.createSession({
 				campaignId: campaign.campaign.id,
+				status: Status.DRAFT,
 				title: "New Session",
 			});
 		},
