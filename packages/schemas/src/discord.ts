@@ -33,11 +33,16 @@ export const GetCampaignIntegrationResponseSchema = z.object({
 	integration: CampaignIntegrationSchema.nullable(),
 });
 
-export const CreateCampaignIntegrationRequestSchema = z.object({
+export const DiscordCreateIntegrationSchema = z.object({
 	campaignId: z.uuid(),
-	channelId: z.string(),
-	serverId: z.string(),
+	code: z.string(),
+	source: z.literal(IntegrationSource.DISCORD),
 });
+
+export const CreateCampaignIntegrationRequestSchema = z.discriminatedUnion(
+	"source",
+	[DiscordCreateIntegrationSchema],
+);
 
 export const CreateCampaignIntegrationResponseSchema = z.object({
 	integration: CampaignIntegrationSchema,

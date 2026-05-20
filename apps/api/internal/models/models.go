@@ -88,6 +88,11 @@ type CampaignIntegration struct {
 	UpdatedAt  time.Time
 }
 
+type CreateDiscordCampaignIntegrationRequest struct {
+	CampaignID string
+	Code       string
+}
+
 type CreateCampaignIntegrationRequest struct {
 	CampaignID string
 	ExternalID string

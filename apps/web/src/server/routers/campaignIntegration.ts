@@ -21,45 +21,49 @@ const createCampaignIntegration = privateProcedure
 	.route({
 		method: "POST",
 		path: "/campaignIntegration/createCampaignIntegration",
-		summary: "Register a campaign with a Discord server",
+		summary: "Register a campaign with an external service",
 	})
 	.input(CreateCampaignIntegrationRequestSchema)
 	.output(CreateCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
-		const { serverId, campaignId, channelId } = input;
-		const api = context.api;
-		if (!(serverId && campaignId && channelId)) {
-			throw new ORPCError("BAD_REQUEST", {
-				message: "missing params for register",
-			});
-		}
-		const source = integrationSourceToProto(IntegrationSource.DISCORD);
-		const values = {
-			campaignId,
-			externalId: serverId,
-			metadata: { channelId, source: IntegrationSource.DISCORD },
-			settings: {
-				enableSessionReminders: true,
-				source: IntegrationSource.DISCORD,
-			},
-			source,
-		};
-		try {
-			const result =
-				await api.campaignIntegration.createCampaignIntegration(values);
-			if (result.integration === undefined) {
-				throw new ORPCError("INTERNAL_SERVER_ERROR", {
-					message: "failed to create campaign integration",
-				});
+		switch (input.source) {
+			case IntegrationSource.DISCORD: {
+				const { code, campaignId } = input;
+				if (!code) {
+					throw new ORPCError("BAD_REQUEST", {
+						message: "missing code for Discord integration",
+					});
+				}
+				const result = await context.api.campaignIntegration
+					.createCampaignIntegration({
+						campaignId,
+						integration: {
+							case: "discord",
+							value: {
+								code,
+							},
+						},
+						source: integrationSourceToProto(IntegrationSource.DISCORD),
+					})
+					.catch((err) => {
+						handleError(
+							err,
+							"failed to create campaign integration",
+							{ campaignId },
+							context.logger,
+						);
+					});
+				if (!result?.integration) {
+					throw new ORPCError("INTERNAL_SERVER_ERROR", {
+						message: "failed to create campaign integration",
+					});
+				}
+				return { integration: protoToCampaignIntegration(result.integration) };
 			}
-			return { integration: protoToCampaignIntegration(result.integration) };
-		} catch (err) {
-			handleError(
-				err,
-				"failed to create campaign integration",
-				{ campaignId, externalId: serverId, integrationSource: source },
-				context.logger,
-			);
+			default:
+				throw new ORPCError("BAD_REQUEST", {
+					message: `unsupported integration source: ${input.source}`,
+				});
 		}
 	});
 

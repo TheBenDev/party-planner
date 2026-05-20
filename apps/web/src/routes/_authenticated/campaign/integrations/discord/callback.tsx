@@ -1,3 +1,4 @@
+import { IntegrationSource } from "@planner/enums/integration";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -7,16 +8,16 @@ export const Route = createFileRoute(
 	"/_authenticated/campaign/integrations/discord/callback",
 )({
 	component: DiscordCallbackPage,
-	validateSearch: (search: Record<string, unknown>) => ({
-		code: (search.code as string) ?? "",
-		guild_id: (search.guild_id as number) ?? "",
-		permissions: (search.permissions as string) ?? "",
-		state: (search.state as string) ?? "",
+	validateSearch: (search: Record<string, string>) => ({
+		code: search.code ?? "",
+		permissions: search.permissions ?? "",
+		state: search.state ?? "",
 	}),
 });
 
-// TODO The callback trusts any decodable state containing campaignId. Without a nonce tied to the initiating session, this flow is vulnerable to forged callback links.
-function decodeState(state: string): { campaignId: string } | null {
+function decodeState(
+	state: string,
+): { campaignId: string; oauthState: string } | null {
 	try {
 		return JSON.parse(atob(state));
 	} catch {
@@ -26,7 +27,7 @@ function decodeState(state: string): { campaignId: string } | null {
 
 function DiscordCallbackPage() {
 	const navigate = useNavigate();
-	const { code, guild_id, state } = Route.useSearch();
+	const { code, state } = Route.useSearch();
 	const {
 		mutate: createIntegration,
 		isPending,
@@ -35,9 +36,8 @@ function DiscordCallbackPage() {
 		mutationFn: (campaignId: string) =>
 			client.campaignIntegration.createCampaignIntegration({
 				campaignId,
-				// TODO set up a way to add channelId
-				channelId: "placeholder",
-				serverId: String(guild_id),
+				code,
+				source: IntegrationSource.DISCORD,
 			}),
 		onError: () => {
 			navigate({ to: "/campaign/integrations/discord" });
@@ -48,13 +48,18 @@ function DiscordCallbackPage() {
 	});
 
 	useEffect(() => {
-		if (!(code && guild_id && state)) {
+		if (!(code && state)) {
 			navigate({ to: "/campaign/integrations" });
 			return;
 		}
 
 		const decoded = decodeState(state);
-		if (!decoded?.campaignId) {
+		const expectedState = sessionStorage.getItem("discord_oauth_state");
+		sessionStorage.removeItem("discord_oauth_state");
+		if (
+			!(decoded?.campaignId && decoded.oauthState) ||
+			decoded.oauthState !== expectedState
+		) {
 			navigate({ to: "/campaign/integrations" });
 			return;
 		}

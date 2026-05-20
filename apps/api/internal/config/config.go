@@ -10,14 +10,17 @@ import (
 )
 
 type Config struct {
-	APIKey             string
-	AppURL             string
-	CORSAllowedOrigins []string
-	DatabaseUrl        string
-	DiscordToken       string
-	Environment        string
-	InternalAPIKey     string
-	Port               string
+	APIKey              string
+	AppURL              string
+	CORSAllowedOrigins  []string
+	DatabaseUrl         string
+	DiscordClientID     string
+	DiscordClientSecret string
+	DiscordRedirectURI  string
+	DiscordToken        string
+	Environment         string
+	InternalAPIKey      string
+	Port                string
 }
 
 func Load() (*Config, error) {
@@ -39,14 +42,17 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		APIKey:             os.Getenv("API_KEY"),
-		AppURL:             os.Getenv("APP_URL"),
-		CORSAllowedOrigins: origins,
-		DatabaseUrl:        os.Getenv("DATABASE_URL"),
-		DiscordToken:       os.Getenv("DISCORD_TOKEN"),
-		Environment:        os.Getenv("ENVIRONMENT"),
-		InternalAPIKey:     os.Getenv("INTERNAL_API_KEY"),
-		Port:               os.Getenv("PORT"),
+		APIKey:              os.Getenv("API_KEY"),
+		AppURL:              os.Getenv("APP_URL"),
+		CORSAllowedOrigins:  origins,
+		DatabaseUrl:         os.Getenv("DATABASE_URL"),
+		DiscordClientID:     os.Getenv("DISCORD_CLIENT_ID"),
+		DiscordClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
+		DiscordRedirectURI:  os.Getenv("DISCORD_REDIRECT_URI"),
+		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
+		Environment:         os.Getenv("ENVIRONMENT"),
+		InternalAPIKey:      os.Getenv("INTERNAL_API_KEY"),
+		Port:                os.Getenv("PORT"),
 	}
 
 	if cfg.APIKey == "" {
@@ -54,6 +60,15 @@ func Load() (*Config, error) {
 	}
 	if cfg.AppURL == "" {
 		return nil, fmt.Errorf("APP_URL is required")
+	}
+	if cfg.DiscordClientID == "" {
+		return nil, fmt.Errorf("DISCORD_CLIENT_ID is required")
+	}
+	if cfg.DiscordClientSecret == "" {
+		return nil, fmt.Errorf("DISCORD_CLIENT_SECRET is required")
+	}
+	if cfg.DiscordRedirectURI == "" {
+		return nil, fmt.Errorf("DISCORD_REDIRECT_URI is required")
 	}
 	if cfg.DiscordToken == "" {
 		return nil, fmt.Errorf("DISCORD_TOKEN is required")
