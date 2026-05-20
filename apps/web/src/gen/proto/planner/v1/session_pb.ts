@@ -2,8 +2,8 @@
 // @generated from file planner/v1/session.proto (package planner.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/session.proto.
  */
 export const file_planner_v1_session: GenFile = /*@__PURE__*/
-  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEihQIKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIyCglzdGFydHNfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESLgoKY3JlYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQgwKCl9zdGFydHNfYXQipgEKFENyZWF0ZVNlc3Npb25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEg0KBXRpdGxlGAIgASgJEhgKC2Rlc2NyaXB0aW9uGAMgASgJSACIAQESMgoJc3RhcnRzX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0Ij0KFUNyZWF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIh8KEUdldFNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJIjoKEkdldFNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIjQKHUxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIkcKHkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRIlCghzZXNzaW9ucxgBIAMoCzITLnBsYW5uZXIudjEuU2Vzc2lvbiIiChRSZW1vdmVTZXNzaW9uUmVxdWVzdBIKCgJpZBgBIAEoCSIXChVSZW1vdmVTZXNzaW9uUmVzcG9uc2UirAEKFFVwZGF0ZVNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESMgoJc3RhcnRzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEhgKC2Rlc2NyaXB0aW9uGAQgASgJSAKIAQFCCAoGX3RpdGxlQgwKCl9zdGFydHNfYXRCDgoMX2Rlc2NyaXB0aW9uIj0KFVVwZGF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uMtADCg5TZXNzaW9uU2VydmljZRJUCg1DcmVhdGVTZXNzaW9uEiAucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uUmVxdWVzdBohLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblJlc3BvbnNlEksKCkdldFNlc3Npb24SHS5wbGFubmVyLnYxLkdldFNlc3Npb25SZXF1ZXN0Gh4ucGxhbm5lci52MS5HZXRTZXNzaW9uUmVzcG9uc2USbwoWTGlzdFNlc3Npb25zQnlDYW1wYWlnbhIpLnBsYW5uZXIudjEuTGlzdFNlc3Npb25zQnlDYW1wYWlnblJlcXVlc3QaKi5wbGFubmVyLnYxLkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRJUCg1SZW1vdmVTZXNzaW9uEiAucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uUmVxdWVzdBohLnBsYW5uZXIudjEuUmVtb3ZlU2Vzc2lvblJlc3BvbnNlElQKDVVwZGF0ZVNlc3Npb24SIC5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uUmVzcG9uc2VCqQEKDmNvbS5wbGFubmVyLnYxQgxTZXNzaW9uUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEisAIKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIpCgZzdGF0dXMYBSABKA4yGS5wbGFubmVyLnYxLlNlc3Npb25TdGF0dXMSMgoJc3RhcnRzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0IkEKFkFubm91bmNlU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEgoKc2Vzc2lvbl9pZBgCIAEoCSIZChdBbm5vdW5jZVNlc3Npb25SZXNwb25zZSLRAQoUQ3JlYXRlU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSGAoLZGVzY3JpcHRpb24YAiABKAlIAIgBARIyCglzdGFydHNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESKQoGc3RhdHVzGAQgASgOMhkucGxhbm5lci52MS5TZXNzaW9uU3RhdHVzEg0KBXRpdGxlGAUgASgJQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0Ij0KFUNyZWF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIh8KEUdldFNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJIjoKEkdldFNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uIjQKHUxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIkcKHkxpc3RTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRIlCghzZXNzaW9ucxgBIAMoCzITLnBsYW5uZXIudjEuU2Vzc2lvbiIiChRSZW1vdmVTZXNzaW9uUmVxdWVzdBIKCgJpZBgBIAEoCSIXChVSZW1vdmVTZXNzaW9uUmVzcG9uc2Ui1wEKFFVwZGF0ZVNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJEhgKC2Rlc2NyaXB0aW9uGAIgASgJSACIAQESMgoJc3RhcnRzX2F0GAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEikKBnN0YXR1cxgEIAEoDjIZLnBsYW5uZXIudjEuU2Vzc2lvblN0YXR1cxISCgV0aXRsZRgFIAEoCUgCiAEBQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0QggKBl90aXRsZSI9ChVVcGRhdGVTZXNzaW9uUmVzcG9uc2USJAoHc2Vzc2lvbhgBIAEoCzITLnBsYW5uZXIudjEuU2Vzc2lvbiqDAQoNU2Vzc2lvblN0YXR1cxIeChpTRVNTSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEhgKFFNFU1NJT05fU1RBVFVTX0RSQUZUEAESGgoWU0VTU0lPTl9TVEFUVVNfUE9MTElORxACEhwKGFNFU1NJT05fU1RBVFVTX0NPTkZJUk1FRBADMqwECg5TZXNzaW9uU2VydmljZRJaCg9Bbm5vdW5jZVNlc3Npb24SIi5wbGFubmVyLnYxLkFubm91bmNlU2Vzc2lvblJlcXVlc3QaIy5wbGFubmVyLnYxLkFubm91bmNlU2Vzc2lvblJlc3BvbnNlElQKDUNyZWF0ZVNlc3Npb24SIC5wbGFubmVyLnYxLkNyZWF0ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uUmVzcG9uc2USSwoKR2V0U2Vzc2lvbhIdLnBsYW5uZXIudjEuR2V0U2Vzc2lvblJlcXVlc3QaHi5wbGFubmVyLnYxLkdldFNlc3Npb25SZXNwb25zZRJvChZMaXN0U2Vzc2lvbnNCeUNhbXBhaWduEikucGxhbm5lci52MS5MaXN0U2Vzc2lvbnNCeUNhbXBhaWduUmVxdWVzdBoqLnBsYW5uZXIudjEuTGlzdFNlc3Npb25zQnlDYW1wYWlnblJlc3BvbnNlElQKDVJlbW92ZVNlc3Npb24SIC5wbGFubmVyLnYxLlJlbW92ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uUmVzcG9uc2USVAoNVXBkYXRlU2Vzc2lvbhIgLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblJlcXVlc3QaIS5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25SZXNwb25zZUKpAQoOY29tLnBsYW5uZXIudjFCDFNlc3Npb25Qcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Session
@@ -39,17 +39,22 @@ export type Session = Message<"planner.v1.Session"> & {
   description?: string | undefined;
 
   /**
-   * @generated from field: optional google.protobuf.Timestamp starts_at = 5;
+   * @generated from field: planner.v1.SessionStatus status = 5;
+   */
+  status: SessionStatus;
+
+  /**
+   * @generated from field: optional google.protobuf.Timestamp starts_at = 6;
    */
   startsAt?: Timestamp | undefined;
 
   /**
-   * @generated from field: google.protobuf.Timestamp created_at = 6;
+   * @generated from field: google.protobuf.Timestamp created_at = 7;
    */
   createdAt?: Timestamp | undefined;
 
   /**
-   * @generated from field: google.protobuf.Timestamp updated_at = 7;
+   * @generated from field: google.protobuf.Timestamp updated_at = 8;
    */
   updatedAt?: Timestamp | undefined;
 };
@@ -62,6 +67,41 @@ export const SessionSchema: GenMessage<Session> = /*@__PURE__*/
   messageDesc(file_planner_v1_session, 0);
 
 /**
+ * @generated from message planner.v1.AnnounceSessionRequest
+ */
+export type AnnounceSessionRequest = Message<"planner.v1.AnnounceSessionRequest"> & {
+  /**
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+
+  /**
+   * @generated from field: string session_id = 2;
+   */
+  sessionId: string;
+};
+
+/**
+ * Describes the message planner.v1.AnnounceSessionRequest.
+ * Use `create(AnnounceSessionRequestSchema)` to create a new message.
+ */
+export const AnnounceSessionRequestSchema: GenMessage<AnnounceSessionRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 1);
+
+/**
+ * @generated from message planner.v1.AnnounceSessionResponse
+ */
+export type AnnounceSessionResponse = Message<"planner.v1.AnnounceSessionResponse"> & {
+};
+
+/**
+ * Describes the message planner.v1.AnnounceSessionResponse.
+ * Use `create(AnnounceSessionResponseSchema)` to create a new message.
+ */
+export const AnnounceSessionResponseSchema: GenMessage<AnnounceSessionResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 2);
+
+/**
  * @generated from message planner.v1.CreateSessionRequest
  */
 export type CreateSessionRequest = Message<"planner.v1.CreateSessionRequest"> & {
@@ -71,19 +111,24 @@ export type CreateSessionRequest = Message<"planner.v1.CreateSessionRequest"> & 
   campaignId: string;
 
   /**
-   * @generated from field: string title = 2;
-   */
-  title: string;
-
-  /**
-   * @generated from field: optional string description = 3;
+   * @generated from field: optional string description = 2;
    */
   description?: string | undefined;
 
   /**
-   * @generated from field: optional google.protobuf.Timestamp starts_at = 4;
+   * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
    */
   startsAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: planner.v1.SessionStatus status = 4;
+   */
+  status: SessionStatus;
+
+  /**
+   * @generated from field: string title = 5;
+   */
+  title: string;
 };
 
 /**
@@ -91,7 +136,7 @@ export type CreateSessionRequest = Message<"planner.v1.CreateSessionRequest"> & 
  * Use `create(CreateSessionRequestSchema)` to create a new message.
  */
 export const CreateSessionRequestSchema: GenMessage<CreateSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 1);
+  messageDesc(file_planner_v1_session, 3);
 
 /**
  * @generated from message planner.v1.CreateSessionResponse
@@ -108,7 +153,7 @@ export type CreateSessionResponse = Message<"planner.v1.CreateSessionResponse"> 
  * Use `create(CreateSessionResponseSchema)` to create a new message.
  */
 export const CreateSessionResponseSchema: GenMessage<CreateSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 2);
+  messageDesc(file_planner_v1_session, 4);
 
 /**
  * @generated from message planner.v1.GetSessionRequest
@@ -125,7 +170,7 @@ export type GetSessionRequest = Message<"planner.v1.GetSessionRequest"> & {
  * Use `create(GetSessionRequestSchema)` to create a new message.
  */
 export const GetSessionRequestSchema: GenMessage<GetSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 3);
+  messageDesc(file_planner_v1_session, 5);
 
 /**
  * @generated from message planner.v1.GetSessionResponse
@@ -142,7 +187,7 @@ export type GetSessionResponse = Message<"planner.v1.GetSessionResponse"> & {
  * Use `create(GetSessionResponseSchema)` to create a new message.
  */
 export const GetSessionResponseSchema: GenMessage<GetSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 4);
+  messageDesc(file_planner_v1_session, 6);
 
 /**
  * @generated from message planner.v1.ListSessionsByCampaignRequest
@@ -159,7 +204,7 @@ export type ListSessionsByCampaignRequest = Message<"planner.v1.ListSessionsByCa
  * Use `create(ListSessionsByCampaignRequestSchema)` to create a new message.
  */
 export const ListSessionsByCampaignRequestSchema: GenMessage<ListSessionsByCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 5);
+  messageDesc(file_planner_v1_session, 7);
 
 /**
  * @generated from message planner.v1.ListSessionsByCampaignResponse
@@ -176,7 +221,7 @@ export type ListSessionsByCampaignResponse = Message<"planner.v1.ListSessionsByC
  * Use `create(ListSessionsByCampaignResponseSchema)` to create a new message.
  */
 export const ListSessionsByCampaignResponseSchema: GenMessage<ListSessionsByCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 6);
+  messageDesc(file_planner_v1_session, 8);
 
 /**
  * @generated from message planner.v1.RemoveSessionRequest
@@ -193,7 +238,7 @@ export type RemoveSessionRequest = Message<"planner.v1.RemoveSessionRequest"> & 
  * Use `create(RemoveSessionRequestSchema)` to create a new message.
  */
 export const RemoveSessionRequestSchema: GenMessage<RemoveSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 7);
+  messageDesc(file_planner_v1_session, 9);
 
 /**
  * @generated from message planner.v1.RemoveSessionResponse
@@ -206,7 +251,7 @@ export type RemoveSessionResponse = Message<"planner.v1.RemoveSessionResponse"> 
  * Use `create(RemoveSessionResponseSchema)` to create a new message.
  */
 export const RemoveSessionResponseSchema: GenMessage<RemoveSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 8);
+  messageDesc(file_planner_v1_session, 10);
 
 /**
  * @generated from message planner.v1.UpdateSessionRequest
@@ -218,9 +263,9 @@ export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & 
   id: string;
 
   /**
-   * @generated from field: optional string title = 2;
+   * @generated from field: optional string description = 2;
    */
-  title?: string | undefined;
+  description?: string | undefined;
 
   /**
    * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
@@ -228,9 +273,14 @@ export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & 
   startsAt?: Timestamp | undefined;
 
   /**
-   * @generated from field: optional string description = 4;
+   * @generated from field: planner.v1.SessionStatus status = 4;
    */
-  description?: string | undefined;
+  status: SessionStatus;
+
+  /**
+   * @generated from field: optional string title = 5;
+   */
+  title?: string | undefined;
 };
 
 /**
@@ -238,7 +288,7 @@ export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & 
  * Use `create(UpdateSessionRequestSchema)` to create a new message.
  */
 export const UpdateSessionRequestSchema: GenMessage<UpdateSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 9);
+  messageDesc(file_planner_v1_session, 11);
 
 /**
  * @generated from message planner.v1.UpdateSessionResponse
@@ -255,12 +305,51 @@ export type UpdateSessionResponse = Message<"planner.v1.UpdateSessionResponse"> 
  * Use `create(UpdateSessionResponseSchema)` to create a new message.
  */
 export const UpdateSessionResponseSchema: GenMessage<UpdateSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 10);
+  messageDesc(file_planner_v1_session, 12);
+
+/**
+ * @generated from enum planner.v1.SessionStatus
+ */
+export enum SessionStatus {
+  /**
+   * @generated from enum value: SESSION_STATUS_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: SESSION_STATUS_DRAFT = 1;
+   */
+  DRAFT = 1,
+
+  /**
+   * @generated from enum value: SESSION_STATUS_POLLING = 2;
+   */
+  POLLING = 2,
+
+  /**
+   * @generated from enum value: SESSION_STATUS_CONFIRMED = 3;
+   */
+  CONFIRMED = 3,
+}
+
+/**
+ * Describes the enum planner.v1.SessionStatus.
+ */
+export const SessionStatusSchema: GenEnum<SessionStatus> = /*@__PURE__*/
+  enumDesc(file_planner_v1_session, 0);
 
 /**
  * @generated from service planner.v1.SessionService
  */
 export const SessionService: GenService<{
+  /**
+   * @generated from rpc planner.v1.SessionService.AnnounceSession
+   */
+  announceSession: {
+    methodKind: "unary";
+    input: typeof AnnounceSessionRequestSchema;
+    output: typeof AnnounceSessionResponseSchema;
+  },
   /**
    * @generated from rpc planner.v1.SessionService.CreateSession
    */

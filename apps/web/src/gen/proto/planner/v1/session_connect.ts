@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateSessionRequest, CreateSessionResponse, GetSessionRequest, GetSessionResponse, ListSessionsByCampaignRequest, ListSessionsByCampaignResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
+import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionRequest, GetSessionResponse, ListSessionsByCampaignRequest, ListSessionsByCampaignResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -12,6 +12,15 @@ import { MethodKind } from "@bufbuild/protobuf";
 export const SessionService = {
   typeName: "planner.v1.SessionService",
   methods: {
+    /**
+     * @generated from rpc planner.v1.SessionService.AnnounceSession
+     */
+    announceSession: {
+      name: "AnnounceSession",
+      I: AnnounceSessionRequest,
+      O: AnnounceSessionResponse,
+      kind: MethodKind.Unary,
+    },
     /**
      * @generated from rpc planner.v1.SessionService.CreateSession
      */

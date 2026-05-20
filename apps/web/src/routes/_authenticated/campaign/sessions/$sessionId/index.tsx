@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { SessionScheduling } from "@/components/session-scheduling";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { client } from "@/lib/client";
@@ -59,7 +60,7 @@ function RouteComponent() {
 				</Button>
 			</div>
 
-			{/* Date badge */}
+			{/* Date badge — only shown when confirmed */}
 			{session.startsAt && (
 				<div>
 					<span className="text-xs font-medium px-2.5 py-1 rounded-full border bg-zinc-500/15 text-zinc-400 border-zinc-500/30">
@@ -75,6 +76,17 @@ function RouteComponent() {
 					content={session.description}
 					placeholder="No description recorded."
 					title="Description"
+				/>
+
+				<Separator />
+
+				<SessionScheduling
+					session={{
+						campaignId: session.campaignId,
+						id: session.id,
+						startsAt: session.startsAt,
+						status: session.status,
+					}}
 				/>
 			</div>
 
