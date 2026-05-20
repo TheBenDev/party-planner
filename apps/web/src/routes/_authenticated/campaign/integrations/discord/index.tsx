@@ -84,11 +84,7 @@ function DiscordIntegrationPage() {
 	const isConnected = integration !== null;
 
 	const handleAddBot = () => {
-		window.open(
-			buildDiscordOAuthUrl(campaignId),
-			"_blank",
-			"noopener,noreferrer",
-		);
+		window.location.assign(buildDiscordOAuthUrl(campaignId));
 	};
 
 	const handleRemove = () => {

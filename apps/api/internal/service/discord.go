@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/BBruington/party-planner/api/internal/db"
 	model "github.com/BBruington/party-planner/api/internal/models"
@@ -38,6 +39,29 @@ func (s *DiscordService) AnnounceSession(
 
 	if metadata.ChannelID == "" {
 		return errors.New("discord integration missing channel_id in metadata")
+	}
+	endTime := session.StartsAt.Time.Add(2 * time.Hour)
+	_, err := s.Session.GuildScheduledEventCreate(integration.ExternalID, &discordgo.GuildScheduledEventParams{
+		Name: session.Title,
+		Description: func() string {
+			if session.Description.Valid {
+				return session.Description.String
+			}
+			return ""
+		}(),
+		ScheduledStartTime: &session.StartsAt.Time,
+		ScheduledEndTime:   &endTime,
+		EntityType:         discordgo.GuildScheduledEventEntityTypeExternal,
+		// TODO: support additional VTT providers later
+		EntityMetadata: &discordgo.GuildScheduledEventEntityMetadata{
+			Location: "Forge + Discord Voice",
+		},
+		PrivacyLevel: discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
+		Status:       discordgo.GuildScheduledEventStatusScheduled,
+	})
+
+	if err != nil {
+		return err
 	}
 
 	msg := formatAnnounceMessage(session)

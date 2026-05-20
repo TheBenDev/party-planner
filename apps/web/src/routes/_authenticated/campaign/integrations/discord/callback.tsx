@@ -7,12 +7,13 @@ export const Route = createFileRoute(
 	"/_authenticated/campaign/integrations/discord/callback",
 )({
 	component: DiscordCallbackPage,
-	validateSearch: (search: Record<string, unknown>) => ({
-		code: (search.code as string) ?? "",
-		guild_id: (search.guild_id as number) ?? "",
-		permissions: (search.permissions as string) ?? "",
-		state: (search.state as string) ?? "",
-	}),
+	// validateSearch: (search: Record<string, string>) => ({
+	// 	code: search.code ?? "",
+	// 	guild_id: search.guild_id ?? "",
+	// 	permissions: search.permissions ?? "",
+	// 	state: search.state ?? "",
+	// }),
+	validateSearch: console.log,
 });
 
 // TODO The callback trusts any decodable state containing campaignId. Without a nonce tied to the initiating session, this flow is vulnerable to forged callback links.
@@ -37,25 +38,25 @@ function DiscordCallbackPage() {
 				campaignId,
 				// TODO set up a way to add channelId
 				channelId: "placeholder",
-				serverId: String(guild_id),
+				serverId: guild_id,
 			}),
-		onError: () => {
-			navigate({ to: "/campaign/integrations/discord" });
-		},
-		onSuccess: () => {
-			navigate({ to: "/campaign/integrations/discord" });
-		},
+		// onError: () => {
+		// 	navigate({ to: "/campaign/integrations/discord" });
+		// },
+		// onSuccess: () => {
+		// 	navigate({ to: "/campaign/integrations/discord" });
+		// },
 	});
 
 	useEffect(() => {
 		if (!(code && guild_id && state)) {
-			navigate({ to: "/campaign/integrations" });
+			// navigate({ to: "/campaign/integrations" });
 			return;
 		}
 
 		const decoded = decodeState(state);
 		if (!decoded?.campaignId) {
-			navigate({ to: "/campaign/integrations" });
+			// navigate({ to: "/campaign/integrations" });
 			return;
 		}
 
