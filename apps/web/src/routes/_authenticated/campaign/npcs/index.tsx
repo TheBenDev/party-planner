@@ -349,6 +349,7 @@ function NPCSPage() {
 			</div>
 			<div className="space-y-2">
 				{isLoading && (
+					// biome-ignore lint/complexity/noUselessFragments: multiple skeletons need a wrapper
 					<>
 						{Array.from({ length: 5 }).map((_, i) => (
 							<NPCCardSkeleton key={i} />

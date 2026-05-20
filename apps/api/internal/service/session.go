@@ -14,11 +14,42 @@ var (
 	ErrSessionNotFound        = errors.New("session not found")
 	ErrSessionAlreadyExists   = errors.New("session already exists")
 	ErrSessionInvalidCampaign = errors.New("campaign does not exist")
+	ErrSessionNotConfirmed    = errors.New("session isn't confirmed")
 )
 
 type SessionService struct {
-	DB  *db.DB
-	Log *slog.Logger
+	DB      *db.DB
+	Discord *DiscordService
+	Log     *slog.Logger
+}
+
+func (s *SessionService) Announce(sessionId string, campaignId string) error {
+	session, err := s.Get(sessionId)
+	if err != nil {
+		return err
+	}
+
+	if session.CampaignID != campaignId {
+		return ErrSessionInvalidCampaign
+	}
+
+	if session.Status != model.SessionStatusConfirmed {
+		return ErrSessionNotConfirmed
+	}
+
+	integration, err := s.DB.GetCampaignIntegration(campaignId, model.IntegrationSourceDiscord)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrCampaignIntegrationNotFound
+		}
+		return fmt.Errorf("get campaign integration error: %w", err)
+	}
+
+	if err := s.Discord.AnnounceSession(integration, session); err != nil {
+		return fmt.Errorf("announce discord session error: %w", err)
+	}
+
+	return nil
 }
 
 func (s *SessionService) Create(session *model.CreateSessionRequest) (*model.Session, error) {

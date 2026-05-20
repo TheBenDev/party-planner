@@ -33,6 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// SessionServiceAnnounceSessionProcedure is the fully-qualified name of the SessionService's
+	// AnnounceSession RPC.
+	SessionServiceAnnounceSessionProcedure = "/planner.v1.SessionService/AnnounceSession"
 	// SessionServiceCreateSessionProcedure is the fully-qualified name of the SessionService's
 	// CreateSession RPC.
 	SessionServiceCreateSessionProcedure = "/planner.v1.SessionService/CreateSession"
@@ -52,6 +55,7 @@ const (
 
 // SessionServiceClient is a client for the planner.v1.SessionService service.
 type SessionServiceClient interface {
+	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
@@ -70,6 +74,12 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 	baseURL = strings.TrimRight(baseURL, "/")
 	sessionServiceMethods := v1.File_planner_v1_session_proto.Services().ByName("SessionService").Methods()
 	return &sessionServiceClient{
+		announceSession: connect.NewClient[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse](
+			httpClient,
+			baseURL+SessionServiceAnnounceSessionProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("AnnounceSession")),
+			connect.WithClientOptions(opts...),
+		),
 		createSession: connect.NewClient[v1.CreateSessionRequest, v1.CreateSessionResponse](
 			httpClient,
 			baseURL+SessionServiceCreateSessionProcedure,
@@ -105,11 +115,17 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // sessionServiceClient implements SessionServiceClient.
 type sessionServiceClient struct {
+	announceSession        *connect.Client[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse]
 	createSession          *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
 	getSession             *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
 	listSessionsByCampaign *connect.Client[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse]
 	removeSession          *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
 	updateSession          *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
+}
+
+// AnnounceSession calls planner.v1.SessionService.AnnounceSession.
+func (c *sessionServiceClient) AnnounceSession(ctx context.Context, req *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error) {
+	return c.announceSession.CallUnary(ctx, req)
 }
 
 // CreateSession calls planner.v1.SessionService.CreateSession.
@@ -139,6 +155,7 @@ func (c *sessionServiceClient) UpdateSession(ctx context.Context, req *connect.R
 
 // SessionServiceHandler is an implementation of the planner.v1.SessionService service.
 type SessionServiceHandler interface {
+	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
@@ -153,6 +170,12 @@ type SessionServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	sessionServiceMethods := v1.File_planner_v1_session_proto.Services().ByName("SessionService").Methods()
+	sessionServiceAnnounceSessionHandler := connect.NewUnaryHandler(
+		SessionServiceAnnounceSessionProcedure,
+		svc.AnnounceSession,
+		connect.WithSchema(sessionServiceMethods.ByName("AnnounceSession")),
+		connect.WithHandlerOptions(opts...),
+	)
 	sessionServiceCreateSessionHandler := connect.NewUnaryHandler(
 		SessionServiceCreateSessionProcedure,
 		svc.CreateSession,
@@ -185,6 +208,8 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 	)
 	return "/planner.v1.SessionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case SessionServiceAnnounceSessionProcedure:
+			sessionServiceAnnounceSessionHandler.ServeHTTP(w, r)
 		case SessionServiceCreateSessionProcedure:
 			sessionServiceCreateSessionHandler.ServeHTTP(w, r)
 		case SessionServiceGetSessionProcedure:
@@ -203,6 +228,10 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 
 // UnimplementedSessionServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedSessionServiceHandler struct{}
+
+func (UnimplementedSessionServiceHandler) AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.AnnounceSession is not implemented"))
+}
 
 func (UnimplementedSessionServiceHandler) CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.CreateSession is not implemented"))

@@ -682,13 +682,13 @@ func (db *DB) RemoveQuest(id string) error {
 // Sessions
 // -----------------------------------------------------------------------------
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, created_at, updated_at`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, updated_at`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
-		&s.CreatedAt, &s.UpdatedAt,
+		&s.Status, &s.CreatedAt, &s.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -698,10 +698,10 @@ func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 
 func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session (campaign_id, title, description, starts_at)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO session (campaign_id, title, description, status, starts_at)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING `+sessionColumns,
-		session.CampaignID, session.Title, session.Description, session.StartsAt,
+		session.CampaignID, session.Title, session.Description, session.Status, session.StartsAt,
 	)
 	return scanSession(row)
 }
@@ -743,10 +743,10 @@ func (db *DB) RemoveSession(id string) error {
 
 func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		UPDATE session SET title = COALESCE($1, title), description = $2, starts_at = $3
-		WHERE id = $4
+		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4
+		WHERE id = $5
 		RETURNING `+sessionColumns,
-		session.Title, session.Description, session.StartsAt, session.ID)
+		session.Title, session.Description, session.StartsAt, session.Status, session.ID)
 	return scanSession(row)
 }
 

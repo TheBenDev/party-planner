@@ -1,14 +1,19 @@
+import { Status } from "@planner/enums/session";
 import { relations } from "drizzle-orm";
 import {
 	foreignKey,
 	index,
+	pgEnum,
 	pgTable,
 	timestamp,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { enumToPgEnum } from "@/lib/enums";
 import { campaignsTable } from "./campaigns";
 import { charactersTable } from "./characters";
+
+export const sessionStatusEnum = pgEnum("session_status", enumToPgEnum(Status));
 
 export const sessionsTable = pgTable(
 	"session",
@@ -18,6 +23,7 @@ export const sessionsTable = pgTable(
 		description: varchar("description"),
 		id: uuid("id").primaryKey().defaultRandom(),
 		startsAt: timestamp("starts_at", { mode: "date" }),
+		status: sessionStatusEnum("status").notNull(),
 		title: varchar("title").notNull(),
 		updatedAt: timestamp("updated_at", { mode: "date" })
 			.defaultNow()

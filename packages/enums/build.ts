@@ -7,6 +7,7 @@ await build({
 		"src/character.ts",
 		"src/integration.ts",
 		"src/quest.ts",
+		"src/session.ts",
 		"src/user.ts",
 	],
 	external: [],
