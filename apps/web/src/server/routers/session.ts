@@ -1,6 +1,8 @@
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/server";
 import {
+	AnnounceSessionRequestSchema,
+	AnnounceSessionResponseSchema,
 	CreateSessionRequestSchema,
 	CreateSessionResponseSchema,
 	GetSessionRequestSchema,
@@ -14,7 +16,36 @@ import {
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
-import { protoToSession } from "./util/proto/session";
+import { protoToSession, sessionStatusToProto } from "./util/proto/session";
+
+const announceSession = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/announce",
+		summary: "Announces that a D&D session was set to a discord channel",
+	})
+	.input(AnnounceSessionRequestSchema)
+	.output(AnnounceSessionResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		const { campaignId, sessionId } = input;
+
+		try {
+			await api.session.announceSession({
+				campaignId,
+				sessionId,
+			});
+
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to announce session",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
+		}
+	});
 
 const createSession = privateProcedure
 	.route({
@@ -34,6 +65,7 @@ const createSession = privateProcedure
 				campaignId: input.campaignId,
 				description: input.description,
 				startsAt,
+				status: sessionStatusToProto(input.status),
 				title: input.title,
 			});
 			if (res.session === undefined) {
@@ -143,6 +175,7 @@ const updateSession = privateProcedure
 			const res = await api.session.updateSession({
 				...input,
 				startsAt,
+				status: sessionStatusToProto(input.status),
 			});
 			if (res.session === undefined) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -161,6 +194,7 @@ const updateSession = privateProcedure
 	});
 
 export const sessionRouter = {
+	announceSession,
 	createSession,
 	getSession,
 	listSessions,

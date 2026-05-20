@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Status } from "@planner/enums/session";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
@@ -235,11 +236,15 @@ function SessionEditFormInner({
 	});
 
 	const updateMutation = useMutation({
-		mutationFn: (values: SessionEditForm) =>
-			client.session.updateSession({
+		mutationFn: (values: SessionEditForm) => {
+			let status = session.status;
+			if (values.startsAt !== undefined) status = Status.CONFIRMED;
+			return client.session.updateSession({
 				id: sessionId,
+				status,
 				...values,
-			}),
+			});
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["session", sessionId] });
 			queryClient.invalidateQueries({

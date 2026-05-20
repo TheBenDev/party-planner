@@ -19,6 +19,22 @@ type SessionServer struct {
 	Log     *slog.Logger
 }
 
+func (s *SessionServer) AnnounceSession(ctx context.Context, req *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.SessionId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
+	}
+
+	err := s.Session.Announce(req.Msg.SessionId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to announce session to discord")
+	}
+
+	return connect.NewResponse(&v1.AnnounceSessionResponse{}), nil
+}
+
 func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
@@ -32,10 +48,16 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		}
 	}
 
+	sessionStatus, err := protoToSessionStatus(req.Msg.Status)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create session")
+	}
+
 	session, err := s.Session.Create(&model.CreateSessionRequest{
 		CampaignID:  req.Msg.CampaignId,
 		Title:       req.Msg.Title,
 		Description: sqlNullString(req.Msg.Description),
+		Status:      sessionStatus,
 		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
 	})
 	if err != nil {
@@ -105,10 +127,16 @@ func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[
 		}
 	}
 
+	sessionStatus, err := protoToSessionStatus(req.Msg.Status)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update session")
+	}
+
 	session, err := s.Session.Update(&model.UpdateSessionRequest{
 		ID:          req.Msg.Id,
 		Title:       sqlNullString(req.Msg.Title),
 		Description: sqlNullString(req.Msg.Description),
+		Status:      sessionStatus,
 		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
 	})
 
@@ -121,6 +149,32 @@ func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[
 	}), nil
 }
 
+func protoToSessionStatus(s v1.SessionStatus) (model.SessionStatus, error) {
+	switch s {
+	case v1.SessionStatus_SESSION_STATUS_CONFIRMED:
+		return model.SessionStatusConfirmed, nil
+	case v1.SessionStatus_SESSION_STATUS_DRAFT:
+		return model.SessionStatusDraft, nil
+	case v1.SessionStatus_SESSION_STATUS_POLLING:
+		return model.SessionStatusPolling, nil
+	default:
+		return "", errors.New("invalid session status")
+	}
+}
+
+func sessionStatusToProto(s model.SessionStatus) v1.SessionStatus {
+	switch s {
+	case model.SessionStatusConfirmed:
+		return v1.SessionStatus_SESSION_STATUS_CONFIRMED
+	case model.SessionStatusDraft:
+		return v1.SessionStatus_SESSION_STATUS_DRAFT
+	case model.SessionStatusPolling:
+		return v1.SessionStatus_SESSION_STATUS_POLLING
+	default:
+		return v1.SessionStatus_SESSION_STATUS_UNSPECIFIED
+	}
+}
+
 func sessionToProto(session *model.Session) *v1.Session {
 	if session == nil {
 		return nil
@@ -128,6 +182,7 @@ func sessionToProto(session *model.Session) *v1.Session {
 	proto := &v1.Session{
 		Id:         session.ID,
 		CampaignId: session.CampaignID,
+		Status:     sessionStatusToProto(session.Status),
 		Title:      session.Title,
 		CreatedAt:  timestamppb.New(session.CreatedAt),
 		UpdatedAt:  timestamppb.New(session.UpdatedAt),

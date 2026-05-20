@@ -1,4 +1,3 @@
-
 ALTER TABLE "campaign_invitations" ADD COLUMN "token" varchar;
 --> statement-breakpoint
 UPDATE "campaign_invitations" SET "token" = gen_random_uuid()::varchar WHERE "token" IS NULL;

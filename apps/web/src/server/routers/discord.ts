@@ -18,6 +18,8 @@ import { Routes } from "discord-api-types/v10";
 import { and, asc, eq, gt, gte, ilike, lt, lte } from "drizzle-orm";
 import { discordProcedure } from "../orpc";
 
+// TODO: This entire file needs to be reworked and possible removed.
+
 const {
 	sessionsTable,
 	campaignIntegrationsTable,
@@ -397,9 +399,9 @@ const scheduleSession = discordProcedure
 		}
 
 		const campaignId = discordIntegrationRow[0].campaignId;
-		const sessionDate = new Date(
-			`${date}T${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`,
-		);
+		// const sessionDate = new Date(
+		// 	`${date}T${hour.padStart(2, "0")}:${minute.padStart(2, "0")}:00`,
+		// );
 
 		const userAvailabilitiesRow = await db
 			.select()
@@ -421,11 +423,11 @@ const scheduleSession = discordProcedure
 			`${user.users.firstName ?? ""} ${user.users.lastName ?? ""}`.trim(),
 		);
 
-		await db.insert(sessionsTable).values({
-			campaignId,
-			startsAt: sessionDate,
-			title: "D&D Session",
-		});
+		// await db.insert(sessionsTable).values({
+		// 	campaignId,
+		// 	startsAt: sessionDate,
+		// 	title: "D&D Session",
+		// });
 
 		return { availableUsers };
 	});

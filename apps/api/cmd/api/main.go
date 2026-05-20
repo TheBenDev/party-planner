@@ -39,8 +39,39 @@ func main() {
 		os.Exit(1)
 	}
 
+	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
+	session, err := bot.Start(cfg.DiscordToken, apiClient)
+	if err != nil {
+		slog.Error("Failed to start Discord bot", "error", err)
+		os.Exit(1)
+	}
+	defer func() {
+		if err := session.Close(); err != nil {
+			slog.Error("Failed to close Discord session", "error", err)
+		}
+	}()
+
+	discordService := &service.DiscordService{
+		Session: session,
+		Log:     logger.Logger,
+		DB:      database,
+	}
+
 	rateLimiter := middleware.NewRateLimitInterceptor()
 	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter, logger.NewLoggingInterceptor(logger.Logger))
+
+	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(
+		&rpc.SessionServer{
+			Session: &service.SessionService{
+				DB:      database,
+				Discord: discordService,
+				Log:     logger.Logger,
+			},
+			Log: logger.Logger,
+		},
+		interceptors,
+	)
+	mux.Handle(sessionPath, sessionHandler)
 
 	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
@@ -57,9 +88,6 @@ func main() {
 	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(&rpc.QuestServer{Quest: &service.QuestService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(questPath, questHandler)
 
-	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(&rpc.SessionServer{Session: &service.SessionService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
-	mux.Handle(sessionPath, sessionHandler)
-
 	locationPath, locationHandler := plannerv1connect.NewLocationServiceHandler(&rpc.LocationServer{Location: &service.LocationService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(locationPath, locationHandler)
 
@@ -74,18 +102,6 @@ func main() {
 		}
 	})
 
-	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
-
-	session, err := bot.Start(cfg.DiscordToken, apiClient)
-	if err != nil {
-		slog.Error("Failed to start Discord bot", "error", err)
-		os.Exit(1)
-	}
-	defer func() {
-		if err := session.Close(); err != nil {
-			slog.Error("Failed to close Discord session", "error", err)
-		}
-	}()
 	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, middleware.WithInternalAPIKey(cfg.InternalAPIKey, logger.Logger, mux))
 
 	srv := server.New(cfg.Port, handler)

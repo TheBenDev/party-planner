@@ -126,6 +126,13 @@
       "when": 1777001274121,
       "tag": "0017_token_on_invitation",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1779225495415,
+      "tag": "0018_add_session_status",
+      "breakpoints": true
     }
   ],
   "version": "7"
