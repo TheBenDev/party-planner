@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -23,7 +24,7 @@ type SessionService struct {
 	Log     *slog.Logger
 }
 
-func (s *SessionService) Announce(sessionId string, campaignId string) error {
+func (s *SessionService) Announce(ctx context.Context, sessionId string, campaignId string) error {
 	session, err := s.Get(sessionId)
 	if err != nil {
 		return err
@@ -45,7 +46,7 @@ func (s *SessionService) Announce(sessionId string, campaignId string) error {
 		return fmt.Errorf("get campaign integration error: %w", err)
 	}
 
-	if err := s.Discord.AnnounceSession(integration, session); err != nil {
+	if err := s.Discord.AnnounceSession(ctx, integration, session); err != nil {
 		return fmt.Errorf("announce discord session error: %w", err)
 	}
 

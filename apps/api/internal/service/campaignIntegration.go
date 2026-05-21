@@ -1,7 +1,9 @@
 package service
 
 import (
+	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -17,8 +19,9 @@ var (
 )
 
 type CampaignIntegrationService struct {
-	DB  *db.DB
-	Log *slog.Logger
+	DB      *db.DB
+	Discord *DiscordService
+	Log     *slog.Logger
 }
 
 func (s *CampaignIntegrationService) GetByCampaign(campaignId string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
@@ -45,6 +48,36 @@ func (s *CampaignIntegrationService) Create(integration *model.CreateCampaignInt
 	}
 
 	return created, nil
+}
+
+func (s *CampaignIntegrationService) CreateDiscordIntegration(ctx context.Context, req *model.CreateDiscordCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+	tokenRes, err := s.Discord.ExchangeCode(ctx, req.Code)
+	if err != nil {
+		return nil, fmt.Errorf("discord token exchange failed: %w", err)
+	}
+
+	metadata, err := json.Marshal(map[string]any{
+		"channelId": "",
+		"source":    "DISCORD",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to build metadata: %w", err)
+	}
+
+	settings, err := json.Marshal(map[string]any{
+		"enableSessionReminders": true,
+		"source":                 "DISCORD",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to build settings: %w", err)
+	}
+	return s.Create(&model.CreateCampaignIntegrationRequest{
+		CampaignID: req.CampaignID,
+		ExternalID: tokenRes.GuildID,
+		Source:     model.IntegrationSourceDiscord,
+		Metadata:   metadata,
+		Settings:   settings,
+	})
 }
 
 func (s *CampaignIntegrationService) ListByCampaign(campaignId string) ([]*model.CampaignIntegration, error) {

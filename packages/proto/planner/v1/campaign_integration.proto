@@ -33,12 +33,16 @@ message CampaignIntegration {
 // RPC Messages
 // -----------------------------------------------------------------------------
 
+message CreateDiscordIntegrationParams {
+  string code = 1;
+}
+
 message CreateCampaignIntegrationRequest {
   string campaign_id = 1;
-  string external_id = 2;
-  IntegrationSource source = 3;
-  google.protobuf.Struct metadata = 4;
-  google.protobuf.Struct settings = 5;
+  IntegrationSource source = 2;
+  oneof integration {
+    CreateDiscordIntegrationParams discord = 3;
+  }
 }
 
 message CreateCampaignIntegrationResponse {

@@ -41,51 +41,34 @@ func (s *CampaignIntegrationServer) GetCampaignIntegration(ctx context.Context, 
 }
 
 func (s *CampaignIntegrationServer) CreateCampaignIntegration(ctx context.Context, req *connect.Request[v1.CreateCampaignIntegrationRequest]) (*connect.Response[v1.CreateCampaignIntegrationResponse], error) {
-	if req.Msg.ExternalId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("integration id required"))
-	}
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	if req.Msg.Source == v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign integration required"))
-	}
-	source, err := protoToIntegrationSource(req.Msg.Source)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
-	}
-	var metadata, settings json.RawMessage
 
-	if req.Msg.Metadata != nil {
-		b, err := req.Msg.Metadata.MarshalJSON()
-		if err != nil {
-			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid metadata"))
+	switch p := req.Msg.Integration.(type) {
+	case *v1.CreateCampaignIntegrationRequest_Discord:
+		if p.Discord == nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("discord integration params required"))
 		}
-		metadata = b
-	}
-
-	if req.Msg.Settings != nil {
-		b, err := req.Msg.Settings.MarshalJSON()
-		if err != nil {
-			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid settings"))
+		if p.Discord.Code == "" {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("discord code required"))
 		}
-		settings = b
-	}
 
-	campaignIntegration, err := s.CampaignIntegration.Create(&model.CreateCampaignIntegrationRequest{
-		CampaignID: req.Msg.CampaignId,
-		ExternalID: req.Msg.ExternalId,
-		Source:     source,
-		Metadata:   metadata,
-		Settings:   settings,
-	})
-	if err != nil {
-		return nil, mapServiceError(ctx, s.Log, err, "failed to create campaign integration")
-	}
+		campaignIntegration, err := s.CampaignIntegration.CreateDiscordIntegration(ctx, &model.CreateDiscordCampaignIntegrationRequest{
+			CampaignID: req.Msg.CampaignId,
+			Code:       p.Discord.Code,
+		})
+		if err != nil {
+			return nil, mapServiceError(ctx, s.Log, err, "failed to create discord integration")
+		}
 
-	return connect.NewResponse(&v1.CreateCampaignIntegrationResponse{
-		Integration: campaignIntegrationToProto(campaignIntegration),
-	}), nil
+		return connect.NewResponse(&v1.CreateCampaignIntegrationResponse{
+			Integration: campaignIntegrationToProto(campaignIntegration),
+		}), nil
+
+	default:
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("unsupported or missing integration params"))
+	}
 }
 
 func (s *CampaignIntegrationServer) ListCampaignIntegrationsByCampaign(ctx context.Context, req *connect.Request[v1.ListCampaignIntegrationsByCampaignRequest]) (*connect.Response[v1.ListCampaignIntegrationsByCampaignResponse], error) {

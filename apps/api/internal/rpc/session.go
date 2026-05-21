@@ -27,7 +27,7 @@ func (s *SessionServer) AnnounceSession(ctx context.Context, req *connect.Reques
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
 	}
 
-	err := s.Session.Announce(req.Msg.SessionId, req.Msg.CampaignId)
+	err := s.Session.Announce(ctx, req.Msg.SessionId, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to announce session to discord")
 	}

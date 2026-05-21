@@ -55,6 +55,11 @@ func main() {
 		Session: session,
 		Log:     logger.Logger,
 		DB:      database,
+		Config: service.DiscordConfig{
+			ClientID:     cfg.DiscordClientID,
+			ClientSecret: cfg.DiscordClientSecret,
+			RedirectURI:  cfg.DiscordRedirectURI,
+		},
 	}
 
 	rateLimiter := middleware.NewRateLimitInterceptor()
@@ -76,7 +81,7 @@ func main() {
 	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
 
-	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
+	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(&rpc.CampaignIntegrationServer{CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger, Discord: discordService}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
 
 	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(&rpc.MemberServer{Member: &service.MemberService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)

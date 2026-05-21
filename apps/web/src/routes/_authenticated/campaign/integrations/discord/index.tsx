@@ -37,7 +37,9 @@ const DISCORD_SCOPES = "bot applications.commands";
 
 function buildDiscordOAuthUrl(campaignId: string) {
 	const redirectUri = `${env.VITE_APP_URL}/campaign/integrations/discord/callback`;
-	const state = btoa(JSON.stringify({ campaignId }));
+	const oauthState = crypto.randomUUID();
+	sessionStorage.setItem("discord_oauth_state", oauthState);
+	const state = btoa(JSON.stringify({ campaignId, oauthState }));
 	const params = new URLSearchParams({
 		client_id: env.VITE_DISCORD_CLIENT_ID,
 		integration_type: "0",
@@ -84,11 +86,7 @@ function DiscordIntegrationPage() {
 	const isConnected = integration !== null;
 
 	const handleAddBot = () => {
-		window.open(
-			buildDiscordOAuthUrl(campaignId),
-			"_blank",
-			"noopener,noreferrer",
-		);
+		window.location.assign(buildDiscordOAuthUrl(campaignId));
 	};
 
 	const handleRemove = () => {
