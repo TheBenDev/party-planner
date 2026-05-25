@@ -5,10 +5,14 @@ import {
 	AnnounceSessionResponseSchema,
 	CreateSessionRequestSchema,
 	CreateSessionResponseSchema,
+	GetPollRequestSchema,
+	GetPollResponseSchema,
 	GetSessionRequestSchema,
 	GetSessionResponseSchema,
 	ListSessionsByCampaignRequestSchema,
 	ListSessionsByCampaignResponseSchema,
+	PollSessionRequestSchema,
+	PollSessionResponseSchema,
 	RemoveSessionRequestSchema,
 	RemoveSessionResponseSchema,
 	UpdateSessionRequestSchema,
@@ -16,7 +20,11 @@ import {
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
 import { privateProcedure } from "../orpc";
-import { protoToSession, sessionStatusToProto } from "./util/proto/session";
+import {
+	protoToPoll,
+	protoToSession,
+	sessionStatusToProto,
+} from "./util/proto/session";
 
 const announceSession = privateProcedure
 	.route({
@@ -135,6 +143,52 @@ const listSessions = privateProcedure
 		}
 	});
 
+const getPoll = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/get-poll",
+		summary: "Get the current discord poll results for a session",
+	})
+	.input(GetPollRequestSchema)
+	.output(GetPollResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		const { campaignId, sessionId } = input;
+		try {
+			const pollProto = await api.session.getSessionPoll({
+				campaignId,
+				sessionId,
+			});
+
+			if (pollProto.poll === undefined) {
+				return { poll: null };
+			}
+
+			return { poll: protoToPoll(pollProto.poll) };
+		} catch (err) {
+			handleError(err, "failed to poll session", { sessionId }, context.logger);
+		}
+	});
+const pollSession = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session/poll",
+		summary: "Start a discord poll for available session starting dates",
+	})
+	.input(PollSessionRequestSchema)
+	.output(PollSessionResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		const { campaignId, sessionId } = input;
+		try {
+			const options = input.options.map((o) => timestampFromDate(o));
+			await api.session.pollSession({ campaignId, options, sessionId });
+			return {};
+		} catch (err) {
+			handleError(err, "failed to poll session", { sessionId }, context.logger);
+		}
+	});
+
 const removeSession = privateProcedure
 	.route({
 		method: "POST",
@@ -196,8 +250,10 @@ const updateSession = privateProcedure
 export const sessionRouter = {
 	announceSession,
 	createSession,
+	getPoll,
 	getSession,
 	listSessions,
+	pollSession,
 	removeSession,
 	updateSession,
 };

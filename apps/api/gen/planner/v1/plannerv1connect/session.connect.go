@@ -42,9 +42,15 @@ const (
 	// SessionServiceGetSessionProcedure is the fully-qualified name of the SessionService's GetSession
 	// RPC.
 	SessionServiceGetSessionProcedure = "/planner.v1.SessionService/GetSession"
+	// SessionServiceGetSessionPollProcedure is the fully-qualified name of the SessionService's
+	// GetSessionPoll RPC.
+	SessionServiceGetSessionPollProcedure = "/planner.v1.SessionService/GetSessionPoll"
 	// SessionServiceListSessionsByCampaignProcedure is the fully-qualified name of the SessionService's
 	// ListSessionsByCampaign RPC.
 	SessionServiceListSessionsByCampaignProcedure = "/planner.v1.SessionService/ListSessionsByCampaign"
+	// SessionServicePollSessionProcedure is the fully-qualified name of the SessionService's
+	// PollSession RPC.
+	SessionServicePollSessionProcedure = "/planner.v1.SessionService/PollSession"
 	// SessionServiceRemoveSessionProcedure is the fully-qualified name of the SessionService's
 	// RemoveSession RPC.
 	SessionServiceRemoveSessionProcedure = "/planner.v1.SessionService/RemoveSession"
@@ -58,7 +64,9 @@ type SessionServiceClient interface {
 	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
+	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
@@ -92,10 +100,22 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(sessionServiceMethods.ByName("GetSession")),
 			connect.WithClientOptions(opts...),
 		),
+		getSessionPoll: connect.NewClient[v1.GetSessionPollRequest, v1.GetSessionPollResponse](
+			httpClient,
+			baseURL+SessionServiceGetSessionPollProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
+			connect.WithClientOptions(opts...),
+		),
 		listSessionsByCampaign: connect.NewClient[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse](
 			httpClient,
 			baseURL+SessionServiceListSessionsByCampaignProcedure,
 			connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
+			connect.WithClientOptions(opts...),
+		),
+		pollSession: connect.NewClient[v1.PollSessionRequest, v1.PollSessionResponse](
+			httpClient,
+			baseURL+SessionServicePollSessionProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("PollSession")),
 			connect.WithClientOptions(opts...),
 		),
 		removeSession: connect.NewClient[v1.RemoveSessionRequest, v1.RemoveSessionResponse](
@@ -118,7 +138,9 @@ type sessionServiceClient struct {
 	announceSession        *connect.Client[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse]
 	createSession          *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
 	getSession             *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
+	getSessionPoll         *connect.Client[v1.GetSessionPollRequest, v1.GetSessionPollResponse]
 	listSessionsByCampaign *connect.Client[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse]
+	pollSession            *connect.Client[v1.PollSessionRequest, v1.PollSessionResponse]
 	removeSession          *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
 	updateSession          *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
 }
@@ -138,9 +160,19 @@ func (c *sessionServiceClient) GetSession(ctx context.Context, req *connect.Requ
 	return c.getSession.CallUnary(ctx, req)
 }
 
+// GetSessionPoll calls planner.v1.SessionService.GetSessionPoll.
+func (c *sessionServiceClient) GetSessionPoll(ctx context.Context, req *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error) {
+	return c.getSessionPoll.CallUnary(ctx, req)
+}
+
 // ListSessionsByCampaign calls planner.v1.SessionService.ListSessionsByCampaign.
 func (c *sessionServiceClient) ListSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
 	return c.listSessionsByCampaign.CallUnary(ctx, req)
+}
+
+// PollSession calls planner.v1.SessionService.PollSession.
+func (c *sessionServiceClient) PollSession(ctx context.Context, req *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {
+	return c.pollSession.CallUnary(ctx, req)
 }
 
 // RemoveSession calls planner.v1.SessionService.RemoveSession.
@@ -158,7 +190,9 @@ type SessionServiceHandler interface {
 	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
+	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
 	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
@@ -188,10 +222,22 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 		connect.WithSchema(sessionServiceMethods.ByName("GetSession")),
 		connect.WithHandlerOptions(opts...),
 	)
+	sessionServiceGetSessionPollHandler := connect.NewUnaryHandler(
+		SessionServiceGetSessionPollProcedure,
+		svc.GetSessionPoll,
+		connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
+		connect.WithHandlerOptions(opts...),
+	)
 	sessionServiceListSessionsByCampaignHandler := connect.NewUnaryHandler(
 		SessionServiceListSessionsByCampaignProcedure,
 		svc.ListSessionsByCampaign,
 		connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionServicePollSessionHandler := connect.NewUnaryHandler(
+		SessionServicePollSessionProcedure,
+		svc.PollSession,
+		connect.WithSchema(sessionServiceMethods.ByName("PollSession")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sessionServiceRemoveSessionHandler := connect.NewUnaryHandler(
@@ -214,8 +260,12 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 			sessionServiceCreateSessionHandler.ServeHTTP(w, r)
 		case SessionServiceGetSessionProcedure:
 			sessionServiceGetSessionHandler.ServeHTTP(w, r)
+		case SessionServiceGetSessionPollProcedure:
+			sessionServiceGetSessionPollHandler.ServeHTTP(w, r)
 		case SessionServiceListSessionsByCampaignProcedure:
 			sessionServiceListSessionsByCampaignHandler.ServeHTTP(w, r)
+		case SessionServicePollSessionProcedure:
+			sessionServicePollSessionHandler.ServeHTTP(w, r)
 		case SessionServiceRemoveSessionProcedure:
 			sessionServiceRemoveSessionHandler.ServeHTTP(w, r)
 		case SessionServiceUpdateSessionProcedure:
@@ -241,8 +291,16 @@ func (UnimplementedSessionServiceHandler) GetSession(context.Context, *connect.R
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.GetSession is not implemented"))
 }
 
+func (UnimplementedSessionServiceHandler) GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.GetSessionPoll is not implemented"))
+}
+
 func (UnimplementedSessionServiceHandler) ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.ListSessionsByCampaign is not implemented"))
+}
+
+func (UnimplementedSessionServiceHandler) PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.PollSession is not implemented"))
 }
 
 func (UnimplementedSessionServiceHandler) RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {

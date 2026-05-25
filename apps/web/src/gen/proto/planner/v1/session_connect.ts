@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionRequest, GetSessionResponse, ListSessionsByCampaignRequest, ListSessionsByCampaignResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
+import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionPollRequest, GetSessionPollResponse, GetSessionRequest, GetSessionResponse, ListSessionsByCampaignRequest, ListSessionsByCampaignResponse, PollSessionRequest, PollSessionResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -40,12 +40,30 @@ export const SessionService = {
       kind: MethodKind.Unary,
     },
     /**
+     * @generated from rpc planner.v1.SessionService.GetSessionPoll
+     */
+    getSessionPoll: {
+      name: "GetSessionPoll",
+      I: GetSessionPollRequest,
+      O: GetSessionPollResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
      * @generated from rpc planner.v1.SessionService.ListSessionsByCampaign
      */
     listSessionsByCampaign: {
       name: "ListSessionsByCampaign",
       I: ListSessionsByCampaignRequest,
       O: ListSessionsByCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionService.PollSession
+     */
+    pollSession: {
+      name: "PollSession",
+      I: PollSessionRequest,
+      O: PollSessionResponse,
       kind: MethodKind.Unary,
     },
     /**

@@ -105,10 +105,6 @@ func (s *DiscordService) AnnounceSession(
 		return fmt.Errorf("failed to parse discord integration metadata: %w", err)
 	}
 
-	if metadata.ChannelID == "" {
-		return errors.New("discord integration missing channel_id in metadata")
-	}
-
 	endTime := session.StartsAt.Time.Add(2 * time.Hour)
 	_, err := s.Session.GuildScheduledEventCreate(integration.ExternalID, &discordgo.GuildScheduledEventParams{
 		Name: session.Title,
@@ -135,11 +131,127 @@ func (s *DiscordService) AnnounceSession(
 
 	msg := formatAnnounceMessage(session)
 
-	if _, err := s.Session.ChannelMessageSend(metadata.ChannelID, msg, discordgo.WithContext(ctx)); err != nil {
-		return fmt.Errorf("discord send error: %w", err)
+	if metadata.ChannelID != "" {
+		if _, err := s.Session.ChannelMessageSend(metadata.ChannelID, msg, discordgo.WithContext(ctx)); err != nil {
+			return fmt.Errorf("discord send error: %w", err)
+		}
 	}
 
 	return nil
+}
+
+func (s *DiscordService) GetPoll(ctx context.Context, channelId, pollId string) (*model.Poll, error) {
+	msg, err := s.Session.ChannelMessage(channelId, pollId, discordgo.WithContext(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch discord poll message: %w", err)
+	}
+
+	if msg.Poll == nil {
+		return nil, errors.New("message does not contain a poll")
+	}
+
+	answers := make([]model.PollAnswer, 0, len(msg.Poll.Answers))
+	for _, a := range msg.Poll.Answers {
+		var text string
+		if a.Media != nil {
+			text = a.Media.Text
+		}
+		var voteCount uint32
+		if msg.Poll.Results != nil {
+			for _, result := range msg.Poll.Results.AnswerCounts {
+				if result.ID == a.AnswerID {
+					voteCount = uint32(result.Count)
+					break
+				}
+			}
+		}
+		answers = append(answers, model.PollAnswer{
+			Text:      text,
+			VoteCount: voteCount,
+		})
+	}
+
+	return &model.Poll{
+		Question:    msg.Poll.Question.Text,
+		Answers:     answers,
+		IsFinalized: msg.Poll.Results != nil && msg.Poll.Results.Finalized,
+	}, nil
+}
+
+type PollProps struct {
+	ID string
+}
+
+func (s *DiscordService) PollSession(
+	ctx context.Context,
+	integration *model.CampaignIntegration,
+	session *model.Session,
+	options []time.Time,
+) (*PollProps, error) {
+	if integration == nil {
+		return nil, errors.New("campaign integration is required")
+	}
+	if session == nil {
+		return nil, errors.New("session is required")
+	}
+	if len(options) == 0 {
+		return nil, errors.New("at least one poll option is required")
+	}
+
+	var metadata struct {
+		ChannelID string `json:"channelId"`
+	}
+	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
+		return nil, fmt.Errorf("failed to parse discord integration metadata: %w", err)
+	}
+	if metadata.ChannelID == "" {
+		return nil, errors.New("discord integration missing channel_id in metadata")
+	}
+
+	pollAnswers := make([]discordgo.PollAnswer, 0, len(options))
+	for _, opt := range options {
+		pollAnswers = append(pollAnswers, discordgo.PollAnswer{
+			Media: &discordgo.PollMedia{
+				Text: opt.UTC().Format("Mon Jan 2, 2006 3:04 PM UTC"),
+			},
+		})
+	}
+
+	poll, err := s.Session.ChannelMessageSendComplex(metadata.ChannelID, &discordgo.MessageSend{
+		Poll: &discordgo.Poll{
+			Question: discordgo.PollMedia{
+				Text: fmt.Sprintf("📅 When can you make it for %s?", session.Title),
+			},
+			Answers:          pollAnswers,
+			Duration:         24,
+			AllowMultiselect: true,
+		},
+	}, discordgo.WithContext(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("discord poll send error: %w", err)
+	}
+	_, err = s.Session.ChannelMessageSend(metadata.ChannelID, formatPollTimestamps(session.Title, options), discordgo.WithContext(ctx))
+	if err != nil {
+		s.Log.WarnContext(ctx, "failed to send poll timestamp message",
+			"channel_id", metadata.ChannelID,
+			"poll_id", poll.ID,
+			"session_title", session.Title,
+			"error", err,
+		)
+	}
+
+	return &PollProps{ID: poll.ID}, nil
+}
+
+func formatPollTimestamps(title string, options []time.Time) string {
+	var sb strings.Builder
+
+	fmt.Fprintf(&sb, "📅 **%s** — options in your local time:\n", title)
+	for i, opt := range options {
+		fmt.Fprintf(&sb, "%d. <t:%d:F>\n", i+1, opt.Unix())
+	}
+
+	return sb.String()
 }
 
 func formatAnnounceMessage(session *model.Session) string {

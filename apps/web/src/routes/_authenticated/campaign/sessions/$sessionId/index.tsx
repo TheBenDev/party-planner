@@ -47,6 +47,7 @@ function RouteComponent() {
 					{session.title}
 				</h1>
 				<Button
+					className="hover:cursor-pointer"
 					onClick={() =>
 						navigate({
 							params: { sessionId },
@@ -82,6 +83,7 @@ function RouteComponent() {
 
 				<SessionScheduling
 					session={{
+						announcedAt: session.announcedAt,
 						campaignId: session.campaignId,
 						id: session.id,
 						startsAt: session.startsAt,

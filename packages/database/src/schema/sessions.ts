@@ -18,10 +18,12 @@ export const sessionStatusEnum = pgEnum("session_status", enumToPgEnum(Status));
 export const sessionsTable = pgTable(
 	"session",
 	{
+		announcedAt: timestamp("announced_at", { mode: "date" }),
 		campaignId: uuid("campaign_id").notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		description: varchar("description"),
 		id: uuid("id").primaryKey().defaultRandom(),
+		pollId: varchar("poll_id"),
 		startsAt: timestamp("starts_at", { mode: "date" }),
 		status: sessionStatusEnum("status").notNull(),
 		title: varchar("title").notNull(),

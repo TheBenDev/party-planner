@@ -329,10 +329,23 @@ type Session struct {
 	CampaignID  string
 	Title       string
 	Description sql.NullString
+	PollID      sql.NullString
+	AnnouncedAt sql.NullTime
 	StartsAt    sql.NullTime
 	Status      SessionStatus
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
+}
+
+type Poll struct {
+	Question    string
+	Answers     []PollAnswer
+	IsFinalized bool
+}
+
+type PollAnswer struct {
+	Text      string
+	VoteCount uint32
 }
 
 type CreateSessionRequest struct {
@@ -347,6 +360,7 @@ type UpdateSessionRequest struct {
 	ID          string
 	Title       sql.NullString
 	Description sql.NullString
+	PollId      sql.NullString
 	Status      SessionStatus
 	StartsAt    sql.NullTime
 }

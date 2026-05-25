@@ -28,6 +28,8 @@ message Session {
   optional google.protobuf.Timestamp starts_at = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
+  optional string poll_id = 9;
+  optional google.protobuf.Timestamp announced_at = 10;
 }
 
 // -----------------------------------------------------------------------------
@@ -49,6 +51,17 @@ message CreateSessionRequest {
   string title = 5;
 }
 
+message PollAnswer {
+  string text = 1;
+  uint32 vote_count = 2;
+}
+
+message Poll {
+  string question = 1;
+  repeated PollAnswer answers = 2;
+  bool is_finalized = 3;
+}
+
 message CreateSessionResponse {
   Session session = 1;
 }
@@ -61,6 +74,15 @@ message GetSessionResponse {
   Session session = 1;
 }
 
+message GetSessionPollRequest {
+  string session_id = 1;
+  string campaign_id = 2;
+}
+
+message GetSessionPollResponse {
+  Poll poll = 1;
+}
+
 message ListSessionsByCampaignRequest {
   string campaign_id = 1;
 }
@@ -68,6 +90,14 @@ message ListSessionsByCampaignRequest {
 message ListSessionsByCampaignResponse {
   repeated Session sessions = 1;
 }
+
+message PollSessionRequest {
+  string campaign_id = 1;
+  string session_id = 2;
+  repeated google.protobuf.Timestamp options = 3;
+}
+
+message PollSessionResponse {}
 
 message RemoveSessionRequest {
   string id = 1;
@@ -94,7 +124,9 @@ service SessionService {
   rpc AnnounceSession(AnnounceSessionRequest) returns (AnnounceSessionResponse);
   rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
+  rpc GetSessionPoll(GetSessionPollRequest) returns (GetSessionPollResponse);
   rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);
+  rpc PollSession(PollSessionRequest) returns (PollSessionResponse);
   rpc RemoveSession(RemoveSessionRequest) returns (RemoveSessionResponse);
   rpc UpdateSession(UpdateSessionRequest) returns (UpdateSessionResponse);
 }
