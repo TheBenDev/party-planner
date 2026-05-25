@@ -211,9 +211,20 @@ func (s *SessionService) Poll(ctx context.Context, sessionId string, campaignId 
 }
 
 func (s *SessionService) Remove(id string) error {
-	_, err := s.Get(id)
+	session, err := s.Get(id)
 	if err != nil {
 		return err
+	}
+	if session.PollID.Valid {
+		integration, err := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
+		if err == nil {
+			var metadata struct {
+				ChannelID string `json:"channelId"`
+			}
+			if err := json.Unmarshal(integration.Metadata, &metadata); err == nil && metadata.ChannelID != "" {
+				s.Discord.ClosePoll(context.Background(), metadata.ChannelID, session.PollID.String, session.Title)
+			}
+		}
 	}
 	if err := s.DB.RemoveSession(id); err != nil {
 		return fmt.Errorf("remove session error: %w", err)
