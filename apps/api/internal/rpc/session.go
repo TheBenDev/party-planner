@@ -3,7 +3,9 @@ package rpc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
+	"time"
 
 	"connectrpc.com/connect"
 	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
@@ -84,6 +86,36 @@ func (s *SessionServer) GetSession(ctx context.Context, req *connect.Request[v1.
 	}), nil
 }
 
+func (s *SessionServer) GetSessionPoll(ctx context.Context, req *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error) {
+	if req.Msg.SessionId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	poll, err := s.Session.GetPoll(ctx, req.Msg.SessionId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get session poll")
+	}
+
+	protoAnswers := make([]*v1.PollAnswer, len(poll.Answers))
+	for i, a := range poll.Answers {
+		protoAnswers[i] = &v1.PollAnswer{
+			Text:      a.Text,
+			VoteCount: a.VoteCount,
+		}
+	}
+
+	return connect.NewResponse(&v1.GetSessionPollResponse{
+		Poll: &v1.Poll{
+			Question:    poll.Question,
+			Answers:     protoAnswers,
+			IsFinalized: poll.IsFinalized,
+		},
+	}), nil
+}
+
 func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
@@ -102,6 +134,33 @@ func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect
 	return connect.NewResponse(&v1.ListSessionsByCampaignResponse{
 		Sessions: protoSessions,
 	}), nil
+}
+
+func (s *SessionServer) PollSession(ctx context.Context, req *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.SessionId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
+	}
+	if len(req.Msg.Options) == 0 {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("at least one poll option required"))
+	}
+
+	options := make([]time.Time, 0, len(req.Msg.Options))
+
+	for i, ts := range req.Msg.Options {
+		if err := ts.CheckValid(); err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("invalid timestamp at options[%d]: %w", i, err))
+		}
+		options = append(options, ts.AsTime())
+	}
+
+	if err := s.Session.Poll(ctx, req.Msg.SessionId, req.Msg.CampaignId, options); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to poll session")
+	}
+
+	return connect.NewResponse(&v1.PollSessionResponse{}), nil
 }
 
 func (s *SessionServer) RemoveSession(ctx context.Context, req *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {
@@ -190,8 +249,14 @@ func sessionToProto(session *model.Session) *v1.Session {
 	if session.Description.Valid {
 		proto.Description = &session.Description.String
 	}
+	if session.PollID.Valid {
+		proto.PollId = &session.PollID.String
+	}
 	if session.StartsAt.Valid {
 		proto.StartsAt = timestamppb.New(session.StartsAt.Time)
+	}
+	if session.AnnouncedAt.Valid {
+		proto.AnnouncedAt = timestamppb.New(session.AnnouncedAt.Time)
 	}
 	return proto
 }

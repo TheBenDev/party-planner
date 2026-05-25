@@ -682,13 +682,13 @@ func (db *DB) RemoveQuest(id string) error {
 // Sessions
 // -----------------------------------------------------------------------------
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, updated_at`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
-		&s.Status, &s.CreatedAt, &s.UpdatedAt,
+		&s.Status, &s.CreatedAt, &s.PollID, &s.AnnouncedAt, &s.UpdatedAt,
 	)
 	if err != nil {
 		return nil, err
@@ -741,12 +741,21 @@ func (db *DB) RemoveSession(id string) error {
 	return nil
 }
 
+func (db *DB) MarkSessionAnnounced(id string) (*model.Session, error) {
+	row := db.conn.QueryRow(`
+		UPDATE session SET announced_at = NOW()
+		WHERE id = $1
+		RETURNING `+sessionColumns,
+		id)
+	return scanSession(row)
+}
+
 func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4
-		WHERE id = $5
+		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4, poll_id = $5
+		WHERE id = $6
 		RETURNING `+sessionColumns,
-		session.Title, session.Description, session.StartsAt, session.Status, session.ID)
+		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.ID)
 	return scanSession(row)
 }
 

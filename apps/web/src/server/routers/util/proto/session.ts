@@ -1,8 +1,14 @@
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/client";
 import { Status } from "@planner/enums/session";
-import { type Session, SessionsSchema } from "@planner/schemas/sessions";
 import {
+	type Poll,
+	PollSchema,
+	type Session,
+	SessionsSchema,
+} from "@planner/schemas/sessions";
+import {
+	type Poll as PollProto,
 	type Session as SessionProto,
 	SessionStatus,
 } from "@/gen/proto/planner/v1/session_pb";
@@ -33,6 +39,10 @@ export function sessionStatusToProto(status: Status): SessionStatus {
 	}
 }
 
+export function protoToPoll(proto: PollProto): Poll {
+	return PollSchema.parse(proto);
+}
+
 export function protoToSession(proto: SessionProto): Session {
 	if (!proto.createdAt) {
 		throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -46,10 +56,12 @@ export function protoToSession(proto: SessionProto): Session {
 	}
 
 	return SessionsSchema.parse({
+		announcedAt: proto.announcedAt ? timestampDate(proto.announcedAt) : undefined,
 		campaignId: proto.campaignId,
 		createdAt: timestampDate(proto.createdAt),
 		description: proto.description,
 		id: proto.id,
+		pollId: proto.pollId,
 		startsAt: proto.startsAt ? timestampDate(proto.startsAt) : undefined,
 		status: protoToSessionStatus(proto.status),
 		title: proto.title,
