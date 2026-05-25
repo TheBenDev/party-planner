@@ -243,6 +243,25 @@ func (s *DiscordService) PollSession(
 	return &PollProps{ID: poll.ID}, nil
 }
 
+func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId, sessionTitle string) {
+	if _, err := s.Session.PollExpire(channelId, pollId); err != nil {
+		s.Log.WarnContext(ctx, "failed to close discord poll",
+			"channel_id", channelId,
+			"poll_id", pollId,
+			"error", err,
+		)
+	}
+	msg := fmt.Sprintf("❌ The poll for **%s** has been closed because the session was cancelled.", sessionTitle)
+	if _, err := s.Session.ChannelMessageSend(channelId, msg, discordgo.WithContext(ctx)); err != nil {
+		s.Log.WarnContext(ctx, "failed to send poll cancellation message",
+			"channel_id", channelId,
+			"poll_id", pollId,
+			"session_title", sessionTitle,
+			"error", err,
+		)
+	}
+}
+
 func formatPollTimestamps(title string, options []time.Time) string {
 	var sb strings.Builder
 
