@@ -10,6 +10,8 @@ import (
 
 func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackMsg string) error {
 	switch err {
+	case service.ErrNotAuthorized:
+		return connect.NewError(connect.CodePermissionDenied, err)
 	// Campaign
 	case service.ErrCampaignNotFound:
 		return connect.NewError(connect.CodeNotFound, err)

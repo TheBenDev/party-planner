@@ -63,6 +63,34 @@ func (s *CampaignService) GetById(id string) (*model.Campaign, error) {
 	return campaign, nil
 }
 
+func (s *CampaignService) Update(userID string, req *model.UpdateCampaignRequest) (*model.Campaign, error) {
+	if err := authorizeCampaignRole(s.DB, req.ID, userID, model.MemberRoleDungeonMaster); err != nil {
+		return nil, err
+	}
+	campaign, err := s.DB.UpdateCampaign(req)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignNotFound
+		}
+		return nil, fmt.Errorf("update campaign error: %w", err)
+	}
+	return campaign, nil
+}
+
+func (s *CampaignService) Delete(userID, id string) (*model.Campaign, error) {
+	if err := authorizeCampaignRole(s.DB, id, userID, model.MemberRoleDungeonMaster); err != nil {
+		return nil, err
+	}
+	campaign, err := s.DB.DeleteCampaign(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignNotFound
+		}
+		return nil, fmt.Errorf("delete campaign error: %w", err)
+	}
+	return campaign, nil
+}
+
 func mapCampaignPgError(err error) error {
 	if isPgError(err, pgErrUniqueViolation) {
 		return ErrCampaignAlreadyExists

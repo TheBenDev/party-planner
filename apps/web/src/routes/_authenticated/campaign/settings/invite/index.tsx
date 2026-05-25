@@ -1,7 +1,7 @@
 import { UserRole } from "@planner/enums/user";
 import type { CampaignInvitation } from "@planner/schemas/member";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { CheckCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -18,9 +18,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface CampaignRole {
+	style: string;
+	label: string;
+	value: UserRole;
+}
+type CampaignRoles = CampaignRole[];
+const campaignRoles: CampaignRoles = [
+	{
+		label: "Player",
+		style: "bg-emerald-500",
+		value: UserRole.PLAYER,
+	},
+	{
+		label: "Dungeon Master",
+		style: "bg-violet-500",
+		value: UserRole.DUNGEON_MASTER,
+	},
+];
 
 function timeAgo(date: Date): string {
 	const days = Math.floor((Date.now() - date.getTime()) / 86_400_000);
@@ -29,13 +49,17 @@ function timeAgo(date: Date): string {
 	return `${days} days ago`;
 }
 
-export const Route = createFileRoute("/_authenticated/campaign/invite/")({
+export const Route = createFileRoute(
+	"/_authenticated/campaign/settings/invite/",
+)({
 	component: InvitePlayerPage,
 });
 
 export function InvitePlayerPage() {
+	const { role: authRole, campaignIsLoading } = useAuth();
+
 	const [email, setEmail] = useState("");
-	const [role, setRole] = useState<UserRole>(UserRole.PLAYER);
+	const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.PLAYER);
 	const [pending, setPending] = useState<CampaignInvitation[]>([]);
 	const [successEmail, setSuccessEmail] = useState<string | null>(null);
 
@@ -60,18 +84,15 @@ export function InvitePlayerPage() {
 	const { mutate: sendInvitation, isPending: sendInvitationIsPending } =
 		useMutation({
 			mutationFn: async () =>
-				await client.member.createInvitation({ inviteeEmail: email, role }),
+				await client.member.createInvitation({
+					inviteeEmail: email,
+					role: selectedRole,
+				}),
 			mutationKey: ["invitation"],
 			onError: (err) => {
 				// TODO: improve error handling for toasts
 				if (err.message === "[already_exists] campaign user already exists") {
 					toast.error("This player is already in the campaign.");
-					return;
-				}
-				if (
-					err.message === "[already_exists] campaign invitation already exists"
-				) {
-					toast.error("This player already has a pending invitation.");
 					return;
 				}
 				toast.error(
@@ -81,7 +102,7 @@ export function InvitePlayerPage() {
 			onSuccess: (inv) => {
 				setSuccessEmail(email.trim());
 				setEmail("");
-				setRole(UserRole.PLAYER);
+				setSelectedRole(UserRole.PLAYER);
 				setPending((prev) => [inv.invitation, ...prev]);
 			},
 		});
@@ -91,11 +112,16 @@ export function InvitePlayerPage() {
 		if (pendingInvites?.invitations) setPending(pendingInvites?.invitations);
 	}, [pendingInvites]);
 
+	if (campaignIsLoading) return <div>loading...</div>;
+	if (authRole !== UserRole.DUNGEON_MASTER) {
+		return <Navigate to="/campaign/settings" />;
+	}
+
 	const isValid = EMAIL_REGEX.test(email.trim());
 
 	function handleReset() {
 		setEmail("");
-		setRole(UserRole.PLAYER);
+		setSelectedRole(UserRole.PLAYER);
 		setSuccessEmail(null);
 	}
 
@@ -171,29 +197,14 @@ export function InvitePlayerPage() {
 						</Label>
 						<RadioGroup
 							className="grid grid-cols-2 gap-3"
-							onValueChange={(v) => setRole(v as UserRole)}
-							value={role}
+							onValueChange={(v) => setSelectedRole(v as UserRole)}
+							value={selectedRole}
 						>
-							{(
-								[
-									{
-										desc: "Controls a character, participates in the adventure",
-										dot: "bg-emerald-500",
-										label: "Player",
-										value: UserRole.PLAYER,
-									},
-									{
-										desc: "Co-DM with full campaign edit access",
-										dot: "bg-violet-500",
-										label: "Dungeon master",
-										value: UserRole.DUNGEON_MASTER,
-									},
-								] as const
-							).map((opt) => (
+							{campaignRoles.map((opt) => (
 								<Label
 									className={[
-										"flex flex-col gap-1 rounded-lg border p-3.5 cursor-pointer transition-colors",
-										role === opt.value
+										"flex flex-col justify-center gap-1 rounded-lg border p-3.5 cursor-pointer transition-colors",
+										selectedRole === opt.value
 											? "border-foreground/40 bg-muted"
 											: "border-border hover:bg-muted/50",
 									].join(" ")}
@@ -205,9 +216,9 @@ export function InvitePlayerPage() {
 										id={`role-${opt.value}`}
 										value={opt.value}
 									/>
-									<span className="flex items-center gap-2 font-cinzel text-[11px] tracking-wide font-medium">
+									<span className="flex items-center justify-center gap-2 font-cinzel text-[11px] tracking-wide font-medium sm:justify-start">
 										<span
-											className={`w-2 h-2 rounded-full shrink-0 ${opt.dot}`}
+											className={`w-2 h-2 rounded-full shrink-0 ${opt.style}`}
 										/>
 										{opt.label}
 									</span>

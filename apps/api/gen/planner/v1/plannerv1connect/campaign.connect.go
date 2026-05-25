@@ -39,12 +39,20 @@ const (
 	// CampaignServiceGetCampaignProcedure is the fully-qualified name of the CampaignService's
 	// GetCampaign RPC.
 	CampaignServiceGetCampaignProcedure = "/planner.v1.CampaignService/GetCampaign"
+	// CampaignServiceUpdateCampaignProcedure is the fully-qualified name of the CampaignService's
+	// UpdateCampaign RPC.
+	CampaignServiceUpdateCampaignProcedure = "/planner.v1.CampaignService/UpdateCampaign"
+	// CampaignServiceDeleteCampaignProcedure is the fully-qualified name of the CampaignService's
+	// DeleteCampaign RPC.
+	CampaignServiceDeleteCampaignProcedure = "/planner.v1.CampaignService/DeleteCampaign"
 )
 
 // CampaignServiceClient is a client for the planner.v1.CampaignService service.
 type CampaignServiceClient interface {
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
 	GetCampaign(context.Context, *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error)
+	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
+	DeleteCampaign(context.Context, *connect.Request[v1.DeleteCampaignRequest]) (*connect.Response[v1.DeleteCampaignResponse], error)
 }
 
 // NewCampaignServiceClient constructs a client for the planner.v1.CampaignService service. By
@@ -70,6 +78,18 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 			connect.WithSchema(campaignServiceMethods.ByName("GetCampaign")),
 			connect.WithClientOptions(opts...),
 		),
+		updateCampaign: connect.NewClient[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse](
+			httpClient,
+			baseURL+CampaignServiceUpdateCampaignProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteCampaign: connect.NewClient[v1.DeleteCampaignRequest, v1.DeleteCampaignResponse](
+			httpClient,
+			baseURL+CampaignServiceDeleteCampaignProcedure,
+			connect.WithSchema(campaignServiceMethods.ByName("DeleteCampaign")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -77,6 +97,8 @@ func NewCampaignServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 type campaignServiceClient struct {
 	createCampaign *connect.Client[v1.CreateCampaignRequest, v1.CreateCampaignResponse]
 	getCampaign    *connect.Client[v1.GetCampaignRequest, v1.GetCampaignResponse]
+	updateCampaign *connect.Client[v1.UpdateCampaignRequest, v1.UpdateCampaignResponse]
+	deleteCampaign *connect.Client[v1.DeleteCampaignRequest, v1.DeleteCampaignResponse]
 }
 
 // CreateCampaign calls planner.v1.CampaignService.CreateCampaign.
@@ -89,10 +111,22 @@ func (c *campaignServiceClient) GetCampaign(ctx context.Context, req *connect.Re
 	return c.getCampaign.CallUnary(ctx, req)
 }
 
+// UpdateCampaign calls planner.v1.CampaignService.UpdateCampaign.
+func (c *campaignServiceClient) UpdateCampaign(ctx context.Context, req *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
+	return c.updateCampaign.CallUnary(ctx, req)
+}
+
+// DeleteCampaign calls planner.v1.CampaignService.DeleteCampaign.
+func (c *campaignServiceClient) DeleteCampaign(ctx context.Context, req *connect.Request[v1.DeleteCampaignRequest]) (*connect.Response[v1.DeleteCampaignResponse], error) {
+	return c.deleteCampaign.CallUnary(ctx, req)
+}
+
 // CampaignServiceHandler is an implementation of the planner.v1.CampaignService service.
 type CampaignServiceHandler interface {
 	CreateCampaign(context.Context, *connect.Request[v1.CreateCampaignRequest]) (*connect.Response[v1.CreateCampaignResponse], error)
 	GetCampaign(context.Context, *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error)
+	UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error)
+	DeleteCampaign(context.Context, *connect.Request[v1.DeleteCampaignRequest]) (*connect.Response[v1.DeleteCampaignResponse], error)
 }
 
 // NewCampaignServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -114,12 +148,28 @@ func NewCampaignServiceHandler(svc CampaignServiceHandler, opts ...connect.Handl
 		connect.WithSchema(campaignServiceMethods.ByName("GetCampaign")),
 		connect.WithHandlerOptions(opts...),
 	)
+	campaignServiceUpdateCampaignHandler := connect.NewUnaryHandler(
+		CampaignServiceUpdateCampaignProcedure,
+		svc.UpdateCampaign,
+		connect.WithSchema(campaignServiceMethods.ByName("UpdateCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
+	campaignServiceDeleteCampaignHandler := connect.NewUnaryHandler(
+		CampaignServiceDeleteCampaignProcedure,
+		svc.DeleteCampaign,
+		connect.WithSchema(campaignServiceMethods.ByName("DeleteCampaign")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.CampaignService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case CampaignServiceCreateCampaignProcedure:
 			campaignServiceCreateCampaignHandler.ServeHTTP(w, r)
 		case CampaignServiceGetCampaignProcedure:
 			campaignServiceGetCampaignHandler.ServeHTTP(w, r)
+		case CampaignServiceUpdateCampaignProcedure:
+			campaignServiceUpdateCampaignHandler.ServeHTTP(w, r)
+		case CampaignServiceDeleteCampaignProcedure:
+			campaignServiceDeleteCampaignHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -135,4 +185,12 @@ func (UnimplementedCampaignServiceHandler) CreateCampaign(context.Context, *conn
 
 func (UnimplementedCampaignServiceHandler) GetCampaign(context.Context, *connect.Request[v1.GetCampaignRequest]) (*connect.Response[v1.GetCampaignResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignService.GetCampaign is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) UpdateCampaign(context.Context, *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignService.UpdateCampaign is not implemented"))
+}
+
+func (UnimplementedCampaignServiceHandler) DeleteCampaign(context.Context, *connect.Request[v1.DeleteCampaignRequest]) (*connect.Response[v1.DeleteCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.CampaignService.DeleteCampaign is not implemented"))
 }

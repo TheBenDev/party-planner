@@ -157,7 +157,29 @@ func (db *DB) CreateCampaign(campaign *model.CreateCampaignRequest) (*model.Camp
 }
 
 func (db *DB) GetCampaign(id string) (*model.Campaign, error) {
-	row := db.conn.QueryRow(`SELECT `+campaignColumns+` FROM campaigns WHERE id = $1 LIMIT 1`, id)
+	row := db.conn.QueryRow(`SELECT `+campaignColumns+` FROM campaigns WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id)
+	return scanCampaign(row)
+}
+
+func (db *DB) UpdateCampaign(req *model.UpdateCampaignRequest) (*model.Campaign, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaigns SET
+			title       = COALESCE($1, title),
+			description = COALESCE($2, description),
+			tags        = COALESCE($3, tags),
+			updated_at  = NOW()
+		WHERE id = $4 AND deleted_at IS NULL
+		RETURNING `+campaignColumns,
+		req.Title, req.Description, pq.Array(req.Tags), req.ID,
+	)
+	return scanCampaign(row)
+}
+
+func (db *DB) DeleteCampaign(id string) (*model.Campaign, error) {
+	row := db.conn.QueryRow(`
+		UPDATE campaigns SET deleted_at = NOW()
+		WHERE id = $1 AND deleted_at IS NULL
+		RETURNING `+campaignColumns, id)
 	return scanCampaign(row)
 }
 

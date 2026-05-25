@@ -1,4 +1,5 @@
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
+import type { UserRole } from "@planner/enums/user";
 import type { GetActiveCampaignResponse } from "@planner/schemas/campaigns";
 import type { GetUserResponse } from "@planner/schemas/user";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +12,7 @@ export type AuthContextValue = {
 	userIsLoading: boolean;
 	campaign: GetActiveCampaignResponse | null;
 	campaignIsLoading: boolean;
+	role: UserRole | null;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -33,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		return {
 			campaign,
 			campaignIsLoading,
+			role: campaign?.role ?? null,
 			user,
 			userIsLoading,
 		};

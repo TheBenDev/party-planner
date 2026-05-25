@@ -50,6 +50,39 @@ func (s *CampaignServer) GetCampaign(ctx context.Context, req *connect.Request[v
 	return connect.NewResponse(&v1.GetCampaignResponse{Campaign: campaignToProto(campaign)}), nil
 }
 
+func (s *CampaignServer) UpdateCampaign(ctx context.Context, req *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.UserId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
+	}
+	campaign, err := s.Campaign.Update(req.Msg.UserId, &model.UpdateCampaignRequest{
+		ID:          req.Msg.Id,
+		Title:       req.Msg.Title,
+		Description: sqlNullString(req.Msg.Description),
+		Tags:        req.Msg.Tags,
+	})
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to update campaign")
+	}
+	return connect.NewResponse(&v1.UpdateCampaignResponse{Campaign: campaignToProto(campaign)}), nil
+}
+
+func (s *CampaignServer) DeleteCampaign(ctx context.Context, req *connect.Request[v1.DeleteCampaignRequest]) (*connect.Response[v1.DeleteCampaignResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.UserId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
+	}
+	campaign, err := s.Campaign.Delete(req.Msg.UserId, req.Msg.Id)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to delete campaign")
+	}
+	return connect.NewResponse(&v1.DeleteCampaignResponse{Campaign: campaignToProto(campaign)}), nil
+}
+
 func campaignToProto(campaign *model.Campaign) *v1.Campaign {
 	if campaign == nil {
 		return nil

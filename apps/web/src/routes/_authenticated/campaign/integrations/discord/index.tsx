@@ -170,7 +170,7 @@ function PageHeader({
 // ---------------------------------------------------------------------------
 // Connected state
 // ---------------------------------------------------------------------------
-
+// TODO: add authentication so that only dms can connect discord with campaign
 function ConnectedState({
 	integration,
 	isRemoving,
