@@ -1,21 +1,58 @@
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/auth";
+import { client } from "@/lib/client";
 
 export const Route = createFileRoute("/")({
 	component: Page,
 });
 
-function Page() {
-	const { campaign, campaignIsLoading } = useAuth();
+function LoadingSpinner() {
+	return (
+		<div className="min-h-screen w-full flex items-center justify-center bg-background">
+			<div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+		</div>
+	);
+}
+
+function SignedInPage({ userClerkId }: { userClerkId: string }) {
+	const { data: campaign } = useSuspenseQuery({
+		gcTime: 10 * 60 * 1000,
+		queryFn: () => client.campaign.getActiveCampaign(),
+		queryKey: ["auth", "campaign"],
+	});
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (campaignIsLoading) return;
-		if (campaign !== null) navigate({ to: "/campaign" });
-	}, [campaign, campaignIsLoading]);
+		if (campaign != null) navigate({ replace: true, to: "/campaign" });
+	}, ["auth", userClerkId, "campaign"]);
 
+	return <LandingContent hasCampaign={!!campaign} />;
+}
+
+function Page() {
+	const { isLoaded, isSignedIn, userId } = useClerkAuth();
+
+	if (!isLoaded) {
+		return <LoadingSpinner />;
+	}
+
+	if (isSignedIn) {
+		return (
+			<Suspense fallback={<LoadingSpinner />}>
+				<SignedInPage userClerkId={userId} />
+			</Suspense>
+		);
+	}
+
+	return <LandingContent hasCampaign={false} />;
+}
+
+function LandingContent({ hasCampaign }: { hasCampaign: boolean }) {
+	const navigate = useNavigate();
+	if (hasCampaign) return <LoadingSpinner />;
 	return (
 		<div className="min-h-screen w-full bg-background">
 			{/* Hero */}
@@ -27,7 +64,12 @@ function Page() {
 					Schedule sessions, manage NPCs, sync with Foundry, and keep your party
 					in the loop — all in one place.
 				</p>
-				<Button className="mt-6">Start building for free</Button>
+				<Button
+					className="mt-6"
+					onClick={() => navigate({ to: "/campaign/create" })}
+				>
+					Start building for free
+				</Button>
 			</section>
 
 			{/* How it works */}
@@ -108,7 +150,12 @@ function Page() {
 				<p className="text-muted-foreground mt-4">
 					Free to get started. No credit card required.
 				</p>
-				<Button className="mt-6">Start building for free</Button>
+				<Button
+					className="mt-6"
+					onClick={() => navigate({ to: "/campaign/create" })}
+				>
+					Start building now
+				</Button>
 			</section>
 		</div>
 	);
