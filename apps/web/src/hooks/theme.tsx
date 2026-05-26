@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		const mq = window.matchMedia("(prefers-color-scheme: dark)");
 		function handleChange(e: MediaQueryListEvent) {
-			if (!localStorage.getItem("theme")) {
+			if (!ThemeSchema.safeParse(localStorage.getItem("theme")).success) {
 				setTheme(e.matches ? "dark" : "light");
 			}
 		}

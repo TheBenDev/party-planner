@@ -178,12 +178,12 @@ const deleteCampaign = privateProcedure
 	.output(DeleteCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { id } = input;
-		const { api, role, logger } = context;
+		const { api, role, logger, campaignId } = context;
 
 		try {
 			if (role !== UserRole.DUNGEON_MASTER) {
 				throw new ORPCError("FORBIDDEN", {
-					message: "not authorized to update campaign",
+					message: "not authorized to delete campaign",
 				});
 			}
 			const result = await api.campaign.deleteCampaign({
@@ -191,13 +191,16 @@ const deleteCampaign = privateProcedure
 				userId: context.userId,
 			});
 			const campaignProto = result.campaign;
-			if (campaignProto === undefined)
+			if (campaignId === id) {
+				deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+			}
+			if (campaignProto === undefined) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to delete campaign",
 				});
-
-			deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
-			return { campaign: protoToCampaign(campaignProto) };
+			}
+			const campaign = protoToCampaign(campaignProto);
+			return { campaign };
 		} catch (err) {
 			handleError(err, "failed to delete campaign", { id }, logger);
 		}

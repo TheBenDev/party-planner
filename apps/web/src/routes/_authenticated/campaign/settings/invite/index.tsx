@@ -85,7 +85,7 @@ export function InvitePlayerPage() {
 		useMutation({
 			mutationFn: async () =>
 				await client.member.createInvitation({
-					inviteeEmail: email,
+					inviteeEmail: email.trim(),
 					role: selectedRole,
 				}),
 			mutationKey: ["invitation"],
