@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateCampaignRequest, CreateCampaignResponse, GetCampaignRequest, GetCampaignResponse } from "./campaign_pb.js";
+import { CreateCampaignRequest, CreateCampaignResponse, DeleteCampaignRequest, DeleteCampaignResponse, GetCampaignRequest, GetCampaignResponse, UpdateCampaignRequest, UpdateCampaignResponse } from "./campaign_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -28,6 +28,24 @@ export const CampaignService = {
       name: "GetCampaign",
       I: GetCampaignRequest,
       O: GetCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.CampaignService.UpdateCampaign
+     */
+    updateCampaign: {
+      name: "UpdateCampaign",
+      I: UpdateCampaignRequest,
+      O: UpdateCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.CampaignService.DeleteCampaign
+     */
+    deleteCampaign: {
+      name: "DeleteCampaign",
+      I: DeleteCampaignRequest,
+      O: DeleteCampaignResponse,
       kind: MethodKind.Unary,
     },
   }

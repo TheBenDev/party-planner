@@ -12,6 +12,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import ProfileButtonComponent from "@/components/profile-button";
+import { FOUC_PREVENTION_SCRIPT, ThemeProvider } from "@/hooks/theme";
 import AppClerkProvider from "@/integrations/clerk/provider";
 import TanStackQueryProvider from "@/integrations/tanstack-query/root-provider";
 import appCss from "@/styles.css?url";
@@ -41,36 +42,40 @@ function RootDocument() {
 		<html lang="en">
 			<head>
 				<HeadContent />
+				{/* Blocking script — runs before React hydrates to prevent dark-mode flash */}
+				<script dangerouslySetInnerHTML={{ __html: FOUC_PREVENTION_SCRIPT }} />
 			</head>
 			<body className="antialiased">
-				<AppClerkProvider>
-					<TanStackQueryProvider>
-						<header className="flex justify-end items-center px-4 py-1 gap-4 h-14 border-b border-muted-foreground/20">
-							<SignedOut>
-								<SignInButton>
-									<button
-										className="h-8 px-3 text-sm font-medium border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
-										type="button"
-									>
-										Sign In
-									</button>
-								</SignInButton>
-								<SignUpButton>
-									<button
-										className="h-8 px-3 text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors cursor-pointer"
-										type="button"
-									>
-										Sign Up
-									</button>
-								</SignUpButton>
-							</SignedOut>
-							<SignedIn>
-								<ProfileButtonComponent />
-							</SignedIn>
-						</header>
-						<Outlet />
-					</TanStackQueryProvider>
-				</AppClerkProvider>
+				<ThemeProvider>
+					<AppClerkProvider>
+						<TanStackQueryProvider>
+							<header className="flex justify-end items-center px-4 py-1 gap-4 h-14 border-b border-muted-foreground/20">
+								<SignedOut>
+									<SignInButton>
+										<button
+											className="h-8 px-3 text-sm font-medium border border-zinc-300 dark:border-zinc-600 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer"
+											type="button"
+										>
+											Sign In
+										</button>
+									</SignInButton>
+									<SignUpButton>
+										<button
+											className="h-8 px-3 text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-md hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors cursor-pointer"
+											type="button"
+										>
+											Sign Up
+										</button>
+									</SignUpButton>
+								</SignedOut>
+								<SignedIn>
+									<ProfileButtonComponent />
+								</SignedIn>
+							</header>
+							<Outlet />
+						</TanStackQueryProvider>
+					</AppClerkProvider>
+				</ThemeProvider>
 				<Scripts />
 			</body>
 		</html>

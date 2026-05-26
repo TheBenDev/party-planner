@@ -42,6 +42,27 @@ message GetCampaignResponse {
   Campaign campaign = 1;
 }
 
+message UpdateCampaignRequest {
+  string id = 1;
+  optional string title = 2;
+  optional string description = 3;
+  repeated string tags = 4;
+  string user_id = 5;
+}
+
+message UpdateCampaignResponse {
+  Campaign campaign = 1;
+}
+
+message DeleteCampaignRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message DeleteCampaignResponse {
+  Campaign campaign = 1;
+}
+
 // -----------------------------------------------------------------------------
 // Service
 // -----------------------------------------------------------------------------
@@ -49,4 +70,6 @@ message GetCampaignResponse {
 service CampaignService {
   rpc CreateCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
   rpc GetCampaign(GetCampaignRequest) returns (GetCampaignResponse);
+  rpc UpdateCampaign(UpdateCampaignRequest) returns (UpdateCampaignResponse);
+  rpc DeleteCampaign(DeleteCampaignRequest) returns (DeleteCampaignResponse);
 }

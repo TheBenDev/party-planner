@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/campaign.proto.
  */
 export const file_planner_v1_campaign: GenFile = /*@__PURE__*/
-  fileDesc("ChlwbGFubmVyL3YxL2NhbXBhaWduLnByb3RvEgpwbGFubmVyLnYxIpICCghDYW1wYWlnbhIKCgJpZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDAoEdGFncxgFIAMoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIzCgpkZWxldGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQg4KDF9kZXNjcmlwdGlvbkINCgtfZGVsZXRlZF9hdCJvChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEgwKBHRhZ3MYBCADKAlCDgoMX2Rlc2NyaXB0aW9uIkAKFkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USJgoIY2FtcGFpZ24YASABKAsyFC5wbGFubmVyLnYxLkNhbXBhaWduIiAKEkdldENhbXBhaWduUmVxdWVzdBIKCgJpZBgBIAEoCSI9ChNHZXRDYW1wYWlnblJlc3BvbnNlEiYKCGNhbXBhaWduGAEgASgLMhQucGxhbm5lci52MS5DYW1wYWlnbjK6AQoPQ2FtcGFpZ25TZXJ2aWNlElcKDkNyZWF0ZUNhbXBhaWduEiEucGxhbm5lci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIi5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USTgoLR2V0Q2FtcGFpZ24SHi5wbGFubmVyLnYxLkdldENhbXBhaWduUmVxdWVzdBofLnBsYW5uZXIudjEuR2V0Q2FtcGFpZ25SZXNwb25zZUKqAQoOY29tLnBsYW5uZXIudjFCDUNhbXBhaWduUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChlwbGFubmVyL3YxL2NhbXBhaWduLnByb3RvEgpwbGFubmVyLnYxIpICCghDYW1wYWlnbhIKCgJpZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDAoEdGFncxgFIAMoCRIuCgpjcmVhdGVkX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIzCgpkZWxldGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBQg4KDF9kZXNjcmlwdGlvbkINCgtfZGVsZXRlZF9hdCJvChVDcmVhdGVDYW1wYWlnblJlcXVlc3QSDwoHdXNlcl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEgwKBHRhZ3MYBCADKAlCDgoMX2Rlc2NyaXB0aW9uIkAKFkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USJgoIY2FtcGFpZ24YASABKAsyFC5wbGFubmVyLnYxLkNhbXBhaWduIiAKEkdldENhbXBhaWduUmVxdWVzdBIKCgJpZBgBIAEoCSI9ChNHZXRDYW1wYWlnblJlc3BvbnNlEiYKCGNhbXBhaWduGAEgASgLMhQucGxhbm5lci52MS5DYW1wYWlnbiKKAQoVVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESGAoLZGVzY3JpcHRpb24YAyABKAlIAYgBARIMCgR0YWdzGAQgAygJEg8KB3VzZXJfaWQYBSABKAlCCAoGX3RpdGxlQg4KDF9kZXNjcmlwdGlvbiJAChZVcGRhdGVDYW1wYWlnblJlc3BvbnNlEiYKCGNhbXBhaWduGAEgASgLMhQucGxhbm5lci52MS5DYW1wYWlnbiI0ChVEZWxldGVDYW1wYWlnblJlcXVlc3QSCgoCaWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSJAChZEZWxldGVDYW1wYWlnblJlc3BvbnNlEiYKCGNhbXBhaWduGAEgASgLMhQucGxhbm5lci52MS5DYW1wYWlnbjLsAgoPQ2FtcGFpZ25TZXJ2aWNlElcKDkNyZWF0ZUNhbXBhaWduEiEucGxhbm5lci52MS5DcmVhdGVDYW1wYWlnblJlcXVlc3QaIi5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduUmVzcG9uc2USTgoLR2V0Q2FtcGFpZ24SHi5wbGFubmVyLnYxLkdldENhbXBhaWduUmVxdWVzdBofLnBsYW5uZXIudjEuR2V0Q2FtcGFpZ25SZXNwb25zZRJXCg5VcGRhdGVDYW1wYWlnbhIhLnBsYW5uZXIudjEuVXBkYXRlQ2FtcGFpZ25SZXF1ZXN0GiIucGxhbm5lci52MS5VcGRhdGVDYW1wYWlnblJlc3BvbnNlElcKDkRlbGV0ZUNhbXBhaWduEiEucGxhbm5lci52MS5EZWxldGVDYW1wYWlnblJlcXVlc3QaIi5wbGFubmVyLnYxLkRlbGV0ZUNhbXBhaWduUmVzcG9uc2VCqgEKDmNvbS5wbGFubmVyLnYxQg1DYW1wYWlnblByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Campaign
@@ -150,6 +150,99 @@ export const GetCampaignResponseSchema: GenMessage<GetCampaignResponse> = /*@__P
   messageDesc(file_planner_v1_campaign, 4);
 
 /**
+ * @generated from message planner.v1.UpdateCampaignRequest
+ */
+export type UpdateCampaignRequest = Message<"planner.v1.UpdateCampaignRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: optional string title = 2;
+   */
+  title?: string | undefined;
+
+  /**
+   * @generated from field: optional string description = 3;
+   */
+  description?: string | undefined;
+
+  /**
+   * @generated from field: repeated string tags = 4;
+   */
+  tags: string[];
+
+  /**
+   * @generated from field: string user_id = 5;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message planner.v1.UpdateCampaignRequest.
+ * Use `create(UpdateCampaignRequestSchema)` to create a new message.
+ */
+export const UpdateCampaignRequestSchema: GenMessage<UpdateCampaignRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_campaign, 5);
+
+/**
+ * @generated from message planner.v1.UpdateCampaignResponse
+ */
+export type UpdateCampaignResponse = Message<"planner.v1.UpdateCampaignResponse"> & {
+  /**
+   * @generated from field: planner.v1.Campaign campaign = 1;
+   */
+  campaign?: Campaign | undefined;
+};
+
+/**
+ * Describes the message planner.v1.UpdateCampaignResponse.
+ * Use `create(UpdateCampaignResponseSchema)` to create a new message.
+ */
+export const UpdateCampaignResponseSchema: GenMessage<UpdateCampaignResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_campaign, 6);
+
+/**
+ * @generated from message planner.v1.DeleteCampaignRequest
+ */
+export type DeleteCampaignRequest = Message<"planner.v1.DeleteCampaignRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string user_id = 2;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message planner.v1.DeleteCampaignRequest.
+ * Use `create(DeleteCampaignRequestSchema)` to create a new message.
+ */
+export const DeleteCampaignRequestSchema: GenMessage<DeleteCampaignRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_campaign, 7);
+
+/**
+ * @generated from message planner.v1.DeleteCampaignResponse
+ */
+export type DeleteCampaignResponse = Message<"planner.v1.DeleteCampaignResponse"> & {
+  /**
+   * @generated from field: planner.v1.Campaign campaign = 1;
+   */
+  campaign?: Campaign | undefined;
+};
+
+/**
+ * Describes the message planner.v1.DeleteCampaignResponse.
+ * Use `create(DeleteCampaignResponseSchema)` to create a new message.
+ */
+export const DeleteCampaignResponseSchema: GenMessage<DeleteCampaignResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_campaign, 8);
+
+/**
  * @generated from service planner.v1.CampaignService
  */
 export const CampaignService: GenService<{
@@ -168,6 +261,22 @@ export const CampaignService: GenService<{
     methodKind: "unary";
     input: typeof GetCampaignRequestSchema;
     output: typeof GetCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.CampaignService.UpdateCampaign
+   */
+  updateCampaign: {
+    methodKind: "unary";
+    input: typeof UpdateCampaignRequestSchema;
+    output: typeof UpdateCampaignResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.CampaignService.DeleteCampaign
+   */
+  deleteCampaign: {
+    methodKind: "unary";
+    input: typeof DeleteCampaignRequestSchema;
+    output: typeof DeleteCampaignResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_campaign, 0);

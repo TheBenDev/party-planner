@@ -5,7 +5,11 @@ import { UserRole } from "@planner/enums/user";
 import {
 	CreateCampaignRequestSchema,
 	CreateCampaignResponseSchema,
+	DeleteCampaignRequestSchema,
+	DeleteCampaignResponseSchema,
 	GetActiveCampaignResponseSchema,
+	UpdateCampaignRequestSchema,
+	UpdateCampaignResponseSchema,
 } from "@planner/schemas/campaigns";
 import { decryptAuthCookie } from "@planner/security/auth";
 import { env } from "@/env";
@@ -102,9 +106,16 @@ const getActiveCampaign = privateProcedure
 				);
 				throw new ORPCError("NOT_FOUND", { message: "Campaign not found" });
 			}
+			const role = context.role;
+			if (role === null) {
+				throw new ORPCError("FORBIDDEN", {
+					message: "Active campaign found but not a member.",
+				});
+			}
 			const campaign = protoToCampaign(result.campaign);
 			return {
 				campaign,
+				role,
 			};
 		} catch (err) {
 			if (err instanceof ConnectError && err.code === Code.NotFound) {
@@ -119,7 +130,85 @@ const getActiveCampaign = privateProcedure
 		}
 	});
 
+const updateCampaign = privateProcedure
+	.route({
+		method: "POST",
+		path: "/campaign/update",
+		summary: "Updates a campaign's title, description, and tags",
+	})
+	.input(UpdateCampaignRequestSchema)
+	.output(UpdateCampaignResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id, title, description, tags } = input;
+		const { api, logger, role } = context;
+
+		try {
+			if (role !== UserRole.DUNGEON_MASTER) {
+				throw new ORPCError("FORBIDDEN", {
+					message: "not authorized to update campaign",
+				});
+			}
+
+			const result = await api.campaign.updateCampaign({
+				description,
+				id,
+				tags,
+				title,
+				userId: context.userId,
+			});
+			const campaignProto = result.campaign;
+			if (campaignProto === undefined)
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update campaign",
+				});
+
+			return { campaign: protoToCampaign(campaignProto) };
+		} catch (err) {
+			handleError(err, "failed to update campaign", { id }, logger);
+		}
+	});
+
+const deleteCampaign = privateProcedure
+	.route({
+		method: "POST",
+		path: "/campaign/delete",
+		summary: "Soft-deletes a campaign",
+	})
+	.input(DeleteCampaignRequestSchema)
+	.output(DeleteCampaignResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { id } = input;
+		const { api, role, logger, campaignId } = context;
+
+		try {
+			if (role !== UserRole.DUNGEON_MASTER) {
+				throw new ORPCError("FORBIDDEN", {
+					message: "not authorized to delete campaign",
+				});
+			}
+			const result = await api.campaign.deleteCampaign({
+				id,
+				userId: context.userId,
+			});
+			const campaignProto = result.campaign;
+			if (campaignId === id) {
+				deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+			}
+			if (campaignProto === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to delete campaign",
+				});
+			}
+			const campaign = protoToCampaign(campaignProto);
+			return { campaign };
+		} catch (err) {
+			handleError(err, "failed to delete campaign", { id }, logger);
+		}
+	});
+
 export const campaignRouter = {
 	createCampaign,
+	deleteCampaign,
 	getActiveCampaign,
+	updateCampaign,
 };

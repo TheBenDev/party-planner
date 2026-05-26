@@ -1,13 +1,16 @@
 import { useClerk } from "@clerk/clerk-react";
 import { Link } from "@tanstack/react-router";
+import { Moon, Sun } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/auth";
+import { useTheme } from "@/hooks/theme";
 import { client } from "@/lib/client";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
@@ -16,6 +19,7 @@ import { Skeleton } from "./ui/skeleton";
 export default function ProfileButtonComponent() {
 	const { signOut } = useClerk();
 	const { campaign: campaignAuth, user: userAuth, userIsLoading } = useAuth();
+	const { theme, toggleTheme } = useTheme();
 	const user = userAuth?.user;
 	const campaign = campaignAuth?.campaign;
 	async function handleSignOut() {
@@ -87,6 +91,18 @@ export default function ProfileButtonComponent() {
 							Create Campaign
 						</Link>
 					)}
+				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<DropdownMenuItem
+					className="w-full justify-center gap-2"
+					onClick={toggleTheme}
+				>
+					{theme === "dark" ? (
+						<Sun className="w-3.5 h-3.5" />
+					) : (
+						<Moon className="w-3.5 h-3.5" />
+					)}
+					{theme === "dark" ? "Light mode" : "Dark mode"}
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="w-full justify-center"

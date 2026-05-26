@@ -65,6 +65,13 @@ type CreateCampaignRequest struct {
 	Tags        []string
 }
 
+type UpdateCampaignRequest struct {
+	ID          string
+	Title       *string
+	Description sql.NullString
+	Tags        []string
+}
+
 // -----------------------------------------------------------------------------
 // Campaign Integrations
 // -----------------------------------------------------------------------------
