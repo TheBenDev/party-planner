@@ -65,6 +65,9 @@ func main() {
 	rateLimiter := middleware.NewRateLimitInterceptor()
 	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter, logger.NewLoggingInterceptor(logger.Logger))
 
+	healthPath, healthHandler := plannerv1connect.NewHealthServiceHandler(&rpc.HealthServer{}, interceptors)
+	mux.Handle(healthPath, healthHandler)
+
 	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(
 		&rpc.SessionServer{
 			Session: &service.SessionService{
