@@ -14,6 +14,6 @@ export enum RelationToPartyEnum {
 	ALLY = "ALLY",
 	NEUTRAL = "NEUTRAL",
 	SUSPICIOUS = "SUSPICIOUS",
-	HOSTILE = "HOSTILE",
+	ENEMY = "ENEMY",
 	UNKNOWN = "UNKNOWN",
 }
