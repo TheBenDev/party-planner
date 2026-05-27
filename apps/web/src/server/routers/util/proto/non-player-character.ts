@@ -50,7 +50,7 @@ export function protoToRelationToParty(
 		case RelationToParty.ALLY:
 			return RelationToPartyEnum.ALLY;
 		case RelationToParty.ENEMY:
-			return RelationToPartyEnum.HOSTILE;
+			return RelationToPartyEnum.ENEMY;
 		case RelationToParty.NEUTRAL:
 			return RelationToPartyEnum.NEUTRAL;
 		case RelationToParty.UNKNOWN:
@@ -68,7 +68,7 @@ export function relationToPartyToProto(
 	switch (relation) {
 		case RelationToPartyEnum.ALLY:
 			return RelationToParty.ALLY;
-		case RelationToPartyEnum.HOSTILE:
+		case RelationToPartyEnum.ENEMY:
 			return RelationToParty.ENEMY;
 		case RelationToPartyEnum.NEUTRAL:
 			return RelationToParty.NEUTRAL;
