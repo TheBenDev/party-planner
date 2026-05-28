@@ -1,13 +1,16 @@
 package commands
 
 import (
+	"encoding/json"
+	"errors"
 	"log/slog"
 
-	"github.com/BBruington/party-planner/api/internal/api"
+	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/service"
 	"github.com/bwmarrin/discordgo"
 )
 
-func registerCampaignAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func registerCampaignAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	if !hasAdminPermission(i) {
 		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
@@ -36,8 +39,12 @@ func registerCampaignAction(s *discordgo.Session, i *discordgo.InteractionCreate
 	})
 }
 
-func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	slog.Info("Registering dnd campaign to discord server", "operation", "beny-bot.register")
+
+	if !hasAdminPermission(i) {
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
+	}
 
 	if i.GuildID == "" {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
@@ -46,20 +53,32 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 	data := i.ModalSubmitData()
 	campaignID := getModalTextInput(data, "campaignId")
 
-	body := map[string]any{
-		"campaignId": campaignID,
-		"channelId":  i.ChannelID,
-		"serverId":   i.GuildID,
+	metadata, err := json.Marshal(map[string]any{"channelId": i.ChannelID, "source": "DISCORD"})
+	if err != nil {
+		slog.Error("Failed to build integration metadata", "operation", "beny-bot.register", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
 	}
 
-	err := client.Post("/api/discord/register", body, nil)
+	settings, err := json.Marshal(map[string]any{"enableSessionReminders": true, "source": "DISCORD"})
 	if err != nil {
-		slog.Error("Failed to register campaign", "operation", "beny-bot.registerCampaign", "error", err)
-		switch api.StatusCode(err) {
-		case 404:
+		slog.Error("Failed to build integration settings", "operation", "beny-bot.register", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
+	}
+
+	_, err = deps.IntegrationSvc.Create(&model.CreateCampaignIntegrationRequest{
+		CampaignID: campaignID,
+		ExternalID: i.GuildID,
+		Source:     model.IntegrationSourceDiscord,
+		Metadata:   metadata,
+		Settings:   settings,
+	})
+	if err != nil {
+		slog.Error("Failed to register campaign", "operation", "beny-bot.registerCampaign", "guildID", i.GuildID, "error", err)
+		switch {
+		case errors.Is(err, service.ErrCampaignIntegrationInvalidCampaign):
 			return replyEphemeral(s, i, "I could not find the campaign you were trying to integrate.")
-		case 409:
-			return replyEphemeral(s, i, "This discord channel is already integrated with a campaign.")
+		case errors.Is(err, service.ErrCampaignIntegrationAlreadyExists):
+			return replyEphemeral(s, i, "This discord server is already integrated with a campaign.")
 		default:
 			return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
 		}

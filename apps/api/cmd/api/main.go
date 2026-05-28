@@ -14,6 +14,7 @@ import (
 	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/bot"
+	"github.com/BBruington/party-planner/api/internal/bot/commands"
 	"github.com/BBruington/party-planner/api/internal/config"
 	"github.com/BBruington/party-planner/api/internal/db"
 	"github.com/BBruington/party-planner/api/internal/logger"
@@ -40,7 +41,13 @@ func main() {
 	}
 
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
-	session, err := bot.Start(cfg.DiscordToken, apiClient)
+	botDeps := &commands.BotDeps{
+		Client: apiClient,
+		NpcSvc: &service.NpcService{DB: database, Log: logger.Logger},
+		IntegrationSvc: &service.CampaignIntegrationService{DB: database, Log: logger.Logger},
+		DB: database,
+	}
+	session, err := bot.Start(cfg.DiscordToken, botDeps)
 	if err != nil {
 		slog.Error("Failed to start Discord bot", "error", err)
 		os.Exit(1)
