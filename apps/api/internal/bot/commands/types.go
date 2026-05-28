@@ -2,8 +2,20 @@ package commands
 
 import (
 	"github.com/BBruington/party-planner/api/internal/api"
+	"github.com/BBruington/party-planner/api/internal/db"
+	"github.com/BBruington/party-planner/api/internal/service"
 	"github.com/bwmarrin/discordgo"
 )
+
+// BotDeps bundles all dependencies available to bot command handlers.
+// Commands that can call the Go API directly use NpcSvc, IntegrationSvc, or DB.
+// Commands that must go through the web app (user_availabilities, user_integrations) use Client.
+type BotDeps struct {
+	Client         *api.Client
+	NpcSvc         *service.NpcService
+	IntegrationSvc *service.CampaignIntegrationService
+	DB             *db.DB
+}
 
 type Option struct {
 	Name        string
@@ -13,13 +25,13 @@ type Option struct {
 
 type Modal struct {
 	ID       string
-	OnSubmit func(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error
+	OnSubmit func(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error
 }
 
 type Subcommand struct {
 	Name        string
 	Description string
-	Action      func(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error
+	Action      func(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error
 	Options     []Option
 	Modal       *Modal
 }
@@ -27,7 +39,7 @@ type Subcommand struct {
 type Command struct {
 	Name        string
 	Description string
-	Action      func(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error
+	Action      func(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error
 	Options     []Option
 	Subcommands []Subcommand
 	Modal       *Modal

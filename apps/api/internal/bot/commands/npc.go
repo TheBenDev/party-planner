@@ -1,31 +1,15 @@
 package commands
 
 import (
+	"database/sql"
+	"errors"
 	"log/slog"
 
-	"github.com/BBruington/party-planner/api/internal/api"
+	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/bwmarrin/discordgo"
 )
 
-type npcResponse struct {
-	NPC struct {
-		ID              string   `json:"id"`
-		Name            string   `json:"name"`
-		Age             string   `json:"age"`
-		Aliases         []string `json:"aliases"`
-		Appearance      string   `json:"appearance"`
-		Avatar          string   `json:"avatar"`
-		IsKnownToParty  bool     `json:"isKnownToParty"`
-		KnownName       string   `json:"knownName"`
-		Personality     string   `json:"personality"`
-		PlayerNotes     string   `json:"playerNotes"`
-		Race            string   `json:"race"`
-		RelationToParty string   `json:"relationToParty"`
-		Status          string   `json:"status"`
-	} `json:"npc"`
-}
-
-func npcSetAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func npcSetAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	if !hasAdminPermission(i) {
 		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
@@ -63,8 +47,12 @@ func npcSetAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *
 	})
 }
 
-func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	slog.Info("Updating an npc's bio", "operation", "beny-bot.npc-set")
+
+	if !hasAdminPermission(i) {
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
+	}
 
 	if i.GuildID == "" {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
@@ -78,39 +66,41 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, c
 		return replyEphemeral(s, i, "Input required to update bio.")
 	}
 
-	if err := deferReply(s, i, true); err != nil {
-		return err
-	}
-
-	body := map[string]any{
-		"npc": map[string]any{
-			"bio":  bio,
-			"name": name,
-		},
-		"serverId": i.GuildID,
-	}
-
-	err := client.Post("/api/discord/setAvailability", body, nil)
+	integration, err := deps.DB.GetCampaignIntegrationByExternalID(i.GuildID, model.IntegrationSourceDiscord)
 	if err != nil {
-		slog.Error("Failed to update npc bio", "operation", "beny-bot.npc-set", "error", err)
-		if isStatusCode(err, 404) {
-			return editReply(s, i, "I could not find that npc.")
+		if errors.Is(err, sql.ErrNoRows) {
+			return replyEphemeral(s, i, "This Discord server is not linked to a campaign.")
 		}
-		return editReply(s, i, "Something went wrong. Please try again later.")
+		slog.Error("Failed to find campaign integration", "operation", "beny-bot.npc-set", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
 	}
 
-	return editReply(s, i, "Npc bio updated successfully.")
+	npc, err := deps.DB.GetNpcByNameAndCampaign(name, integration.CampaignID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return replyEphemeral(s, i, "I could not find that npc.")
+		}
+		slog.Error("Failed to find npc", "operation", "beny-bot.npc-set", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
+	}
+
+	_, err = deps.NpcSvc.Update(&model.UpdateNpcRequest{
+		ID:          npc.ID,
+		Personality: sql.NullString{String: bio, Valid: true},
+	})
+	if err != nil {
+		slog.Error("Failed to update npc bio", "operation", "beny-bot.npc-set", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
+	}
+
+	return replyEphemeral(s, i, "Npc bio updated successfully.")
 }
 
-func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	slog.Info("Fetching npc", "operation", "beny-bot.npc-view")
 
 	if i.GuildID == "" {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
-	}
-
-	if err := deferReply(s, i, true); err != nil {
-		return err
 	}
 
 	data := i.ApplicationCommandData()
@@ -121,33 +111,41 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client 
 		}
 	}
 
-	var result npcResponse
-	err := client.Get("/api/discord/npc", map[string]string{
-		"npcName":  npcName,
-		"serverId": i.GuildID,
-	}, &result)
+	integration, err := deps.DB.GetCampaignIntegrationByExternalID(i.GuildID, model.IntegrationSourceDiscord)
 	if err != nil {
-		slog.Error("Failed to fetch npc", "operation", "beny-bot.npc-view", "error", err)
-		if isStatusCode(err, 404) {
-			return editReply(s, i, "I could not find that npc.")
+		if errors.Is(err, sql.ErrNoRows) {
+			return replyEphemeral(s, i, "This Discord server is not linked to a campaign.")
 		}
-		return editReply(s, i, "Something went wrong. Please try again later.")
+		slog.Error("Failed to find campaign integration", "operation", "beny-bot.npc-view", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
 	}
 
-	npc := result.NPC
+	slog.Info("Searching for npc", "operation", "beny-bot.npc-view", "name", npcName, "campaignID", integration.CampaignID)
+	npc, err := deps.DB.GetNpcByNameAndCampaign(npcName, integration.CampaignID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return replyEphemeral(s, i, "I could not find that npc.")
+		}
+		slog.Error("Failed to fetch npc", "operation", "beny-bot.npc-view", "guildID", i.GuildID, "error", err)
+		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
+	}
+
 	embed := &discordgo.MessageEmbed{
 		Title:       npc.Name,
 		Description: "Character: " + npc.Name,
 		Color:       0x0099ff,
 	}
-	if npc.Avatar != "" {
-		embed.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: npc.Avatar}
+	if npc.Avatar.Valid && npc.Avatar.String != "" {
+		embed.Thumbnail = &discordgo.MessageEmbedThumbnail{URL: npc.Avatar.String}
 	}
 
-	_, err = s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-		Embeds: &[]*discordgo.MessageEmbed{embed},
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Flags:  discordgo.MessageFlagsEphemeral,
+			Embeds: []*discordgo.MessageEmbed{embed},
+		},
 	})
-	return err
 }
 
 var NpcCommand = Command{

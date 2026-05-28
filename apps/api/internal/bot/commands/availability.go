@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/lib"
 	"github.com/bwmarrin/discordgo"
 )
@@ -23,7 +22,7 @@ type getAvailabilitiesResponse struct {
 	UserAvailabilities []availabilitySlot `json:"userAvailabilities"`
 }
 
-func availabilitySetAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func availabilitySetAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	slog.Info("Setting an availability", "operation", "beny-bot.available-set")
 
 	modal := &discordgo.InteractionResponse{
@@ -87,7 +86,8 @@ func availabilitySetAction(s *discordgo.Session, i *discordgo.InteractionCreate,
 	return s.InteractionRespond(i.Interaction, modal)
 }
 
-func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
+	// TODO: Migrate to direct Go service calls once user_availabilities and user_integrations have a Go service.
 	slog.Info("Setting timeslot for user's availability", "operation", "beny-bot.availability-set")
 
 	if i.GuildID == "" {
@@ -153,9 +153,9 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 		},
 	}
 
-	err = client.Post("/api/discord/availability", body, nil)
+	err = deps.Client.Post("/api/discord/availability", body, nil)
 	if err != nil {
-		slog.Error("Failed to set availability", "operation", "beny-bot.availability-set", "error", err)
+		slog.Error("Failed to set availability", "operation", "beny-bot.availability-set", "userID", userID, "guildID", serverId, "error", err)
 		if isStatusCode(err, 409) {
 			return replyEphemeral(s, i, "Timeslot overlapping with an already existing one. Use /availability view to see your already set availabilities.")
 		}
@@ -165,7 +165,8 @@ func availabilitySetModalOnSubmit(s *discordgo.Session, i *discordgo.Interaction
 	return replyEphemeral(s, i, "Availability set successfully. Use /availability view to see your currently set availability timeslots.")
 }
 
-func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
+	// TODO: Migrate to direct Go service calls once user_availabilities and user_integrations have a Go service.
 	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
@@ -174,11 +175,11 @@ func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate
 
 	userID := i.Member.User.ID
 	var result getAvailabilitiesResponse
-	err := client.Get("/api/discord/availability", map[string]string{
+	err := deps.Client.Get("/api/discord/availability", map[string]string{
 		"userExternalId": userID,
 	}, &result)
 	if err != nil {
-		slog.Error("Failed to get availabilities", "operation", "beny-bot.availability-view", "error", err)
+		slog.Error("Failed to get availabilities", "operation", "beny-bot.availability-view", "userID", userID, "error", err)
 		return replyEphemeral(s, i, "Failed to check for your availabilities. Please try again later.")
 	}
 
@@ -207,7 +208,8 @@ func availabilityViewAction(s *discordgo.Session, i *discordgo.InteractionCreate
 	return replyEphemeral(s, i, content)
 }
 
-func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
+	// TODO: Migrate to direct Go service calls once user_availabilities and user_integrations have a Go service.
 	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
@@ -246,16 +248,17 @@ func availabilityRemoveAction(s *discordgo.Session, i *discordgo.InteractionCrea
 		"userExternalId": userID,
 	}
 
-	err := client.Delete("/api/discord/availability/single", body)
+	err := deps.Client.Delete("/api/discord/availability/single", body)
 	if err != nil {
-		slog.Error("Failed to remove availability", "operation", "beny-bot.availability-remove", "error", err)
+		slog.Error("Failed to remove availability", "operation", "beny-bot.availability-remove", "userID", userID, "error", err)
 		return replyEphemeral(s, i, "Something went wrong when trying to remove your availability timeslot. Please try again later or reach out for help.")
 	}
 
 	return replyEphemeral(s, i, "Successfully removed availability timeslot.")
 }
 
-func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
+	// TODO: Migrate to direct Go service calls once user_availabilities and user_integrations have a Go service.
 	if i.GuildID == "" || i.Member == nil || i.Member.User == nil {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 	}
@@ -267,9 +270,9 @@ func availabilityClearAction(s *discordgo.Session, i *discordgo.InteractionCreat
 		"userExternalId": userID,
 	}
 
-	err := client.Delete("/api/discord/availability", body)
+	err := deps.Client.Delete("/api/discord/availability", body)
 	if err != nil {
-		slog.Error("Failed to clear availability", "operation", "beny-bot.availability-clear", "error", err)
+		slog.Error("Failed to clear availability", "operation", "beny-bot.availability-clear", "userID", userID, "error", err)
 		return replyEphemeral(s, i, "Something went wrong when trying to remove all of your availability timeslots. Please try again later or reach out for help.")
 	}
 

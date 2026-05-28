@@ -231,6 +231,17 @@ func (db *DB) GetCampaignIntegration(id string, source model.IntegrationSource) 
 	return scanCampaignIntegration(row)
 }
 
+func (db *DB) GetCampaignIntegrationByExternalID(externalID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+	if !isValidIntegrationSource(source) {
+		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
+	}
+	row := db.conn.QueryRow(`
+		SELECT `+campaignIntegrationColumns+` FROM campaign_integrations
+		WHERE external_id = $1 AND source = $2
+		LIMIT 1`, externalID, source)
+	return scanCampaignIntegration(row)
+}
+
 func (db *DB) ListCampaignIntegrationsByCampaign(campaignId string) ([]*model.CampaignIntegration, error) {
 	rows, err := db.conn.Query(`SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1`, campaignId)
 	if err != nil {
@@ -577,6 +588,14 @@ func (db *DB) ListNpcsByCampaign(campaignId string) ([]*model.Npc, error) {
 	return npcs, rows.Err()
 }
 
+func (db *DB) GetNpcByNameAndCampaign(name, campaignID string) (*model.Npc, error) {
+	row := db.conn.QueryRow(`
+		SELECT `+npcColumns+` FROM non_player_character
+		WHERE campaign_id = $1 AND name ILIKE $2
+		LIMIT 1`, campaignID, "%"+name+"%")
+	return scanNpc(row)
+}
+
 func (db *DB) UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error) {
 	row := db.conn.QueryRow(`
 		UPDATE non_player_character SET
@@ -730,6 +749,15 @@ func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session
 
 func (db *DB) GetSession(id string) (*model.Session, error) {
 	row := db.conn.QueryRow(`SELECT `+sessionColumns+` FROM session WHERE id = $1 LIMIT 1`, id)
+	return scanSession(row)
+}
+
+func (db *DB) GetNextSessionByCampaign(campaignID string) (*model.Session, error) {
+	row := db.conn.QueryRow(`
+		SELECT `+sessionColumns+` FROM session
+		WHERE campaign_id = $1 AND starts_at > NOW()
+		ORDER BY starts_at ASC
+		LIMIT 1`, campaignID)
 	return scanSession(row)
 }
 

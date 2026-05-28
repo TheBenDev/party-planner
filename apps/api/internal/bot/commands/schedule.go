@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -14,7 +13,7 @@ type scheduleSessionResponse struct {
 	AvailableUsers []string `json:"availableUsers"`
 }
 
-func scheduleAction(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func scheduleAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
 	if !hasAdminPermission(i) {
 		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
 	}
@@ -81,8 +80,14 @@ func scheduleAction(s *discordgo.Session, i *discordgo.InteractionCreate, client
 	})
 }
 
-func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, client *api.Client) error {
+func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, deps *BotDeps) error {
+	// TODO: Migrate to direct Go service calls once user_availabilities has a Go service.
+	// Currently queries user_availabilities for available members via the web app.
 	slog.Info("Scheduling session for dnd", "operation", "beny-bot.schedule")
+
+	if !hasAdminPermission(i) {
+		return replyEphemeral(s, i, "❌ You need Administrator permissions to use this command.")
+	}
 
 	if i.GuildID == "" {
 		return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
@@ -110,7 +115,7 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	loc := time.UTC
 	scheduledStartTime, err := time.ParseInLocation("2006-01-02T15:04:05", fmt.Sprintf("%sT%s:%s:00", date, hour, minute), loc)
 	if err != nil {
-		slog.Error("Failed to parse schedule time", "operation", "beny-bot.schedule", "error", err)
+		slog.Error("Failed to parse schedule time", "operation", "beny-bot.schedule", "guildID", i.GuildID, "error", err)
 		return replyEphemeral(s, i, "Failed to parse the date and time. Please try again.")
 	}
 	scheduledEndTime := scheduledStartTime.Add(2 * time.Hour)
@@ -130,9 +135,9 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 	}
 
 	var result scheduleSessionResponse
-	err = client.Post("/api/discord/session", body, &result)
+	err = deps.Client.Post("/api/discord/session", body, &result)
 	if err != nil {
-		slog.Error("Failed to schedule session", "operation", "beny-bot.schedule", "error", err)
+		slog.Error("Failed to schedule session", "operation", "beny-bot.schedule", "guildID", i.GuildID, "error", err)
 		return editReply(s, i, "Failed to schedule session. Please try again later.")
 	}
 
@@ -150,7 +155,7 @@ func scheduleModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate,
 		},
 	})
 	if err != nil {
-		slog.Error("Failed to create Discord scheduled event", "operation", "beny-bot.schedule", "error", err)
+		slog.Error("Failed to create Discord scheduled event", "operation", "beny-bot.schedule", "guildID", i.GuildID, "error", err)
 	}
 
 	unixTimestamp := scheduledStartTime.Unix()
