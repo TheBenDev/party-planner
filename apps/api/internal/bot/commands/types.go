@@ -103,11 +103,6 @@ func editReply(s *discordgo.Session, i *discordgo.InteractionCreate, content str
 	return err
 }
 
-// Helper to check if API error has a specific status code
-func isStatusCode(err error, code int) bool {
-	return api.StatusCode(err) == code
-}
-
 // hasAdminPermission checks if the member has administrator permissions
 func hasAdminPermission(i *discordgo.InteractionCreate) bool {
 	if i.Member == nil {

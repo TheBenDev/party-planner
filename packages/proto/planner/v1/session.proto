@@ -30,6 +30,8 @@ message Session {
   google.protobuf.Timestamp updated_at = 8;
   optional string poll_id = 9;
   optional google.protobuf.Timestamp announced_at = 10;
+  optional string series_id = 11;
+  optional google.protobuf.Timestamp original_starts_at = 12;
 }
 
 // -----------------------------------------------------------------------------
@@ -49,6 +51,8 @@ message CreateSessionRequest {
   optional google.protobuf.Timestamp starts_at = 3;
   SessionStatus status = 4;
   string title = 5;
+  optional string series_id = 6;
+  optional google.protobuf.Timestamp original_starts_at = 7;
 }
 
 message PollAnswer {

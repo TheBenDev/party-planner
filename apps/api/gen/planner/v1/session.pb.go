@@ -75,19 +75,21 @@ func (SessionStatus) EnumDescriptor() ([]byte, []int) {
 }
 
 type Session struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Status        SessionStatus          `protobuf:"varint,5,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
-	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PollId        *string                `protobuf:"bytes,9,opt,name=poll_id,json=pollId,proto3,oneof" json:"poll_id,omitempty"`
-	AnnouncedAt   *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=announced_at,json=announcedAt,proto3,oneof" json:"announced_at,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId       string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Title            string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Description      *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Status           SessionStatus          `protobuf:"varint,5,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
+	StartsAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	PollId           *string                `protobuf:"bytes,9,opt,name=poll_id,json=pollId,proto3,oneof" json:"poll_id,omitempty"`
+	AnnouncedAt      *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=announced_at,json=announcedAt,proto3,oneof" json:"announced_at,omitempty"`
+	SeriesId         *string                `protobuf:"bytes,11,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
+	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Session) Reset() {
@@ -190,6 +192,20 @@ func (x *Session) GetAnnouncedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Session) GetSeriesId() string {
+	if x != nil && x.SeriesId != nil {
+		return *x.SeriesId
+	}
+	return ""
+}
+
+func (x *Session) GetOriginalStartsAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.OriginalStartsAt
+	}
+	return nil
+}
+
 type AnnounceSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -279,14 +295,16 @@ func (*AnnounceSessionResponse) Descriptor() ([]byte, []int) {
 }
 
 type CreateSessionRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Description   *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
-	Status        SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
-	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	CampaignId       string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Description      *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	StartsAt         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
+	Status           SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
+	Title            string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	SeriesId         *string                `protobuf:"bytes,6,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
+	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *CreateSessionRequest) Reset() {
@@ -352,6 +370,20 @@ func (x *CreateSessionRequest) GetTitle() string {
 		return x.Title
 	}
 	return ""
+}
+
+func (x *CreateSessionRequest) GetSeriesId() string {
+	if x != nil && x.SeriesId != nil {
+		return *x.SeriesId
+	}
+	return ""
+}
+
+func (x *CreateSessionRequest) GetOriginalStartsAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.OriginalStartsAt
+	}
+	return nil
 }
 
 type PollAnswer struct {
@@ -1083,7 +1115,7 @@ var File_planner_v1_session_proto protoreflect.FileDescriptor
 const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"\x18planner/v1/session.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfb\x03\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x91\x05\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1098,29 +1130,39 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1c\n" +
 	"\apoll_id\x18\t \x01(\tH\x02R\x06pollId\x88\x01\x01\x12B\n" +
 	"\fannounced_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vannouncedAt\x88\x01\x01B\x0e\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vannouncedAt\x88\x01\x01\x12 \n" +
+	"\tseries_id\x18\v \x01(\tH\x04R\bseriesId\x88\x01\x01\x12M\n" +
+	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\n" +
 	"\n" +
 	"\b_poll_idB\x0f\n" +
-	"\r_announced_at\"X\n" +
+	"\r_announced_atB\f\n" +
+	"\n" +
+	"_series_idB\x15\n" +
+	"\x13_original_starts_at\"X\n" +
 	"\x16AnnounceSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tR\tsessionId\"\x19\n" +
-	"\x17AnnounceSessionResponse\"\x83\x02\n" +
+	"\x17AnnounceSessionResponse\"\x99\x03\n" +
 	"\x14CreateSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12%\n" +
 	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
 	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x121\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x14\n" +
-	"\x05title\x18\x05 \x01(\tR\x05titleB\x0e\n" +
+	"\x05title\x18\x05 \x01(\tR\x05title\x12 \n" +
+	"\tseries_id\x18\x06 \x01(\tH\x02R\bseriesId\x88\x01\x01\x12M\n" +
+	"\x12original_starts_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x10originalStartsAt\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
-	"_starts_at\"?\n" +
+	"_starts_atB\f\n" +
+	"\n" +
+	"_series_idB\x15\n" +
+	"\x13_original_starts_at\"?\n" +
 	"\n" +
 	"PollAnswer\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1d\n" +
@@ -1232,38 +1274,40 @@ var file_planner_v1_session_proto_depIdxs = []int32{
 	20, // 2: planner.v1.Session.created_at:type_name -> google.protobuf.Timestamp
 	20, // 3: planner.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
 	20, // 4: planner.v1.Session.announced_at:type_name -> google.protobuf.Timestamp
-	20, // 5: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: planner.v1.CreateSessionRequest.status:type_name -> planner.v1.SessionStatus
-	5,  // 7: planner.v1.Poll.answers:type_name -> planner.v1.PollAnswer
-	1,  // 8: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
-	1,  // 9: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
-	6,  // 10: planner.v1.GetSessionPollResponse.poll:type_name -> planner.v1.Poll
-	1,  // 11: planner.v1.ListSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
-	20, // 12: planner.v1.PollSessionRequest.options:type_name -> google.protobuf.Timestamp
-	20, // 13: planner.v1.UpdateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
-	0,  // 14: planner.v1.UpdateSessionRequest.status:type_name -> planner.v1.SessionStatus
-	1,  // 15: planner.v1.UpdateSessionResponse.session:type_name -> planner.v1.Session
-	2,  // 16: planner.v1.SessionService.AnnounceSession:input_type -> planner.v1.AnnounceSessionRequest
-	4,  // 17: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
-	8,  // 18: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
-	10, // 19: planner.v1.SessionService.GetSessionPoll:input_type -> planner.v1.GetSessionPollRequest
-	12, // 20: planner.v1.SessionService.ListSessionsByCampaign:input_type -> planner.v1.ListSessionsByCampaignRequest
-	14, // 21: planner.v1.SessionService.PollSession:input_type -> planner.v1.PollSessionRequest
-	16, // 22: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
-	18, // 23: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
-	3,  // 24: planner.v1.SessionService.AnnounceSession:output_type -> planner.v1.AnnounceSessionResponse
-	7,  // 25: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
-	9,  // 26: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
-	11, // 27: planner.v1.SessionService.GetSessionPoll:output_type -> planner.v1.GetSessionPollResponse
-	13, // 28: planner.v1.SessionService.ListSessionsByCampaign:output_type -> planner.v1.ListSessionsByCampaignResponse
-	15, // 29: planner.v1.SessionService.PollSession:output_type -> planner.v1.PollSessionResponse
-	17, // 30: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
-	19, // 31: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse
-	24, // [24:32] is the sub-list for method output_type
-	16, // [16:24] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	20, // 5: planner.v1.Session.original_starts_at:type_name -> google.protobuf.Timestamp
+	20, // 6: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
+	0,  // 7: planner.v1.CreateSessionRequest.status:type_name -> planner.v1.SessionStatus
+	20, // 8: planner.v1.CreateSessionRequest.original_starts_at:type_name -> google.protobuf.Timestamp
+	5,  // 9: planner.v1.Poll.answers:type_name -> planner.v1.PollAnswer
+	1,  // 10: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
+	1,  // 11: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
+	6,  // 12: planner.v1.GetSessionPollResponse.poll:type_name -> planner.v1.Poll
+	1,  // 13: planner.v1.ListSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
+	20, // 14: planner.v1.PollSessionRequest.options:type_name -> google.protobuf.Timestamp
+	20, // 15: planner.v1.UpdateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
+	0,  // 16: planner.v1.UpdateSessionRequest.status:type_name -> planner.v1.SessionStatus
+	1,  // 17: planner.v1.UpdateSessionResponse.session:type_name -> planner.v1.Session
+	2,  // 18: planner.v1.SessionService.AnnounceSession:input_type -> planner.v1.AnnounceSessionRequest
+	4,  // 19: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
+	8,  // 20: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
+	10, // 21: planner.v1.SessionService.GetSessionPoll:input_type -> planner.v1.GetSessionPollRequest
+	12, // 22: planner.v1.SessionService.ListSessionsByCampaign:input_type -> planner.v1.ListSessionsByCampaignRequest
+	14, // 23: planner.v1.SessionService.PollSession:input_type -> planner.v1.PollSessionRequest
+	16, // 24: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
+	18, // 25: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
+	3,  // 26: planner.v1.SessionService.AnnounceSession:output_type -> planner.v1.AnnounceSessionResponse
+	7,  // 27: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
+	9,  // 28: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
+	11, // 29: planner.v1.SessionService.GetSessionPoll:output_type -> planner.v1.GetSessionPollResponse
+	13, // 30: planner.v1.SessionService.ListSessionsByCampaign:output_type -> planner.v1.ListSessionsByCampaignResponse
+	15, // 31: planner.v1.SessionService.PollSession:output_type -> planner.v1.PollSessionResponse
+	17, // 32: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
+	19, // 33: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse
+	26, // [26:34] is the sub-list for method output_type
+	18, // [18:26] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_session_proto_init() }

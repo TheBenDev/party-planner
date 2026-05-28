@@ -147,6 +147,13 @@
       "when": 1779921009819,
       "tag": "0020_npc_relation_status",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1780000127408,
+      "tag": "0021_session_redesign",
+      "breakpoints": true
     }
   ],
   "version": "7"

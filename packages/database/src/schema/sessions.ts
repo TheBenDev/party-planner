@@ -12,6 +12,7 @@ import {
 import { enumToPgEnum } from "@/lib/enums";
 import { campaignsTable } from "./campaigns";
 import { charactersTable } from "./characters";
+import { sessionSeriesTable } from "./sessionSeries";
 
 export const sessionStatusEnum = pgEnum("session_status", enumToPgEnum(Status));
 
@@ -23,7 +24,9 @@ export const sessionsTable = pgTable(
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		description: varchar("description"),
 		id: uuid("id").primaryKey().defaultRandom(),
+		originalStartsAt: timestamp("original_starts_at", { mode: "date" }),
 		pollId: varchar("poll_id"),
+		seriesId: uuid("series_id"),
 		startsAt: timestamp("starts_at", { mode: "date" }),
 		status: sessionStatusEnum("status").notNull(),
 		title: varchar("title").notNull(),
@@ -39,6 +42,12 @@ export const sessionsTable = pgTable(
 			name: "fk_session_campaign_id",
 		}).onDelete("cascade"),
 		index("idx_session_campaign_id").on(table.campaignId),
+		foreignKey({
+			columns: [table.seriesId],
+			foreignColumns: [sessionSeriesTable.id],
+			name: "fk_session_series_id",
+		}).onDelete("set null"),
+		index("idx_session_series_id").on(table.seriesId),
 	],
 );
 
@@ -48,4 +57,8 @@ export const sessionsRelations = relations(sessionsTable, ({ one, many }) => ({
 		references: [campaignsTable.id],
 	}),
 	players: many(charactersTable),
+	series: one(sessionSeriesTable, {
+		fields: [sessionsTable.seriesId],
+		references: [sessionSeriesTable.id],
+	}),
 }));

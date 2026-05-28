@@ -723,13 +723,14 @@ func (db *DB) RemoveQuest(id string) error {
 // Sessions
 // -----------------------------------------------------------------------------
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
 		&s.Status, &s.CreatedAt, &s.PollID, &s.AnnouncedAt, &s.UpdatedAt,
+		&s.SeriesID, &s.OriginalStartsAt,
 	)
 	if err != nil {
 		return nil, err
@@ -739,10 +740,11 @@ func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 
 func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session (campaign_id, title, description, status, starts_at)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO session (campaign_id, title, description, status, starts_at, series_id, original_starts_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING `+sessionColumns,
 		session.CampaignID, session.Title, session.Description, session.Status, session.StartsAt,
+		session.SeriesID, session.OriginalStartsAt,
 	)
 	return scanSession(row)
 }
