@@ -1,5 +1,4 @@
 import { createClerkClient, verifyToken } from "@clerk/backend";
-import { REST } from "@discordjs/rest";
 import type { LoggerContext } from "@orpc/experimental-pino";
 import { getLogger } from "@orpc/experimental-pino";
 import { ORPCError, os } from "@orpc/server";
@@ -52,25 +51,6 @@ const dbMiddleware = base.middleware(({ next }) => {
 	const api = createApiClients();
 	const db: Client = createDb();
 	return next({ context: { api, db } });
-});
-
-const discordMiddleware = base.middleware(({ next, context: c }) => {
-	const authHeader = c.reqHeaders?.get("Authorization");
-
-	if (!authHeader?.startsWith("Bot ")) {
-		throw new ORPCError("UNAUTHORIZED", {
-			message: "Missing bot authorization",
-		});
-	}
-
-	const apiKey = authHeader.replace("Bot ", "");
-	if (apiKey !== env.DISCORD_API_KEY) {
-		throw new ORPCError("UNAUTHORIZED", { message: "Invalid discord API key" });
-	}
-
-	const rest = new REST({ version: "10" }).setToken(env.DISCORD_TOKEN);
-
-	return next({ context: { discord: rest } });
 });
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -341,5 +321,3 @@ export const publicProcedure = base.use(loggingMiddleware).use(dbMiddleware);
  * Authenticated procedures - has token, userId, RPC clients
  */
 export const privateProcedure = publicProcedure.use(authMiddleware);
-
-export const discordProcedure = publicProcedure.use(discordMiddleware);

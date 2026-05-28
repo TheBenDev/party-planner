@@ -6,7 +6,9 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	announcedAt: z.date().nullable().optional(),
 	campaignId: z.uuid(),
 	description: z.string().nullable().optional(),
+	originalStartsAt: z.date().nullable().optional(),
 	pollId: z.string().nullable().optional(),
+	seriesId: z.uuid().nullable().optional(),
 	startsAt: z.date().nullable().optional(),
 	status: z.enum(Status),
 	title: z.string(),
@@ -34,6 +36,8 @@ export const AnnounceSessionResponseSchema = z.object({});
 export const CreateSessionRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
+	originalStartsAt: z.date().optional(),
+	seriesId: z.uuid().optional(),
 	startsAt: z.date().optional(),
 	status: z.enum(Status),
 	title: z.string(),

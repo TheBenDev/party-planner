@@ -10,7 +10,6 @@ import (
 
 // AllCommands is the registry of all bot commands.
 var AllCommands = []commands.Command{
-	commands.AvailabilityCommand,
 	commands.BenyBoyCommand,
 	commands.NextSessionCommand,
 	commands.NpcCommand,

@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message SessionSeries {
+  string id = 1;
+  string campaign_id = 2;
+  string title = 3;
+  optional string description = 4;
+  string rrule = 5;
+  string start_time = 6;
+  google.protobuf.Timestamp series_start_date = 7;
+  optional google.protobuf.Timestamp series_end_date = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message CreateSessionSeriesRequest {
+  string campaign_id = 1;
+  string title = 2;
+  optional string description = 3;
+  string rrule = 4;
+  string start_time = 5;
+  google.protobuf.Timestamp series_start_date = 6;
+  optional google.protobuf.Timestamp series_end_date = 7;
+}
+
+message CreateSessionSeriesResponse {
+  SessionSeries series = 1;
+}
+
+message GetSessionSeriesRequest {
+  string id = 1;
+}
+
+message GetSessionSeriesResponse {
+  SessionSeries series = 1;
+}
+
+message ListSessionSeriesByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message ListSessionSeriesByCampaignResponse {
+  repeated SessionSeries series = 1;
+}
+
+message UpdateSessionSeriesRequest {
+  string id = 1;
+  optional string title = 2;
+  optional string description = 3;
+  optional string rrule = 4;
+  optional string start_time = 5;
+  optional google.protobuf.Timestamp series_end_date = 6;
+}
+
+message UpdateSessionSeriesResponse {
+  SessionSeries series = 1;
+}
+
+message RemoveSessionSeriesRequest {
+  string id = 1;
+}
+
+message RemoveSessionSeriesResponse {}
+
+message AddSeriesExceptionRequest {
+  string series_id = 1;
+  google.protobuf.Timestamp excluded_date = 2;
+}
+
+message AddSeriesExceptionResponse {}
+
+message RemoveSeriesExceptionRequest {
+  string series_id = 1;
+  google.protobuf.Timestamp excluded_date = 2;
+}
+
+message RemoveSeriesExceptionResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service SessionSeriesService {
+  rpc CreateSessionSeries(CreateSessionSeriesRequest) returns (CreateSessionSeriesResponse);
+  rpc GetSessionSeries(GetSessionSeriesRequest) returns (GetSessionSeriesResponse);
+  rpc ListSessionSeriesByCampaign(ListSessionSeriesByCampaignRequest) returns (ListSessionSeriesByCampaignResponse);
+  rpc UpdateSessionSeries(UpdateSessionSeriesRequest) returns (UpdateSessionSeriesResponse);
+  rpc RemoveSessionSeries(RemoveSessionSeriesRequest) returns (RemoveSessionSeriesResponse);
+  rpc AddSeriesException(AddSeriesExceptionRequest) returns (AddSeriesExceptionResponse);
+  rpc RemoveSeriesException(RemoveSeriesExceptionRequest) returns (RemoveSeriesExceptionResponse);
+}

@@ -332,16 +332,18 @@ const (
 )
 
 type Session struct {
-	ID          string
-	CampaignID  string
-	Title       string
-	Description sql.NullString
-	PollID      sql.NullString
-	AnnouncedAt sql.NullTime
-	StartsAt    sql.NullTime
-	Status      SessionStatus
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID               string
+	CampaignID       string
+	Title            string
+	Description      sql.NullString
+	PollID           sql.NullString
+	SeriesID         sql.NullString
+	AnnouncedAt      sql.NullTime
+	OriginalStartsAt sql.NullTime
+	StartsAt         sql.NullTime
+	Status           SessionStatus
+	CreatedAt        time.Time
+	UpdatedAt        time.Time
 }
 
 type Poll struct {
@@ -356,11 +358,13 @@ type PollAnswer struct {
 }
 
 type CreateSessionRequest struct {
-	CampaignID  string
-	Title       string
-	Description sql.NullString
-	Status      SessionStatus
-	StartsAt    sql.NullTime
+	CampaignID       string
+	Title            string
+	Description      sql.NullString
+	SeriesID         sql.NullString
+	OriginalStartsAt sql.NullTime
+	Status           SessionStatus
+	StartsAt         sql.NullTime
 }
 
 type UpdateSessionRequest struct {

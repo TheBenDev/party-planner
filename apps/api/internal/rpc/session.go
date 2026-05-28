@@ -55,12 +55,24 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		return nil, mapServiceError(ctx, s.Log, err, "failed to create session")
 	}
 
+	if req.Msg.OriginalStartsAt != nil {
+		if err := req.Msg.OriginalStartsAt.CheckValid(); err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid original_starts_at"))
+		}
+	}
+
+	if (req.Msg.SeriesId != nil && *req.Msg.SeriesId != "") != (req.Msg.OriginalStartsAt != nil) {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series_id and original_starts_at must be provided together"))
+	}
+
 	session, err := s.Session.Create(&model.CreateSessionRequest{
-		CampaignID:  req.Msg.CampaignId,
-		Title:       req.Msg.Title,
-		Description: sqlNullString(req.Msg.Description),
-		Status:      sessionStatus,
-		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
+		CampaignID:       req.Msg.CampaignId,
+		Title:            req.Msg.Title,
+		Description:      sqlNullString(req.Msg.Description),
+		SeriesID:         sqlNullString(req.Msg.SeriesId),
+		OriginalStartsAt: sqlNullableTime(req.Msg.OriginalStartsAt),
+		Status:           sessionStatus,
+		StartsAt:         sqlNullableTime(req.Msg.StartsAt),
 	})
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to create session")
@@ -257,6 +269,12 @@ func sessionToProto(session *model.Session) *v1.Session {
 	}
 	if session.AnnouncedAt.Valid {
 		proto.AnnouncedAt = timestamppb.New(session.AnnouncedAt.Time)
+	}
+	if session.SeriesID.Valid {
+		proto.SeriesId = &session.SeriesID.String
+	}
+	if session.OriginalStartsAt.Valid {
+		proto.OriginalStartsAt = timestamppb.New(session.OriginalStartsAt.Time)
 	}
 	return proto
 }
