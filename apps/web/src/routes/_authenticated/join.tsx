@@ -15,6 +15,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 const searchSchema = z.object({
 	token: z.string().min(1),
@@ -180,7 +181,7 @@ export default function JoinCampaignPage() {
 	} = useQuery({
 		enabled: !!token,
 		queryFn: async () => await client.member.getInvitationByToken({ token }),
-		queryKey: ["invitation", token],
+		queryKey: queryKeys.invitations.detail(token),
 	});
 
 	const { mutateAsync: acceptInvitation } = useMutation({
@@ -195,7 +196,7 @@ export default function JoinCampaignPage() {
 			);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
 			navigate({ to: "/dashboard" });
 		},
 	});

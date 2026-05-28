@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/_authenticated/campaign/sessions/")({
 	component: SessionsPage,
@@ -201,7 +202,7 @@ function SessionsPage() {
 				campaignId: campaign.campaign.id,
 			});
 		},
-		queryKey: ["sessions", campaign?.campaign.id],
+		queryKey: queryKeys.sessions.list(campaign?.campaign.id ?? ""),
 	});
 
 	const { mutate: deleteSession } = useMutation({
@@ -209,7 +210,7 @@ function SessionsPage() {
 		onError: () => toast.error("Failed to delete session"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["sessions", campaign?.campaign.id],
+				queryKey: queryKeys.sessions.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});
@@ -226,7 +227,7 @@ function SessionsPage() {
 		onError: () => toast.error("Failed to create session"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["sessions", campaign?.campaign.id],
+				queryKey: queryKeys.sessions.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});

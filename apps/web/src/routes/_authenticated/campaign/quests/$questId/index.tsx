@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { client } from "@/lib/client";
+import { useQuest } from "@/hooks/queries";
 
 export const Route = createFileRoute(
 	"/_authenticated/campaign/quests/$questId/",
@@ -33,10 +32,7 @@ function RouteComponent() {
 	const { questId } = Route.useParams();
 	const navigate = useNavigate();
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => client.quest.getQuest({ id: questId }),
-		queryKey: ["quest", questId],
-	});
+	const { data, isLoading } = useQuest(questId);
 
 	if (isLoading)
 		return <div className="p-8 text-muted-foreground">Loading...</div>;

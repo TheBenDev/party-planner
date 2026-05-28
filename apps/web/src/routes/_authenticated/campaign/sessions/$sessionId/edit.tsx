@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@planner/enums/session";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useSession } from "@/hooks/queries";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const sessionEditSchema = z.object({
 	description: z.string().optional(),
@@ -28,10 +30,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { sessionId } = Route.useParams();
 
-	const { data, isPending, isError } = useQuery({
-		queryFn: () => client.session.getSession({ id: sessionId }),
-		queryKey: ["session", sessionId],
-	});
+	const { data, isPending, isError } = useSession(sessionId);
 
 	if (isPending) return <div>Loading...</div>;
 	if (isError || !data?.session) return <div>Session not found.</div>;
@@ -79,9 +78,9 @@ function SessionEditFormInner({
 			});
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["session", sessionId] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) });
 			queryClient.invalidateQueries({
-				queryKey: ["sessions", session.campaignId],
+				queryKey: queryKeys.sessions.list(session.campaignId),
 			});
 			navigate({
 				params: { sessionId },

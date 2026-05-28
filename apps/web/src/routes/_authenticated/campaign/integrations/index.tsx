@@ -5,6 +5,7 @@ import { ServerIcon } from "lucide-react";
 import { IntegrationCard } from "@/components/integration-card";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 // ---------------------------------------------------------------------------
 // Icons — inline SVGs keep the bundle lean and avoid icon-pack coupling.
@@ -164,7 +165,7 @@ function IntegrationsPage() {
 			client.campaignIntegration.listCampaignIntegrationsByCampaign({
 				campaignId,
 			}),
-		queryKey: ["integrations", campaignId],
+		queryKey: queryKeys.integrations.list(campaignId),
 	});
 
 	const connectedSources = new Set(

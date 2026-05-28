@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/_authenticated/campaign/locations/")({
 	component: LocationsPage,
@@ -159,7 +160,7 @@ function LocationsPage() {
 				campaignId: campaign.campaign.id,
 			});
 		},
-		queryKey: ["locations", campaign?.campaign.id],
+		queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
 	});
 
 	const { mutate: deleteLocation } = useMutation({
@@ -167,7 +168,7 @@ function LocationsPage() {
 		onError: () => toast.error("Failed to delete location"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["locations", campaign?.campaign.id],
+				queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});
@@ -183,7 +184,7 @@ function LocationsPage() {
 		onError: () => toast.error("Failed to create location"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["locations", campaign?.campaign.id],
+				queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/_authenticated/campaign/npcs/")({
 	component: NPCSPage,
@@ -260,7 +261,7 @@ function NPCSPage() {
 				campaignId: campaign.campaign.id,
 			});
 		},
-		queryKey: ["npcs", campaign?.campaign.id],
+		queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
 	});
 
 	const { mutate: deleteNpc } = useMutation({
@@ -270,7 +271,7 @@ function NPCSPage() {
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["npcs", campaign?.campaign.id],
+				queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});
@@ -288,7 +289,7 @@ function NPCSPage() {
 		},
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["npcs", campaign?.campaign.id],
+				queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});

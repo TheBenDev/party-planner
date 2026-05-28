@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@planner/enums/quest";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,7 +15,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useQuest } from "@/hooks/queries";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const questEditSchema = z.object({
 	description: z.string().optional(),
@@ -34,10 +36,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { questId } = Route.useParams();
 
-	const { data, isPending, isError } = useQuery({
-		queryFn: () => client.quest.getQuest({ id: questId }),
-		queryKey: ["quest", questId],
-	});
+	const { data, isPending, isError } = useQuest(questId);
 	if (isPending) return <div>Loading...</div>;
 	if (isError || !data?.quest) return <div>Quest not found.</div>;
 
@@ -74,9 +73,9 @@ function QuestEditFormInner({
 				...values,
 			}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["quest", questId] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.quests.detail(questId) });
 			queryClient.invalidateQueries({
-				queryKey: ["quests", quest.campaignId],
+				queryKey: queryKeys.quests.list(quest.campaignId),
 			});
 			navigate({
 				params: { questId },

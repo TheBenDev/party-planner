@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/_authenticated/campaign/quests/")({
 	component: QuestsPage,
@@ -192,7 +193,7 @@ function QuestsPage() {
 				campaignId: campaign.campaign.id,
 			});
 		},
-		queryKey: ["quests", campaign?.campaign.id],
+		queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
 	});
 
 	const { mutate: deleteQuest } = useMutation({
@@ -200,7 +201,7 @@ function QuestsPage() {
 		onError: () => toast.error("Failed to delete quest"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["quests", campaign?.campaign.id],
+				queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});
@@ -217,7 +218,7 @@ function QuestsPage() {
 		onError: () => toast.error("Failed to create quest"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["quests", campaign?.campaign.id],
+				queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
 			});
 		},
 	});

@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { client } from "@/lib/client";
+import { useLocation } from "@/hooks/queries";
 
 export const Route = createFileRoute(
 	"/_authenticated/campaign/locations/$locationId/",
@@ -14,14 +13,7 @@ function RouteComponent() {
 	const { locationId } = Route.useParams();
 	const navigate = useNavigate();
 
-	const {
-		data: locationData,
-		isError,
-		isLoading,
-	} = useQuery({
-		queryFn: () => client.location.getLocationById({ id: locationId }),
-		queryKey: ["location", locationId],
-	});
+	const { data: locationData, isError, isLoading } = useLocation(locationId);
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) return <div>Failed to load location.</div>;
 	const location = locationData?.location;

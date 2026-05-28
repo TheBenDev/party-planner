@@ -2,6 +2,7 @@ import { IntegrationSource } from "@planner/enums/integration";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BotIcon, ExternalLinkIcon, HashIcon, Trash2Icon } from "lucide-react";
+import { toast } from "sonner";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -25,6 +26,7 @@ import {
 import { env } from "@/env";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute(
 	"/_authenticated/campaign/integrations/discord/",
@@ -65,7 +67,7 @@ function DiscordIntegrationPage() {
 				campaignId,
 				source: IntegrationSource.DISCORD,
 			}),
-		queryKey: ["integrations", campaignId, IntegrationSource.DISCORD],
+		queryKey: queryKeys.integrations.bySource(campaignId, IntegrationSource.DISCORD),
 	});
 
 	const { mutate: remove, isPending: isRemoving } = useMutation({
@@ -74,10 +76,12 @@ function DiscordIntegrationPage() {
 				campaignId,
 				source: IntegrationSource.DISCORD,
 			}),
+		onError: () => toast.error("Failed to remove Discord integration. Please try again."),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ["integrations", campaignId],
+				queryKey: queryKeys.integrations.list(campaignId),
 			});
+			toast.success("Discord integration removed.");
 			navigate({ to: "/campaign/integrations" });
 		},
 	});
