@@ -2,9 +2,11 @@ import {
 	CharacterStatusEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
+import { UserRole } from "@planner/enums/user";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/auth";
 import { useNpc } from "@/hooks/queries";
 
 export const Route = createFileRoute("/_authenticated/campaign/npcs/$npcId/")({
@@ -14,6 +16,7 @@ export const Route = createFileRoute("/_authenticated/campaign/npcs/$npcId/")({
 function RouteComponent() {
 	const { npcId } = Route.useParams();
 	const navigate = useNavigate();
+	const { role } = useAuth();
 
 	const { data, isLoading } = useNpc(npcId);
 
@@ -68,15 +71,17 @@ function RouteComponent() {
 						</div>
 					)}
 				</div>
-				<Button
-					onClick={() =>
-						navigate({ params: { npcId }, to: "/campaign/npcs/$npcId/edit" })
-					}
-					size="sm"
-					variant="outline"
-				>
-					Edit
-				</Button>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Button
+						onClick={() =>
+							navigate({ params: { npcId }, to: "/campaign/npcs/$npcId/edit" })
+						}
+						size="sm"
+						variant="outline"
+					>
+						Edit
+					</Button>
+				)}
 			</div>
 
 			{/* Status badges + meta */}
@@ -147,12 +152,14 @@ function RouteComponent() {
 
 			{/* Notes */}
 			<div className="space-y-6">
-				<Section
-					content={npc.dmNotes}
-					muted
-					placeholder="No DM notes yet."
-					title="DM Notes"
-				/>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Section
+						content={npc.dmNotes}
+						muted
+						placeholder="No DM notes yet."
+						title="DM Notes"
+					/>
+				)}
 				<Section
 					content={npc.playerNotes}
 					muted

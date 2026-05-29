@@ -1,4 +1,5 @@
 import { IntegrationSource } from "@planner/enums/integration";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BotIcon, ExternalLinkIcon, HashIcon, Trash2Icon } from "lucide-react";
@@ -57,7 +58,8 @@ function buildDiscordOAuthUrl(campaignId: string) {
 function DiscordIntegrationPage() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
+	const isDm = role === UserRole.DUNGEON_MASTER;
 	const campaignId = campaign?.campaign.id ?? "";
 
 	const { data, isLoading } = useQuery({
@@ -67,7 +69,10 @@ function DiscordIntegrationPage() {
 				campaignId,
 				source: IntegrationSource.DISCORD,
 			}),
-		queryKey: queryKeys.integrations.bySource(campaignId, IntegrationSource.DISCORD),
+		queryKey: queryKeys.integrations.bySource(
+			campaignId,
+			IntegrationSource.DISCORD,
+		),
 	});
 
 	const { mutate: remove, isPending: isRemoving } = useMutation({
@@ -76,7 +81,8 @@ function DiscordIntegrationPage() {
 				campaignId,
 				source: IntegrationSource.DISCORD,
 			}),
-		onError: () => toast.error("Failed to remove Discord integration. Please try again."),
+		onError: () =>
+			toast.error("Failed to remove Discord integration. Please try again."),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.integrations.list(campaignId),
@@ -120,11 +126,12 @@ function DiscordIntegrationPage() {
 			{isConnected ? (
 				<ConnectedState
 					integration={integration}
+					isDm={isDm}
 					isRemoving={isRemoving}
 					onRemove={handleRemove}
 				/>
 			) : (
-				<DisconnectedState onAddBot={handleAddBot} />
+				<DisconnectedState isDm={isDm} onAddBot={handleAddBot} />
 			)}
 		</div>
 	);
@@ -174,47 +181,58 @@ function PageHeader({
 // ---------------------------------------------------------------------------
 // Connected state
 // ---------------------------------------------------------------------------
-// TODO: add authentication so that only dms can connect discord with campaign
+
 function ConnectedState({
 	integration,
 	isRemoving,
 	onRemove,
+	isDm,
 }: {
 	integration: NonNullable<{
 		externalId: string;
 		metadata?: { channelId?: string };
 	}>;
+	isDm: boolean;
 	isRemoving: boolean;
 	onRemove: () => void;
 }) {
 	return (
 		<div className="space-y-4">
-			<Card>
-				<CardHeader>
-					<CardTitle className="text-base">Connection</CardTitle>
-					<CardDescription>
-						Beny Bot is active in your Discord server.
-					</CardDescription>
-				</CardHeader>
-				<CardContent className="space-y-3">
-					<DetailRow
-						icon={<HashIcon className="h-4 w-4" />}
-						label="Server ID"
-						value={integration.externalId}
-					/>
-					{integration.metadata?.channelId && (
+			{isDm && (
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-base">Connection</CardTitle>
+						<CardDescription>
+							Beny Bot is active in your Discord server.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-3">
 						<DetailRow
 							icon={<HashIcon className="h-4 w-4" />}
-							label="Channel"
-							value={`#${integration.metadata.channelId}`}
+							label="Server ID"
+							value={integration.externalId}
 						/>
-					)}
-				</CardContent>
-			</Card>
+						{integration.metadata?.channelId && (
+							<DetailRow
+								icon={<HashIcon className="h-4 w-4" />}
+								label="Channel"
+								value={`#${integration.metadata.channelId}`}
+							/>
+						)}
+					</CardContent>
+				</Card>
+			)}
 
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-base">What Beny Bot does</CardTitle>
+					<CardTitle className="text-base">
+						{isDm ? "What Beny Bot does" : "Active features"}
+					</CardTitle>
+					{!isDm && (
+						<CardDescription>
+							Beny Bot is active in this campaign's Discord server.
+						</CardDescription>
+					)}
 				</CardHeader>
 				<CardContent>
 					<ul className="space-y-2 text-sm text-muted-foreground">
@@ -225,55 +243,64 @@ function ConnectedState({
 							</li>
 						))}
 					</ul>
+					{!isDm && (
+						<p className="mt-4 text-xs text-muted-foreground">
+							Only the Dungeon Master can manage integrations.
+						</p>
+					)}
 				</CardContent>
 			</Card>
 
-			<Card className="border-destructive/40">
-				<CardHeader>
-					<CardTitle className="text-base text-destructive">
-						Danger zone
-					</CardTitle>
-					<CardDescription>
-						Removing this integration will stop Beny Bot from posting to your
-						server.
-					</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<AlertDialog>
-						<AlertDialogTrigger asChild>
-							<Button
-								className="hover:cursor-pointer hover:opacity-80"
-								disabled={isRemoving}
-								size="sm"
-								variant="destructive"
-							>
-								<Trash2Icon className="mr-2 h-4 w-4" />
-								{isRemoving ? "Removing…" : "Remove integration"}
-							</Button>
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Remove Discord integration?</AlertDialogTitle>
-								<AlertDialogDescription>
-									Beny Bot will stop sending session announcements, reminders,
-									and recaps to your server. You can reconnect at any time.
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel className="hover:cursor-pointer hover:opacity-80">
-									Cancel
-								</AlertDialogCancel>
-								<AlertDialogAction
+			{isDm && (
+				<Card className="border-destructive/40">
+					<CardHeader>
+						<CardTitle className="text-base text-destructive">
+							Danger zone
+						</CardTitle>
+						<CardDescription>
+							Removing this integration will stop Beny Bot from posting to your
+							server.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<AlertDialog>
+							<AlertDialogTrigger asChild>
+								<Button
 									className="hover:cursor-pointer hover:opacity-80"
-									onClick={onRemove}
+									disabled={isRemoving}
+									size="sm"
+									variant="destructive"
 								>
-									Remove
-								</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
-				</CardContent>
-			</Card>
+									<Trash2Icon className="mr-2 h-4 w-4" />
+									{isRemoving ? "Removing…" : "Remove integration"}
+								</Button>
+							</AlertDialogTrigger>
+							<AlertDialogContent>
+								<AlertDialogHeader>
+									<AlertDialogTitle>
+										Remove Discord integration?
+									</AlertDialogTitle>
+									<AlertDialogDescription>
+										Beny Bot will stop sending session announcements, reminders,
+										and recaps to your server. You can reconnect at any time.
+									</AlertDialogDescription>
+								</AlertDialogHeader>
+								<AlertDialogFooter>
+									<AlertDialogCancel className="hover:cursor-pointer hover:opacity-80">
+										Cancel
+									</AlertDialogCancel>
+									<AlertDialogAction
+										className="hover:cursor-pointer hover:opacity-80"
+										onClick={onRemove}
+									>
+										Remove
+									</AlertDialogAction>
+								</AlertDialogFooter>
+							</AlertDialogContent>
+						</AlertDialog>
+					</CardContent>
+				</Card>
+			)}
 		</div>
 	);
 }
@@ -282,7 +309,41 @@ function ConnectedState({
 // Disconnected state
 // ---------------------------------------------------------------------------
 
-function DisconnectedState({ onAddBot }: { onAddBot: () => void }) {
+function DisconnectedState({
+	onAddBot,
+	isDm,
+}: {
+	onAddBot: () => void;
+	isDm: boolean;
+}) {
+	if (!isDm) {
+		return (
+			<div className="space-y-4">
+				<Card>
+					<CardHeader>
+						<CardTitle className="text-base">Not connected</CardTitle>
+						<CardDescription>
+							This campaign hasn't connected Discord yet.
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<ul className="space-y-2 text-sm text-muted-foreground">
+							{CAPABILITIES.map((c) => (
+								<li className="flex items-center gap-2" key={c}>
+									<span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-muted-foreground/50" />
+									{c}
+								</li>
+							))}
+						</ul>
+						<p className="mt-4 text-xs text-muted-foreground">
+							Only the Dungeon Master can connect integrations.
+						</p>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
+
 	return (
 		<div className="space-y-4">
 			<Card>

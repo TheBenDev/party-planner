@@ -1,3 +1,4 @@
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MapPin, MoreHorizontal, Plus, Search } from "lucide-react";
@@ -71,11 +72,13 @@ function LocationRow({
 	onView,
 	onEdit,
 	onDelete,
+	isDm,
 }: {
 	location: Location;
 	onView: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
+	isDm: boolean;
 }) {
 	const initials = getInitials(location.name);
 	const color = getLocationColor(location.name);
@@ -122,24 +125,28 @@ function LocationRow({
 					>
 						View
 					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.stopPropagation();
-							onEdit();
-						}}
-					>
-						Edit
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem
-						className="text-destructive focus:text-destructive"
-						onClick={(e) => {
-							e.stopPropagation();
-							onDelete();
-						}}
-					>
-						Delete
-					</DropdownMenuItem>
+					{isDm && (
+						<>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.stopPropagation();
+									onEdit();
+								}}
+							>
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-destructive focus:text-destructive"
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete();
+								}}
+							>
+								Delete
+							</DropdownMenuItem>
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</Button>
@@ -147,7 +154,8 @@ function LocationRow({
 }
 
 function LocationsPage() {
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
+	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
@@ -220,14 +228,16 @@ function LocationsPage() {
 						</p>
 					)}
 				</div>
-				<Button
-					className="shrink-0"
-					disabled={creatingLocation}
-					onClick={() => createLocation()}
-				>
-					<Plus className="w-4 h-4 mr-2" />
-					New Location
-				</Button>
+				{isDm && (
+					<Button
+						className="shrink-0"
+						disabled={creatingLocation}
+						onClick={() => createLocation()}
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Location
+					</Button>
+				)}
 			</div>
 
 			<div className="relative">
@@ -261,19 +271,23 @@ function LocationsPage() {
 						) : (
 							<>
 								<p className="font-medium">No locations yet</p>
-								<p className="text-sm text-muted-foreground mt-1">
-									Add your first location to get started.
-								</p>
-								<Button
-									className="mt-4"
-									disabled={creatingLocation}
-									onClick={() => createLocation()}
-									size="sm"
-									variant="outline"
-								>
-									<Plus className="w-4 h-4 mr-1.5" />
-									Create Location
-								</Button>
+								{isDm && (
+									<>
+										<p className="text-sm text-muted-foreground mt-1">
+											Add your first location to get started.
+										</p>
+										<Button
+											className="mt-4"
+											disabled={creatingLocation}
+											onClick={() => createLocation()}
+											size="sm"
+											variant="outline"
+										>
+											<Plus className="w-4 h-4 mr-1.5" />
+											Create Location
+										</Button>
+									</>
+								)}
 							</>
 						)}
 					</div>
@@ -283,6 +297,7 @@ function LocationsPage() {
 					filtered.length > 0 &&
 					filtered.map((loc) => (
 						<LocationRow
+							isDm={isDm}
 							key={loc.id}
 							location={loc}
 							onDelete={() => deleteLocation(loc.id)}

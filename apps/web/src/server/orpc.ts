@@ -8,7 +8,7 @@ import type {
 	ResponseHeadersPluginContext,
 } from "@orpc/server/plugins";
 import { type Client, createDb } from "@planner/database";
-import type { UserRole } from "@planner/enums/user";
+import { UserRole } from "@planner/enums/user";
 import type { Campaign } from "@planner/schemas/campaigns";
 import type { GetAuthResponse, User } from "@planner/schemas/user";
 import {
@@ -321,3 +321,9 @@ export const publicProcedure = base.use(loggingMiddleware).use(dbMiddleware);
  * Authenticated procedures - has token, userId, RPC clients
  */
 export const privateProcedure = publicProcedure.use(authMiddleware);
+
+export function requireDungeonMaster(role: UserRole | null): void {
+	if (role !== UserRole.DUNGEON_MASTER) {
+		throw new ORPCError("FORBIDDEN", { message: "requires dungeon master role" });
+	}
+}

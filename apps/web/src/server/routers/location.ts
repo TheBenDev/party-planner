@@ -12,7 +12,7 @@ import {
 	UpdateLocationResponseSchema,
 } from "@planner/schemas/locations";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
 import { protoToLocation } from "./util/proto/location";
 
 const createLocation = privateProcedure
@@ -24,6 +24,7 @@ const createLocation = privateProcedure
 	.input(CreateLocationRequestSchema)
 	.output(CreateLocationResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 
 		try {
@@ -123,6 +124,7 @@ const removeLocation = privateProcedure
 	.input(RemoveLocationRequestSchema)
 	.output(RemoveLocationResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const { id } = input;
 		const api = context.api;
 
@@ -151,6 +153,7 @@ const updateLocation = privateProcedure
 	.input(UpdateLocationRequestSchema)
 	.output(UpdateLocationResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 
 		try {

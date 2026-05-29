@@ -1,7 +1,9 @@
 import { IntegrationSource } from "@planner/enums/integration";
+import { UserRole } from "@planner/enums/user";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
 
 export const Route = createFileRoute(
@@ -27,6 +29,7 @@ function decodeState(
 
 function DiscordCallbackPage() {
 	const navigate = useNavigate();
+	const { role, campaignIsLoading } = useAuth();
 	const { code, state } = Route.useSearch();
 	const {
 		mutate: createIntegration,
@@ -49,6 +52,13 @@ function DiscordCallbackPage() {
 
 	useEffect(() => {
 		if (!(code && state)) {
+			sessionStorage.removeItem("discord_oauth_state");
+			navigate({ to: "/campaign/integrations" });
+			return;
+		}
+		if (campaignIsLoading) return;
+		if (role !== UserRole.DUNGEON_MASTER) {
+			sessionStorage.removeItem("discord_oauth_state");
 			navigate({ to: "/campaign/integrations" });
 			return;
 		}
@@ -65,7 +75,7 @@ function DiscordCallbackPage() {
 		}
 
 		createIntegration(decoded.campaignId);
-	}, []);
+	}, [campaignIsLoading, role, code, state, navigate, createIntegration]);
 
 	if (isError) {
 		return (

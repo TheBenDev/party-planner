@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/auth";
 import { useLocation } from "@/hooks/queries";
 import { client } from "@/lib/client";
 import { queryKeys } from "@/lib/queryKeys";
@@ -29,8 +31,21 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	const { locationId } = Route.useParams();
+	const { role, campaignIsLoading } = useAuth();
 
 	const { data: locationData, isError, isLoading } = useLocation(locationId);
+
+	if (campaignIsLoading) return <div>Loading...</div>;
+	if (role !== UserRole.DUNGEON_MASTER) {
+		return (
+			<Navigate
+				params={{ locationId }}
+				replace
+				to="/campaign/locations/$locationId"
+			/>
+		);
+	}
+
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) return <div>Failed to load location.</div>;
 	const location = locationData?.location;

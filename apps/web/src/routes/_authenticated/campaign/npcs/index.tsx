@@ -1,3 +1,4 @@
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { EyeOff, MoreHorizontal, Plus, Search, User2 } from "lucide-react";
@@ -132,11 +133,13 @@ function NPCRow({
 	onView,
 	onEdit,
 	onDelete,
+	isDm,
 }: {
 	npc: NPC;
 	onView: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
+	isDm: boolean;
 }) {
 	const displayName = npc.isKnownToParty
 		? (npc.knownName ?? npc.name)
@@ -223,24 +226,28 @@ function NPCRow({
 					>
 						View
 					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.stopPropagation();
-							onEdit();
-						}}
-					>
-						Edit
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem
-						className="text-destructive focus:text-destructive"
-						onClick={(e) => {
-							e.stopPropagation();
-							onDelete();
-						}}
-					>
-						Delete
-					</DropdownMenuItem>
+					{isDm && (
+						<>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.stopPropagation();
+									onEdit();
+								}}
+							>
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-destructive focus:text-destructive"
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete();
+								}}
+							>
+								Delete
+							</DropdownMenuItem>
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</Button>
@@ -248,7 +255,8 @@ function NPCRow({
 }
 
 function NPCSPage() {
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
+	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
@@ -330,14 +338,16 @@ function NPCSPage() {
 						</p>
 					)}
 				</div>
-				<Button
-					className="shrink-0"
-					disabled={creatingNpc}
-					onClick={() => createNpc()}
-				>
-					<Plus className="w-4 h-4 mr-2" />
-					New NPC
-				</Button>
+				{isDm && (
+					<Button
+						className="shrink-0"
+						disabled={creatingNpc}
+						onClick={() => createNpc()}
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New NPC
+					</Button>
+				)}
 			</div>
 			<div className="relative">
 				<Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
@@ -376,19 +386,23 @@ function NPCSPage() {
 						{!search && (
 							<>
 								<p className="font-medium">No NPCs yet</p>
-								<p className="text-sm text-muted-foreground mt-1">
-									Add your first character to get started.
-								</p>
-								<Button
-									className="mt-4"
-									disabled={creatingNpc}
-									onClick={() => createNpc()}
-									size="sm"
-									variant="outline"
-								>
-									<Plus className="w-4 h-4 mr-1.5" />
-									Create NPC
-								</Button>
+								{isDm && (
+									<>
+										<p className="text-sm text-muted-foreground mt-1">
+											Add your first character to get started.
+										</p>
+										<Button
+											className="mt-4"
+											disabled={creatingNpc}
+											onClick={() => createNpc()}
+											size="sm"
+											variant="outline"
+										>
+											<Plus className="w-4 h-4 mr-1.5" />
+											Create NPC
+										</Button>
+									</>
+								)}
 							</>
 						)}
 					</div>
@@ -398,6 +412,7 @@ function NPCSPage() {
 					filtered.length > 0 &&
 					filtered.map((npc) => (
 						<NPCRow
+							isDm={isDm}
 							key={npc.id}
 							npc={npc}
 							onDelete={() => {

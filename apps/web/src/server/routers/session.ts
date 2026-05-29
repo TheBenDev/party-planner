@@ -19,7 +19,7 @@ import {
 	UpdateSessionResponseSchema,
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
 import {
 	protoToPoll,
 	protoToSession,
@@ -35,6 +35,7 @@ const announceSession = privateProcedure
 	.input(AnnounceSessionRequestSchema)
 	.output(AnnounceSessionResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		const { campaignId, sessionId } = input;
 
@@ -64,6 +65,7 @@ const createSession = privateProcedure
 	.input(CreateSessionRequestSchema)
 	.output(CreateSessionResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)
@@ -178,6 +180,7 @@ const pollSession = privateProcedure
 	.input(PollSessionRequestSchema)
 	.output(PollSessionResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		const { campaignId, sessionId } = input;
 		try {
@@ -198,6 +201,7 @@ const removeSession = privateProcedure
 	.input(RemoveSessionRequestSchema)
 	.output(RemoveSessionResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			await api.session.removeSession({ id: input.id });
@@ -221,6 +225,7 @@ const updateSession = privateProcedure
 	.input(UpdateSessionRequestSchema)
 	.output(UpdateSessionResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)

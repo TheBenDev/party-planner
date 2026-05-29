@@ -12,7 +12,7 @@ import {
 	UpdateNpcResponseSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
 import {
 	characterStatusToProto,
 	protoToNpc,
@@ -28,6 +28,7 @@ const createNpc = privateProcedure
 	.input(CreateNpcRequestSchema)
 	.output(CreateNpcResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			const res = await api.npc.createNpc({
@@ -105,6 +106,7 @@ const removeNpc = privateProcedure
 	.input(RemoveNpcRequestSchema)
 	.output(RemoveNpcResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const { id } = input;
 		const api = context.api;
 		try {
@@ -126,6 +128,7 @@ const updateNpc = privateProcedure
 	.input(UpdateNpcRequestSchema)
 	.output(UpdateNpcResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 
 		try {

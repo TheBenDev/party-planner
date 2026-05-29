@@ -1,7 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@planner/enums/quest";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/auth";
 import { useQuest } from "@/hooks/queries";
 import { client } from "@/lib/client";
 import { queryKeys } from "@/lib/queryKeys";
@@ -35,8 +37,15 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	const { questId } = Route.useParams();
+	const { role, campaignIsLoading } = useAuth();
 
 	const { data, isPending, isError } = useQuest(questId);
+
+	if (campaignIsLoading) return <div>Loading...</div>;
+	if (role !== UserRole.DUNGEON_MASTER) {
+		return <Navigate params={{ questId }} replace to="/campaign/quests/$questId" />;
+	}
+
 	if (isPending) return <div>Loading...</div>;
 	if (isError || !data?.quest) return <div>Quest not found.</div>;
 
