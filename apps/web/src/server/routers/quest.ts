@@ -12,7 +12,7 @@ import {
 	UpdateQuestResponseSchema,
 } from "@planner/schemas/quests";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
 import { protoToQuest, questStatusToProto } from "./util/proto/quest";
 
 const createQuest = privateProcedure
@@ -24,6 +24,7 @@ const createQuest = privateProcedure
 	.input(CreateQuestRequestSchema)
 	.output(CreateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		context.logger?.info({ reward: input.reward }, "REWARD SHOWN HERE");
 		try {
@@ -97,6 +98,7 @@ const updateQuest = privateProcedure
 	.input(UpdateQuestRequestSchema)
 	.output(UpdateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			const res = await api.quest.updateQuest({
@@ -128,6 +130,7 @@ const removeQuest = privateProcedure
 	.input(RemoveQuestRequestSchema)
 	.output(RemoveQuestResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			await api.quest.removeQuest({ id: input.id });

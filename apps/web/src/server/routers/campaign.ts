@@ -18,6 +18,7 @@ import {
 	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 	AUTH_COOKIE_NAME,
 	privateProcedure,
+	requireDungeonMaster,
 	updateAuthCookie,
 } from "../orpc";
 import { protoToCampaign } from "./util/proto/campaign";
@@ -143,12 +144,7 @@ const updateCampaign = privateProcedure
 		const { api, logger, role } = context;
 
 		try {
-			if (role !== UserRole.DUNGEON_MASTER) {
-				throw new ORPCError("FORBIDDEN", {
-					message: "not authorized to update campaign",
-				});
-			}
-
+			requireDungeonMaster(role);
 			const result = await api.campaign.updateCampaign({
 				description,
 				id,
@@ -181,11 +177,7 @@ const deleteCampaign = privateProcedure
 		const { api, role, logger, campaignId } = context;
 
 		try {
-			if (role !== UserRole.DUNGEON_MASTER) {
-				throw new ORPCError("FORBIDDEN", {
-					message: "not authorized to delete campaign",
-				});
-			}
+			requireDungeonMaster(role);
 			const result = await api.campaign.deleteCampaign({
 				id,
 				userId: context.userId,

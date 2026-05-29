@@ -1,4 +1,5 @@
 import { Status } from "@planner/enums/session";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
@@ -114,11 +115,13 @@ function SessionRow({
 	onView,
 	onEdit,
 	onDelete,
+	isDm,
 }: {
 	session: Session;
 	onView: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
+	isDm: boolean;
 }) {
 	const label = getSessionNumber(session.title);
 	const color = getSessionColor(session.title);
@@ -164,24 +167,28 @@ function SessionRow({
 					>
 						View
 					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.stopPropagation();
-							onEdit();
-						}}
-					>
-						Edit
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem
-						className="text-destructive focus:text-destructive"
-						onClick={(e) => {
-							e.stopPropagation();
-							onDelete();
-						}}
-					>
-						Delete
-					</DropdownMenuItem>
+					{isDm && (
+						<>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.stopPropagation();
+									onEdit();
+								}}
+							>
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-destructive focus:text-destructive"
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete();
+								}}
+							>
+								Delete
+							</DropdownMenuItem>
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>
@@ -189,7 +196,8 @@ function SessionRow({
 }
 
 function SessionsPage() {
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
+	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
@@ -263,14 +271,16 @@ function SessionsPage() {
 						</p>
 					)}
 				</div>
-				<Button
-					className="shrink-0"
-					disabled={creatingSession}
-					onClick={() => createSession()}
-				>
-					<Plus className="w-4 h-4 mr-2" />
-					New Session
-				</Button>
+				{isDm && (
+					<Button
+						className="shrink-0"
+						disabled={creatingSession}
+						onClick={() => createSession()}
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Session
+					</Button>
+				)}
 			</div>
 
 			<div className="relative">
@@ -304,19 +314,23 @@ function SessionsPage() {
 						) : (
 							<>
 								<p className="font-medium">No sessions yet</p>
-								<p className="text-sm text-muted-foreground mt-1">
-									Add your first session to get started.
-								</p>
-								<Button
-									className="mt-4"
-									disabled={creatingSession}
-									onClick={() => createSession()}
-									size="sm"
-									variant="outline"
-								>
-									<Plus className="w-4 h-4 mr-1.5" />
-									Create Session
-								</Button>
+								{isDm && (
+									<>
+										<p className="text-sm text-muted-foreground mt-1">
+											Add your first session to get started.
+										</p>
+										<Button
+											className="mt-4"
+											disabled={creatingSession}
+											onClick={() => createSession()}
+											size="sm"
+											variant="outline"
+										>
+											<Plus className="w-4 h-4 mr-1.5" />
+											Create Session
+										</Button>
+									</>
+								)}
 							</>
 						)}
 					</div>
@@ -326,6 +340,7 @@ function SessionsPage() {
 					filtered.length > 0 &&
 					filtered.map((s) => (
 						<SessionRow
+							isDm={isDm}
 							key={s.id}
 							onDelete={() => deleteSession(s.id)}
 							onEdit={() =>

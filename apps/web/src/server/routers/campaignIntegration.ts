@@ -11,7 +11,7 @@ import {
 	RemoveCampaignIntegrationResponseSchema,
 } from "@planner/schemas/discord";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
 import {
 	integrationSourceToProto,
 	protoToCampaignIntegration,
@@ -26,6 +26,7 @@ const createCampaignIntegration = privateProcedure
 	.input(CreateCampaignIntegrationRequestSchema)
 	.output(CreateCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		switch (input.source) {
 			case IntegrationSource.DISCORD: {
 				const { code, campaignId } = input;
@@ -106,6 +107,7 @@ const removeCampaignIntegration = privateProcedure
 	.input(RemoveCampaignIntegrationRequestSchema)
 	.output(RemoveCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const { campaignId, source } = input;
 		const api = context.api;
 

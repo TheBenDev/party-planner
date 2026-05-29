@@ -3,8 +3,9 @@ import {
 	CharacterStatusEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/auth";
 import { useNpc } from "@/hooks/queries";
 import { client } from "@/lib/client";
 import { queryKeys } from "@/lib/queryKeys";
@@ -49,8 +51,15 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
 	const { npcId } = Route.useParams();
+	const { role, campaignIsLoading } = useAuth();
 
 	const { data: npc, isPending, isError } = useNpc(npcId);
+
+	if (campaignIsLoading) return <div>Loading...</div>;
+	if (role !== UserRole.DUNGEON_MASTER) {
+		return <Navigate params={{ npcId }} replace to="/campaign/npcs/$npcId" />;
+	}
+
 	if (isPending) return <div>Loading...</div>;
 	if (isError || !npc?.npc) return <div>NPC not found.</div>;
 

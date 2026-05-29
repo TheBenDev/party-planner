@@ -24,7 +24,7 @@ import {
 import DndInviteEmail from "@/components/email-invite-template";
 import { env } from "@/env";
 import { handleError } from "../errors";
-import { privateProcedure, updateAuthCookie } from "../orpc";
+import { privateProcedure, requireDungeonMaster, updateAuthCookie } from "../orpc";
 import { generateToken } from "./util/helpers";
 import { protoToCampaign } from "./util/proto/campaign";
 import {
@@ -141,6 +141,7 @@ const createInvitation = privateProcedure
 	.input(CreateCampaignInvitationRequestSchema)
 	.output(CreateCampaignInvitationResponseSchema)
 	.handler(async ({ context, input }) => {
+		requireDungeonMaster(context.role);
 		const { inviteeEmail, role } = input;
 		const { campaignId, userId, clerkUserId, api, resend } = context;
 
@@ -225,6 +226,7 @@ const listInvitations = privateProcedure
 	})
 	.output(ListCampaignInvitationsByCampaignResponseSchema)
 	.handler(async ({ context }) => {
+		requireDungeonMaster(context.role);
 		const campaignId = context.campaignId;
 		const api = context.api;
 		if (campaignId === null) return { invitations: [] };
@@ -251,6 +253,7 @@ const revokeInvitation = privateProcedure
 	.input(RevokeCampaignInvitationRequestSchema)
 	.output(RevokeCampaignInvitationResponseSchema)
 	.handler(async ({ context, input }) => {
+		requireDungeonMaster(context.role);
 		const { id } = input;
 		const campaignId = context.campaignId;
 		const api = context.api;
@@ -288,6 +291,7 @@ const createMember = privateProcedure
 	.input(CreateMemberRequestSchema)
 	.output(CreateMemberResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const { campaignId, userId, role } = input;
 		const api = context.api;
 		try {
@@ -378,6 +382,7 @@ const removeMember = privateProcedure
 	.input(RemoveMemberRequestSchema)
 	.output(RemoveMemberResponseSchema)
 	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
 		const { campaignId, userId } = input;
 		const api = context.api;
 		try {

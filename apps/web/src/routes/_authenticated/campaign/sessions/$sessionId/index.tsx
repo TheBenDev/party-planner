@@ -1,7 +1,9 @@
+import { UserRole } from "@planner/enums/user";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SessionScheduling } from "@/components/session-scheduling";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/auth";
 import { useSession } from "@/hooks/queries";
 
 export const Route = createFileRoute(
@@ -22,6 +24,7 @@ function formatSessionDate(date: Date | string): string {
 function RouteComponent() {
 	const { sessionId } = Route.useParams();
 	const navigate = useNavigate();
+	const { role } = useAuth();
 
 	const { data, isLoading } = useSession(sessionId);
 
@@ -42,19 +45,21 @@ function RouteComponent() {
 				<h1 className="text-3xl font-semibold tracking-tight">
 					{session.title}
 				</h1>
-				<Button
-					className="hover:cursor-pointer"
-					onClick={() =>
-						navigate({
-							params: { sessionId },
-							to: "/campaign/sessions/$sessionId/edit",
-						})
-					}
-					size="sm"
-					variant="outline"
-				>
-					Edit
-				</Button>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Button
+						className="hover:cursor-pointer"
+						onClick={() =>
+							navigate({
+								params: { sessionId },
+								to: "/campaign/sessions/$sessionId/edit",
+							})
+						}
+						size="sm"
+						variant="outline"
+					>
+						Edit
+					</Button>
+				)}
 			</div>
 
 			{/* Date badge — only shown when confirmed */}

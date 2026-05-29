@@ -1,6 +1,8 @@
+import { UserRole } from "@planner/enums/user";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/auth";
 import { useQuest } from "@/hooks/queries";
 
 export const Route = createFileRoute(
@@ -31,6 +33,7 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 function RouteComponent() {
 	const { questId } = Route.useParams();
 	const navigate = useNavigate();
+	const { role } = useAuth();
 
 	const { data, isLoading } = useQuest(questId);
 
@@ -48,18 +51,20 @@ function RouteComponent() {
 			{/* Header */}
 			<div className="flex items-start justify-between gap-4">
 				<h1 className="text-3xl font-semibold tracking-tight">{quest.title}</h1>
-				<Button
-					onClick={() =>
-						navigate({
-							params: { questId },
-							to: "/campaign/quests/$questId/edit",
-						})
-					}
-					size="sm"
-					variant="outline"
-				>
-					Edit
-				</Button>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Button
+						onClick={() =>
+							navigate({
+								params: { questId },
+								to: "/campaign/quests/$questId/edit",
+							})
+						}
+						size="sm"
+						variant="outline"
+					>
+						Edit
+					</Button>
+				)}
 			</div>
 
 			{/* Status badge */}

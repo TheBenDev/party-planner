@@ -1,4 +1,5 @@
 import { Status } from "@planner/enums/quest";
+import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MoreHorizontal, Plus, ScrollText, Search } from "lucide-react";
@@ -95,11 +96,13 @@ function QuestRow({
 	onView,
 	onEdit,
 	onDelete,
+	isDm,
 }: {
 	quest: Quest;
 	onView: () => void;
 	onEdit: () => void;
 	onDelete: () => void;
+	isDm: boolean;
 }) {
 	const color = getQuestColor(quest.title);
 	const initials = getInitials(quest.title);
@@ -155,24 +158,28 @@ function QuestRow({
 					>
 						View
 					</DropdownMenuItem>
-					<DropdownMenuItem
-						onClick={(e) => {
-							e.stopPropagation();
-							onEdit();
-						}}
-					>
-						Edit
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
-					<DropdownMenuItem
-						className="text-destructive focus:text-destructive"
-						onClick={(e) => {
-							e.stopPropagation();
-							onDelete();
-						}}
-					>
-						Delete
-					</DropdownMenuItem>
+					{isDm && (
+						<>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.stopPropagation();
+									onEdit();
+								}}
+							>
+								Edit
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-destructive focus:text-destructive"
+								onClick={(e) => {
+									e.stopPropagation();
+									onDelete();
+								}}
+							>
+								Delete
+							</DropdownMenuItem>
+						</>
+					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</Button>
@@ -180,7 +187,8 @@ function QuestRow({
 }
 
 function QuestsPage() {
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
+	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
@@ -254,14 +262,16 @@ function QuestsPage() {
 						</p>
 					)}
 				</div>
-				<Button
-					className="shrink-0"
-					disabled={creatingQuest}
-					onClick={() => createQuest()}
-				>
-					<Plus className="w-4 h-4 mr-2" />
-					New Quest
-				</Button>
+				{isDm && (
+					<Button
+						className="shrink-0"
+						disabled={creatingQuest}
+						onClick={() => createQuest()}
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Quest
+					</Button>
+				)}
 			</div>
 
 			<div className="relative">
@@ -295,19 +305,23 @@ function QuestsPage() {
 						) : (
 							<>
 								<p className="font-medium">No quests yet</p>
-								<p className="text-sm text-muted-foreground mt-1">
-									Add your first quest to get started.
-								</p>
-								<Button
-									className="mt-4"
-									disabled={creatingQuest}
-									onClick={() => createQuest()}
-									size="sm"
-									variant="outline"
-								>
-									<Plus className="w-4 h-4 mr-1.5" />
-									Create Quest
-								</Button>
+								{isDm && (
+									<>
+										<p className="text-sm text-muted-foreground mt-1">
+											Add your first quest to get started.
+										</p>
+										<Button
+											className="mt-4"
+											disabled={creatingQuest}
+											onClick={() => createQuest()}
+											size="sm"
+											variant="outline"
+										>
+											<Plus className="w-4 h-4 mr-1.5" />
+											Create Quest
+										</Button>
+									</>
+								)}
 							</>
 						)}
 					</div>
@@ -317,6 +331,7 @@ function QuestsPage() {
 					filtered.length > 0 &&
 					filtered.map((quest) => (
 						<QuestRow
+							isDm={isDm}
 							key={quest.id}
 							onDelete={() => deleteQuest(quest.id)}
 							onEdit={() =>

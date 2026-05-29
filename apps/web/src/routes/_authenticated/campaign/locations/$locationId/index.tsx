@@ -1,6 +1,8 @@
+import { UserRole } from "@planner/enums/user";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/hooks/auth";
 import { useLocation } from "@/hooks/queries";
 
 export const Route = createFileRoute(
@@ -12,15 +14,16 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { locationId } = Route.useParams();
 	const navigate = useNavigate();
+	const { role } = useAuth();
 
 	const { data: locationData, isError, isLoading } = useLocation(locationId);
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) return <div>Failed to load location.</div>;
 	const location = locationData?.location;
-	if (!location) return <div>Location not found.</div>;
 
-	if (!location)
+	if (!location) {
 		return <div className="p-8 text-muted-foreground">Location not found.</div>;
+	}
 
 	return (
 		<div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
@@ -31,18 +34,20 @@ function RouteComponent() {
 						{location.name}
 					</h1>
 				</div>
-				<Button
-					onClick={() =>
-						navigate({
-							params: { locationId },
-							to: "/campaign/locations/$locationId/edit",
-						})
-					}
-					size="sm"
-					variant="outline"
-				>
-					Edit
-				</Button>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Button
+						onClick={() =>
+							navigate({
+								params: { locationId },
+								to: "/campaign/locations/$locationId/edit",
+							})
+						}
+						size="sm"
+						variant="outline"
+					>
+						Edit
+					</Button>
+				)}
 			</div>
 
 			<Separator />
@@ -58,12 +63,14 @@ function RouteComponent() {
 					placeholder="No notes recorded."
 					title="Notes"
 				/>
-				<Section
-					content={location.dmNotes}
-					muted
-					placeholder="No DM notes yet."
-					title="DM Notes"
-				/>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Section
+						content={location.dmNotes}
+						muted
+						placeholder="No DM notes yet."
+						title="DM Notes"
+					/>
+				)}
 			</div>
 		</div>
 	);
