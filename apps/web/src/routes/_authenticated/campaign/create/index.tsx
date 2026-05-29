@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/_authenticated/campaign/create/")({
 	component: CreateCampaignForm,
@@ -34,7 +35,7 @@ function CreateCampaignForm() {
 			});
 		},
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+			await queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
 			navigate({ to: "/dashboard" });
 		},
 	});

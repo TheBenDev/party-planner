@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -8,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useLocation } from "@/hooks/queries";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const locationEditSchema = z.object({
 	description: z.string().optional(),
@@ -28,14 +30,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { locationId } = Route.useParams();
 
-	const {
-		data: locationData,
-		isError,
-		isLoading,
-	} = useQuery({
-		queryFn: () => client.location.getLocationById({ id: locationId }),
-		queryKey: ["location", locationId],
-	});
+	const { data: locationData, isError, isLoading } = useLocation(locationId);
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) return <div>Failed to load location.</div>;
 	const location = locationData?.location;
@@ -77,11 +72,11 @@ function LocationEditFormInner({
 		onError: () => toast.error("failed to update location"),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ["location", locationId],
+				queryKey: queryKeys.locations.detail(locationId),
 			});
 
 			queryClient.invalidateQueries({
-				queryKey: ["locations", location.campaignId],
+				queryKey: queryKeys.locations.list(location.campaignId ?? ""),
 			});
 
 			navigate({

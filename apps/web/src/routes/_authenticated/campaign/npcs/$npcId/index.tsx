@@ -2,11 +2,10 @@ import {
 	CharacterStatusEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { client } from "@/lib/client";
+import { useNpc } from "@/hooks/queries";
 
 export const Route = createFileRoute("/_authenticated/campaign/npcs/$npcId/")({
 	component: RouteComponent,
@@ -16,10 +15,7 @@ function RouteComponent() {
 	const { npcId } = Route.useParams();
 	const navigate = useNavigate();
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => client.npc.getNonPlayerCharacter({ id: npcId }),
-		queryKey: ["npc", npcId],
-	});
+	const { data, isLoading } = useNpc(npcId);
 
 	if (isLoading)
 		return <div className="p-8 text-muted-foreground">Loading...</div>;

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export type AuthContextValue = {
 	user: GetUserResponse | null;
@@ -22,13 +23,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => await client.user.getUser(),
-		queryKey: ["auth", "user"],
+		queryKey: queryKeys.auth.user(),
 	});
 	const { data: campaign = null, isLoading: campaignIsLoading } = useQuery({
 		enabled: clerkAuth.isSignedIn === true,
 		gcTime: 10 * 60 * 1000,
 		queryFn: async () => await client.campaign.getActiveCampaign(),
-		queryKey: ["auth", "campaign"],
+		queryKey: queryKeys.auth.campaign(),
 	});
 
 	const value = useMemo(() => {

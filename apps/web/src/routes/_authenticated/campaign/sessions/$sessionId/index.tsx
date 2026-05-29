@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SessionScheduling } from "@/components/session-scheduling";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { client } from "@/lib/client";
+import { useSession } from "@/hooks/queries";
 
 export const Route = createFileRoute(
 	"/_authenticated/campaign/sessions/$sessionId/",
@@ -24,10 +23,7 @@ function RouteComponent() {
 	const { sessionId } = Route.useParams();
 	const navigate = useNavigate();
 
-	const { data, isLoading } = useQuery({
-		queryFn: () => client.session.getSession({ id: sessionId }),
-		queryKey: ["session", sessionId],
-	});
+	const { data, isLoading } = useSession(sessionId);
 
 	if (isLoading) {
 		return <div className="p-8 text-muted-foreground">Loading...</div>;

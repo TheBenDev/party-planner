@@ -3,7 +3,7 @@ import {
 	CharacterStatusEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,7 +18,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useNpc } from "@/hooks/queries";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const npcEditSchema = z.object({
 	age: z.string().optional(),
@@ -48,12 +50,9 @@ export const Route = createFileRoute(
 function RouteComponent() {
 	const { npcId } = Route.useParams();
 
-	const { data: npc } = useQuery({
-		queryFn: () => client.npc.getNonPlayerCharacter({ id: npcId }),
-		queryKey: ["npc", npcId],
-	});
-
-	if (!npc?.npc) return <div>Loading...</div>;
+	const { data: npc, isPending, isError } = useNpc(npcId);
+	if (isPending) return <div>Loading...</div>;
+	if (isError || !npc?.npc) return <div>NPC not found.</div>;
 
 	return <NpcEditFormInner npc={npc.npc} npcId={npcId} />;
 }
@@ -99,9 +98,9 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 				aliases: values.aliases.map((a) => a.value),
 			}),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["npc", npcId] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.npcs.detail(npcId) });
 			queryClient.invalidateQueries({
-				queryKey: ["npcs", npc.campaignId],
+				queryKey: queryKeys.npcs.list(npc.campaignId),
 			});
 
 			navigate({

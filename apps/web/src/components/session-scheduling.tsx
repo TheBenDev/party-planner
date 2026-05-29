@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 import { cn } from "@/lib/utils";
 import { DateTimePicker } from "./date-time-picker";
 import {
@@ -53,7 +54,7 @@ export function SessionScheduling({ session }: Props) {
 				campaignId: session.campaignId,
 				source: IntegrationSource.DISCORD,
 			}),
-		queryKey: ["integrations", session.campaignId, IntegrationSource.DISCORD],
+		queryKey: queryKeys.integrations.bySource(session.campaignId, IntegrationSource.DISCORD),
 	});
 	return (
 		<div className="space-y-1.5">
@@ -114,7 +115,7 @@ function PollingState({ sessionId, campaignId }: PollingStateProps) {
 	const queryClient = useQueryClient();
 	const { data, isLoading, isError } = useQuery({
 		queryFn: () => client.session.getPoll({ campaignId, sessionId }),
-		queryKey: ["session-poll", sessionId],
+		queryKey: queryKeys.sessions.poll(sessionId),
 		refetchInterval: 60_000,
 	});
 
@@ -129,7 +130,7 @@ function PollingState({ sessionId, campaignId }: PollingStateProps) {
 			});
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["session", sessionId] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) });
 		},
 	});
 
@@ -316,7 +317,7 @@ export function ProposeDatesDialog({
 		onSuccess: () => {
 			setOpen(false);
 			setOptions([undefined]);
-			queryClient.invalidateQueries({ queryKey: ["session", sessionId] });
+			queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) });
 		},
 	});
 
@@ -470,7 +471,7 @@ function ConfirmedState({
 	const announceMutation = useMutation({
 		mutationFn: () => client.session.announceSession({ campaignId, sessionId }),
 		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: ["session", sessionId] }),
+			queryClient.invalidateQueries({ queryKey: queryKeys.sessions.detail(sessionId) }),
 	});
 
 	return (

@@ -20,6 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -65,7 +66,7 @@ export function InvitePlayerPage() {
 
 	const { data: pendingInvites, isLoading: isLoadingInvites } = useQuery({
 		queryFn: async () => await client.member.listInvitations(),
-		queryKey: ["invitation"],
+		queryKey: queryKeys.invitations.list(),
 	});
 
 	const { mutate: revokeInvitation } = useMutation({

@@ -32,6 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 const TRAILING_COMMA_RE = /,$/;
 
@@ -72,7 +73,7 @@ function SettingsPage() {
 				campaignId: campaign.campaign.id,
 			});
 		},
-		queryKey: ["members", campaign?.campaign.id],
+		queryKey: queryKeys.members.list(campaign?.campaign.id ?? ""),
 	});
 
 	const { mutate: updateCampaign, isPending: updatingCampaign } = useMutation({
@@ -87,7 +88,7 @@ function SettingsPage() {
 		},
 		onError: () => toast.error("Failed to update campaign"),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+			await queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
 			toast.success("Campaign updated");
 		},
 	});
@@ -103,7 +104,7 @@ function SettingsPage() {
 		onError: () => toast.error("Failed to remove member"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ["members", campaign?.campaign.id],
+				queryKey: queryKeys.members.list(campaign?.campaign.id ?? ""),
 			});
 			toast.success("Member removed");
 		},
@@ -116,7 +117,7 @@ function SettingsPage() {
 		},
 		onError: () => toast.error("Failed to delete campaign"),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: ["auth", "campaign"] });
+			await queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
 			toast.success("Campaign deleted");
 			navigate({ to: "/" });
 		},

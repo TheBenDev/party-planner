@@ -4,6 +4,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Suspense, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { client } from "@/lib/client";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const Route = createFileRoute("/")({
 	component: Page,
@@ -21,7 +22,7 @@ function SignedInPage({ userClerkId }: { userClerkId: string }) {
 	const { data: campaign } = useSuspenseQuery({
 		gcTime: 10 * 60 * 1000,
 		queryFn: () => client.campaign.getActiveCampaign(),
-		queryKey: ["auth", "campaign"],
+		queryKey: queryKeys.auth.campaign(),
 	});
 	const navigate = useNavigate();
 
