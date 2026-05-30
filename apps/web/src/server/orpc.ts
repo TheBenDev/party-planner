@@ -274,7 +274,7 @@ export const authMiddleware = os
 
 		// if flag is set, create/update and encrypt cookie for auth information
 		if (shouldSetCookie) {
-			const publicKey = env.VITE_AUTH_PUBLIC_KEY_PEM;
+			const publicKey = env.AUTH_PUBLIC_KEY_PEM;
 
 			if (!publicKey) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
