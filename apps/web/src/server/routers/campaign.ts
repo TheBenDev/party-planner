@@ -61,7 +61,7 @@ const createCampaign = privateProcedure
 						encryptedAuthCookie,
 						env.AUTH_PRIVATE_KEY_PEM,
 					);
-					await updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {
+					await updateAuthCookie(env.AUTH_PUBLIC_KEY_PEM, context, {
 						campaign,
 						role: UserRole.DUNGEON_MASTER,
 						user: rawCookie.user,

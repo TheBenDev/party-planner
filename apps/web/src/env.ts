@@ -5,7 +5,6 @@ import { z } from "zod";
 const clientRuntime = {
 	VITE_API_URL: import.meta.env.VITE_API_URL,
 	VITE_APP_URL: import.meta.env.VITE_APP_URL,
-	VITE_AUTH_PUBLIC_KEY_PEM: import.meta.env.VITE_AUTH_PUBLIC_KEY_PEM,
 	VITE_CLERK_AFTER_SIGN_IN_URL: import.meta.env.VITE_CLERK_AFTER_SIGN_IN_URL,
 	VITE_CLERK_AFTER_SIGN_UP_URL: import.meta.env.VITE_CLERK_AFTER_SIGN_UP_URL,
 	VITE_CLERK_PUBLISHABLE_KEY: import.meta.env.VITE_CLERK_PUBLISHABLE_KEY,
@@ -19,7 +18,6 @@ export const env = createEnv({
 		VITE_API_URL: z.url().default("http://localhost:8000"),
 		VITE_APP_FROM_EMAIL: z.email().default("onboarding@resend.dev"),
 		VITE_APP_URL: z.url().default("http://localhost:3000"),
-		VITE_AUTH_PUBLIC_KEY_PEM: z.string(),
 		VITE_CLERK_AFTER_SIGN_IN_URL: z.string().default("/"),
 		VITE_CLERK_AFTER_SIGN_UP_URL: z.string().default("/onboarding"),
 		VITE_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -35,6 +33,7 @@ export const env = createEnv({
 	},
 	server: {
 		AUTH_PRIVATE_KEY_PEM: z.string(),
+		AUTH_PUBLIC_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
 		CLERK_WEBHOOK_SIGNING_SECRET: z.string(),
 		DATABASE_URL: z.string(),

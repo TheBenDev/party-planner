@@ -72,7 +72,7 @@ const acceptCampaignInvitation = privateProcedure
 						? protoToCampaign(authRes.campaign)
 						: null;
 					const role = authRes.role ? protoRoleToUserRole(authRes.role) : null;
-					await updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {
+					await updateAuthCookie(env.AUTH_PUBLIC_KEY_PEM, context, {
 						campaign,
 						role,
 						user: protoToUser(authRes.user),
