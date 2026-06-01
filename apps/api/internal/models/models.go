@@ -377,6 +377,42 @@ type UpdateSessionRequest struct {
 }
 
 // -----------------------------------------------------------------------------
+// Session Series
+// -----------------------------------------------------------------------------
+
+type SessionSeries struct {
+	ID              string
+	CampaignID      string
+	Title           string
+	Description     sql.NullString
+	RRule           string
+	StartTime       string
+	SeriesStartDate time.Time
+	SeriesEndDate   sql.NullTime
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+}
+
+type CreateSessionSeriesRequest struct {
+	CampaignID      string
+	Title           string
+	Description     sql.NullString
+	RRule           string
+	StartTime       string
+	SeriesStartDate time.Time
+	SeriesEndDate   sql.NullTime
+}
+
+type UpdateSessionSeriesRequest struct {
+	ID            string
+	Title         *string
+	Description   sql.NullString
+	RRule         *string
+	StartTime     *string
+	SeriesEndDate sql.NullTime
+}
+
+// -----------------------------------------------------------------------------
 // Locations
 // -----------------------------------------------------------------------------
 
