@@ -7,6 +7,7 @@ import { memberRouter } from "./routers/member";
 import { nonPlayerCharacterRouter } from "./routers/non-player-character";
 import { questRouter } from "./routers/quest";
 import { sessionRouter } from "./routers/session";
+import { sessionSeriesRouter } from "./routers/sessionSeries";
 import { userRouter } from "./routers/user";
 
 /**
@@ -23,6 +24,7 @@ const appRouter = {
 	npc: nonPlayerCharacterRouter,
 	quest: questRouter,
 	session: sessionRouter,
+	sessionSeries: sessionSeriesRouter,
 	user: userRouter,
 };
 

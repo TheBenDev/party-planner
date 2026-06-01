@@ -70,10 +70,13 @@ const createSession = privateProcedure
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)
 			: undefined;
-		try {
+		const originalStartsAt = input.originalStartsAt ? timestampFromDate(input.originalStartsAt) : undefined
+    try {
 			const res = await api.session.createSession({
 				campaignId: input.campaignId,
-				description: input.description,
+        description: input.description,
+				originalStartsAt,
+				seriesId: input.seriesId ?? undefined,
 				startsAt,
 				status: sessionStatusToProto(input.status),
 				title: input.title,

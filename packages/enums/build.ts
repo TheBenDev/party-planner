@@ -5,6 +5,7 @@ await build({
 		"src/common.ts",
 		"src/event.ts",
 		"src/character.ts",
+		"src/i18n.ts",
 		"src/integration.ts",
 		"src/quest.ts",
 		"src/session.ts",

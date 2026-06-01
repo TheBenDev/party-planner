@@ -391,6 +391,7 @@ type SessionSeries struct {
 	SeriesEndDate   sql.NullTime
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+	Timezone        string
 }
 
 type CreateSessionSeriesRequest struct {
@@ -401,6 +402,7 @@ type CreateSessionSeriesRequest struct {
 	StartTime       string
 	SeriesStartDate time.Time
 	SeriesEndDate   sql.NullTime
+	Timezone        string
 }
 
 type UpdateSessionSeriesRequest struct {
@@ -410,6 +412,7 @@ type UpdateSessionSeriesRequest struct {
 	RRule         *string
 	StartTime     *string
 	SeriesEndDate sql.NullTime
+	Timezone      *string
 }
 
 // -----------------------------------------------------------------------------

@@ -12,6 +12,7 @@ await build({
 		"src/nonPlayerCharacter.ts",
 		"src/quest.ts",
 		"src/session.ts",
+		"src/sessionSeries.ts",
 		"src/user.ts",
 	],
 	external: ["@planner/enums", "zod"],

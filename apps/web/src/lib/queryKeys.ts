@@ -27,6 +27,10 @@ export const queryKeys = {
 		detail: (questId: string) => ["quest", questId] as const,
 		list: (campaignId: string) => ["quests", campaignId] as const,
 	},
+	sessionSeries: {
+		detail: (seriesId: string) => ["session-series", seriesId] as const,
+		list: (campaignId: string) => ["session-series-list", campaignId] as const,
+	},
 	sessions: {
 		detail: (sessionId: string) => ["session", sessionId] as const,
 		list: (campaignId: string) => ["sessions", campaignId] as const,

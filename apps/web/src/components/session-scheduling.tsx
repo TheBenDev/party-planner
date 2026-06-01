@@ -514,7 +514,7 @@ function ConfirmedState({
 			<Separator />
 
 			{/* Actions */}
-			<div className="px-4 py-3 flex items-center gap-2">
+			<div className="px-4 py-3 flex items-center gap-2 justify-end">
 				{announced ? (
 					<p className="text-xs text-muted-foreground flex items-center gap-1.5">
 						<Check className="size-3.5 text-emerald-500" />

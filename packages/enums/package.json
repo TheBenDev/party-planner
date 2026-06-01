@@ -19,6 +19,11 @@
       "require": "./dist/event.js",
       "types": "./dist/event.d.ts"
     },
+    "./i18n": {
+      "import": "./dist/i18n.js",
+      "require": "./dist/i18n.js",
+      "types": "./dist/i18n.d.ts"
+    },
     "./integration": {
       "import": "./dist/integration.js",
       "require": "./dist/integration.js",

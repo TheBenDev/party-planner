@@ -24,6 +24,7 @@ export const sessionSeriesTable = pgTable(
 		seriesStartDate: timestamp("series_start_date", { mode: "date" }).notNull(),
 		startTime: time("start_time").notNull(),
 		title: varchar("title").notNull(),
+		timezone: varchar("timezone").notNull().default("UTC"),
 		updatedAt: timestamp("updated_at", { mode: "date" })
 			.defaultNow()
 			.notNull()

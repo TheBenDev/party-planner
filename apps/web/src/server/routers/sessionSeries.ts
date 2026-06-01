@@ -1,0 +1,241 @@
+import { timestampFromDate } from "@bufbuild/protobuf/wkt";
+import { ORPCError } from "@orpc/server";
+import {
+	AddSeriesExceptionRequestSchema,
+	AddSeriesExceptionResponseSchema,
+	CreateSessionSeriesRequestSchema,
+	CreateSessionSeriesResponseSchema,
+	GetSessionSeriesRequestSchema,
+	GetSessionSeriesResponseSchema,
+	ListSessionSeriesByCampaignRequestSchema,
+	ListSessionSeriesByCampaignResponseSchema,
+	RemoveSeriesExceptionRequestSchema,
+	RemoveSeriesExceptionResponseSchema,
+	RemoveSessionSeriesRequestSchema,
+	RemoveSessionSeriesResponseSchema,
+	UpdateSessionSeriesRequestSchema,
+	UpdateSessionSeriesResponseSchema,
+} from "@planner/schemas/sessionSeries";
+import { handleError } from "../errors";
+import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { protoToSessionSeries } from "./util/proto/sessionSeries";
+
+const createSessionSeries = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/create",
+		summary: "Create a recurring session series",
+	})
+	.input(CreateSessionSeriesRequestSchema)
+	.output(CreateSessionSeriesResponseSchema)
+	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.createSessionSeries({
+				campaignId: input.campaignId,
+				description: input.description,
+				rrule: input.rrule,
+				seriesEndDate: input.seriesEndDate
+					? timestampFromDate(input.seriesEndDate)
+					: undefined,
+				seriesStartDate: timestampFromDate(input.seriesStartDate),
+				startTime: input.startTime,
+				timezone: input.timezone,
+				title: input.title,
+			});
+			if (!res.series) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create session series",
+				});
+			}
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to create session series",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
+		}
+	});
+
+const getSessionSeries = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/get",
+		summary: "Get a session series by id",
+	})
+	.input(GetSessionSeriesRequestSchema)
+	.output(GetSessionSeriesResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.getSessionSeries({ id: input.id });
+			if (!res.series) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "session series not found",
+				});
+			}
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to get session series",
+				{ id: input.id },
+				context.logger,
+			);
+		}
+	});
+
+const listSessionSeriesByCampaign = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/list",
+		summary: "List session series for a campaign",
+	})
+	.input(ListSessionSeriesByCampaignRequestSchema)
+	.output(ListSessionSeriesByCampaignResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.listSessionSeriesByCampaign({
+				campaignId: input.campaignId,
+			});
+			return { series: res.series.map(protoToSessionSeries) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to list session series",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
+		}
+	});
+
+const updateSessionSeries = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/update",
+		summary: "Update a session series",
+	})
+	.input(UpdateSessionSeriesRequestSchema)
+	.output(UpdateSessionSeriesResponseSchema)
+	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.updateSessionSeries({
+				description: input.description,
+				id: input.id,
+				rrule: input.rrule,
+				seriesEndDate: input.seriesEndDate
+					? timestampFromDate(input.seriesEndDate)
+					: undefined,
+				startTime: input.startTime,
+				timezone: input.timezone,
+				title: input.title,
+			});
+			if (!res.series) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update session series",
+				});
+			}
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update session series",
+				{ id: input.id },
+				context.logger,
+			);
+		}
+	});
+
+const removeSessionSeries = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/remove",
+		summary: "Remove a session series",
+	})
+	.input(RemoveSessionSeriesRequestSchema)
+	.output(RemoveSessionSeriesResponseSchema)
+	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
+		const api = context.api;
+		try {
+			await api.sessionSeries.removeSessionSeries({ id: input.id });
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to remove session series",
+				{ id: input.id },
+				context.logger,
+			);
+		}
+	});
+
+const addSeriesException = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/add-exception",
+		summary: "Cancel one occurrence in a series",
+	})
+	.input(AddSeriesExceptionRequestSchema)
+	.output(AddSeriesExceptionResponseSchema)
+	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
+		const api = context.api;
+		try {
+			await api.sessionSeries.addSeriesException({
+				excludedDate: timestampFromDate(input.excludedDate),
+				seriesId: input.seriesId,
+			});
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to add series exception",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const removeSeriesException = privateProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/remove-exception",
+		summary: "Restore a cancelled series occurrence",
+	})
+	.input(RemoveSeriesExceptionRequestSchema)
+	.output(RemoveSeriesExceptionResponseSchema)
+	.handler(async ({ input, context }) => {
+		requireDungeonMaster(context.role);
+		const api = context.api;
+		try {
+			await api.sessionSeries.removeSeriesException({
+				excludedDate: timestampFromDate(input.excludedDate),
+				seriesId: input.seriesId,
+			});
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to remove series exception",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+export const sessionSeriesRouter = {
+	addSeriesException,
+	createSessionSeries,
+	getSessionSeries,
+	listSessionSeriesByCampaign,
+	removeSeriesException,
+	removeSessionSeries,
+	updateSessionSeries,
+};

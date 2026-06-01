@@ -1,0 +1,1 @@
+ALTER TABLE "session_series" ADD COLUMN "timezone" varchar DEFAULT 'UTC' NOT NULL;
