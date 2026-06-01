@@ -222,7 +222,13 @@ func (s *SessionService) Remove(id string) error {
 				ChannelID string `json:"channelId"`
 			}
 			if err := json.Unmarshal(integration.Metadata, &metadata); err == nil && metadata.ChannelID != "" {
-				s.Discord.ClosePoll(context.Background(), metadata.ChannelID, session.PollID.String, session.Title)
+				ctx := context.Background()
+				if err := s.Discord.ClosePoll(ctx, metadata.ChannelID, session.PollID.String); err == nil {
+					sessionInFuture := !session.StartsAt.Valid || session.StartsAt.Time.After(time.Now())
+					if sessionInFuture {
+						s.Discord.NotifyPollCancelled(ctx, metadata.ChannelID, session.PollID.String, session.Title)
+					}
+				}
 			}
 		}
 	}
@@ -232,8 +238,8 @@ func (s *SessionService) Remove(id string) error {
 	return nil
 }
 
-func (s *SessionService) Update(req *model.UpdateSessionRequest) (*model.Session, error) {
-	_, err := s.Get(req.ID)
+func (s *SessionService) Update(ctx context.Context, req *model.UpdateSessionRequest) (*model.Session, error) {
+	session, err := s.Get(req.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -243,6 +249,19 @@ func (s *SessionService) Update(req *model.UpdateSessionRequest) (*model.Session
 			return nil, mapped
 		}
 		return nil, fmt.Errorf("update session error: %w", err)
+	}
+
+	// If an existing session starttime was updated from null to a date, make sure to close the discord poll
+	if !session.StartsAt.Valid && session.PollID.Valid && req.StartsAt.Valid {
+		integration, err := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
+		if err == nil {
+			var metadata struct {
+				ChannelID string `json:"channelId"`
+			}
+			if err := json.Unmarshal(integration.Metadata, &metadata); err == nil && metadata.ChannelID != "" {
+				_ = s.Discord.ClosePoll(ctx, metadata.ChannelID, session.PollID.String)
+			}
+		}
 	}
 	return updated, nil
 }

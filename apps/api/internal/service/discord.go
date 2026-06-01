@@ -243,14 +243,19 @@ func (s *DiscordService) PollSession(
 	return &PollProps{ID: poll.ID}, nil
 }
 
-func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId, sessionTitle string) {
+func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId string) error {
 	if _, err := s.Session.PollExpire(channelId, pollId); err != nil {
 		s.Log.WarnContext(ctx, "failed to close discord poll",
 			"channel_id", channelId,
 			"poll_id", pollId,
 			"error", err,
 		)
+		return err
 	}
+	return nil
+}
+
+func (s *DiscordService) NotifyPollCancelled(ctx context.Context, channelId, pollId, sessionTitle string) {
 	msg := fmt.Sprintf("❌ The poll for **%s** has been closed because the session was cancelled.", sessionTitle)
 	if _, err := s.Session.ChannelMessageSend(channelId, msg, discordgo.WithContext(ctx)); err != nil {
 		s.Log.WarnContext(ctx, "failed to send poll cancellation message",
@@ -260,6 +265,14 @@ func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId, sessi
 			"error", err,
 		)
 	}
+}
+
+func (s *DiscordService) SendDiscordMessage(ctx context.Context, channelId, message string) (*discordgo.Message, error) {
+	discordMessage, err := s.Session.ChannelMessageSend(channelId, message, discordgo.WithContext(ctx))
+	if err != nil {
+		return nil, fmt.Errorf("discord message send error: %w", err)
+	}
+	return discordMessage, nil
 }
 
 func formatPollTimestamps(title string, options []time.Time) string {
