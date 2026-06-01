@@ -88,6 +88,15 @@ func main() {
 	)
 	mux.Handle(sessionPath, sessionHandler)
 
+	sessionSeriesPath, sessionSeriesHandler := plannerv1connect.NewSessionSeriesServiceHandler(
+		&rpc.SessionSeriesServer{
+			SessionSeries: &service.SessionSeriesService{DB: database, Log: logger.Logger},
+			Log:           logger.Logger,
+		},
+		interceptors,
+	)
+	mux.Handle(sessionSeriesPath, sessionSeriesHandler)
+
 	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(&rpc.CampaignServer{Campaign: &service.CampaignService{DB: database, Log: logger.Logger}, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
 

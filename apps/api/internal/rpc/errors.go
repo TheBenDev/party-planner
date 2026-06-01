@@ -73,6 +73,13 @@ func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackM
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case service.ErrSessionInvalidCampaign:
 		return connect.NewError(connect.CodeInvalidArgument, err)
+	// Session Series
+	case service.ErrSessionSeriesNotFound:
+		return connect.NewError(connect.CodeNotFound, err)
+	case service.ErrSessionSeriesAlreadyExists:
+		return connect.NewError(connect.CodeAlreadyExists, err)
+	case service.ErrSessionSeriesInvalidCampaign:
+		return connect.NewError(connect.CodeInvalidArgument, err)
 	// User
 	case service.ErrUserNotFound:
 		return connect.NewError(connect.CodeNotFound, err)
