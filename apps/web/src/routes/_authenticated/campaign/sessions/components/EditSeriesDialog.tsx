@@ -34,7 +34,7 @@ export function EditSeriesDialog({
 	const [title, setTitle] = useState(series.title);
 	const [description, setDescription] = useState(series.description ?? "");
 	const [rrule, setRrule] = useState(series.rrule);
-	const [startTime, setStartTime] = useState(utcTimeToLocal(series.startTime));
+	const [startTime, setStartTime] = useState(utcTimeToLocal(series.startTime, series.seriesStartDate));
 	const [seriesEndDate, setSeriesEndDate] = useState(
 		series.seriesEndDate ? toDateInputValue(series.seriesEndDate) : "",
 	);
@@ -112,7 +112,7 @@ export function EditSeriesDialog({
 								seriesEndDate: seriesEndDate
 									? new Date(`${seriesEndDate}T00:00`)
 									: undefined,
-								startTime: startTime ? localTimeToUtc(startTime) : undefined,
+								startTime: startTime ? localTimeToUtc(startTime, series.seriesStartDate) : undefined,
 								title: title.trim() || undefined,
 							})
 						}

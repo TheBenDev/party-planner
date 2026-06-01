@@ -31,8 +31,9 @@ export function parseRrule(rrule: string): {
   }
 
   let byDay: Set<string>;
-  if (parts.BYDAY.includes(",")) byDay = new Set((parts.BYDAY ?? "").split(",").filter(Boolean));
-  else byDay = new Set([parts.BYDAY])
+  if (parts.BYDAY?.includes(",")) byDay = new Set(parts.BYDAY.split(",").filter(Boolean));
+  else if (parts.BYDAY) byDay = new Set([parts.BYDAY]);
+  else byDay = new Set();
 	return {
 		biWeekly: Number.parseInt(parts.INTERVAL ?? "1", 10) >= 2,
 		days: byDay,
@@ -49,31 +50,31 @@ export function formatStartTime(startTime: string): string {
 	return `${display}:${m ?? "00"} ${period}`;
 }
 
-export function localTimeToUtc(localTime: string): string {
-	const [hStr, mStr] = localTime.split(":");
-	const h = Number(hStr ?? "0");
-	const m = Number(mStr ?? "0");
-	const d = new Date();
-	d.setHours(h, m, 0, 0);
-	return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+export function localTimeToUtc(localTime: string, sessionDate: Date): string {
+  const [hStr, mStr] = localTime.split(":");
+  const h = Number(hStr ?? "0");
+  const m = Number(mStr ?? "0");
+  const d = new Date(sessionDate);
+  d.setHours(h, m, 0, 0);
+  return `${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
 }
 
-export function utcTimeToLocal(utcTime: string): string {
-	const [hStr, mStr] = utcTime.split(":");
-	const h = Number(hStr ?? "0");
-	const m = Number(mStr ?? "0");
-	const now = new Date();
-	const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m));
-	return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+export function utcTimeToLocal(utcTime: string, sessionDate: Date): string {
+  const [hStr, mStr] = utcTime.split(":");
+  const h = Number(hStr ?? "0");
+  const m = Number(mStr ?? "0");
+  const d = new Date(sessionDate);
+  const utc = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), h, m));
+  return `${String(utc.getHours()).padStart(2, "0")}:${String(utc.getMinutes()).padStart(2, "0")}`;
 }
 
-export function rruleToHuman(rrule: string, startTime: string): string {
+export function rruleToHuman(rrule: string, startTime: string, seriesDate: Date): string {
 	const { biWeekly, days } = parseRrule(rrule);
 	const dayNames = Array.from(days)
 		.map((d) => DAY_FULL[d] ?? d)
 		.join(", ");
 	const prefix = biWeekly ? "Every other" : "Every";
-	const localTime = utcTimeToLocal(startTime);
+	const localTime = utcTimeToLocal(startTime, seriesDate);
 	const time = formatStartTime(localTime);
 	return dayNames
 		? `${prefix} ${dayNames} at ${time}`
@@ -116,13 +117,6 @@ export function getNextOccurrence(series: {
 		.filter((n) => n >= 0);
 	if (targetDows.length === 0) return null;
 
-	// Convert stored UTC time → local HH:MM so the Date constructor applies the
-	// correct local offset (avoids off-by-one-day issues near midnight UTC)
-	const localTime = utcTimeToLocal(series.startTime);
-	const [lhStr, lmStr] = localTime.split(":");
-	const localH = Number(lhStr ?? "0");
-  const localM = Number(lmStr ?? "0");
-
   const seriesStart = new Date(series.seriesStartDate);
 	const now = new Date();
 	const searchFrom = now > seriesStart ? now : seriesStart;
@@ -140,6 +134,11 @@ export function getNextOccurrence(series: {
 			);
 			if (Math.floor(daysSinceStart / 7) % 2 !== 0) continue;
 		}
+
+		// Convert UTC time → local for this specific candidate date so DST is correct
+		const [lhStr, lmStr] = utcTimeToLocal(series.startTime, candidate).split(":");
+		const localH = Number(lhStr ?? "0");
+		const localM = Number(lmStr ?? "0");
 
 		const result = new Date(
 			candidate.getFullYear(),

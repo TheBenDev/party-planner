@@ -78,7 +78,7 @@ export function SeriesGroup({
 							{series.title}
 						</p>
 						<p className="text-xs text-muted-foreground mt-0.5 truncate">
-							{rruleToHuman(series.rrule, series.startTime)} &middot;{" "}
+							{rruleToHuman(series.rrule, series.startTime, series.seriesStartDate)} &middot;{" "}
 							{sessions.length} session{sessions.length !== 1 ? "s" : ""}
 						</p>
 					</div>

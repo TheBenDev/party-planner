@@ -95,7 +95,7 @@ export function CreateSessionDialog({
 				? new Date(`${seriesEndDate}T00:00`)
 				: undefined,
 			seriesStartDate: new Date(`${seriesStartDate}T00:00`),
-			startTime: localTimeToUtc(startTime),
+			startTime: localTimeToUtc(startTime, new Date(`${seriesStartDate}T00:00`)),
 			timezone,
 			title: seriesTitle.trim(),
 		});

@@ -19,7 +19,7 @@ export const CreateSessionSeriesRequestSchema = z.object({
 	seriesEndDate: z.date().optional(),
 	seriesStartDate: z.date(),
 	startTime: z.string(),
-	timezone: z.string(),
+	timezone: z.string().min(1),
 	title: z.string(),
 });
 export const CreateSessionSeriesResponseSchema = z.object({
@@ -44,7 +44,7 @@ export const UpdateSessionSeriesRequestSchema = z.object({
 	rrule: z.string().optional(),
 	seriesEndDate: z.date().optional(),
 	startTime: z.string().optional(),
-	timezone: z.string().optional(),
+	timezone: z.string().min(1).optional(),
 	title: z.string().optional(),
 });
 export const UpdateSessionSeriesResponseSchema = z.object({

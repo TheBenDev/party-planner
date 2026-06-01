@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"time"
 
 	"connectrpc.com/connect"
 	v1 "github.com/BBruington/party-planner/api/gen/planner/v1"
@@ -45,6 +46,10 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 	}
 	if req.Msg.Timezone == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("timezone required"))
+	}
+
+	if _, err := time.LoadLocation(req.Msg.Timezone); err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid timezone"))
 	}
 
 	series, err := s.SessionSeries.Create(&model.CreateSessionSeriesRequest{
