@@ -53,6 +53,11 @@
 			"require": "./dist/quest.js",
 			"types": "./dist/quest.d.ts"
 		},
+		"./sessionSeries": {
+			"import": "./dist/sessionSeries.js",
+			"require": "./dist/sessionSeries.js",
+			"types": "./dist/sessionSeries.d.ts"
+		},
 		"./sessions": {
 			"import": "./dist/session.js",
 			"require": "./dist/session.js",

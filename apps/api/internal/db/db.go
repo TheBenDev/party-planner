@@ -895,13 +895,13 @@ func (db *DB) RemoveLocation(id string) error {
 // Session Series
 // -----------------------------------------------------------------------------
 
-const sessionSeriesColumns = `id, campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, created_at, updated_at`
+const sessionSeriesColumns = `id, campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, created_at, updated_at, timezone`
 
 func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSeries, error) {
 	var s model.SessionSeries
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.RRule, &s.StartTime,
-		&s.SeriesStartDate, &s.SeriesEndDate, &s.CreatedAt, &s.UpdatedAt,
+		&s.SeriesStartDate, &s.SeriesEndDate, &s.CreatedAt, &s.UpdatedAt, &s.Timezone,
 	)
 	if err != nil {
 		return nil, err
@@ -911,11 +911,11 @@ func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSerie
 
 func (db *DB) CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session_series (campaign_id, title, description, rrule, start_time, series_start_date, series_end_date)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO session_series (campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, timezone)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING `+sessionSeriesColumns,
 		req.CampaignID, req.Title, req.Description, req.RRule, req.StartTime,
-		req.SeriesStartDate, req.SeriesEndDate,
+		req.SeriesStartDate, req.SeriesEndDate, req.Timezone,
 	)
 	return scanSessionSeries(row)
 }
@@ -955,10 +955,11 @@ func (db *DB) UpdateSessionSeries(req *model.UpdateSessionSeriesRequest) (*model
 			rrule           = COALESCE($3, rrule),
 			start_time      = COALESCE($4, start_time),
 			series_end_date = $5,
+			timezone        = COALESCE($6, timezone),
 			updated_at      = NOW()
-		WHERE id = $6
+		WHERE id = $7
 		RETURNING `+sessionSeriesColumns,
-		req.Title, req.Description, req.RRule, req.StartTime, req.SeriesEndDate, req.ID,
+		req.Title, req.Description, req.RRule, req.StartTime, req.SeriesEndDate, req.Timezone, req.ID,
 	)
 	return scanSessionSeries(row)
 }

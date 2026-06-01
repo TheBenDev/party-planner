@@ -1,0 +1,17 @@
+export enum Language {
+	EN_US = "en-US",
+	EN_AU = "en-AU",
+	EN_GB = "en-GB",
+	EN_CA = "en-CA",
+	FR_FR = "fr-FR",
+	FR_CA = "fr-CA",
+	DE_DE = "de-DE",
+	ES_ES = "es-ES",
+	IT_IT = "it-IT",
+	PT_BR = "pt-BR",
+	JA_JP = "ja-JP",
+	KO_KR = "ko-KR",
+	ZH_CN = "zh-CN",
+	ZH_TW = "zh-TW",
+	EN_NZ = "en-NZ",
+}

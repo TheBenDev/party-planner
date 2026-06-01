@@ -34,6 +34,7 @@ type SessionSeries struct {
 	SeriesEndDate   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Timezone        string                 `protobuf:"bytes,11,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -138,6 +139,13 @@ func (x *SessionSeries) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *SessionSeries) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
+}
+
 type CreateSessionSeriesRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId      string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -147,6 +155,7 @@ type CreateSessionSeriesRequest struct {
 	StartTime       string                 `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	SeriesStartDate *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=series_start_date,json=seriesStartDate,proto3" json:"series_start_date,omitempty"`
 	SeriesEndDate   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
+	Timezone        string                 `protobuf:"bytes,8,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -228,6 +237,13 @@ func (x *CreateSessionSeriesRequest) GetSeriesEndDate() *timestamppb.Timestamp {
 		return x.SeriesEndDate
 	}
 	return nil
+}
+
+func (x *CreateSessionSeriesRequest) GetTimezone() string {
+	if x != nil {
+		return x.Timezone
+	}
+	return ""
 }
 
 type CreateSessionSeriesResponse struct {
@@ -458,6 +474,7 @@ type UpdateSessionSeriesRequest struct {
 	Rrule         *string                `protobuf:"bytes,4,opt,name=rrule,proto3,oneof" json:"rrule,omitempty"`
 	StartTime     *string                `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3,oneof" json:"start_time,omitempty"`
 	SeriesEndDate *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
+	Timezone      *string                `protobuf:"bytes,7,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -532,6 +549,13 @@ func (x *UpdateSessionSeriesRequest) GetSeriesEndDate() *timestamppb.Timestamp {
 		return x.SeriesEndDate
 	}
 	return nil
+}
+
+func (x *UpdateSessionSeriesRequest) GetTimezone() string {
+	if x != nil && x.Timezone != nil {
+		return *x.Timezone
+	}
+	return ""
 }
 
 type UpdateSessionSeriesResponse struct {
@@ -839,7 +863,7 @@ var File_planner_v1_session_series_proto protoreflect.FileDescriptor
 const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"\x1fplanner/v1/session_series.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xdd\x03\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf9\x03\n" +
 	"\rSessionSeries\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -855,9 +879,10 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x0e\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1a\n" +
+	"\btimezone\x18\v \x01(\tR\btimezoneB\x0e\n" +
 	"\f_descriptionB\x12\n" +
-	"\x10_series_end_date\"\xe4\x02\n" +
+	"\x10_series_end_date\"\x80\x03\n" +
 	"\x1aCreateSessionSeriesRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
@@ -867,7 +892,8 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"start_time\x18\x05 \x01(\tR\tstartTime\x12F\n" +
 	"\x11series_start_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x0fseriesStartDate\x12G\n" +
-	"\x0fseries_end_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rseriesEndDate\x88\x01\x01B\x0e\n" +
+	"\x0fseries_end_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rseriesEndDate\x88\x01\x01\x12\x1a\n" +
+	"\btimezone\x18\b \x01(\tR\btimezoneB\x0e\n" +
 	"\f_descriptionB\x12\n" +
 	"\x10_series_end_date\"P\n" +
 	"\x1bCreateSessionSeriesResponse\x121\n" +
@@ -880,7 +906,7 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"X\n" +
 	"#ListSessionSeriesByCampaignResponse\x121\n" +
-	"\x06series\x18\x01 \x03(\v2\x19.planner.v1.SessionSeriesR\x06series\"\xbd\x02\n" +
+	"\x06series\x18\x01 \x03(\v2\x19.planner.v1.SessionSeriesR\x06series\"\xeb\x02\n" +
 	"\x1aUpdateSessionSeriesRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
@@ -888,12 +914,14 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x05rrule\x18\x04 \x01(\tH\x02R\x05rrule\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\tH\x03R\tstartTime\x88\x01\x01\x12G\n" +
-	"\x0fseries_end_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\rseriesEndDate\x88\x01\x01B\b\n" +
+	"\x0fseries_end_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\rseriesEndDate\x88\x01\x01\x12\x1f\n" +
+	"\btimezone\x18\a \x01(\tH\x05R\btimezone\x88\x01\x01B\b\n" +
 	"\x06_titleB\x0e\n" +
 	"\f_descriptionB\b\n" +
 	"\x06_rruleB\r\n" +
 	"\v_start_timeB\x12\n" +
-	"\x10_series_end_date\"P\n" +
+	"\x10_series_end_dateB\v\n" +
+	"\t_timezone\"P\n" +
 	"\x1bUpdateSessionSeriesResponse\x121\n" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\",\n" +
 	"\x1aRemoveSessionSeriesRequest\x12\x0e\n" +

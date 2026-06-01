@@ -43,6 +43,9 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid series end date"))
 		}
 	}
+	if req.Msg.Timezone == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("timezone required"))
+	}
 
 	series, err := s.SessionSeries.Create(&model.CreateSessionSeriesRequest{
 		CampaignID:      req.Msg.CampaignId,
@@ -52,6 +55,7 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 		StartTime:       req.Msg.StartTime,
 		SeriesStartDate: req.Msg.SeriesStartDate.AsTime(),
 		SeriesEndDate:   sqlNullableTime(req.Msg.SeriesEndDate),
+		Timezone:        req.Msg.Timezone,
 	})
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to create session series")
@@ -114,6 +118,7 @@ func (s *SessionSeriesServer) UpdateSessionSeries(ctx context.Context, req *conn
 		RRule:         req.Msg.Rrule,
 		StartTime:     req.Msg.StartTime,
 		SeriesEndDate: sqlNullableTime(req.Msg.SeriesEndDate),
+		Timezone:      req.Msg.Timezone,
 	})
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to update session series")
@@ -185,6 +190,7 @@ func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 		SeriesStartDate: timestamppb.New(s.SeriesStartDate),
 		CreatedAt:       timestamppb.New(s.CreatedAt),
 		UpdatedAt:       timestamppb.New(s.UpdatedAt),
+		Timezone:        s.Timezone,
 	}
 	if s.Description.Valid {
 		proto.Description = &s.Description.String

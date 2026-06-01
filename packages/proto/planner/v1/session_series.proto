@@ -19,6 +19,7 @@ message SessionSeries {
   optional google.protobuf.Timestamp series_end_date = 8;
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
+  string timezone = 11;
 }
 
 // -----------------------------------------------------------------------------
@@ -33,6 +34,7 @@ message CreateSessionSeriesRequest {
   string start_time = 5;
   google.protobuf.Timestamp series_start_date = 6;
   optional google.protobuf.Timestamp series_end_date = 7;
+  string timezone = 8;
 }
 
 message CreateSessionSeriesResponse {
@@ -62,6 +64,7 @@ message UpdateSessionSeriesRequest {
   optional string rrule = 4;
   optional string start_time = 5;
   optional google.protobuf.Timestamp series_end_date = 6;
+  optional string timezone = 7;
 }
 
 message UpdateSessionSeriesResponse {
