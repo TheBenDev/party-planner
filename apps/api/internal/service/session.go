@@ -30,7 +30,7 @@ type SessionService struct {
 }
 
 func (s *SessionService) Announce(ctx context.Context, sessionId string, campaignId string) error {
-	session, err := s.Get(sessionId)
+	session, err := s.Get(sessionId, campaignId)
 	if err != nil {
 		return err
 	}
@@ -73,8 +73,8 @@ func (s *SessionService) Create(session *model.CreateSessionRequest) (*model.Ses
 	return created, nil
 }
 
-func (s *SessionService) Get(id string) (*model.Session, error) {
-	session, err := s.DB.GetSession(id)
+func (s *SessionService) Get(id, campaignId string) (*model.Session, error) {
+	session, err := s.DB.GetSession(id, campaignId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrSessionNotFound
@@ -93,7 +93,7 @@ func (s *SessionService) GetPoll(ctx context.Context, sessionId, campaignId stri
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		session, err = s.Get(sessionId)
+		session, err = s.Get(sessionId, campaignId)
 		if err != nil {
 			return err
 		}
@@ -158,7 +158,7 @@ func (s *SessionService) Poll(ctx context.Context, sessionId string, campaignId 
 
 	g.Go(func() error {
 		var err error
-		session, err = s.Get(sessionId)
+		session, err = s.Get(sessionId, campaignId)
 		if err != nil {
 			return err
 		}
@@ -193,9 +193,10 @@ func (s *SessionService) Poll(ctx context.Context, sessionId string, campaignId 
 	}
 
 	if _, err := s.DB.UpdateSession(&model.UpdateSessionRequest{
-		ID:     sessionId,
-		Status: model.SessionStatusPolling,
-		PollId: sql.NullString{String: poll.ID, Valid: true},
+		ID:         sessionId,
+		Status:     model.SessionStatusPolling,
+		PollId:     sql.NullString{String: poll.ID, Valid: true},
+		CampaignID: campaignId,
 	}); err != nil {
 		// If this fails the poll exists on Discord but is untracked; log enough
 		// context for manual recovery.
@@ -210,8 +211,8 @@ func (s *SessionService) Poll(ctx context.Context, sessionId string, campaignId 
 	return nil
 }
 
-func (s *SessionService) Remove(id string) error {
-	session, err := s.Get(id)
+func (s *SessionService) Remove(id, campaignID string) error {
+	session, err := s.Get(id, campaignID)
 	if err != nil {
 		return err
 	}
@@ -232,14 +233,14 @@ func (s *SessionService) Remove(id string) error {
 			}
 		}
 	}
-	if err := s.DB.RemoveSession(id); err != nil {
+	if err := s.DB.RemoveSession(id, campaignID); err != nil {
 		return fmt.Errorf("remove session error: %w", err)
 	}
 	return nil
 }
 
 func (s *SessionService) Update(ctx context.Context, req *model.UpdateSessionRequest) (*model.Session, error) {
-	session, err := s.Get(req.ID)
+	session, err := s.Get(req.ID, req.CampaignID)
 	if err != nil {
 		return nil, err
 	}

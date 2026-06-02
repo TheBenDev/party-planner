@@ -33,8 +33,8 @@ func (s *SessionSeriesService) Create(req *model.CreateSessionSeriesRequest) (*m
 	return created, nil
 }
 
-func (s *SessionSeriesService) Get(id string) (*model.SessionSeries, error) {
-	series, err := s.DB.GetSessionSeries(id)
+func (s *SessionSeriesService) Get(id, campaignId string) (*model.SessionSeries, error) {
+	series, err := s.DB.GetSessionSeries(id, campaignId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrSessionSeriesNotFound
@@ -53,7 +53,7 @@ func (s *SessionSeriesService) ListByCampaign(campaignID string) ([]*model.Sessi
 }
 
 func (s *SessionSeriesService) Update(req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
-	if _, err := s.Get(req.ID); err != nil {
+	if _, err := s.Get(req.ID, req.CampaignID); err != nil {
 		return nil, err
 	}
 	updated, err := s.DB.UpdateSessionSeries(req)
@@ -66,31 +66,31 @@ func (s *SessionSeriesService) Update(req *model.UpdateSessionSeriesRequest) (*m
 	return updated, nil
 }
 
-func (s *SessionSeriesService) Remove(id string) error {
-	if _, err := s.Get(id); err != nil {
+func (s *SessionSeriesService) Remove(id, campaignID string) error {
+	if _, err := s.Get(id, campaignID); err != nil {
 		return err
 	}
-	if err := s.DB.RemoveSessionSeries(id); err != nil {
+	if err := s.DB.RemoveSessionSeries(id, campaignID); err != nil {
 		return fmt.Errorf("remove session series error: %w", err)
 	}
 	return nil
 }
 
-func (s *SessionSeriesService) AddException(seriesID string, excludedDate time.Time) error {
-	if _, err := s.Get(seriesID); err != nil {
+func (s *SessionSeriesService) AddException(seriesID, campaignID string, excludedDate time.Time) error {
+	if _, err := s.Get(seriesID, campaignID); err != nil {
 		return err
 	}
-	if err := s.DB.AddSeriesException(seriesID, excludedDate); err != nil {
+	if err := s.DB.AddSeriesException(seriesID, campaignID, excludedDate); err != nil {
 		return fmt.Errorf("add series exception error: %w", err)
 	}
 	return nil
 }
 
-func (s *SessionSeriesService) RemoveException(seriesID string, excludedDate time.Time) error {
-	if _, err := s.Get(seriesID); err != nil {
+func (s *SessionSeriesService) RemoveException(seriesID, campaignID string, excludedDate time.Time) error {
+	if _, err := s.Get(seriesID, campaignID); err != nil {
 		return err
 	}
-	if err := s.DB.RemoveSeriesException(seriesID, excludedDate); err != nil {
+	if err := s.DB.RemoveSeriesException(seriesID, campaignID, excludedDate); err != nil {
 		return fmt.Errorf("remove series exception error: %w", err)
 	}
 	return nil

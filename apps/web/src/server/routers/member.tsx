@@ -24,7 +24,7 @@ import {
 import DndInviteEmail from "@/components/email-invite-template";
 import { env } from "@/env";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster, updateAuthCookie } from "../orpc";
+import { campaignProcedure, dmProcedure, privateProcedure, updateAuthCookie } from "../orpc";
 import { generateToken } from "./util/helpers";
 import { protoToCampaign } from "./util/proto/campaign";
 import {
@@ -132,7 +132,7 @@ const declineCampaignInvitation = privateProcedure
 		}
 	});
 
-const createInvitation = privateProcedure
+const createInvitation = dmProcedure
 	.route({
 		method: "POST",
 		path: "/member/createInvitation",
@@ -141,16 +141,8 @@ const createInvitation = privateProcedure
 	.input(CreateCampaignInvitationRequestSchema)
 	.output(CreateCampaignInvitationResponseSchema)
 	.handler(async ({ context, input }) => {
-		requireDungeonMaster(context.role);
 		const { inviteeEmail, role } = input;
 		const { campaignId, userId, clerkUserId, api, resend } = context;
-
-		if (campaignId === null) {
-			throw new ORPCError("CONFLICT", {
-				message:
-					"failed to create invitation. Could not find active campaign id.",
-			});
-		}
 
 		try {
 			const [campaignRes, inviterRes] = await Promise.all([
@@ -218,7 +210,7 @@ const createInvitation = privateProcedure
 			);
 		}
 	});
-const listInvitations = privateProcedure
+const listInvitations = dmProcedure
 	.route({
 		method: "POST",
 		path: "/member/listInvitations",
@@ -226,10 +218,8 @@ const listInvitations = privateProcedure
 	})
 	.output(ListCampaignInvitationsByCampaignResponseSchema)
 	.handler(async ({ context }) => {
-		requireDungeonMaster(context.role);
 		const campaignId = context.campaignId;
 		const api = context.api;
-		if (campaignId === null) return { invitations: [] };
 		try {
 			const res = await api.member.listCampaignInvitations({ campaignId });
 			const invitations = res.invitations.map(protoToCampaignInvitation);
@@ -244,7 +234,7 @@ const listInvitations = privateProcedure
 		}
 	});
 
-const revokeInvitation = privateProcedure
+const revokeInvitation = dmProcedure
 	.route({
 		method: "POST",
 		path: "/member/revokeInvitation",
@@ -253,16 +243,9 @@ const revokeInvitation = privateProcedure
 	.input(RevokeCampaignInvitationRequestSchema)
 	.output(RevokeCampaignInvitationResponseSchema)
 	.handler(async ({ context, input }) => {
-		requireDungeonMaster(context.role);
 		const { id } = input;
 		const campaignId = context.campaignId;
 		const api = context.api;
-		if (campaignId === null) {
-			throw new ORPCError("CONFLICT", {
-				message:
-					"failed to revoke invitation. Could not find active campaign id.",
-			});
-		}
 		try {
 			const res = await api.member.revokeCampaignInvitation({ campaignId, id });
 			if (res.invitation === undefined) {
@@ -282,7 +265,7 @@ const revokeInvitation = privateProcedure
 		}
 	});
 
-const createMember = privateProcedure
+const createMember = dmProcedure
 	.route({
 		method: "POST",
 		path: "/member",
@@ -291,8 +274,10 @@ const createMember = privateProcedure
 	.input(CreateMemberRequestSchema)
 	.output(CreateMemberResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const { campaignId, userId, role } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const res = await api.member.createMember({
@@ -309,7 +294,7 @@ const createMember = privateProcedure
 		}
 	});
 
-const getMember = privateProcedure
+const getMember = campaignProcedure
 	.route({
 		method: "GET",
 		path: "/member",
@@ -319,6 +304,9 @@ const getMember = privateProcedure
 	.output(GetMemberResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId, userId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const res = await api.member.getMember({ campaignId, userId });
@@ -331,7 +319,7 @@ const getMember = privateProcedure
 		}
 	});
 
-const listMembersByCampaign = privateProcedure
+const listMembersByCampaign = campaignProcedure
 	.route({
 		method: "GET",
 		path: "/member/listByCampaign",
@@ -341,7 +329,6 @@ const listMembersByCampaign = privateProcedure
 	.handler(async ({ context }) => {
 		const { campaignId } = context;
 		const api = context.api;
-		if (campaignId === undefined || campaignId === null) return { members: [] };
 		try {
 			const res = await api.member.listMembersByCampaign({ campaignId });
 			return { members: res.members.map(protoToMember) };
@@ -373,7 +360,7 @@ const listMembersByUser = privateProcedure
 		}
 	});
 
-const removeMember = privateProcedure
+const removeMember = dmProcedure
 	.route({
 		method: "DELETE",
 		path: "/member",
@@ -382,8 +369,10 @@ const removeMember = privateProcedure
 	.input(RemoveMemberRequestSchema)
 	.output(RemoveMemberResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const { campaignId, userId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			await api.member.removeMember({ campaignId, userId });

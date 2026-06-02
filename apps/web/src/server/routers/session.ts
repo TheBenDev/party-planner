@@ -19,14 +19,14 @@ import {
 	UpdateSessionResponseSchema,
 } from "@planner/schemas/sessions";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import {
 	protoToPoll,
 	protoToSession,
 	sessionStatusToProto,
 } from "./util/proto/session";
 
-const announceSession = privateProcedure
+const announceSession = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session/announce",
@@ -35,10 +35,11 @@ const announceSession = privateProcedure
 	.input(AnnounceSessionRequestSchema)
 	.output(AnnounceSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		const { campaignId, sessionId } = input;
-
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			await api.session.announceSession({
 				campaignId,
@@ -56,7 +57,7 @@ const announceSession = privateProcedure
 		}
 	});
 
-const createSession = privateProcedure
+const createSession = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session/create",
@@ -65,16 +66,20 @@ const createSession = privateProcedure
 	.input(CreateSessionRequestSchema)
 	.output(CreateSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)
 			: undefined;
-		const originalStartsAt = input.originalStartsAt ? timestampFromDate(input.originalStartsAt) : undefined
-    try {
+		const originalStartsAt = input.originalStartsAt
+			? timestampFromDate(input.originalStartsAt)
+			: undefined;
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
+		try {
 			const res = await api.session.createSession({
 				campaignId: input.campaignId,
-        description: input.description,
+				description: input.description,
 				originalStartsAt,
 				seriesId: input.seriesId ?? undefined,
 				startsAt,
@@ -97,7 +102,7 @@ const createSession = privateProcedure
 		}
 	});
 
-const getSession = privateProcedure
+const getSession = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session/get",
@@ -109,11 +114,15 @@ const getSession = privateProcedure
 		const { id } = input;
 		const api = context.api;
 		try {
-			const res = await api.session.getSession({ id });
+			const res = await api.session.getSession({
+				campaignId: context.campaignId,
+				id,
+			});
 			if (res.session === undefined) {
 				throw new ORPCError("NOT_FOUND", { message: "session not found" });
 			}
-			return { session: protoToSession(res.session) };
+			const session = protoToSession(res.session);
+			return { session };
 		} catch (err) {
 			handleError(
 				err,
@@ -124,7 +133,7 @@ const getSession = privateProcedure
 		}
 	});
 
-const listSessions = privateProcedure
+const listSessions = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session/list",
@@ -134,6 +143,9 @@ const listSessions = privateProcedure
 	.output(ListSessionsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const res = await api.session.listSessionsByCampaign({ campaignId });
@@ -148,7 +160,7 @@ const listSessions = privateProcedure
 		}
 	});
 
-const getPoll = privateProcedure
+const getPoll = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session/get-poll",
@@ -159,6 +171,9 @@ const getPoll = privateProcedure
 	.handler(async ({ input, context }) => {
 		const api = context.api;
 		const { campaignId, sessionId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const pollProto = await api.session.getSessionPoll({
 				campaignId,
@@ -174,7 +189,7 @@ const getPoll = privateProcedure
 			handleError(err, "failed to poll session", { sessionId }, context.logger);
 		}
 	});
-const pollSession = privateProcedure
+const pollSession = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session/poll",
@@ -183,9 +198,11 @@ const pollSession = privateProcedure
 	.input(PollSessionRequestSchema)
 	.output(PollSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		const { campaignId, sessionId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const options = input.options.map((o) => timestampFromDate(o));
 			await api.session.pollSession({ campaignId, options, sessionId });
@@ -195,7 +212,7 @@ const pollSession = privateProcedure
 		}
 	});
 
-const removeSession = privateProcedure
+const removeSession = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session/remove",
@@ -204,10 +221,12 @@ const removeSession = privateProcedure
 	.input(RemoveSessionRequestSchema)
 	.output(RemoveSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
-			await api.session.removeSession({ id: input.id });
+			await api.session.removeSession({
+				campaignId: context.campaignId,
+				id: input.id,
+			});
 			return {};
 		} catch (err) {
 			handleError(
@@ -219,7 +238,7 @@ const removeSession = privateProcedure
 		}
 	});
 
-const updateSession = privateProcedure
+const updateSession = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session/update",
@@ -228,7 +247,6 @@ const updateSession = privateProcedure
 	.input(UpdateSessionRequestSchema)
 	.output(UpdateSessionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)
@@ -236,6 +254,7 @@ const updateSession = privateProcedure
 		try {
 			const res = await api.session.updateSession({
 				...input,
+				campaignId: context.campaignId,
 				startsAt,
 				status: sessionStatusToProto(input.status),
 			});
@@ -249,7 +268,7 @@ const updateSession = privateProcedure
 			handleError(
 				err,
 				"failed to update session",
-				{ sessiongId: input.id },
+				{ sessionId: input.id },
 				context.logger,
 			);
 		}

@@ -273,6 +273,7 @@ type UpdateNpcRequest struct {
 	OriginLocationID      sql.NullString
 	SessionEncounteredID  sql.NullString
 	Aliases               []string
+	CampaignID            string
 }
 
 // -----------------------------------------------------------------------------
@@ -316,6 +317,7 @@ type UpdateQuestRequest struct {
 	Title       *string
 	Status      *QuestStatus
 	Description sql.NullString
+	CampaignID  string
 }
 
 // -----------------------------------------------------------------------------
@@ -373,6 +375,7 @@ type UpdateSessionRequest struct {
 	PollId      sql.NullString
 	Status      SessionStatus
 	StartsAt    sql.NullTime
+	CampaignID  string
 }
 
 // -----------------------------------------------------------------------------
@@ -412,6 +415,7 @@ type UpdateSessionSeriesRequest struct {
 	StartTime     *string
 	SeriesEndDate sql.NullTime
 	Timezone      *string
+	CampaignID    string
 }
 
 // -----------------------------------------------------------------------------
@@ -444,4 +448,5 @@ type UpdateLocationRequest struct {
 	Description sql.NullString
 	Notes       sql.NullString
 	DmNotes     sql.NullString
+	CampaignID  string
 }

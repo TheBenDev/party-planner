@@ -545,6 +545,7 @@ func (x *CreateSessionResponse) GetSession() *Session {
 type GetSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -582,6 +583,13 @@ func (*GetSessionRequest) Descriptor() ([]byte, []int) {
 func (x *GetSessionRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetSessionRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -913,6 +921,7 @@ func (*PollSessionResponse) Descriptor() ([]byte, []int) {
 type RemoveSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -950,6 +959,13 @@ func (*RemoveSessionRequest) Descriptor() ([]byte, []int) {
 func (x *RemoveSessionRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveSessionRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -997,6 +1013,7 @@ type UpdateSessionRequest struct {
 	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
 	Status        SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
 	Title         *string                `protobuf:"bytes,5,opt,name=title,proto3,oneof" json:"title,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,6,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1062,6 +1079,13 @@ func (x *UpdateSessionRequest) GetStatus() SessionStatus {
 func (x *UpdateSessionRequest) GetTitle() string {
 	if x != nil && x.Title != nil {
 		return *x.Title
+	}
+	return ""
+}
+
+func (x *UpdateSessionRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -1173,9 +1197,11 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\aanswers\x18\x02 \x03(\v2\x16.planner.v1.PollAnswerR\aanswers\x12!\n" +
 	"\fis_finalized\x18\x03 \x01(\bR\visFinalized\"F\n" +
 	"\x15CreateSessionResponse\x12-\n" +
-	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"#\n" +
+	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"D\n" +
 	"\x11GetSessionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"C\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"C\n" +
 	"\x12GetSessionResponse\x12-\n" +
 	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"W\n" +
 	"\x15GetSessionPollRequest\x12\x1d\n" +
@@ -1196,16 +1222,20 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tR\tsessionId\x124\n" +
 	"\aoptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\aoptions\"\x15\n" +
-	"\x13PollSessionResponse\"&\n" +
+	"\x13PollSessionResponse\"G\n" +
 	"\x14RemoveSessionRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x17\n" +
-	"\x15RemoveSessionResponse\"\x81\x02\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"\x17\n" +
+	"\x15RemoveSessionResponse\"\xa2\x02\n" +
 	"\x14UpdateSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
 	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
 	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x121\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x19\n" +
-	"\x05title\x18\x05 \x01(\tH\x02R\x05title\x88\x01\x01B\x0e\n" +
+	"\x05title\x18\x05 \x01(\tH\x02R\x05title\x88\x01\x01\x12\x1f\n" +
+	"\vcampaign_id\x18\x06 \x01(\tR\n" +
+	"campaignIdB\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\b\n" +

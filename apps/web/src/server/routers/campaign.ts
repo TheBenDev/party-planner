@@ -17,8 +17,8 @@ import { handleError } from "../errors";
 import {
 	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 	AUTH_COOKIE_NAME,
+	dmProcedure,
 	privateProcedure,
-	requireDungeonMaster,
 	updateAuthCookie,
 } from "../orpc";
 import { protoToCampaign } from "./util/proto/campaign";
@@ -131,7 +131,7 @@ const getActiveCampaign = privateProcedure
 		}
 	});
 
-const updateCampaign = privateProcedure
+const updateCampaign = dmProcedure
 	.route({
 		method: "POST",
 		path: "/campaign/update",
@@ -141,10 +141,11 @@ const updateCampaign = privateProcedure
 	.output(UpdateCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { id, title, description, tags } = input;
-		const { api, logger, role } = context;
-
+		const { api, logger } = context;
+		if (id !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
-			requireDungeonMaster(role);
 			const result = await api.campaign.updateCampaign({
 				description,
 				id,
@@ -164,7 +165,7 @@ const updateCampaign = privateProcedure
 		}
 	});
 
-const deleteCampaign = privateProcedure
+const deleteCampaign = dmProcedure
 	.route({
 		method: "POST",
 		path: "/campaign/delete",
@@ -174,18 +175,18 @@ const deleteCampaign = privateProcedure
 	.output(DeleteCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { id } = input;
-		const { api, role, logger, campaignId } = context;
-
+		const { api, logger, campaignId } = context;
+		if (id !== campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
-			requireDungeonMaster(role);
 			const result = await api.campaign.deleteCampaign({
 				id,
 				userId: context.userId,
 			});
+			deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+
 			const campaignProto = result.campaign;
-			if (campaignId === id) {
-				deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
-			}
 			if (campaignProto === undefined) {
 				throw new ORPCError("INTERNAL_SERVER_ERROR", {
 					message: "failed to delete campaign",

@@ -320,8 +320,27 @@ export const publicProcedure = base.use(loggingMiddleware).use(apiMiddleware);
  */
 export const privateProcedure = publicProcedure.use(authMiddleware);
 
-export function requireDungeonMaster(role: UserRole | null): void {
-	if (role !== UserRole.DUNGEON_MASTER) {
-		throw new ORPCError("FORBIDDEN", { message: "requires dungeon master role" });
+/**
+ * Campaign-scoped procedures - check user to be valid member of a campaign
+ */
+export const campaignProcedure = privateProcedure.use(({ next, context }) => {
+	if (!context.campaignId) {
+		throw new ORPCError("FORBIDDEN", { message: "no active campaign" });
 	}
-}
+	if (!context.role) {
+		throw new ORPCError("FORBIDDEN", { message: "no campaign role" });
+	}
+	return next({ context: { campaignId: context.campaignId, role: context.role } });
+});
+
+/**
+ * DM-only procedures - requires DUNGEON_MASTER role and active campaign
+ */
+export const dmProcedure = campaignProcedure.use(({ next, context }) => {
+	if (context.role !== UserRole.DUNGEON_MASTER) {
+		throw new ORPCError("FORBIDDEN", {
+			message: "requires dungeon master role",
+		});
+	}
+	return next({});
+});

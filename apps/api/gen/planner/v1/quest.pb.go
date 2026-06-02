@@ -330,6 +330,7 @@ func (x *CreateQuestResponse) GetQuest() *Quest {
 type GetQuestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -367,6 +368,13 @@ func (*GetQuestRequest) Descriptor() ([]byte, []int) {
 func (x *GetQuestRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetQuestRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -509,6 +517,7 @@ type UpdateQuestRequest struct {
 	Title         *string                `protobuf:"bytes,2,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	Status        *QuestStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus,oneof" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,5,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -571,6 +580,13 @@ func (x *UpdateQuestRequest) GetDescription() string {
 	return ""
 }
 
+func (x *UpdateQuestRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
 type UpdateQuestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Quest         *Quest                 `protobuf:"bytes,1,opt,name=quest,proto3" json:"quest,omitempty"`
@@ -618,6 +634,7 @@ func (x *UpdateQuestResponse) GetQuest() *Quest {
 type RemoveQuestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -655,6 +672,13 @@ func (*RemoveQuestRequest) Descriptor() ([]byte, []int) {
 func (x *RemoveQuestRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveQuestRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -735,28 +759,34 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\x0f_quest_giver_idB\t\n" +
 	"\a_reward\">\n" +
 	"\x13CreateQuestResponse\x12'\n" +
-	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"!\n" +
+	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"B\n" +
 	"\x0fGetQuestRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\";\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\";\n" +
 	"\x10GetQuestResponse\x12'\n" +
 	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\">\n" +
 	"\x1bListQuestsByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"I\n" +
 	"\x1cListQuestsByCampaignResponse\x12)\n" +
-	"\x06quests\x18\x01 \x03(\v2\x11.planner.v1.QuestR\x06quests\"\xc1\x01\n" +
+	"\x06quests\x18\x01 \x03(\v2\x11.planner.v1.QuestR\x06quests\"\xe2\x01\n" +
 	"\x12UpdateQuestRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x124\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x17.planner.v1.QuestStatusH\x01R\x06status\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01B\b\n" +
+	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1f\n" +
+	"\vcampaign_id\x18\x05 \x01(\tR\n" +
+	"campaignIdB\b\n" +
 	"\x06_titleB\t\n" +
 	"\a_statusB\x0e\n" +
 	"\f_description\">\n" +
 	"\x13UpdateQuestResponse\x12'\n" +
-	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"$\n" +
+	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"E\n" +
 	"\x12RemoveQuestRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x15\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"\x15\n" +
 	"\x13RemoveQuestResponse*y\n" +
 	"\vQuestStatus\x12\x1c\n" +
 	"\x18QUEST_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +

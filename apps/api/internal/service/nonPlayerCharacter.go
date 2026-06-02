@@ -47,8 +47,8 @@ func (s *NpcService) Create(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	return created, nil
 }
 
-func (s *NpcService) Get(id string) (*model.Npc, error) {
-	npc, err := s.DB.GetNpc(id)
+func (s *NpcService) Get(id, campaignId string) (*model.Npc, error) {
+	npc, err := s.DB.GetNpc(id, campaignId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNpcNotFound
@@ -67,7 +67,7 @@ func (s *NpcService) ListByCampaign(campaignId string) ([]*model.Npc, error) {
 }
 
 func (s *NpcService) Update(req *model.UpdateNpcRequest) (*model.Npc, error) {
-	_, err := s.Get(req.ID)
+	_, err := s.Get(req.ID, req.CampaignID)
 	if err != nil {
 		return nil, err
 	}
@@ -82,13 +82,13 @@ func (s *NpcService) Update(req *model.UpdateNpcRequest) (*model.Npc, error) {
 	return updated, nil
 }
 
-func (s *NpcService) Remove(id string) error {
-	_, err := s.Get(id)
+func (s *NpcService) Remove(id, campaignID string) error {
+	_, err := s.Get(id, campaignID)
 	if err != nil {
 		return err
 	}
 
-	if err := s.DB.RemoveNpc(id); err != nil {
+	if err := s.DB.RemoveNpc(id, campaignID); err != nil {
 		return fmt.Errorf("remove npc error: %w", err)
 	}
 	return nil

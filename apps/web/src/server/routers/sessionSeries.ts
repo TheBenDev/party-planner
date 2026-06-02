@@ -17,10 +17,10 @@ import {
 	UpdateSessionSeriesResponseSchema,
 } from "@planner/schemas/sessionSeries";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import { protoToSessionSeries } from "./util/proto/sessionSeries";
 
-const createSessionSeries = privateProcedure
+const createSessionSeries = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/create",
@@ -29,8 +29,10 @@ const createSessionSeries = privateProcedure
 	.input(CreateSessionSeriesRequestSchema)
 	.output(CreateSessionSeriesResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const res = await api.sessionSeries.createSessionSeries({
 				campaignId: input.campaignId,
@@ -60,7 +62,7 @@ const createSessionSeries = privateProcedure
 		}
 	});
 
-const getSessionSeries = privateProcedure
+const getSessionSeries = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/get",
@@ -71,13 +73,17 @@ const getSessionSeries = privateProcedure
 	.handler(async ({ input, context }) => {
 		const api = context.api;
 		try {
-			const res = await api.sessionSeries.getSessionSeries({ id: input.id });
+			const res = await api.sessionSeries.getSessionSeries({
+				campaignId: context.campaignId,
+				id: input.id,
+			});
 			if (!res.series) {
 				throw new ORPCError("NOT_FOUND", {
 					message: "session series not found",
 				});
 			}
-			return { series: protoToSessionSeries(res.series) };
+			const series = protoToSessionSeries(res.series);
+			return { series };
 		} catch (err) {
 			handleError(
 				err,
@@ -88,7 +94,7 @@ const getSessionSeries = privateProcedure
 		}
 	});
 
-const listSessionSeriesByCampaign = privateProcedure
+const listSessionSeriesByCampaign = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/list",
@@ -98,6 +104,9 @@ const listSessionSeriesByCampaign = privateProcedure
 	.output(ListSessionSeriesByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const api = context.api;
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const res = await api.sessionSeries.listSessionSeriesByCampaign({
 				campaignId: input.campaignId,
@@ -113,7 +122,7 @@ const listSessionSeriesByCampaign = privateProcedure
 		}
 	});
 
-const updateSessionSeries = privateProcedure
+const updateSessionSeries = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/update",
@@ -122,10 +131,10 @@ const updateSessionSeries = privateProcedure
 	.input(UpdateSessionSeriesRequestSchema)
 	.output(UpdateSessionSeriesResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			const res = await api.sessionSeries.updateSessionSeries({
+				campaignId: context.campaignId,
 				description: input.description,
 				id: input.id,
 				rrule: input.rrule,
@@ -152,7 +161,7 @@ const updateSessionSeries = privateProcedure
 		}
 	});
 
-const removeSessionSeries = privateProcedure
+const removeSessionSeries = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/remove",
@@ -161,10 +170,12 @@ const removeSessionSeries = privateProcedure
 	.input(RemoveSessionSeriesRequestSchema)
 	.output(RemoveSessionSeriesResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
-			await api.sessionSeries.removeSessionSeries({ id: input.id });
+			await api.sessionSeries.removeSessionSeries({
+				campaignId: context.campaignId,
+				id: input.id,
+			});
 			return {};
 		} catch (err) {
 			handleError(
@@ -176,7 +187,7 @@ const removeSessionSeries = privateProcedure
 		}
 	});
 
-const addSeriesException = privateProcedure
+const addSeriesException = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/add-exception",
@@ -185,10 +196,10 @@ const addSeriesException = privateProcedure
 	.input(AddSeriesExceptionRequestSchema)
 	.output(AddSeriesExceptionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			await api.sessionSeries.addSeriesException({
+				campaignId: context.campaignId,
 				excludedDate: timestampFromDate(input.excludedDate),
 				seriesId: input.seriesId,
 			});
@@ -203,7 +214,7 @@ const addSeriesException = privateProcedure
 		}
 	});
 
-const removeSeriesException = privateProcedure
+const removeSeriesException = dmProcedure
 	.route({
 		method: "POST",
 		path: "/session-series/remove-exception",
@@ -212,10 +223,10 @@ const removeSeriesException = privateProcedure
 	.input(RemoveSeriesExceptionRequestSchema)
 	.output(RemoveSeriesExceptionResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			await api.sessionSeries.removeSeriesException({
+				campaignId: context.campaignId,
 				excludedDate: timestampFromDate(input.excludedDate),
 				seriesId: input.seriesId,
 			});

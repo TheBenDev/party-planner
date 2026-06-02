@@ -82,7 +82,11 @@ func (s *NpcServer) GetNpc(ctx context.Context, req *connect.Request[v1.GetNpcRe
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
 
-	npc, err := s.Npc.Get(req.Msg.Id)
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	npc, err := s.Npc.Get(req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to get npc")
 	}
@@ -116,6 +120,9 @@ func (s *NpcServer) UpdateNpc(ctx context.Context, req *connect.Request[v1.Updat
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
 	var status *model.CharacterStatus
 	if req.Msg.Status != nil {
@@ -143,6 +150,7 @@ func (s *NpcServer) UpdateNpc(ctx context.Context, req *connect.Request[v1.Updat
 
 	npc, err := s.Npc.Update(&model.UpdateNpcRequest{
 		ID:                    req.Msg.Id,
+		CampaignID:            req.Msg.CampaignId,
 		Name:                  req.Msg.Name,
 		Status:                status,
 		RelationToPartyStatus: relation,
@@ -175,8 +183,11 @@ func (s *NpcServer) RemoveNpc(ctx context.Context, req *connect.Request[v1.Remov
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
-	if err := s.Npc.Remove(req.Msg.Id); err != nil {
+	if err := s.Npc.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove npc")
 	}
 

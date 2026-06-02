@@ -12,14 +12,14 @@ import {
 	UpdateNpcResponseSchema,
 } from "@planner/schemas/nonPlayerCharacters";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import {
 	characterStatusToProto,
 	protoToNpc,
 	relationToPartyToProto,
 } from "./util/proto/non-player-character";
 
-const createNpc = privateProcedure
+const createNpc = dmProcedure
 	.route({
 		method: "POST",
 		path: "/npc/create",
@@ -28,8 +28,10 @@ const createNpc = privateProcedure
 	.input(CreateNpcRequestSchema)
 	.output(CreateNpcResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const res = await api.npc.createNpc({
 				...input,
@@ -54,7 +56,7 @@ const createNpc = privateProcedure
 		}
 	});
 
-const getNonPlayerCharacter = privateProcedure
+const getNonPlayerCharacter = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/npc/get",
@@ -66,17 +68,18 @@ const getNonPlayerCharacter = privateProcedure
 		const { id } = input;
 		const api = context.api;
 		try {
-			const res = await api.npc.getNpc({ id });
+			const res = await api.npc.getNpc({ campaignId: context.campaignId, id });
 			if (res.npc === undefined) {
 				throw new ORPCError("NOT_FOUND", { message: "npc not found" });
 			}
-			return { npc: protoToNpc(res.npc) };
+			const npc = protoToNpc(res.npc);
+			return { npc };
 		} catch (err) {
 			handleError(err, "failed to get npc", { npcId: id }, context.logger);
 		}
 	});
 
-const listNonPlayerCharactersByCampaign = privateProcedure
+const listNonPlayerCharactersByCampaign = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/npc/list",
@@ -86,6 +89,9 @@ const listNonPlayerCharactersByCampaign = privateProcedure
 	.output(ListNonPlayerCharactersByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const res = await api.npc.listNpcsByCampaign({
@@ -97,7 +103,7 @@ const listNonPlayerCharactersByCampaign = privateProcedure
 		}
 	});
 
-const removeNpc = privateProcedure
+const removeNpc = dmProcedure
 	.route({
 		method: "POST",
 		path: "/npc/remove",
@@ -106,11 +112,11 @@ const removeNpc = privateProcedure
 	.input(RemoveNpcRequestSchema)
 	.output(RemoveNpcResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const { id } = input;
 		const api = context.api;
 		try {
 			await api.npc.removeNpc({
+				campaignId: context.campaignId,
 				id,
 			});
 			return {};
@@ -119,7 +125,7 @@ const removeNpc = privateProcedure
 		}
 	});
 
-const updateNpc = privateProcedure
+const updateNpc = dmProcedure
 	.route({
 		method: "POST",
 		path: "/npc/update",
@@ -128,7 +134,6 @@ const updateNpc = privateProcedure
 	.input(UpdateNpcRequestSchema)
 	.output(UpdateNpcResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 
 		try {
@@ -138,6 +143,7 @@ const updateNpc = privateProcedure
 				appearance: input.appearance,
 				avatar: input.avatar,
 				backstory: input.backstory,
+				campaignId: context.campaignId,
 				currentLocationId: input.currentLocationId,
 				dmNotes: input.dmNotes,
 				foundryActorId: input.foundryActorId,

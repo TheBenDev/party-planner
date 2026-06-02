@@ -590,6 +590,7 @@ func (x *CreateNpcResponse) GetNpc() *Npc {
 type GetNpcRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -627,6 +628,13 @@ func (*GetNpcRequest) Descriptor() ([]byte, []int) {
 func (x *GetNpcRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetNpcRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -784,6 +792,7 @@ type UpdateNpcRequest struct {
 	OriginLocationId      *string                `protobuf:"bytes,17,opt,name=origin_location_id,json=originLocationId,proto3,oneof" json:"origin_location_id,omitempty"`
 	SessionEncounteredId  *string                `protobuf:"bytes,18,opt,name=session_encountered_id,json=sessionEncounteredId,proto3,oneof" json:"session_encountered_id,omitempty"`
 	Aliases               []string               `protobuf:"bytes,19,rep,name=aliases,proto3" json:"aliases,omitempty"`
+	CampaignId            string                 `protobuf:"bytes,20,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -951,6 +960,13 @@ func (x *UpdateNpcRequest) GetAliases() []string {
 	return nil
 }
 
+func (x *UpdateNpcRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
 type UpdateNpcResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
@@ -998,6 +1014,7 @@ func (x *UpdateNpcResponse) GetNpc() *Npc {
 type RemoveNpcRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1035,6 +1052,13 @@ func (*RemoveNpcRequest) Descriptor() ([]byte, []int) {
 func (x *RemoveNpcRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveNpcRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -1169,16 +1193,18 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x17_session_encountered_idB\x13\n" +
 	"\x11_foundry_actor_id\"6\n" +
 	"\x11CreateNpcResponse\x12!\n" +
-	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"\x1f\n" +
+	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"@\n" +
 	"\rGetNpcRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"3\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"3\n" +
 	"\x0eGetNpcResponse\x12!\n" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"<\n" +
 	"\x19ListNpcsByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"A\n" +
 	"\x1aListNpcsByCampaignResponse\x12#\n" +
-	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xb0\b\n" +
+	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xd1\b\n" +
 	"\x10UpdateNpcRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x128\n" +
@@ -1203,7 +1229,9 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x13current_location_id\x18\x10 \x01(\tH\x0eR\x11currentLocationId\x88\x01\x01\x121\n" +
 	"\x12origin_location_id\x18\x11 \x01(\tH\x0fR\x10originLocationId\x88\x01\x01\x129\n" +
 	"\x16session_encountered_id\x18\x12 \x01(\tH\x10R\x14sessionEncounteredId\x88\x01\x01\x12\x18\n" +
-	"\aaliases\x18\x13 \x03(\tR\aaliasesB\a\n" +
+	"\aaliases\x18\x13 \x03(\tR\aaliases\x12\x1f\n" +
+	"\vcampaign_id\x18\x14 \x01(\tR\n" +
+	"campaignIdB\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_statusB\x1b\n" +
 	"\x19_relation_to_party_statusB\x14\n" +
@@ -1223,9 +1251,11 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x13_origin_location_idB\x19\n" +
 	"\x17_session_encountered_id\"6\n" +
 	"\x11UpdateNpcResponse\x12!\n" +
-	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"\"\n" +
+	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"C\n" +
 	"\x10RemoveNpcRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x13\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"\x13\n" +
 	"\x11RemoveNpcResponse*\xa6\x01\n" +
 	"\x0fCharacterStatus\x12 \n" +
 	"\x1cCHARACTER_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +

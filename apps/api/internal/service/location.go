@@ -44,8 +44,8 @@ func (s *LocationService) Create(req *model.CreateLocationRequest) (*model.Locat
 	return created, nil
 }
 
-func (s *LocationService) Get(id string) (*model.Location, error) {
-	location, err := s.DB.GetLocation(id)
+func (s *LocationService) Get(id, campaignId string) (*model.Location, error) {
+	location, err := s.DB.GetLocation(id, campaignId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrLocationNotFound
@@ -64,7 +64,7 @@ func (s *LocationService) ListByCampaign(campaignId string) ([]*model.Location, 
 }
 
 func (s *LocationService) Update(req *model.UpdateLocationRequest) (*model.Location, error) {
-	_, err := s.Get(req.ID)
+	_, err := s.Get(req.ID, req.CampaignID)
 	if err != nil {
 		return nil, err
 	}
@@ -78,12 +78,12 @@ func (s *LocationService) Update(req *model.UpdateLocationRequest) (*model.Locat
 	return updated, nil
 }
 
-func (s *LocationService) Remove(id string) error {
-	_, err := s.Get(id)
+func (s *LocationService) Remove(id, campaignID string) error {
+	_, err := s.Get(id, campaignID)
 	if err != nil {
 		return err
 	}
-	if err := s.DB.RemoveLocation(id); err != nil {
+	if err := s.DB.RemoveLocation(id, campaignID); err != nil {
 		return fmt.Errorf("remove location error: %w", err)
 	}
 	return nil
