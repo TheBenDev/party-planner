@@ -203,7 +203,7 @@ func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[
 		return nil, mapServiceError(ctx, s.Log, err, "failed to update session")
 	}
 
-	session, err := s.Session.Update(&model.UpdateSessionRequest{
+	session, err := s.Session.Update(ctx, &model.UpdateSessionRequest{
 		ID:          req.Msg.Id,
 		Title:       sqlNullString(req.Msg.Title),
 		Description: sqlNullString(req.Msg.Description),
