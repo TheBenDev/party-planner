@@ -7,7 +7,7 @@ import type {
 	RequestHeadersPluginContext,
 	ResponseHeadersPluginContext,
 } from "@orpc/server/plugins";
-import { type Client, createDb } from "@planner/database";
+
 import { UserRole } from "@planner/enums/user";
 import type { Campaign } from "@planner/schemas/campaigns";
 import type { GetAuthResponse, User } from "@planner/schemas/user";
@@ -31,7 +31,6 @@ interface ORPCContext
 		LoggerContext {}
 interface Context extends ORPCContext {
 	api: ReturnType<typeof createApiClients>;
-	db: Client;
 	accessToken?: string;
 	logger?: pino.Logger;
 }
@@ -47,10 +46,9 @@ const loggingMiddleware = base.middleware(({ next, context, path }) => {
 	});
 });
 
-const dbMiddleware = base.middleware(({ next }) => {
+const apiMiddleware = base.middleware(({ next }) => {
 	const api = createApiClients();
-	const db: Client = createDb();
-	return next({ context: { api, db } });
+	return next({ context: { api } });
 });
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -315,7 +313,7 @@ export const authMiddleware = os
  *
  * This is the base piece you use to build new queries and mutations on your API.
  */
-export const publicProcedure = base.use(loggingMiddleware).use(dbMiddleware);
+export const publicProcedure = base.use(loggingMiddleware).use(apiMiddleware);
 
 /**
  * Authenticated procedures - has token, userId, RPC clients
