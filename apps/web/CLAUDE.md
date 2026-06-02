@@ -107,6 +107,7 @@ export const appRouter = {
 
 | File | Issue |
 |---|---|
+| `src/server/routers/discord.ts` | Queries `userAvailabilitiesTable` etc. directly; has TODO: "needs to be reworked" |
 | `src/routes/api.webhooks.clerk.ts` | Multiple `console.error` calls (needs migration to `slog`-style logging) |
 
 ## Proto-Generated Types

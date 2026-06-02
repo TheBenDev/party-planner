@@ -30,7 +30,6 @@ const (
 	CharacterStatus_CHARACTER_STATUS_ALIVE       CharacterStatus = 2
 	CharacterStatus_CHARACTER_STATUS_DEAD        CharacterStatus = 3
 	CharacterStatus_CHARACTER_STATUS_MISSING     CharacterStatus = 4
-	CharacterStatus_CHARACTER_STATUS_SUSPICIOUS  CharacterStatus = 5
 )
 
 // Enum value maps for CharacterStatus.
@@ -41,7 +40,6 @@ var (
 		2: "CHARACTER_STATUS_ALIVE",
 		3: "CHARACTER_STATUS_DEAD",
 		4: "CHARACTER_STATUS_MISSING",
-		5: "CHARACTER_STATUS_SUSPICIOUS",
 	}
 	CharacterStatus_value = map[string]int32{
 		"CHARACTER_STATUS_UNSPECIFIED": 0,
@@ -49,7 +47,6 @@ var (
 		"CHARACTER_STATUS_ALIVE":       2,
 		"CHARACTER_STATUS_DEAD":        3,
 		"CHARACTER_STATUS_MISSING":     4,
-		"CHARACTER_STATUS_SUSPICIOUS":  5,
 	}
 )
 
@@ -1229,14 +1226,13 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"\"\n" +
 	"\x10RemoveNpcRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"\x13\n" +
-	"\x11RemoveNpcResponse*\xc7\x01\n" +
+	"\x11RemoveNpcResponse*\xa6\x01\n" +
 	"\x0fCharacterStatus\x12 \n" +
 	"\x1cCHARACTER_STATUS_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18CHARACTER_STATUS_UNKNOWN\x10\x01\x12\x1a\n" +
 	"\x16CHARACTER_STATUS_ALIVE\x10\x02\x12\x19\n" +
 	"\x15CHARACTER_STATUS_DEAD\x10\x03\x12\x1c\n" +
-	"\x18CHARACTER_STATUS_MISSING\x10\x04\x12\x1f\n" +
-	"\x1bCHARACTER_STATUS_SUSPICIOUS\x10\x05*\xcd\x01\n" +
+	"\x18CHARACTER_STATUS_MISSING\x10\x04*\xcd\x01\n" +
 	"\x0fRelationToParty\x12!\n" +
 	"\x1dRELATION_TO_PARTY_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19RELATION_TO_PARTY_UNKNOWN\x10\x01\x12\x1a\n" +
