@@ -3,9 +3,9 @@ import { InviteToCampaignRequest } from "@planner/schemas/email";
 import { DndInviteEmail } from "@/components/email-invite-template";
 import { env } from "@/env";
 import { handleError } from "../errors";
-import { privateProcedure } from "../orpc";
+import { dmProcedure } from "../orpc";
 
-const inviteToCampaign = privateProcedure
+const inviteToCampaign = dmProcedure
 	.route({
 		method: "POST",
 		path: "/email/invite",
@@ -14,6 +14,10 @@ const inviteToCampaign = privateProcedure
 	.input(InviteToCampaignRequest)
 	.handler(async ({ input, context }) => {
 		const { campaignId, campaignName, dmName, from, to } = input;
+
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign id mismatch" });
+		}
 		const resend = context.resend;
 
 		try {

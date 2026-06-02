@@ -52,7 +52,11 @@ func (s *LocationServer) GetLocation(ctx context.Context, req *connect.Request[v
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
 
-	location, err := s.Location.Get(req.Msg.Id)
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	location, err := s.Location.Get(req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to get location")
 	}
@@ -86,9 +90,13 @@ func (s *LocationServer) UpdateLocation(ctx context.Context, req *connect.Reques
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
 	location, err := s.Location.Update(&model.UpdateLocationRequest{
 		ID:          req.Msg.Id,
+		CampaignID:  req.Msg.CampaignId,
 		Name:        req.Msg.Name,
 		Description: sqlNullString(req.Msg.Description),
 		Notes:       sqlNullString(req.Msg.Notes),
@@ -107,8 +115,11 @@ func (s *LocationServer) RemoveLocation(ctx context.Context, req *connect.Reques
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
-	if err := s.Location.Remove(req.Msg.Id); err != nil {
+	if err := s.Location.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove location")
 	}
 

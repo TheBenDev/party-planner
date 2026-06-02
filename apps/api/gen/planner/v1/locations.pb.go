@@ -253,6 +253,7 @@ func (x *CreateLocationResponse) GetLocation() *Location {
 type GetLocationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -290,6 +291,13 @@ func (*GetLocationRequest) Descriptor() ([]byte, []int) {
 func (x *GetLocationRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetLocationRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -433,6 +441,7 @@ type UpdateLocationRequest struct {
 	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Notes         *string                `protobuf:"bytes,4,opt,name=notes,proto3,oneof" json:"notes,omitempty"`
 	DmNotes       *string                `protobuf:"bytes,5,opt,name=dm_notes,json=dmNotes,proto3,oneof" json:"dm_notes,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,6,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,6 +511,13 @@ func (x *UpdateLocationRequest) GetDmNotes() string {
 	return ""
 }
 
+func (x *UpdateLocationRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
 type UpdateLocationResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Location      *Location              `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
@@ -549,6 +565,7 @@ func (x *UpdateLocationResponse) GetLocation() *Location {
 type RemoveLocationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -586,6 +603,13 @@ func (*RemoveLocationRequest) Descriptor() ([]byte, []int) {
 func (x *RemoveLocationRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveLocationRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -661,30 +685,36 @@ const file_planner_v1_locations_proto_rawDesc = "" +
 	"\x06_notesB\v\n" +
 	"\t_dm_notes\"J\n" +
 	"\x16CreateLocationResponse\x120\n" +
-	"\blocation\x18\x01 \x01(\v2\x14.planner.v1.LocationR\blocation\"$\n" +
+	"\blocation\x18\x01 \x01(\v2\x14.planner.v1.LocationR\blocation\"E\n" +
 	"\x12GetLocationRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"G\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"G\n" +
 	"\x13GetLocationResponse\x120\n" +
 	"\blocation\x18\x01 \x01(\v2\x14.planner.v1.LocationR\blocation\"A\n" +
 	"\x1eListLocationsByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"U\n" +
 	"\x1fListLocationsByCampaignResponse\x122\n" +
-	"\tlocations\x18\x01 \x03(\v2\x14.planner.v1.LocationR\tlocations\"\xd2\x01\n" +
+	"\tlocations\x18\x01 \x03(\v2\x14.planner.v1.LocationR\tlocations\"\xf3\x01\n" +
 	"\x15UpdateLocationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01\x12\x19\n" +
 	"\x05notes\x18\x04 \x01(\tH\x02R\x05notes\x88\x01\x01\x12\x1e\n" +
-	"\bdm_notes\x18\x05 \x01(\tH\x03R\admNotes\x88\x01\x01B\a\n" +
+	"\bdm_notes\x18\x05 \x01(\tH\x03R\admNotes\x88\x01\x01\x12\x1f\n" +
+	"\vcampaign_id\x18\x06 \x01(\tR\n" +
+	"campaignIdB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\b\n" +
 	"\x06_notesB\v\n" +
 	"\t_dm_notes\"J\n" +
 	"\x16UpdateLocationResponse\x120\n" +
-	"\blocation\x18\x01 \x01(\v2\x14.planner.v1.LocationR\blocation\"'\n" +
+	"\blocation\x18\x01 \x01(\v2\x14.planner.v1.LocationR\blocation\"H\n" +
 	"\x15RemoveLocationRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x18\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"\x18\n" +
 	"\x16RemoveLocationResponse2\xe0\x03\n" +
 	"\x0fLocationService\x12W\n" +
 	"\x0eCreateLocation\x12!.planner.v1.CreateLocationRequest\x1a\".planner.v1.CreateLocationResponse\x12N\n" +

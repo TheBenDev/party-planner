@@ -72,6 +72,7 @@ message CreateSessionResponse {
 
 message GetSessionRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message GetSessionResponse {
@@ -105,6 +106,7 @@ message PollSessionResponse {}
 
 message RemoveSessionRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 message RemoveSessionResponse {}
 
@@ -114,6 +116,7 @@ message UpdateSessionRequest {
   optional google.protobuf.Timestamp starts_at = 3;
   SessionStatus status = 4;
   optional string title = 5;
+  string campaign_id = 6;
 }
 
 message UpdateSessionResponse {

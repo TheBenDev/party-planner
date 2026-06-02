@@ -33,8 +33,8 @@ func (s *QuestService) Create(quest *model.CreateQuestRequest) (*model.Quest, er
 	return created, nil
 }
 
-func (s *QuestService) Get(id string) (*model.Quest, error) {
-	quest, err := s.DB.GetQuest(id)
+func (s *QuestService) Get(id, campaignId string) (*model.Quest, error) {
+	quest, err := s.DB.GetQuest(id, campaignId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrQuestNotFound
@@ -53,7 +53,7 @@ func (s *QuestService) ListByCampaign(campaignId string) ([]*model.Quest, error)
 }
 
 func (s *QuestService) Update(req *model.UpdateQuestRequest) (*model.Quest, error) {
-	_, err := s.Get(req.ID)
+	_, err := s.Get(req.ID, req.CampaignID)
 	if err != nil {
 		return nil, err
 	}
@@ -67,12 +67,12 @@ func (s *QuestService) Update(req *model.UpdateQuestRequest) (*model.Quest, erro
 	return updated, nil
 }
 
-func (s *QuestService) Remove(id string) error {
-	_, err := s.Get(id)
+func (s *QuestService) Remove(id, campaignID string) error {
+	_, err := s.Get(id, campaignID)
 	if err != nil {
 		return err
 	}
-	if err := s.DB.RemoveQuest(id); err != nil {
+	if err := s.DB.RemoveQuest(id, campaignID); err != nil {
 		return fmt.Errorf("remove quest error: %w", err)
 	}
 	return nil

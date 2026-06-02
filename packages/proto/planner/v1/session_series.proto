@@ -43,6 +43,7 @@ message CreateSessionSeriesResponse {
 
 message GetSessionSeriesRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message GetSessionSeriesResponse {
@@ -65,6 +66,7 @@ message UpdateSessionSeriesRequest {
   optional string start_time = 5;
   optional google.protobuf.Timestamp series_end_date = 6;
   optional string timezone = 7;
+  string campaign_id = 8;
 }
 
 message UpdateSessionSeriesResponse {
@@ -73,6 +75,7 @@ message UpdateSessionSeriesResponse {
 
 message RemoveSessionSeriesRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message RemoveSessionSeriesResponse {}
@@ -80,6 +83,7 @@ message RemoveSessionSeriesResponse {}
 message AddSeriesExceptionRequest {
   string series_id = 1;
   google.protobuf.Timestamp excluded_date = 2;
+  string campaign_id = 3;
 }
 
 message AddSeriesExceptionResponse {}
@@ -87,6 +91,7 @@ message AddSeriesExceptionResponse {}
 message RemoveSeriesExceptionRequest {
   string series_id = 1;
   google.protobuf.Timestamp excluded_date = 2;
+  string campaign_id = 3;
 }
 
 message RemoveSeriesExceptionResponse {}

@@ -53,6 +53,7 @@ message CreateQuestResponse {
 
 message GetQuestRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message GetQuestResponse {
@@ -72,6 +73,7 @@ message UpdateQuestRequest {
   optional string title = 2;
   optional QuestStatus status = 3;
   optional string description = 4;
+  string campaign_id = 5;
 }
 
 message UpdateQuestResponse {
@@ -80,6 +82,7 @@ message UpdateQuestResponse {
 
 message RemoveQuestRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message RemoveQuestResponse {}

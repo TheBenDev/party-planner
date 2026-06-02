@@ -88,7 +88,11 @@ func (s *SessionServer) GetSession(ctx context.Context, req *connect.Request[v1.
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
 
-	session, err := s.Session.Get(req.Msg.Id)
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	session, err := s.Session.Get(req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to get session")
 	}
@@ -179,8 +183,11 @@ func (s *SessionServer) RemoveSession(ctx context.Context, req *connect.Request[
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
-	if err := s.Session.Remove(req.Msg.Id); err != nil {
+	if err := s.Session.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove session")
 	}
 
@@ -190,6 +197,9 @@ func (s *SessionServer) RemoveSession(ctx context.Context, req *connect.Request[
 func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error) {
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
 	if req.Msg.StartsAt != nil {
@@ -205,6 +215,7 @@ func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[
 
 	session, err := s.Session.Update(ctx, &model.UpdateSessionRequest{
 		ID:          req.Msg.Id,
+		CampaignID:  req.Msg.CampaignId,
 		Title:       sqlNullString(req.Msg.Title),
 		Description: sqlNullString(req.Msg.Description),
 		Status:      sessionStatus,

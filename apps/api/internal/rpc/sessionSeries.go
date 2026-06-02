@@ -76,7 +76,11 @@ func (s *SessionSeriesServer) GetSessionSeries(ctx context.Context, req *connect
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
 
-	series, err := s.SessionSeries.Get(req.Msg.Id)
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	series, err := s.SessionSeries.Get(req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to get session series")
 	}
@@ -110,6 +114,9 @@ func (s *SessionSeriesServer) UpdateSessionSeries(ctx context.Context, req *conn
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 	if req.Msg.SeriesEndDate != nil {
 		if err := req.Msg.SeriesEndDate.CheckValid(); err != nil {
 			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid series end date"))
@@ -118,6 +125,7 @@ func (s *SessionSeriesServer) UpdateSessionSeries(ctx context.Context, req *conn
 
 	series, err := s.SessionSeries.Update(&model.UpdateSessionSeriesRequest{
 		ID:            req.Msg.Id,
+		CampaignID:    req.Msg.CampaignId,
 		Title:         req.Msg.Title,
 		Description:   sqlNullString(req.Msg.Description),
 		RRule:         req.Msg.Rrule,
@@ -138,8 +146,11 @@ func (s *SessionSeriesServer) RemoveSessionSeries(ctx context.Context, req *conn
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
-	if err := s.SessionSeries.Remove(req.Msg.Id); err != nil {
+	if err := s.SessionSeries.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove session series")
 	}
 
@@ -150,6 +161,9 @@ func (s *SessionSeriesServer) AddSeriesException(ctx context.Context, req *conne
 	if req.Msg.SeriesId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 	if req.Msg.ExcludedDate == nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("excluded date required"))
 	}
@@ -157,7 +171,7 @@ func (s *SessionSeriesServer) AddSeriesException(ctx context.Context, req *conne
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid excluded date"))
 	}
 
-	if err := s.SessionSeries.AddException(req.Msg.SeriesId, req.Msg.ExcludedDate.AsTime()); err != nil {
+	if err := s.SessionSeries.AddException(req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to add series exception")
 	}
 
@@ -168,6 +182,9 @@ func (s *SessionSeriesServer) RemoveSeriesException(ctx context.Context, req *co
 	if req.Msg.SeriesId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 	if req.Msg.ExcludedDate == nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("excluded date required"))
 	}
@@ -175,7 +192,7 @@ func (s *SessionSeriesServer) RemoveSeriesException(ctx context.Context, req *co
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid excluded date"))
 	}
 
-	if err := s.SessionSeries.RemoveException(req.Msg.SeriesId, req.Msg.ExcludedDate.AsTime()); err != nil {
+	if err := s.SessionSeries.RemoveException(req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove series exception")
 	}
 

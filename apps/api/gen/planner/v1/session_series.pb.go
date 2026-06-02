@@ -293,6 +293,7 @@ func (x *CreateSessionSeriesResponse) GetSeries() *SessionSeries {
 type GetSessionSeriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -330,6 +331,13 @@ func (*GetSessionSeriesRequest) Descriptor() ([]byte, []int) {
 func (x *GetSessionSeriesRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *GetSessionSeriesRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -475,6 +483,7 @@ type UpdateSessionSeriesRequest struct {
 	StartTime     *string                `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3,oneof" json:"start_time,omitempty"`
 	SeriesEndDate *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
 	Timezone      *string                `protobuf:"bytes,7,opt,name=timezone,proto3,oneof" json:"timezone,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,8,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -558,6 +567,13 @@ func (x *UpdateSessionSeriesRequest) GetTimezone() string {
 	return ""
 }
 
+func (x *UpdateSessionSeriesRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
 type UpdateSessionSeriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Series        *SessionSeries         `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
@@ -605,6 +621,7 @@ func (x *UpdateSessionSeriesResponse) GetSeries() *SessionSeries {
 type RemoveSessionSeriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -642,6 +659,13 @@ func (*RemoveSessionSeriesRequest) Descriptor() ([]byte, []int) {
 func (x *RemoveSessionSeriesRequest) GetId() string {
 	if x != nil {
 		return x.Id
+	}
+	return ""
+}
+
+func (x *RemoveSessionSeriesRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
 	}
 	return ""
 }
@@ -686,6 +710,7 @@ type AddSeriesExceptionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
 	ExcludedDate  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=excluded_date,json=excludedDate,proto3" json:"excluded_date,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -734,6 +759,13 @@ func (x *AddSeriesExceptionRequest) GetExcludedDate() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *AddSeriesExceptionRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
 type AddSeriesExceptionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -774,6 +806,7 @@ type RemoveSeriesExceptionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
 	ExcludedDate  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=excluded_date,json=excludedDate,proto3" json:"excluded_date,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -820,6 +853,13 @@ func (x *RemoveSeriesExceptionRequest) GetExcludedDate() *timestamppb.Timestamp 
 		return x.ExcludedDate
 	}
 	return nil
+}
+
+func (x *RemoveSeriesExceptionRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
 }
 
 type RemoveSeriesExceptionResponse struct {
@@ -897,16 +937,18 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\f_descriptionB\x12\n" +
 	"\x10_series_end_date\"P\n" +
 	"\x1bCreateSessionSeriesResponse\x121\n" +
-	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\")\n" +
+	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"J\n" +
 	"\x17GetSessionSeriesRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"M\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"M\n" +
 	"\x18GetSessionSeriesResponse\x121\n" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"E\n" +
 	"\"ListSessionSeriesByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"X\n" +
 	"#ListSessionSeriesByCampaignResponse\x121\n" +
-	"\x06series\x18\x01 \x03(\v2\x19.planner.v1.SessionSeriesR\x06series\"\xeb\x02\n" +
+	"\x06series\x18\x01 \x03(\v2\x19.planner.v1.SessionSeriesR\x06series\"\x8c\x03\n" +
 	"\x1aUpdateSessionSeriesRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
@@ -915,7 +957,9 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"start_time\x18\x05 \x01(\tH\x03R\tstartTime\x88\x01\x01\x12G\n" +
 	"\x0fseries_end_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x04R\rseriesEndDate\x88\x01\x01\x12\x1f\n" +
-	"\btimezone\x18\a \x01(\tH\x05R\btimezone\x88\x01\x01B\b\n" +
+	"\btimezone\x18\a \x01(\tH\x05R\btimezone\x88\x01\x01\x12\x1f\n" +
+	"\vcampaign_id\x18\b \x01(\tR\n" +
+	"campaignIdB\b\n" +
 	"\x06_titleB\x0e\n" +
 	"\f_descriptionB\b\n" +
 	"\x06_rruleB\r\n" +
@@ -923,17 +967,23 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x10_series_end_dateB\v\n" +
 	"\t_timezone\"P\n" +
 	"\x1bUpdateSessionSeriesResponse\x121\n" +
-	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\",\n" +
+	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"M\n" +
 	"\x1aRemoveSessionSeriesRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"\x1d\n" +
-	"\x1bRemoveSessionSeriesResponse\"y\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"\x1d\n" +
+	"\x1bRemoveSessionSeriesResponse\"\x9a\x01\n" +
 	"\x19AddSeriesExceptionRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12?\n" +
-	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\"\x1c\n" +
-	"\x1aAddSeriesExceptionResponse\"|\n" +
+	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
+	"\vcampaign_id\x18\x03 \x01(\tR\n" +
+	"campaignId\"\x1c\n" +
+	"\x1aAddSeriesExceptionResponse\"\x9d\x01\n" +
 	"\x1cRemoveSeriesExceptionRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12?\n" +
-	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\"\x1f\n" +
+	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
+	"\vcampaign_id\x18\x03 \x01(\tR\n" +
+	"campaignId\"\x1f\n" +
 	"\x1dRemoveSeriesExceptionResponse2\x80\x06\n" +
 	"\x14SessionSeriesService\x12f\n" +
 	"\x13CreateSessionSeries\x12&.planner.v1.CreateSessionSeriesRequest\x1a'.planner.v1.CreateSessionSeriesResponse\x12]\n" +

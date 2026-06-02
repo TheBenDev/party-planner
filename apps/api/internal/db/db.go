@@ -562,8 +562,8 @@ func (db *DB) CreateNpc(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	return scanNpc(row)
 }
 
-func (db *DB) GetNpc(id string) (*model.Npc, error) {
-	row := db.conn.QueryRow(`SELECT `+npcColumns+` FROM non_player_character WHERE id = $1 LIMIT 1`, id)
+func (db *DB) GetNpc(id, campaignId string) (*model.Npc, error) {
+	row := db.conn.QueryRow(`SELECT `+npcColumns+` FROM non_player_character WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignId)
 	return scanNpc(row)
 }
 
@@ -619,20 +619,20 @@ func (db *DB) UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error) {
 			session_encountered_id = $17,
 			aliases               = $18,
 			updated_at            = NOW()
-		WHERE id = $19
+		WHERE id = $19 AND campaign_id = $20
 		RETURNING `+npcColumns,
 		npc.Name, npc.Status, npc.RelationToPartyStatus, npc.IsKnownToParty,
 		npc.Age, npc.Appearance, npc.Avatar, npc.Backstory, npc.DmNotes, npc.FoundryActorID,
 		npc.KnownName, npc.Personality, npc.PlayerNotes, npc.Race,
 		npc.CurrentLocationID, npc.OriginLocationID, npc.SessionEncounteredID,
 		pq.Array(npc.Aliases),
-		npc.ID,
+		npc.ID, npc.CampaignID,
 	)
 	return scanNpc(row)
 }
 
-func (db *DB) RemoveNpc(id string) error {
-	_, err := db.conn.Exec(`DELETE FROM non_player_character WHERE id = $1`, id)
+func (db *DB) RemoveNpc(id, campaignID string) error {
+	_, err := db.conn.Exec(`DELETE FROM non_player_character WHERE id = $1 AND campaign_id = $2`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove npc: %w", err)
 	}
@@ -671,8 +671,8 @@ func (db *DB) CreateQuest(quest *model.CreateQuestRequest) (*model.Quest, error)
 	return scanQuest(row)
 }
 
-func (db *DB) GetQuest(id string) (*model.Quest, error) {
-	row := db.conn.QueryRow(`SELECT `+questColumns+` FROM quest WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id)
+func (db *DB) GetQuest(id, campaignId string) (*model.Quest, error) {
+	row := db.conn.QueryRow(`SELECT `+questColumns+` FROM quest WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL LIMIT 1`, id, campaignId)
 	return scanQuest(row)
 }
 
@@ -705,15 +705,15 @@ func (db *DB) UpdateQuest(quest *model.UpdateQuestRequest) (*model.Quest, error)
 			status      = COALESCE($2, status),
 			description = $3,
 			updated_at  = NOW()
-		WHERE id = $4 AND deleted_at IS NULL
+		WHERE id = $4 AND campaign_id = $5 AND deleted_at IS NULL
 		RETURNING `+questColumns,
-		quest.Title, quest.Status, quest.Description, quest.ID,
+		quest.Title, quest.Status, quest.Description, quest.ID, quest.CampaignID,
 	)
 	return scanQuest(row)
 }
 
-func (db *DB) RemoveQuest(id string) error {
-	_, err := db.conn.Exec(`UPDATE quest SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL`, id)
+func (db *DB) RemoveQuest(id, campaignID string) error {
+	_, err := db.conn.Exec(`UPDATE quest SET deleted_at = NOW() WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove quest: %w", err)
 	}
@@ -750,8 +750,8 @@ func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session
 	return scanSession(row)
 }
 
-func (db *DB) GetSession(id string) (*model.Session, error) {
-	row := db.conn.QueryRow(`SELECT `+sessionColumns+` FROM session WHERE id = $1 LIMIT 1`, id)
+func (db *DB) GetSession(id, campaignId string) (*model.Session, error) {
+	row := db.conn.QueryRow(`SELECT `+sessionColumns+` FROM session WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignId)
 	return scanSession(row)
 }
 
@@ -786,8 +786,8 @@ func (db *DB) ListSessionsByCampaign(campaignId string) ([]*model.Session, error
 	return sessions, rows.Err()
 }
 
-func (db *DB) RemoveSession(id string) error {
-	_, err := db.conn.Exec(`DELETE FROM session WHERE id = $1`, id)
+func (db *DB) RemoveSession(id, campaignID string) error {
+	_, err := db.conn.Exec(`DELETE FROM session WHERE id = $1 AND campaign_id = $2`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove session: %w", err)
 	}
@@ -806,9 +806,9 @@ func (db *DB) MarkSessionAnnounced(id string) (*model.Session, error) {
 func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
 		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4, poll_id = $5
-		WHERE id = $6
+		WHERE id = $6 AND campaign_id = $7
 		RETURNING `+sessionColumns,
-		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.ID)
+		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.ID, session.CampaignID)
 	return scanSession(row)
 }
 
@@ -840,8 +840,8 @@ func (db *DB) CreateLocation(location *model.CreateLocationRequest) (*model.Loca
 	return scanLocation(row)
 }
 
-func (db *DB) GetLocation(id string) (*model.Location, error) {
-	row := db.conn.QueryRow(`SELECT `+locationColumns+` FROM location WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id)
+func (db *DB) GetLocation(id, campaignId string) (*model.Location, error) {
+	row := db.conn.QueryRow(`SELECT `+locationColumns+` FROM location WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL LIMIT 1`, id, campaignId)
 	return scanLocation(row)
 }
 
@@ -875,16 +875,16 @@ func (db *DB) UpdateLocation(location *model.UpdateLocationRequest) (*model.Loca
 			notes       = $3,
 			dm_notes    = $4,
 			updated_at  = NOW()
-		WHERE id = $5 AND deleted_at IS NULL
+		WHERE id = $5 AND campaign_id = $6 AND deleted_at IS NULL
 		RETURNING `+locationColumns,
 		location.Name, location.Description, location.Notes, location.DmNotes,
-		location.ID,
+		location.ID, location.CampaignID,
 	)
 	return scanLocation(row)
 }
 
-func (db *DB) RemoveLocation(id string) error {
-	_, err := db.conn.Exec(`UPDATE location SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL`, id)
+func (db *DB) RemoveLocation(id, campaignID string) error {
+	_, err := db.conn.Exec(`UPDATE location SET deleted_at = NOW() WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove location: %w", err)
 	}
@@ -920,8 +920,8 @@ func (db *DB) CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model
 	return scanSessionSeries(row)
 }
 
-func (db *DB) GetSessionSeries(id string) (*model.SessionSeries, error) {
-	row := db.conn.QueryRow(`SELECT `+sessionSeriesColumns+` FROM session_series WHERE id = $1 LIMIT 1`, id)
+func (db *DB) GetSessionSeries(id, campaignId string) (*model.SessionSeries, error) {
+	row := db.conn.QueryRow(`SELECT `+sessionSeriesColumns+` FROM session_series WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignId)
 	return scanSessionSeries(row)
 }
 
@@ -957,27 +957,27 @@ func (db *DB) UpdateSessionSeries(req *model.UpdateSessionSeriesRequest) (*model
 			series_end_date = $5,
 			timezone        = COALESCE($6, timezone),
 			updated_at      = NOW()
-		WHERE id = $7
+		WHERE id = $7 AND campaign_id = $8
 		RETURNING `+sessionSeriesColumns,
-		req.Title, req.Description, req.RRule, req.StartTime, req.SeriesEndDate, req.Timezone, req.ID,
+		req.Title, req.Description, req.RRule, req.StartTime, req.SeriesEndDate, req.Timezone, req.ID, req.CampaignID,
 	)
 	return scanSessionSeries(row)
 }
 
-func (db *DB) RemoveSessionSeries(id string) error {
-	_, err := db.conn.Exec(`DELETE FROM session_series WHERE id = $1`, id)
+func (db *DB) RemoveSessionSeries(id, campaignID string) error {
+	_, err := db.conn.Exec(`DELETE FROM session_series WHERE id = $1 AND campaign_id = $2`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove session series: %w", err)
 	}
 	return nil
 }
 
-func (db *DB) AddSeriesException(seriesID string, excludedDate time.Time) error {
+func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.Time) error {
 	_, err := db.conn.Exec(`
 		INSERT INTO session_exceptions (series_id, excluded_date)
-		VALUES ($1, $2)
+		SELECT $1, $2 FROM session_series WHERE id = $1 AND campaign_id = $3
 		ON CONFLICT (series_id, excluded_date) DO NOTHING`,
-		seriesID, excludedDate,
+		seriesID, excludedDate, campaignID,
 	)
 	if err != nil {
 		return fmt.Errorf("add series exception: %w", err)
@@ -985,8 +985,13 @@ func (db *DB) AddSeriesException(seriesID string, excludedDate time.Time) error 
 	return nil
 }
 
-func (db *DB) RemoveSeriesException(seriesID string, excludedDate time.Time) error {
-	_, err := db.conn.Exec(`DELETE FROM session_exceptions WHERE series_id = $1 AND excluded_date = $2`, seriesID, excludedDate)
+func (db *DB) RemoveSeriesException(seriesID, campaignID string, excludedDate time.Time) error {
+	_, err := db.conn.Exec(`
+		DELETE FROM session_exceptions
+		WHERE series_id = $1 AND excluded_date = $2
+		AND EXISTS (SELECT 1 FROM session_series WHERE id = $1 AND campaign_id = $3)`,
+		seriesID, excludedDate, campaignID,
+	)
 	if err != nil {
 		return fmt.Errorf("remove series exception: %w", err)
 	}

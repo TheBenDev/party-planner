@@ -12,10 +12,10 @@ import {
 	UpdateLocationResponseSchema,
 } from "@planner/schemas/locations";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import { protoToLocation } from "./util/proto/location";
 
-const createLocation = privateProcedure
+const createLocation = dmProcedure
 	.route({
 		method: "POST",
 		path: "/location/create",
@@ -24,9 +24,10 @@ const createLocation = privateProcedure
 	.input(CreateLocationRequestSchema)
 	.output(CreateLocationResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
-
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const res = await api.location.createLocation({
 				...input,
@@ -51,7 +52,7 @@ const createLocation = privateProcedure
 		}
 	});
 
-const getLocationById = privateProcedure
+const getLocationById = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/location/get",
@@ -64,7 +65,10 @@ const getLocationById = privateProcedure
 		const api = context.api;
 
 		try {
-			const res = await api.location.getLocation({ id });
+			const res = await api.location.getLocation({
+				campaignId: context.campaignId,
+				id,
+			});
 
 			if (res.location === undefined) {
 				throw new ORPCError("NOT_FOUND", {
@@ -72,9 +76,8 @@ const getLocationById = privateProcedure
 				});
 			}
 
-			return {
-				location: protoToLocation(res.location),
-			};
+			const location = protoToLocation(res.location);
+			return { location };
 		} catch (err) {
 			handleError(
 				err,
@@ -85,7 +88,7 @@ const getLocationById = privateProcedure
 		}
 	});
 
-const listLocationsByCampaignId = privateProcedure
+const listLocationsByCampaignId = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/location/list",
@@ -95,6 +98,9 @@ const listLocationsByCampaignId = privateProcedure
 	.output(ListLocationsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 
 		try {
@@ -115,7 +121,7 @@ const listLocationsByCampaignId = privateProcedure
 		}
 	});
 
-const removeLocation = privateProcedure
+const removeLocation = dmProcedure
 	.route({
 		method: "POST",
 		path: "/location/remove",
@@ -124,12 +130,12 @@ const removeLocation = privateProcedure
 	.input(RemoveLocationRequestSchema)
 	.output(RemoveLocationResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const { id } = input;
 		const api = context.api;
 
 		try {
 			await api.location.removeLocation({
+				campaignId: context.campaignId,
 				id,
 			});
 
@@ -144,7 +150,7 @@ const removeLocation = privateProcedure
 		}
 	});
 
-const updateLocation = privateProcedure
+const updateLocation = dmProcedure
 	.route({
 		method: "POST",
 		path: "/location/update",
@@ -153,11 +159,11 @@ const updateLocation = privateProcedure
 	.input(UpdateLocationRequestSchema)
 	.output(UpdateLocationResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 
 		try {
 			const res = await api.location.updateLocation({
+				campaignId: context.campaignId,
 				description: input.description,
 				dmNotes: input.dmNotes,
 				id: input.id,

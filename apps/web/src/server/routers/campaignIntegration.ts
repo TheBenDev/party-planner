@@ -11,13 +11,13 @@ import {
 	RemoveCampaignIntegrationResponseSchema,
 } from "@planner/schemas/discord";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import {
 	integrationSourceToProto,
 	protoToCampaignIntegration,
 } from "./util/proto/campaignIntegration";
 
-const createCampaignIntegration = privateProcedure
+const createCampaignIntegration = dmProcedure
 	.route({
 		method: "POST",
 		path: "/campaignIntegration/createCampaignIntegration",
@@ -26,10 +26,12 @@ const createCampaignIntegration = privateProcedure
 	.input(CreateCampaignIntegrationRequestSchema)
 	.output(CreateCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		switch (input.source) {
 			case IntegrationSource.DISCORD: {
 				const { code, campaignId } = input;
+				if (campaignId !== context.campaignId) {
+					throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+				}
 				if (!code) {
 					throw new ORPCError("BAD_REQUEST", {
 						message: "missing code for Discord integration",
@@ -68,7 +70,7 @@ const createCampaignIntegration = privateProcedure
 		}
 	});
 
-const getCampaignIntegration = privateProcedure
+const getCampaignIntegration = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/campaignIntegration/getCampaignIntegration",
@@ -78,6 +80,9 @@ const getCampaignIntegration = privateProcedure
 	.output(GetCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId, source } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const result = await api.campaignIntegration.getCampaignIntegration({
@@ -98,7 +103,7 @@ const getCampaignIntegration = privateProcedure
 		}
 	});
 
-const removeCampaignIntegration = privateProcedure
+const removeCampaignIntegration = dmProcedure
 	.route({
 		method: "POST",
 		path: "/campaignIntegration/removeCampaignIntegration",
@@ -107,8 +112,10 @@ const removeCampaignIntegration = privateProcedure
 	.input(RemoveCampaignIntegrationRequestSchema)
 	.output(RemoveCampaignIntegrationResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const { campaignId, source } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 
 		try {
@@ -127,7 +134,7 @@ const removeCampaignIntegration = privateProcedure
 		}
 	});
 
-const listCampaignIntegrationsByCampaign = privateProcedure
+const listCampaignIntegrationsByCampaign = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/campaignIntegration/listCampaignIntegrationsByCampaign",
@@ -137,6 +144,9 @@ const listCampaignIntegrationsByCampaign = privateProcedure
 	.output(ListCampaignIntegrationsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const result =

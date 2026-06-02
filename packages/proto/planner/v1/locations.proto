@@ -37,6 +37,7 @@ message CreateLocationResponse {
 
 message GetLocationRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message GetLocationResponse {
@@ -57,6 +58,7 @@ message UpdateLocationRequest {
   optional string description = 3;
   optional string notes = 4;
   optional string dm_notes = 5;
+  string campaign_id = 6;
 }
 
 message UpdateLocationResponse {
@@ -65,6 +67,7 @@ message UpdateLocationResponse {
 
 message RemoveLocationRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message RemoveLocationResponse {}

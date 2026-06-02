@@ -86,6 +86,7 @@ message CreateNpcResponse {
 
 message GetNpcRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message GetNpcResponse {
@@ -120,6 +121,7 @@ message UpdateNpcRequest {
   optional string origin_location_id = 17;
   optional string session_encountered_id = 18;
   repeated string aliases = 19;
+  string campaign_id = 20;
 }
 
 message UpdateNpcResponse {
@@ -128,6 +130,7 @@ message UpdateNpcResponse {
 
 message RemoveNpcRequest {
   string id = 1;
+  string campaign_id = 2;
 }
 
 message RemoveNpcResponse {}

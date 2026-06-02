@@ -12,10 +12,10 @@ import {
 	UpdateQuestResponseSchema,
 } from "@planner/schemas/quests";
 import { handleError } from "../errors";
-import { privateProcedure, requireDungeonMaster } from "../orpc";
+import { campaignProcedure, dmProcedure } from "../orpc";
 import { protoToQuest, questStatusToProto } from "./util/proto/quest";
 
-const createQuest = privateProcedure
+const createQuest = dmProcedure
 	.route({
 		method: "POST",
 		path: "/quest/create",
@@ -24,9 +24,10 @@ const createQuest = privateProcedure
 	.input(CreateQuestRequestSchema)
 	.output(CreateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
-		context.logger?.info({ reward: input.reward }, "REWARD SHOWN HERE");
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		try {
 			const res = await api.quest.createQuest({
 				...input,
@@ -48,7 +49,7 @@ const createQuest = privateProcedure
 		}
 	});
 
-const getQuest = privateProcedure
+const getQuest = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/quest/get",
@@ -60,17 +61,21 @@ const getQuest = privateProcedure
 		const { id } = input;
 		const api = context.api;
 		try {
-			const res = await api.quest.getQuest({ id });
+			const res = await api.quest.getQuest({
+				campaignId: context.campaignId,
+				id,
+			});
 			if (res.quest === undefined) {
 				throw new ORPCError("NOT_FOUND", { message: "quest not found" });
 			}
-			return { quest: protoToQuest(res.quest) };
+			const quest = protoToQuest(res.quest);
+			return { quest };
 		} catch (err) {
 			handleError(err, "failed to get quest", { questId: id }, context.logger);
 		}
 	});
 
-const listQuestsByCampaign = privateProcedure
+const listQuestsByCampaign = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/quest/list",
@@ -80,6 +85,9 @@ const listQuestsByCampaign = privateProcedure
 	.output(ListQuestsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
+		if (campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+		}
 		const api = context.api;
 		try {
 			const res = await api.quest.listQuestsByCampaign({ campaignId });
@@ -89,7 +97,7 @@ const listQuestsByCampaign = privateProcedure
 		}
 	});
 
-const updateQuest = privateProcedure
+const updateQuest = dmProcedure
 	.route({
 		method: "POST",
 		path: "/quest/update",
@@ -98,11 +106,11 @@ const updateQuest = privateProcedure
 	.input(UpdateQuestRequestSchema)
 	.output(UpdateQuestResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
 			const res = await api.quest.updateQuest({
 				...input,
+				campaignId: context.campaignId,
 				status: input.status ? questStatusToProto(input.status) : undefined,
 			});
 			if (res.quest === undefined) {
@@ -121,7 +129,7 @@ const updateQuest = privateProcedure
 		}
 	});
 
-const removeQuest = privateProcedure
+const removeQuest = dmProcedure
 	.route({
 		method: "POST",
 		path: "/quest/remove",
@@ -130,10 +138,12 @@ const removeQuest = privateProcedure
 	.input(RemoveQuestRequestSchema)
 	.output(RemoveQuestResponseSchema)
 	.handler(async ({ input, context }) => {
-		requireDungeonMaster(context.role);
 		const api = context.api;
 		try {
-			await api.quest.removeQuest({ id: input.id });
+			await api.quest.removeQuest({
+				campaignId: context.campaignId,
+				id: input.id,
+			});
 			return {};
 		} catch (err) {
 			handleError(

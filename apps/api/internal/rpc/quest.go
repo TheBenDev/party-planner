@@ -67,7 +67,11 @@ func (s *QuestServer) GetQuest(ctx context.Context, req *connect.Request[v1.GetQ
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
 
-	quest, err := s.Quest.Get(req.Msg.Id)
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	quest, err := s.Quest.Get(req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to get quest")
 	}
@@ -101,6 +105,9 @@ func (s *QuestServer) UpdateQuest(ctx context.Context, req *connect.Request[v1.U
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
 	var status *model.QuestStatus
 	if req.Msg.Status != nil {
@@ -116,6 +123,7 @@ func (s *QuestServer) UpdateQuest(ctx context.Context, req *connect.Request[v1.U
 
 	quest, err := s.Quest.Update(&model.UpdateQuestRequest{
 		ID:          req.Msg.Id,
+		CampaignID:  req.Msg.CampaignId,
 		Title:       req.Msg.Title,
 		Status:      status,
 		Description: sqlNullString(req.Msg.Description),
@@ -133,8 +141,11 @@ func (s *QuestServer) RemoveQuest(ctx context.Context, req *connect.Request[v1.R
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
 	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
 
-	if err := s.Quest.Remove(req.Msg.Id); err != nil {
+	if err := s.Quest.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove quest")
 	}
 
