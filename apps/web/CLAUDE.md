@@ -7,7 +7,7 @@ TanStack Start (SSR) + TanStack Router + oRPC server. See root CLAUDE.md for mon
 - **Framework**: TanStack Start (SSR), TanStack Router (file-based)
 - **Server procedures**: oRPC (`@orpc/server`, `@orpc/client`)
 - **Go API client**: ConnectRPC (`@connectrpc/connect-web`)
-- **DB**: Drizzle ORM (Neon Postgres) — server-side only, injected via `dbMiddleware`
+- **DB**: Drizzle ORM (Neon Postgres) — used only in `packages/database`; never queried directly from oRPC routers
 - **Auth**: Clerk (JWT verification) + RSA-encrypted auth cookie
 - **UI**: shadcn/ui, Tailwind v4, React 19
 - **Email**: Resend + React Email
@@ -33,11 +33,10 @@ TanStack Start (SSR) + TanStack Router + oRPC server. See root CLAUDE.md for mon
 // Public — no auth required
 publicProcedure.route({...}).input(schema).output(schema).handler(...)
 
-// Private — requires Clerk JWT; injects userId, campaignId, role, api, db
+// Private — requires Clerk JWT; injects userId, campaignId, role, api
 privateProcedure.route({...}).input(schema).output(schema).handler(async ({ input, context }) => {
-  const { userId, campaignId, role, api, db, logger } = context;
+  const { userId, campaignId, role, api, logger } = context;
   // api.campaign, api.session, etc. — ConnectRPC clients
-  // db — Drizzle instance (web-only, avoid for entities with Go API paths)
 })
 
 // Discord — requires Bot <api_key> header; used only for Beny Bot callbacks
@@ -108,8 +107,6 @@ export const appRouter = {
 
 | File | Issue |
 |---|---|
-| `src/server/routers/character.ts` | Queries `charactersTable` directly via Drizzle — no Go API |
-| `src/server/routers/discord.ts` | Queries `userAvailabilitiesTable` etc. directly; has TODO: "needs to be reworked" |
 | `src/routes/api.webhooks.clerk.ts` | Multiple `console.error` calls (needs migration to `slog`-style logging) |
 
 ## Proto-Generated Types
