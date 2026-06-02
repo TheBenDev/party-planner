@@ -190,7 +190,6 @@ const (
 	CharacterStatusAlive       CharacterStatus = "ALIVE"
 	CharacterStatusDead        CharacterStatus = "DEAD"
 	CharacterStatusMissing     CharacterStatus = "MISSING"
-	CharacterStatusSuspicious  CharacterStatus = "SUSPICIOUS"
 	CharacterStatusUnknown     CharacterStatus = "UNKNOWN"
 	CharacterStatusUnspecified CharacterStatus = "UNSPECIFIED"
 )
