@@ -278,6 +278,21 @@ func (db *DB) RemoveCampaignIntegration(campaignId string, source model.Integrat
 	return nil
 }
 
+func (db *DB) UpdateCampaignIntegrationChannelID(campaignId, channelId string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+	if !isValidIntegrationSource(source) {
+		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
+	}
+	row := db.conn.QueryRow(`
+		UPDATE campaign_integrations
+		SET metadata = jsonb_set(metadata, '{channelId}', to_jsonb($1::text)),
+		    updated_at = NOW()
+		WHERE campaign_id = $2 AND source = $3
+		RETURNING `+campaignIntegrationColumns,
+		channelId, campaignId, source,
+	)
+	return scanCampaignIntegration(row)
+}
+
 // -----------------------------------------------------------------------------
 // Campaign Invitations
 // -----------------------------------------------------------------------------

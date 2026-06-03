@@ -3,6 +3,7 @@ import { UserRole } from "@planner/enums/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { BotIcon, ExternalLinkIcon, HashIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
 	AlertDialog,
@@ -24,6 +25,8 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { ORPCError } from "@orpc/client";
+import { Input } from "@/components/ui/input";
 import { env } from "@/env";
 import { useAuth } from "@/hooks/auth";
 import { client } from "@/lib/client";
@@ -125,6 +128,7 @@ function DiscordIntegrationPage() {
 
 			{isConnected ? (
 				<ConnectedState
+					campaignId={campaignId}
 					integration={integration}
 					isDm={isDm}
 					isRemoving={isRemoving}
@@ -187,15 +191,45 @@ function ConnectedState({
 	isRemoving,
 	onRemove,
 	isDm,
+	campaignId,
 }: {
 	integration: NonNullable<{
 		externalId: string;
-		metadata?: { channelId?: string };
+		metaData: { channelId: string };
 	}>;
+	campaignId: string;
 	isDm: boolean;
 	isRemoving: boolean;
 	onRemove: () => void;
 }) {
+	const queryClient = useQueryClient();
+	const [channelId, setChannelId] = useState(integration.metaData.channelId);
+
+	const { mutate: updateChannel, isPending: isSavingChannel } = useMutation({
+		mutationFn: (value: string) =>
+			client.campaignIntegration.updateCampaignIntegration({
+				campaignId,
+				channelId: value,
+				source: IntegrationSource.DISCORD,
+			}),
+		onError: (err) => {
+			if (err instanceof ORPCError && err.code === "BAD_REQUEST") {
+				toast.error("That channel ID isn't valid or doesn't belong to your server.");
+			} else {
+				toast.error("Failed to save channel ID. Please try again.");
+			}
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: queryKeys.integrations.bySource(
+					campaignId,
+					IntegrationSource.DISCORD,
+				),
+			});
+			toast.success("Channel ID saved.");
+		},
+	});
+
 	return (
 		<div className="space-y-4">
 			{isDm && (
@@ -212,13 +246,32 @@ function ConnectedState({
 							label="Server ID"
 							value={integration.externalId}
 						/>
-						{integration.metadata?.channelId && (
-							<DetailRow
-								icon={<HashIcon className="h-4 w-4" />}
-								label="Channel"
-								value={`#${integration.metadata.channelId}`}
-							/>
-						)}
+						<div className="flex items-center justify-between gap-3 text-sm">
+							<div className="flex items-center gap-2 text-muted-foreground">
+								<HashIcon className="h-4 w-4" />
+								<span>Channel ID</span>
+							</div>
+							<div className="flex items-center gap-2">
+								{channelId !== integration.metaData.channelId && (<Button
+									className="h-7 gap-1.5 px-2 text-xs hover:cursor-pointer hover:opacity-80"
+									disabled={
+										isSavingChannel ||
+										channelId === integration.metaData.channelId
+									}
+									size="sm"
+									variant="outline"
+									onClick={() => updateChannel(channelId)}
+								>
+									{isSavingChannel ? "Saving…" : "Save"}
+								</Button>)}
+								<Input
+									className="h-7 w-48 font-mono text-xs"
+									placeholder="e.g. 1234567890"
+									value={channelId}
+									onChange={(e) => setChannelId(e.target.value)}
+								/>
+							</div>
+						</div>
 					</CardContent>
 				</Card>
 			)}

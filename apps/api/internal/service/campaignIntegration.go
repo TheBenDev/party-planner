@@ -10,12 +10,15 @@ import (
 
 	"github.com/BBruington/party-planner/api/internal/db"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/bwmarrin/discordgo"
 )
 
 var (
 	ErrCampaignIntegrationInvalidCampaign = errors.New("campaign does not exist")
 	ErrCampaignIntegrationNotFound        = errors.New("campaign integration not found")
 	ErrCampaignIntegrationAlreadyExists   = errors.New("campaign integration already exists")
+	ErrCampaignIntegrationInvalidChannel  = errors.New("channel does not belong to the integration's Discord server")
+	ErrCampaignIntegrationChannelNotFound = errors.New("discord channel not found")
 )
 
 type CampaignIntegrationService struct {
@@ -86,6 +89,38 @@ func (s *CampaignIntegrationService) ListByCampaign(campaignId string) ([]*model
 		return nil, fmt.Errorf("list campaign integrations error: %w", err)
 	}
 	return integrations, nil
+}
+
+func (s *CampaignIntegrationService) UpdateDiscordChannelID(ctx context.Context, campaignId, channelId string) (*model.CampaignIntegration, error) {
+	integration, err := s.DB.GetCampaignIntegration(campaignId, model.IntegrationSourceDiscord)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignIntegrationNotFound
+		}
+		return nil, fmt.Errorf("get campaign integration: %w", err)
+	}
+	if integration == nil {
+		return nil, ErrCampaignIntegrationNotFound
+	}
+
+	if channelId != "" {
+		ch, err := s.Discord.Session.Channel(channelId, discordgo.WithContext(ctx))
+		if err != nil {
+			return nil, ErrCampaignIntegrationChannelNotFound
+		}
+		if ch.GuildID != integration.ExternalID {
+			return nil, ErrCampaignIntegrationInvalidChannel
+		}
+	}
+
+	updated, err := s.DB.UpdateCampaignIntegrationChannelID(campaignId, channelId, model.IntegrationSourceDiscord)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrCampaignIntegrationNotFound
+		}
+		return nil, fmt.Errorf("update campaign integration channel id: %w", err)
+	}
+	return updated, nil
 }
 
 func (s *CampaignIntegrationService) Remove(campaignId string, source model.IntegrationSource) error {

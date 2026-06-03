@@ -73,6 +73,21 @@ message RemoveCampaignIntegrationRequest {
 
 message RemoveCampaignIntegrationResponse {}
 
+message UpdateDiscordIntegrationParams {
+  string channel_id = 1;
+}
+
+message UpdateCampaignIntegrationRequest {
+  string campaign_id = 1;
+  oneof integration {
+    UpdateDiscordIntegrationParams discord = 2;
+  }
+}
+
+message UpdateCampaignIntegrationResponse {
+  CampaignIntegration integration = 1;
+}
+
 // -----------------------------------------------------------------------------
 // Service
 // -----------------------------------------------------------------------------
@@ -82,4 +97,5 @@ service CampaignIntegrationService {
   rpc GetCampaignIntegration(GetCampaignIntegrationRequest) returns (GetCampaignIntegrationResponse);
   rpc ListCampaignIntegrationsByCampaign(ListCampaignIntegrationsByCampaignRequest) returns (ListCampaignIntegrationsByCampaignResponse);
   rpc RemoveCampaignIntegration(RemoveCampaignIntegrationRequest) returns (RemoveCampaignIntegrationResponse);
+  rpc UpdateCampaignIntegration(UpdateCampaignIntegrationRequest) returns (UpdateCampaignIntegrationResponse);
 }

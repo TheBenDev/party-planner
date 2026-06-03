@@ -50,6 +50,21 @@ export const RemoveCampaignIntegrationRequestSchema = z.object({
 
 export const RemoveCampaignIntegrationResponseSchema = z.object({});
 
+export const UpdateDiscordIntegrationRequestSchema = z.object({
+	campaignId: z.uuid(),
+	channelId: z.string(),
+	source: z.literal(IntegrationSource.DISCORD),
+});
+
+export const UpdateCampaignIntegrationRequestSchema = z.discriminatedUnion(
+	"source",
+	[UpdateDiscordIntegrationRequestSchema],
+);
+
+export const UpdateCampaignIntegrationResponseSchema = z.object({
+	integration: CampaignIntegrationSchema,
+});
+
 export const ListCampaignIntegrationsByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
