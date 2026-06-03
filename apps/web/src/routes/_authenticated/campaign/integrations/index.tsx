@@ -1,4 +1,5 @@
 import { IntegrationSource } from "@planner/enums/integration";
+import { UserRole } from "@planner/enums/user";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ServerIcon } from "lucide-react";
@@ -155,9 +156,10 @@ export const Route = createFileRoute("/_authenticated/campaign/integrations/")({
 });
 
 function IntegrationsPage() {
-	const { campaign } = useAuth();
+	const { campaign, role } = useAuth();
 	if (!campaign) return <div>Campaign Required</div>;
 	const campaignId = campaign.campaign.id;
+	const isDm = role === UserRole.DUNGEON_MASTER;
 
 	// TODO Handle query failures before computing connected/available states.
 	const { data, isLoading } = useQuery({
@@ -215,27 +217,29 @@ function IntegrationsPage() {
 						</section>
 					)}
 
-					<section>
-						<p className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
-							Available
-						</p>
-						<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-							{available.map((integration) => (
-								<IntegrationCard
-									description={integration.description}
-									href={integration.href}
-									icon={integration.icon}
-									key={integration.name}
-									meta={integration.meta}
-									metaIcon={integration.metaIcon}
-									name={integration.name}
-									status={
-										integration.source !== null ? "available" : "coming_soon"
-									}
-								/>
-							))}
-						</div>
-					</section>
+					{isDm && (
+						<section>
+							<p className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+								Available
+							</p>
+							<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+								{available.map((integration) => (
+									<IntegrationCard
+										description={integration.description}
+										href={integration.href}
+										icon={integration.icon}
+										key={integration.name}
+										meta={integration.meta}
+										metaIcon={integration.metaIcon}
+										name={integration.name}
+										status={
+											integration.source !== null ? "available" : "coming_soon"
+										}
+									/>
+								))}
+							</div>
+						</section>
+					)}
 				</>
 			)}
 		</div>
