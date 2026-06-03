@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateCampaignIntegrationRequest, CreateCampaignIntegrationResponse, GetCampaignIntegrationRequest, GetCampaignIntegrationResponse, ListCampaignIntegrationsByCampaignRequest, ListCampaignIntegrationsByCampaignResponse, RemoveCampaignIntegrationRequest, RemoveCampaignIntegrationResponse } from "./campaign_integration_pb.js";
+import { CreateCampaignIntegrationRequest, CreateCampaignIntegrationResponse, GetCampaignIntegrationRequest, GetCampaignIntegrationResponse, ListCampaignIntegrationsByCampaignRequest, ListCampaignIntegrationsByCampaignResponse, RemoveCampaignIntegrationRequest, RemoveCampaignIntegrationResponse, UpdateCampaignIntegrationRequest, UpdateCampaignIntegrationResponse } from "./campaign_integration_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -46,6 +46,15 @@ export const CampaignIntegrationService = {
       name: "RemoveCampaignIntegration",
       I: RemoveCampaignIntegrationRequest,
       O: RemoveCampaignIntegrationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.CampaignIntegrationService.UpdateCampaignIntegration
+     */
+    updateCampaignIntegration: {
+      name: "UpdateCampaignIntegration",
+      I: UpdateCampaignIntegrationRequest,
+      O: UpdateCampaignIntegrationResponse,
       kind: MethodKind.Unary,
     },
   }

@@ -91,6 +91,27 @@ func (s *CampaignIntegrationServer) ListCampaignIntegrationsByCampaign(ctx conte
 	}), nil
 }
 
+func (s *CampaignIntegrationServer) UpdateCampaignIntegration(ctx context.Context, req *connect.Request[v1.UpdateCampaignIntegrationRequest]) (*connect.Response[v1.UpdateCampaignIntegrationResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	switch p := req.Msg.Integration.(type) {
+	case *v1.UpdateCampaignIntegrationRequest_Discord:
+		if p.Discord == nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("discord integration params required"))
+		}
+		updated, err := s.CampaignIntegration.UpdateDiscordChannelID(ctx, req.Msg.CampaignId, p.Discord.ChannelId)
+		if err != nil {
+			return nil, mapServiceError(ctx, s.Log, err, "failed to update discord integration")
+		}
+		return connect.NewResponse(&v1.UpdateCampaignIntegrationResponse{
+			Integration: campaignIntegrationToProto(updated),
+		}), nil
+	default:
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("unsupported or missing integration params"))
+	}
+}
+
 func (s *CampaignIntegrationServer) RemoveCampaignIntegration(ctx context.Context, req *connect.Request[v1.RemoveCampaignIntegrationRequest]) (*connect.Response[v1.RemoveCampaignIntegrationResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))

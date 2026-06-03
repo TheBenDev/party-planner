@@ -9,6 +9,8 @@ import {
 	ListCampaignIntegrationsByCampaignResponseSchema,
 	RemoveCampaignIntegrationRequestSchema,
 	RemoveCampaignIntegrationResponseSchema,
+	UpdateCampaignIntegrationRequestSchema,
+	UpdateCampaignIntegrationResponseSchema,
 } from "@planner/schemas/discord";
 import { handleError } from "../errors";
 import { campaignProcedure, dmProcedure } from "../orpc";
@@ -166,9 +168,55 @@ const listCampaignIntegrationsByCampaign = campaignProcedure
 		}
 	});
 
+const updateCampaignIntegration = dmProcedure
+	.route({
+		method: "POST",
+		path: "/campaignIntegration/updateCampaignIntegration",
+		summary: "Update a campaign integration",
+	})
+	.input(UpdateCampaignIntegrationRequestSchema)
+	.output(UpdateCampaignIntegrationResponseSchema)
+	.handler(async ({ input, context }) => {
+		switch (input.source) {
+			case IntegrationSource.DISCORD: {
+				const { campaignId, channelId } = input;
+				if (campaignId !== context.campaignId) {
+					throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+				}
+				const result = await context.api.campaignIntegration
+					.updateCampaignIntegration({
+						campaignId,
+						integration: {
+							case: "discord",
+							value: { channelId },
+						},
+					})
+					.catch((err) => {
+						handleError(
+							err,
+							"failed to update campaign integration",
+							{ campaignId },
+							context.logger,
+						);
+					});
+				if (!result?.integration) {
+					throw new ORPCError("INTERNAL_SERVER_ERROR", {
+						message: "failed to update campaign integration",
+					});
+				}
+				return { integration: protoToCampaignIntegration(result.integration) };
+			}
+			default:
+				throw new ORPCError("BAD_REQUEST", {
+					message: `unsupported integration source: ${input.source}`,
+				});
+		}
+	});
+
 export const campaignIntegrationRouter = {
 	createCampaignIntegration,
 	getCampaignIntegration,
 	listCampaignIntegrationsByCampaign,
 	removeCampaignIntegration,
+	updateCampaignIntegration,
 };
