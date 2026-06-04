@@ -19,7 +19,7 @@ Go API server using ConnectRPC (protobuf), `log/slog`, `database/sql` + `pgx/v5`
 cmd/api/main.go          — wiring: DB, services, RPC handlers, bot
 internal/
   config/                — env config struct
-  db/db.go               — ALL SQL lives here; no SQL outside this file
+  db/                    — ALL SQL lives here; no SQL outside this package
   lib/                   — shared utilities (RSA cookie, JWT verify)
   logger/                — slog setup
   middleware/            — HTTP middleware
@@ -39,7 +39,7 @@ gen/proto/planner/v1/    — buf-generated Go stubs
 rpc → service → db
 ```
 
-- **db/db.go**: SQL only. No business logic. Takes `*sql.DB` + domain types. All queries live here.
+- **db/**: SQL only. No business logic. Takes `*sql.DB` + domain types. All queries live here, split per entity file.
 - **service/**: Maps domain errors. Orchestrates DB calls + external calls (Discord, Clerk). Uses `errgroup` for parallelism. Never writes SQL directly.
 - **rpc/**: Translates ConnectRPC request/response ↔ service calls. Maps service errors via `mapServiceError()` → ConnectRPC codes. No business logic.
 - **main.go**: Wires everything. All new services MUST be registered here.
@@ -48,7 +48,7 @@ rpc → service → db
 
 1. Add proto in `packages/proto/planner/v1/<entity>.proto`
 2. Run `buf generate` from `packages/proto/`
-3. Add SQL methods to `internal/db/db.go`
+3. Add SQL methods to `internal/db/<entity>.go`
 4. Add domain errors to `internal/service/errors.go` if needed
 5. Implement service in `internal/service/<entity>.go`
 6. Implement RPC handler in `internal/rpc/<entity>.go`
@@ -123,7 +123,7 @@ pgConstraint(err)             // returns constraint name string
 
 ## Hard Rules
 
-- No SQL outside `internal/db/db.go`
+- No SQL outside the `internal/db/` package
 - No business logic in `rpc/` layer — only translation
 - No service logic in `db/` layer — only queries
 - Use `log/slog` — no `fmt.Println`, no `log.Print`

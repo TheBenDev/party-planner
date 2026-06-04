@@ -55,7 +55,7 @@ func (s *SessionService) Announce(ctx context.Context, sessionId string, campaig
 		return fmt.Errorf("announce discord session error: %w", err)
 	}
 
-	if _, err := s.DB.MarkSessionAnnounced(sessionId); err != nil {
+	if _, err := s.DB.MarkSessionAnnounced(sessionId, campaignId); err != nil {
 		return fmt.Errorf("mark session announced error: %w", err)
 	}
 
