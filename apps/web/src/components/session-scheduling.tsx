@@ -36,6 +36,8 @@ type Session = {
 	announcedAt?: Date | string | null;
 	startsAt?: Date | string | null;
 	campaignId: string;
+	seriesId?: string | null;
+	discordEventId?: string | null;
 };
 
 // ----------------------------------------------------------------
@@ -85,7 +87,9 @@ function renderState(session: Session, hasDiscordIntegration: boolean) {
 				<ConfirmedState
 					announcedAt={session.announcedAt}
 					campaignId={session.campaignId}
+					discordEventId={session.discordEventId}
 					hasDiscordIntegration={hasDiscordIntegration}
+					seriesId={session.seriesId}
 					sessionId={session.id}
 					startsAt={session.startsAt}
 				/>
@@ -449,7 +453,56 @@ type ConfirmedStateProps = {
 	sessionId: string;
 	campaignId: string;
 	hasDiscordIntegration: boolean;
+	seriesId?: string | null;
+	discordEventId?: string | null;
 };
+
+type DiscordActionProps = {
+	isSeriesSession: boolean;
+	hasDiscordEvent: boolean;
+	announced: boolean;
+	hasDiscordIntegration: boolean;
+	announceMutation: { isPending: boolean; mutate: () => void };
+};
+
+function renderDiscordAction({
+	isSeriesSession,
+	hasDiscordEvent,
+	announced,
+	hasDiscordIntegration,
+	announceMutation,
+}: DiscordActionProps) {
+	if (isSeriesSession) {
+		if (!hasDiscordEvent) return null;
+		return (
+			<p className="text-xs text-muted-foreground flex items-center gap-1.5">
+				<Check className="size-3.5 text-emerald-500" />
+				Discord event scheduled
+			</p>
+		);
+	}
+
+	if (announced) {
+		return (
+			<p className="text-xs text-muted-foreground flex items-center gap-1.5">
+				<Check className="size-3.5 text-emerald-500" />
+				Announced on Discord
+			</p>
+		);
+	}
+
+	return (
+		<Button
+			className="gap-1.5"
+			disabled={announceMutation.isPending || !hasDiscordIntegration}
+			onClick={() => announceMutation.mutate()}
+			size="sm"
+			variant="outline"
+		>
+			Announce on Discord
+		</Button>
+	);
+}
 
 function toDate(value: Date | string | null | undefined): Date | undefined {
 	if (!value) return undefined;
@@ -463,10 +516,14 @@ function ConfirmedState({
 	campaignId,
 	sessionId,
 	hasDiscordIntegration,
+	seriesId,
+	discordEventId,
 }: ConfirmedStateProps) {
 	const queryClient = useQueryClient();
 	const date = toDate(startsAt);
 	const announced = !!announcedAt;
+	const isSeriesSession = !!seriesId;
+	const hasDiscordEvent = !!discordEventId;
 
 	const announceMutation = useMutation({
 		mutationFn: () => client.session.announceSession({ campaignId, sessionId }),
@@ -515,23 +572,13 @@ function ConfirmedState({
 
 			{/* Actions */}
 			<div className="px-4 py-3 flex items-center gap-2 justify-end">
-				{announced ? (
-					<p className="text-xs text-muted-foreground flex items-center gap-1.5">
-						<Check className="size-3.5 text-emerald-500" />
-						Announced on Discord
-					</p>
-				) : (
-					<Button
-						className="gap-1.5"
-						disabled={announceMutation.isPending || !hasDiscordIntegration}
-						onClick={() => announceMutation.mutate()}
-						size="sm"
-						variant="outline"
-					>
-						{/* Swap for a Discord icon if you have one */}
-						Announce on Discord
-					</Button>
-				)}
+				{renderDiscordAction({
+					announced,
+					announceMutation,
+					hasDiscordEvent,
+					hasDiscordIntegration,
+					isSeriesSession,
+				})}
 			</div>
 		</div>
 	);

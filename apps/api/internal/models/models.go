@@ -349,6 +349,7 @@ type Session struct {
 	Title            string
 	Description      sql.NullString
 	PollID           sql.NullString
+	DiscordEventID   sql.NullString
 	SeriesID         sql.NullString
 	AnnouncedAt      sql.NullTime
 	OriginalStartsAt sql.NullTime

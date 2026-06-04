@@ -16,6 +16,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var ErrDiscordEventNotFound = errors.New("discord scheduled event not found")
+
 type DiscordService struct {
 	Session *discordgo.Session
 	Log     *slog.Logger
@@ -81,32 +83,17 @@ func (s *DiscordService) ExchangeCode(ctx context.Context, code string) (*discor
 	return &discordTokenResponse{GuildID: apiRes.Guild.ID}, nil
 }
 
-func (s *DiscordService) AnnounceSession(
+func (s *DiscordService) CreateScheduledEvent(
 	ctx context.Context,
-	integration *model.CampaignIntegration,
+	guildID string,
 	session *model.Session,
-) error {
-	var metadata struct {
-		ChannelID string `json:"channelId"`
-	}
-
-	if integration == nil {
-		return errors.New("campaign integration is required")
-	}
-	if session == nil {
-		return errors.New("session is required")
-	}
-
+) (string, error) {
 	if !session.StartsAt.Valid {
-		return errors.New("valid start time is required to announce session")
-	}
-
-	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
-		return fmt.Errorf("failed to parse discord integration metadata: %w", err)
+		return "", errors.New("valid start time is required to create discord event")
 	}
 
 	endTime := session.StartsAt.Time.Add(2 * time.Hour)
-	_, err := s.Session.GuildScheduledEventCreate(integration.ExternalID, &discordgo.GuildScheduledEventParams{
+	event, err := s.Session.GuildScheduledEventCreate(guildID, &discordgo.GuildScheduledEventParams{
 		Name: session.Title,
 		Description: func() string {
 			if session.Description.Valid {
@@ -117,26 +104,90 @@ func (s *DiscordService) AnnounceSession(
 		ScheduledStartTime: &session.StartsAt.Time,
 		ScheduledEndTime:   &endTime,
 		EntityType:         discordgo.GuildScheduledEventEntityTypeExternal,
-		// TODO: support additional VTT providers later
 		EntityMetadata: &discordgo.GuildScheduledEventEntityMetadata{
 			Location: "Forge + Discord Voice",
 		},
 		PrivacyLevel: discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
 		Status:       discordgo.GuildScheduledEventStatusScheduled,
 	}, discordgo.WithContext(ctx))
-
 	if err != nil {
-		return err
+		return "", fmt.Errorf("discord scheduled event create error: %w", err)
+	}
+	return event.ID, nil
+}
+
+func (s *DiscordService) AnnounceSession(
+	ctx context.Context,
+	integration *model.CampaignIntegration,
+	session *model.Session,
+) (string, error) {
+	var metadata struct {
+		ChannelID string `json:"channelId"`
+	}
+
+	if integration == nil {
+		return "", errors.New("campaign integration is required")
+	}
+	if session == nil {
+		return "", errors.New("session is required")
+	}
+
+	if !session.StartsAt.Valid {
+		return "", errors.New("valid start time is required to announce session")
+	}
+
+	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
+		return "", fmt.Errorf("failed to parse discord integration metadata: %w", err)
+	}
+
+	eventID, err := s.CreateScheduledEvent(ctx, integration.ExternalID, session)
+	if err != nil {
+		return "", err
 	}
 
 	msg := formatAnnounceMessage(session)
-
 	if metadata.ChannelID != "" {
 		if _, err := s.Session.ChannelMessageSend(metadata.ChannelID, msg, discordgo.WithContext(ctx)); err != nil {
-			return fmt.Errorf("discord send error: %w", err)
+			s.Log.WarnContext(ctx, "failed to send announcement message; event created",
+				"channel_id", metadata.ChannelID,
+				"event_id", eventID,
+				"error", err,
+			)
 		}
 	}
 
+	return eventID, nil
+}
+
+func (s *DiscordService) UpdateScheduledEvent(
+	ctx context.Context,
+	guildID string,
+	eventID string,
+	session *model.Session,
+) error {
+	if !session.StartsAt.Valid {
+		return errors.New("valid start time is required to update discord event")
+	}
+
+	endTime := session.StartsAt.Time.Add(2 * time.Hour)
+	_, err := s.Session.GuildScheduledEventEdit(guildID, eventID, &discordgo.GuildScheduledEventParams{
+		Name: session.Title,
+		Description: func() string {
+			if session.Description.Valid {
+				return session.Description.String
+			}
+			return ""
+		}(),
+		ScheduledStartTime: &session.StartsAt.Time,
+		ScheduledEndTime:   &endTime,
+	}, discordgo.WithContext(ctx))
+	if err != nil {
+		var restErr *discordgo.RESTError
+		if errors.As(err, &restErr) && restErr.Response != nil && restErr.Response.StatusCode == http.StatusNotFound {
+			return ErrDiscordEventNotFound
+		}
+		return fmt.Errorf("discord scheduled event update error: %w", err)
+	}
 	return nil
 }
 

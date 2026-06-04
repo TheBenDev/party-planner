@@ -1,0 +1,1 @@
+ALTER TABLE "session" ADD COLUMN "discord_event_id" varchar;

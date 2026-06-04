@@ -6,6 +6,7 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	announcedAt: z.date().nullable().optional(),
 	campaignId: z.uuid(),
 	description: z.string().nullable().optional(),
+	discordEventId: z.string().nullable().optional(),
 	originalStartsAt: z.date().nullable().optional(),
 	pollId: z.string().nullable().optional(),
 	seriesId: z.uuid().nullable().optional(),

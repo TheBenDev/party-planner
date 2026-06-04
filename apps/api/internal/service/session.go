@@ -51,7 +51,8 @@ func (s *SessionService) Announce(ctx context.Context, sessionId string, campaig
 		return fmt.Errorf("get campaign integration error: %w", err)
 	}
 
-	if err := s.Discord.AnnounceSession(ctx, integration, session); err != nil {
+	eventID, err := s.Discord.AnnounceSession(ctx, integration, session)
+	if err != nil {
 		return fmt.Errorf("announce discord session error: %w", err)
 	}
 
@@ -59,10 +60,20 @@ func (s *SessionService) Announce(ctx context.Context, sessionId string, campaig
 		return fmt.Errorf("mark session announced error: %w", err)
 	}
 
+	if eventID != "" {
+		if err := s.DB.SetSessionDiscordEventID(sessionId, campaignId, eventID); err != nil {
+			s.Log.WarnContext(ctx, "failed to persist discord_event_id after announce",
+				"session_id", sessionId,
+				"event_id", eventID,
+				"error", err,
+			)
+		}
+	}
+
 	return nil
 }
 
-func (s *SessionService) Create(session *model.CreateSessionRequest) (*model.Session, error) {
+func (s *SessionService) Create(ctx context.Context, session *model.CreateSessionRequest) (*model.Session, error) {
 	created, err := s.DB.CreateSession(session)
 	if err != nil {
 		if mapped := mapSessionPgError(err); mapped != err {
@@ -70,6 +81,30 @@ func (s *SessionService) Create(session *model.CreateSessionRequest) (*model.Ses
 		}
 		return nil, fmt.Errorf("create session error: %w", err)
 	}
+
+	if created.SeriesID.Valid && created.StartsAt.Valid && created.StartsAt.Time.After(time.Now()) {
+		integration, intErr := s.DB.GetCampaignIntegration(created.CampaignID, model.IntegrationSourceDiscord)
+		if intErr == nil {
+			eventID, eventErr := s.Discord.CreateScheduledEvent(ctx, integration.ExternalID, created)
+			if eventErr != nil {
+				s.Log.WarnContext(ctx, "failed to create discord event for series session",
+					"session_id", created.ID,
+					"error", eventErr,
+				)
+			} else if eventID != "" {
+				if err := s.DB.SetSessionDiscordEventID(created.ID, created.CampaignID, eventID); err != nil {
+					s.Log.WarnContext(ctx, "failed to persist discord_event_id for series session",
+						"session_id", created.ID,
+						"event_id", eventID,
+						"error", err,
+					)
+				} else {
+					created.DiscordEventID = sql.NullString{String: eventID, Valid: true}
+				}
+			}
+		}
+	}
+
 	return created, nil
 }
 
@@ -264,6 +299,34 @@ func (s *SessionService) Update(ctx context.Context, req *model.UpdateSessionReq
 			}
 		}
 	}
+
+	// Sync Discord event if startsAt changed
+	startsAtChanged := req.StartsAt.Valid && (!session.StartsAt.Valid || !session.StartsAt.Time.Equal(req.StartsAt.Time))
+	if startsAtChanged && session.DiscordEventID.Valid {
+		integration, intErr := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
+		if intErr == nil {
+			updateErr := s.Discord.UpdateScheduledEvent(ctx, integration.ExternalID, session.DiscordEventID.String, updated)
+			if updateErr != nil {
+				if errors.Is(updateErr, ErrDiscordEventNotFound) {
+					if clearErr := s.DB.ClearSessionDiscordEventID(session.ID, session.CampaignID); clearErr != nil {
+						s.Log.WarnContext(ctx, "failed to clear stale discord_event_id",
+							"session_id", session.ID,
+							"error", clearErr,
+						)
+					} else {
+						updated.DiscordEventID = sql.NullString{}
+					}
+				} else {
+					s.Log.WarnContext(ctx, "failed to update discord scheduled event",
+						"session_id", session.ID,
+						"event_id", session.DiscordEventID.String,
+						"error", updateErr,
+					)
+				}
+			}
+		}
+	}
+
 	return updated, nil
 }
 

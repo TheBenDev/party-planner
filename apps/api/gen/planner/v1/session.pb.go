@@ -88,6 +88,7 @@ type Session struct {
 	AnnouncedAt      *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=announced_at,json=announcedAt,proto3,oneof" json:"announced_at,omitempty"`
 	SeriesId         *string                `protobuf:"bytes,11,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
 	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
+	DiscordEventId   *string                `protobuf:"bytes,13,opt,name=discord_event_id,json=discordEventId,proto3,oneof" json:"discord_event_id,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -204,6 +205,13 @@ func (x *Session) GetOriginalStartsAt() *timestamppb.Timestamp {
 		return x.OriginalStartsAt
 	}
 	return nil
+}
+
+func (x *Session) GetDiscordEventId() string {
+	if x != nil && x.DiscordEventId != nil {
+		return *x.DiscordEventId
+	}
+	return ""
 }
 
 type AnnounceSessionRequest struct {
@@ -1139,7 +1147,7 @@ var File_planner_v1_session_proto protoreflect.FileDescriptor
 const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"\x18planner/v1/session.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x91\x05\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x05\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1156,7 +1164,8 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\fannounced_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vannouncedAt\x88\x01\x01\x12 \n" +
 	"\tseries_id\x18\v \x01(\tH\x04R\bseriesId\x88\x01\x01\x12M\n" +
-	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01B\x0e\n" +
+	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01\x12-\n" +
+	"\x10discord_event_id\x18\r \x01(\tH\x06R\x0ediscordEventId\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\n" +
@@ -1165,7 +1174,8 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\r_announced_atB\f\n" +
 	"\n" +
 	"_series_idB\x15\n" +
-	"\x13_original_starts_at\"X\n" +
+	"\x13_original_starts_atB\x13\n" +
+	"\x11_discord_event_id\"X\n" +
 	"\x16AnnounceSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x1d\n" +

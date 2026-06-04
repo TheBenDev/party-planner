@@ -65,7 +65,7 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series_id and original_starts_at must be provided together"))
 	}
 
-	session, err := s.Session.Create(&model.CreateSessionRequest{
+	session, err := s.Session.Create(ctx, &model.CreateSessionRequest{
 		CampaignID:       req.Msg.CampaignId,
 		Title:            req.Msg.Title,
 		Description:      sqlNullString(req.Msg.Description),
@@ -286,6 +286,9 @@ func sessionToProto(session *model.Session) *v1.Session {
 	}
 	if session.OriginalStartsAt.Valid {
 		proto.OriginalStartsAt = timestamppb.New(session.OriginalStartsAt.Time)
+	}
+	if session.DiscordEventID.Valid {
+		proto.DiscordEventId = &session.DiscordEventID.String
 	}
 	return proto
 }
