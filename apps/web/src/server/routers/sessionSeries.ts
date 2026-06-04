@@ -33,6 +33,27 @@ const createSessionSeries = dmProcedure
 		if (input.campaignId !== context.campaignId) {
 			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
 		}
+		const now = new Date();
+		const startOfToday = new Date(
+			Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+		);
+		if (input.seriesStartDate < startOfToday) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "series start date cannot be before today",
+			});
+		}
+		if (input.seriesEndDate) {
+			if (input.seriesEndDate < startOfToday) {
+				throw new ORPCError("BAD_REQUEST", {
+					message: "series end date cannot be in the past",
+				});
+			}
+			if (input.seriesEndDate < input.seriesStartDate) {
+				throw new ORPCError("BAD_REQUEST", {
+					message: "series end date cannot be before series start date",
+				});
+			}
+		}
 		try {
 			const res = await api.sessionSeries.createSessionSeries({
 				campaignId: input.campaignId,
@@ -132,6 +153,17 @@ const updateSessionSeries = dmProcedure
 	.output(UpdateSessionSeriesResponseSchema)
 	.handler(async ({ input, context }) => {
 		const api = context.api;
+		if (input.seriesEndDate) {
+			const now = new Date();
+			const startOfToday = new Date(
+				Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+			);
+			if (input.seriesEndDate < startOfToday) {
+				throw new ORPCError("BAD_REQUEST", {
+					message: "series end date cannot be in the past",
+				});
+			}
+		}
 		try {
 			const res = await api.sessionSeries.updateSessionSeries({
 				campaignId: context.campaignId,

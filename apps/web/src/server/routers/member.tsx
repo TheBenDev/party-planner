@@ -31,6 +31,7 @@ import {
 	protoRoleToUserRole,
 	protoToCampaignInvitation,
 	protoToMember,
+	protoToMemberProfile,
 	userRoleToProtoRole,
 } from "./util/proto/member";
 import { protoToUser } from "./util/proto/user";
@@ -172,13 +173,19 @@ const createInvitation = dmProcedure
 				});
 			}
 
+			const { firstName, lastName, email: senderEmail } = inviterRes.user;
+			const dmName =
+				firstName
+					? `${firstName} ${lastName ?? ""}`.trim()
+					: senderEmail;
+
 			const { error } = await resend.emails.send({
 				from: env.VITE_APP_FROM_EMAIL,
 				react: (
 					<DndInviteEmail
 						acceptLink={`${env.VITE_APP_URL}/accept?token=${text}`}
 						campaignName={campaignRes.campaign.title}
-						dmName={`${inviterRes.user.firstName} ${inviterRes.user.lastName}`}
+						dmName={dmName}
 					/>
 				),
 				subject: "Invitation to Dungeons and Dragons Campaign",
@@ -331,7 +338,7 @@ const listMembersByCampaign = campaignProcedure
 		const api = context.api;
 		try {
 			const res = await api.member.listMembersByCampaign({ campaignId });
-			return { members: res.members.map(protoToMember) };
+			return { members: res.members.map(protoToMemberProfile) };
 		} catch (err) {
 			handleError(
 				err,
@@ -354,7 +361,7 @@ const listMembersByUser = privateProcedure
 		const api = context.api;
 		try {
 			const res = await api.member.listMembersByUser({ userId });
-			return { members: res.members.map(protoToMember) };
+			return { members: res.members.map(protoToMemberProfile) };
 		} catch (err) {
 			handleError(err, "failed to list members", { userId }, context.logger);
 		}

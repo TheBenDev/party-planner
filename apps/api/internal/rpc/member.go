@@ -75,7 +75,7 @@ func (s *MemberServer) ListMembersByCampaign(ctx context.Context, req *connect.R
 		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign users by campaign")
 	}
 
-	return connect.NewResponse(&v1.ListMembersByCampaignResponse{Members: Map(members, memberToProto)}), nil
+	return connect.NewResponse(&v1.ListMembersByCampaignResponse{Members: Map(members, memberWithUserToProto)}), nil
 }
 
 func (s *MemberServer) ListMembersByUser(ctx context.Context, req *connect.Request[v1.ListMembersByUserRequest]) (*connect.Response[v1.ListMembersByUserResponse], error) {
@@ -87,7 +87,7 @@ func (s *MemberServer) ListMembersByUser(ctx context.Context, req *connect.Reque
 		return nil, mapServiceError(ctx, s.Log, err, "failed to list campaign users by user")
 	}
 
-	return connect.NewResponse(&v1.ListMembersByUserResponse{Members: Map(members, memberToProto)}), nil
+	return connect.NewResponse(&v1.ListMembersByUserResponse{Members: Map(members, memberWithUserToProto)}), nil
 }
 
 func (s *MemberServer) RemoveMember(ctx context.Context, req *connect.Request[v1.RemoveMemberRequest]) (*connect.Response[v1.RemoveMemberResponse], error) {
@@ -236,6 +236,27 @@ func memberSourceToProto(source model.MemberRole) v1.MemberRole {
 	default:
 		return v1.MemberRole_MEMBER_ROLE_UNSPECIFIED
 	}
+}
+
+func memberWithUserToProto(m *model.MemberWithUser) *v1.MemberProfile {
+	if m == nil {
+		return nil
+	}
+	proto := &v1.MemberProfile{
+		UserId:     m.UserID,
+		CampaignId: m.CampaignID,
+		Role:       memberSourceToProto(m.Role),
+		CreatedAt:  timestamppb.New(m.CreatedAt),
+		UpdatedAt:  timestamppb.New(m.UpdatedAt),
+		Email:      m.Email,
+	}
+	if m.FirstName.Valid {
+		proto.FirstName = &m.FirstName.String
+	}
+	if m.LastName.Valid {
+		proto.LastName = &m.LastName.String
+	}
+	return proto
 }
 
 func memberToProto(campaignUser *model.Member) *v1.Member {

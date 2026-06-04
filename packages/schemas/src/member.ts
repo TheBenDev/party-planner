@@ -13,6 +13,12 @@ export const CampaignUserSchema = z.object({
 	userId: z.uuid(),
 });
 
+export const CampaignUserWithUserSchema = CampaignUserSchema.extend({
+	email: z.email(),
+	firstName: z.string().nullable(),
+	lastName: z.string().nullable(),
+});
+
 export const CampaignInvitationSchema = BaseEntitySchema.extend({
 	acceptedAt: z.date().nullable(),
 	campaignId: z.uuid(),
@@ -24,6 +30,7 @@ export const CampaignInvitationSchema = BaseEntitySchema.extend({
 });
 
 export type CampaignUser = z.infer<typeof CampaignUserSchema>;
+export type CampaignUserWithUser = z.infer<typeof CampaignUserWithUserSchema>;
 export type CampaignInvitation = z.infer<typeof CampaignInvitationSchema>;
 
 // ─── Invitations ──────────────────────────────────────────────────────────────
@@ -100,11 +107,11 @@ export const GetMemberResponseSchema = z.object({
 });
 
 export const ListMembersByCampaignResponseSchema = z.object({
-	members: z.array(CampaignUserSchema),
+	members: z.array(CampaignUserWithUserSchema),
 });
 
 export const ListMembersByUserResponseSchema = z.object({
-	members: z.array(CampaignUserSchema),
+	members: z.array(CampaignUserWithUserSchema),
 });
 
 export const RemoveMemberRequestSchema = z.object({

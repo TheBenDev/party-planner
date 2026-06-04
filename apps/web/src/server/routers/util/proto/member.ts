@@ -7,11 +7,14 @@ import {
 	CampaignInvitationSchema,
 	type CampaignUser,
 	CampaignUserSchema,
+	type CampaignUserWithUser,
+	CampaignUserWithUserSchema,
 } from "@planner/schemas/member";
 import {
 	type CampaignInvitation as CampaignInvitationProto,
 	InvitationStatus as InvitationStatusProto,
 	type Member as MemberProto,
+	type MemberProfile as MemberProfileProto,
 	MemberRole as MemberRoleProto,
 } from "@/gen/proto/planner/v1/member_pb";
 
@@ -90,6 +93,30 @@ export function protoToMember(proto: MemberProto): CampaignUser {
 	return CampaignUserSchema.parse({
 		campaignId: proto.campaignId,
 		createdAt: timestampDate(proto.createdAt),
+		role: protoRoleToUserRole(proto.role),
+		updatedAt: timestampDate(proto.updatedAt),
+		userId: proto.userId,
+	});
+}
+
+export function protoToMemberProfile(proto: MemberProfileProto): CampaignUserWithUser {
+	if (!proto.createdAt) {
+		throw new ORPCError("INTERNAL_SERVER_ERROR", {
+			message: "MemberProfile is missing createdAt",
+		});
+	}
+	if (!proto.updatedAt) {
+		throw new ORPCError("INTERNAL_SERVER_ERROR", {
+			message: "MemberProfile is missing updatedAt",
+		});
+	}
+
+	return CampaignUserWithUserSchema.parse({
+		campaignId: proto.campaignId,
+		createdAt: timestampDate(proto.createdAt),
+		email: proto.email,
+		firstName: proto.firstName ?? null,
+		lastName: proto.lastName ?? null,
 		role: protoRoleToUserRole(proto.role),
 		updatedAt: timestampDate(proto.updatedAt),
 		userId: proto.userId,

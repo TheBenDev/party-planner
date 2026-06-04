@@ -1,5 +1,5 @@
 import { UserRole } from "@planner/enums/user";
-import type { CampaignUser } from "@planner/schemas/member";
+import type { CampaignUserWithUser } from "@planner/schemas/member";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { UserPlus, X } from "lucide-react";
@@ -60,7 +60,6 @@ function SettingsPage() {
 		}
 	}, [campaign]);
 
-	// TODO: List names with members
 	const {
 		data: membersData,
 		isLoading: membersLoading,
@@ -88,7 +87,9 @@ function SettingsPage() {
 		},
 		onError: () => toast.error("Failed to update campaign"),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.auth.campaign(),
+			});
 			toast.success("Campaign updated");
 		},
 	});
@@ -117,7 +118,9 @@ function SettingsPage() {
 		},
 		onError: () => toast.error("Failed to delete campaign"),
 		onSuccess: async () => {
-			await queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.auth.campaign(),
+			});
 			toast.success("Campaign deleted");
 			navigate({ to: "/" });
 		},
@@ -371,7 +374,7 @@ function MemberRow({
 	isRemoving,
 	onKick,
 }: {
-	member: CampaignUser;
+	member: CampaignUserWithUser;
 	currentUserId: string | undefined;
 	isDm: boolean;
 	isRemoving: boolean;
@@ -387,7 +390,7 @@ function MemberRow({
 			</div>
 			<div className="flex-1 min-w-0">
 				<p className="text-sm font-medium truncate">
-					{isCurrentUser ? "You" : `Member ···${member.userId.slice(-6)}`}
+					{isCurrentUser ? "You" : `Member ${member.email}`}
 				</p>
 				<p className="text-xs text-muted-foreground font-crimson italic">
 					{member.role === UserRole.DUNGEON_MASTER

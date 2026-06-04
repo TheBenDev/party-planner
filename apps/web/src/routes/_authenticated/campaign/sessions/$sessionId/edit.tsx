@@ -120,7 +120,7 @@ function SessionEditFormInner({
 					control={form.control}
 					name="startsAt"
 					render={({ field }) => (
-						<DateTimePicker onChange={field.onChange} value={field.value} />
+						<DateTimePicker minDate={new Date()} onChange={field.onChange} value={field.value} />
 					)}
 				/>
 			</div>
