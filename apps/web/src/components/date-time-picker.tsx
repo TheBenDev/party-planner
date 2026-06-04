@@ -19,6 +19,7 @@ type TimeSegment = "hour" | "minute" | "ampm";
 export type DateTimePickerProps = {
 	value: Date | undefined;
 	onChange: (date: Date | undefined) => void;
+	minDate?: Date;
 };
 
 // ----------------------------------------------------------------
@@ -60,7 +61,7 @@ export function applyTimeChange(
 // Component
 // ----------------------------------------------------------------
 
-export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
+export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps) {
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -83,6 +84,18 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
 			<PopoverContent className="w-auto p-0">
 				<div className="sm:flex">
 					<Calendar
+						disabled={
+							minDate
+								? (day) => {
+										const minDay = new Date(
+											minDate.getFullYear(),
+											minDate.getMonth(),
+											minDate.getDate(),
+										);
+										return day < minDay;
+									}
+								: undefined
+						}
 						mode="single"
 						onSelect={(day) => {
 							if (!day) return;

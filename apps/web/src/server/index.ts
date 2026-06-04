@@ -1,7 +1,6 @@
 import { campaignRouter } from "./routers/campaign";
 import { campaignIntegrationRouter } from "./routers/campaignIntegration";
 
-import { emailRouter } from "./routers/email";
 import { locationRouter } from "./routers/location";
 import { memberRouter } from "./routers/member";
 import { nonPlayerCharacterRouter } from "./routers/non-player-character";
@@ -17,7 +16,6 @@ import { userRouter } from "./routers/user";
 const appRouter = {
 	campaign: campaignRouter,
 	campaignIntegration: campaignIntegrationRouter,
-	email: emailRouter,
 	location: locationRouter,
 	member: memberRouter,
 	npc: nonPlayerCharacterRouter,

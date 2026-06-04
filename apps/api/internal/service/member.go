@@ -49,7 +49,7 @@ func (s *MemberService) Get(campaignId, userId string) (*model.Member, error) {
 	return campaignUser, nil
 }
 
-func (s *MemberService) ListByCampaign(campaignId string) ([]*model.Member, error) {
+func (s *MemberService) ListByCampaign(campaignId string) ([]*model.MemberWithUser, error) {
 	campaignUser, err := s.DB.ListCampaignUsersByCampaign(campaignId)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign users by campaign error: %w", err)
@@ -58,7 +58,7 @@ func (s *MemberService) ListByCampaign(campaignId string) ([]*model.Member, erro
 	return campaignUser, nil
 }
 
-func (s *MemberService) ListByUser(userId string) ([]*model.Member, error) {
+func (s *MemberService) ListByUser(userId string) ([]*model.MemberWithUser, error) {
 	campaignUser, err := s.DB.ListCampaignUsersByUser(userId)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign users by user error: %w", err)

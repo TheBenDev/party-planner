@@ -466,8 +466,25 @@ func (db *DB) GetCampaignUser(campaignId, userId string) (*model.Member, error) 
 	return scanCampaignUser(row)
 }
 
-func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE campaign_id = $1`, campaignId)
+func scanMemberWithUser(row interface{ Scan(...any) error }) (*model.MemberWithUser, error) {
+	var m model.MemberWithUser
+	err := row.Scan(
+		&m.CampaignID, &m.CreatedAt, &m.Role, &m.UpdatedAt, &m.UserID,
+		&m.Email, &m.FirstName, &m.LastName,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &m, nil
+}
+
+func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.MemberWithUser, error) {
+	rows, err := db.conn.Query(`
+		SELECT cu.campaign_id, cu.created_at, cu.role, cu.updated_at, cu.user_id,
+		       u.email, u.first_name, u.last_name
+		FROM campaign_users cu
+		INNER JOIN users u ON cu.user_id = u.id
+		WHERE cu.campaign_id = $1`, campaignId)
 	if err != nil {
 		return nil, err
 	}
@@ -477,9 +494,9 @@ func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, e
 		}
 	}()
 
-	var members []*model.Member
+	var members []*model.MemberWithUser
 	for rows.Next() {
-		member, err := scanCampaignUser(rows)
+		member, err := scanMemberWithUser(rows)
 		if err != nil {
 			return nil, err
 		}
@@ -491,8 +508,13 @@ func (db *DB) ListCampaignUsersByCampaign(campaignId string) ([]*model.Member, e
 	return members, nil
 }
 
-func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignUserColumns+` FROM campaign_users WHERE user_id = $1`, userId)
+func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.MemberWithUser, error) {
+	rows, err := db.conn.Query(`
+		SELECT cu.campaign_id, cu.created_at, cu.role, cu.updated_at, cu.user_id,
+		       u.email, u.first_name, u.last_name
+		FROM campaign_users cu
+		INNER JOIN users u ON cu.user_id = u.id
+		WHERE cu.user_id = $1`, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -502,9 +524,9 @@ func (db *DB) ListCampaignUsersByUser(userId string) ([]*model.Member, error) {
 		}
 	}()
 
-	var members []*model.Member
+	var members []*model.MemberWithUser
 	for rows.Next() {
-		member, err := scanCampaignUser(rows)
+		member, err := scanMemberWithUser(rows)
 		if err != nil {
 			return nil, err
 		}

@@ -251,6 +251,11 @@ const updateSession = dmProcedure
 		const startsAt = input.startsAt
 			? timestampFromDate(input.startsAt)
 			: undefined;
+		if (input.startsAt && input.startsAt < new Date()) {
+			throw new ORPCError("BAD_REQUEST", {
+				message: "session start time cannot be in the past",
+			});
+		}
 		try {
 			const res = await api.session.updateSession({
 				...input,

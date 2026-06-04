@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/member.proto.
  */
 export const file_planner_v1_member: GenFile = /*@__PURE__*/
-  fileDesc("ChdwbGFubmVyL3YxL21lbWJlci5wcm90bxIKcGxhbm5lci52MSK0AQoGTWVtYmVyEhMKC2NhbXBhaWduX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoEcm9sZRgDIAEoDjIWLnBsYW5uZXIudjEuTWVtYmVyUm9sZRIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKKAwoSQ2FtcGFpZ25JbnZpdGF0aW9uEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEhIKCmludml0ZXJfaWQYAyABKAkSFQoNaW52aXRlZV9lbWFpbBgEIAEoCRIkCgRyb2xlGAUgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlEiwKBnN0YXR1cxgGIAEoDjIcLnBsYW5uZXIudjEuSW52aXRhdGlvblN0YXR1cxI0CgthY2NlcHRlZF9hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIuCgpleHBpcmVzX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgpjcmVhdGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAogASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEIOCgxfYWNjZXB0ZWRfYXQiYQoTQ3JlYXRlTWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUiOgoUQ3JlYXRlTWVtYmVyUmVzcG9uc2USIgoGbWVtYmVyGAEgASgLMhIucGxhbm5lci52MS5NZW1iZXIiOAoQR2V0TWVtYmVyUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJIjcKEUdldE1lbWJlclJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyIjMKHExpc3RNZW1iZXJzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiRAodTGlzdE1lbWJlcnNCeUNhbXBhaWduUmVzcG9uc2USIwoHbWVtYmVycxgBIAMoCzISLnBsYW5uZXIudjEuTWVtYmVyIisKGExpc3RNZW1iZXJzQnlVc2VyUmVxdWVzdBIPCgd1c2VyX2lkGAEgASgJIkAKGUxpc3RNZW1iZXJzQnlVc2VyUmVzcG9uc2USIwoHbWVtYmVycxgBIAMoCzISLnBsYW5uZXIudjEuTWVtYmVyIjsKE1JlbW92ZU1lbWJlclJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSIWChRSZW1vdmVNZW1iZXJSZXNwb25zZSIwCh9BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Eg0KBXRva2VuGAEgASgJInoKIEFjY2VwdENhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyEjIKCmludml0YXRpb24YAiABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiKWAQofQ3JlYXRlQ2FtcGFpZ25JbnZpdGF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIVCg1pbnZpdGVlX2VtYWlsGAIgASgJEhIKCmludml0ZXJfaWQYAyABKAkSJAoEcm9sZRgEIAEoDjIWLnBsYW5uZXIudjEuTWVtYmVyUm9sZRINCgV0b2tlbhgFIAEoCSJWCiBDcmVhdGVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24iNAojR2V0Q2FtcGFpZ25JbnZpdGF0aW9uQnlUb2tlblJlcXVlc3QSDQoFdG9rZW4YASABKAkilAEKJEdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW5SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24SFAoHc2VudF9ieRgCIAEoCUgAiAEBEhYKDmNhbXBhaWduX3RpdGxlGAMgASgJQgoKCF9zZW50X2J5IjEKIERlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Eg0KBXRva2VuGAEgASgJIlcKIURlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24iNQoeTGlzdENhbXBhaWduSW52aXRhdGlvbnNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIlYKH0xpc3RDYW1wYWlnbkludml0YXRpb25zUmVzcG9uc2USMwoLaW52aXRhdGlvbnMYASADKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiJCCh9SZXZva2VDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIlYKIFJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEjIKCmludml0YXRpb24YASABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiphCgpNZW1iZXJSb2xlEhsKF01FTUJFUl9ST0xFX1VOU1BFQ0lGSUVEEAASFgoSTUVNQkVSX1JPTEVfUExBWUVSEAESHgoaTUVNQkVSX1JPTEVfRFVOR0VPTl9NQVNURVIQAirSAQoQSW52aXRhdGlvblN0YXR1cxIhCh1JTlZJVEFUSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGUlOVklUQVRJT05fU1RBVFVTX1BFTkRJTkcQARIeChpJTlZJVEFUSU9OX1NUQVRVU19BQ0NFUFRFRBACEh0KGUlOVklUQVRJT05fU1RBVFVTX0VYUElSRUQQAxIeChpJTlZJVEFUSU9OX1NUQVRVU19ERUNMSU5FRBAEEh0KGUlOVklUQVRJT05fU1RBVFVTX1JFVk9LRUQQBTKmCQoNTWVtYmVyU2VydmljZRJRCgxDcmVhdGVNZW1iZXISHy5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlcXVlc3QaIC5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlc3BvbnNlEkgKCUdldE1lbWJlchIcLnBsYW5uZXIudjEuR2V0TWVtYmVyUmVxdWVzdBodLnBsYW5uZXIudjEuR2V0TWVtYmVyUmVzcG9uc2USbAoVTGlzdE1lbWJlcnNCeUNhbXBhaWduEigucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5Q2FtcGFpZ25SZXF1ZXN0GikucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5Q2FtcGFpZ25SZXNwb25zZRJgChFMaXN0TWVtYmVyc0J5VXNlchIkLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNCeVVzZXJSZXF1ZXN0GiUucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5VXNlclJlc3BvbnNlElEKDFJlbW92ZU1lbWJlchIfLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVxdWVzdBogLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVzcG9uc2USdQoYQWNjZXB0Q2FtcGFpZ25JbnZpdGF0aW9uEisucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0GiwucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRJ1ChhDcmVhdGVDYW1wYWlnbkludml0YXRpb24SKy5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLC5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEngKGURlY2xpbmVDYW1wYWlnbkludml0YXRpb24SLC5wbGFubmVyLnYxLkRlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Gi0ucGxhbm5lci52MS5EZWNsaW5lQ2FtcGFpZ25JbnZpdGF0aW9uUmVzcG9uc2USgQEKHEdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW4SLy5wbGFubmVyLnYxLkdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW5SZXF1ZXN0GjAucGxhbm5lci52MS5HZXRDYW1wYWlnbkludml0YXRpb25CeVRva2VuUmVzcG9uc2UScgoXTGlzdENhbXBhaWduSW52aXRhdGlvbnMSKi5wbGFubmVyLnYxLkxpc3RDYW1wYWlnbkludml0YXRpb25zUmVxdWVzdBorLnBsYW5uZXIudjEuTGlzdENhbXBhaWduSW52aXRhdGlvbnNSZXNwb25zZRJ1ChhSZXZva2VDYW1wYWlnbkludml0YXRpb24SKy5wbGFubmVyLnYxLlJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLC5wbGFubmVyLnYxLlJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlQqgBCg5jb20ucGxhbm5lci52MUILTWVtYmVyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChdwbGFubmVyL3YxL21lbWJlci5wcm90bxIKcGxhbm5lci52MSK0AQoGTWVtYmVyEhMKC2NhbXBhaWduX2lkGAEgASgJEg8KB3VzZXJfaWQYAiABKAkSJAoEcm9sZRgDIAEoDjIWLnBsYW5uZXIudjEuTWVtYmVyUm9sZRIuCgpjcmVhdGVkX2F0GAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIuCgp1cGRhdGVkX2F0GAUgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCKYAgoNTWVtYmVyUHJvZmlsZRITCgtjYW1wYWlnbl9pZBgBIAEoCRIPCgd1c2VyX2lkGAIgASgJEiQKBHJvbGUYAyABKA4yFi5wbGFubmVyLnYxLk1lbWJlclJvbGUSLgoKY3JlYXRlZF9hdBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASDQoFZW1haWwYBiABKAkSFwoKZmlyc3RfbmFtZRgHIAEoCUgAiAEBEhYKCWxhc3RfbmFtZRgIIAEoCUgBiAEBQg0KC19maXJzdF9uYW1lQgwKCl9sYXN0X25hbWUiigMKEkNhbXBhaWduSW52aXRhdGlvbhIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRISCgppbnZpdGVyX2lkGAMgASgJEhUKDWludml0ZWVfZW1haWwYBCABKAkSJAoEcm9sZRgFIAEoDjIWLnBsYW5uZXIudjEuTWVtYmVyUm9sZRIsCgZzdGF0dXMYBiABKA4yHC5wbGFubmVyLnYxLkludml0YXRpb25TdGF0dXMSNAoLYWNjZXB0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSACIAQESLgoKZXhwaXJlc19hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgJIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2FjY2VwdGVkX2F0ImEKE0NyZWF0ZU1lbWJlclJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCRIkCgRyb2xlGAMgASgOMhYucGxhbm5lci52MS5NZW1iZXJSb2xlIjoKFENyZWF0ZU1lbWJlclJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyIjgKEEdldE1lbWJlclJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSI3ChFHZXRNZW1iZXJSZXNwb25zZRIiCgZtZW1iZXIYASABKAsyEi5wbGFubmVyLnYxLk1lbWJlciIzChxMaXN0TWVtYmVyc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIksKHUxpc3RNZW1iZXJzQnlDYW1wYWlnblJlc3BvbnNlEioKB21lbWJlcnMYASADKAsyGS5wbGFubmVyLnYxLk1lbWJlclByb2ZpbGUiKwoYTGlzdE1lbWJlcnNCeVVzZXJSZXF1ZXN0Eg8KB3VzZXJfaWQYASABKAkiRwoZTGlzdE1lbWJlcnNCeVVzZXJSZXNwb25zZRIqCgdtZW1iZXJzGAEgAygLMhkucGxhbm5lci52MS5NZW1iZXJQcm9maWxlIjsKE1JlbW92ZU1lbWJlclJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDwoHdXNlcl9pZBgCIAEoCSIWChRSZW1vdmVNZW1iZXJSZXNwb25zZSIwCh9BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Eg0KBXRva2VuGAEgASgJInoKIEFjY2VwdENhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEiIKBm1lbWJlchgBIAEoCzISLnBsYW5uZXIudjEuTWVtYmVyEjIKCmludml0YXRpb24YAiABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiKWAQofQ3JlYXRlQ2FtcGFpZ25JbnZpdGF0aW9uUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRIVCg1pbnZpdGVlX2VtYWlsGAIgASgJEhIKCmludml0ZXJfaWQYAyABKAkSJAoEcm9sZRgEIAEoDjIWLnBsYW5uZXIudjEuTWVtYmVyUm9sZRINCgV0b2tlbhgFIAEoCSJWCiBDcmVhdGVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24iNAojR2V0Q2FtcGFpZ25JbnZpdGF0aW9uQnlUb2tlblJlcXVlc3QSDQoFdG9rZW4YASABKAkilAEKJEdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW5SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24SFAoHc2VudF9ieRgCIAEoCUgAiAEBEhYKDmNhbXBhaWduX3RpdGxlGAMgASgJQgoKCF9zZW50X2J5IjEKIERlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Eg0KBXRva2VuGAEgASgJIlcKIURlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRIyCgppbnZpdGF0aW9uGAEgASgLMh4ucGxhbm5lci52MS5DYW1wYWlnbkludml0YXRpb24iNQoeTGlzdENhbXBhaWduSW52aXRhdGlvbnNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIlYKH0xpc3RDYW1wYWlnbkludml0YXRpb25zUmVzcG9uc2USMwoLaW52aXRhdGlvbnMYASADKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiJCCh9SZXZva2VDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIlYKIFJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEjIKCmludml0YXRpb24YASABKAsyHi5wbGFubmVyLnYxLkNhbXBhaWduSW52aXRhdGlvbiphCgpNZW1iZXJSb2xlEhsKF01FTUJFUl9ST0xFX1VOU1BFQ0lGSUVEEAASFgoSTUVNQkVSX1JPTEVfUExBWUVSEAESHgoaTUVNQkVSX1JPTEVfRFVOR0VPTl9NQVNURVIQAirSAQoQSW52aXRhdGlvblN0YXR1cxIhCh1JTlZJVEFUSU9OX1NUQVRVU19VTlNQRUNJRklFRBAAEh0KGUlOVklUQVRJT05fU1RBVFVTX1BFTkRJTkcQARIeChpJTlZJVEFUSU9OX1NUQVRVU19BQ0NFUFRFRBACEh0KGUlOVklUQVRJT05fU1RBVFVTX0VYUElSRUQQAxIeChpJTlZJVEFUSU9OX1NUQVRVU19ERUNMSU5FRBAEEh0KGUlOVklUQVRJT05fU1RBVFVTX1JFVk9LRUQQBTKmCQoNTWVtYmVyU2VydmljZRJRCgxDcmVhdGVNZW1iZXISHy5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlcXVlc3QaIC5wbGFubmVyLnYxLkNyZWF0ZU1lbWJlclJlc3BvbnNlEkgKCUdldE1lbWJlchIcLnBsYW5uZXIudjEuR2V0TWVtYmVyUmVxdWVzdBodLnBsYW5uZXIudjEuR2V0TWVtYmVyUmVzcG9uc2USbAoVTGlzdE1lbWJlcnNCeUNhbXBhaWduEigucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5Q2FtcGFpZ25SZXF1ZXN0GikucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5Q2FtcGFpZ25SZXNwb25zZRJgChFMaXN0TWVtYmVyc0J5VXNlchIkLnBsYW5uZXIudjEuTGlzdE1lbWJlcnNCeVVzZXJSZXF1ZXN0GiUucGxhbm5lci52MS5MaXN0TWVtYmVyc0J5VXNlclJlc3BvbnNlElEKDFJlbW92ZU1lbWJlchIfLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVxdWVzdBogLnBsYW5uZXIudjEuUmVtb3ZlTWVtYmVyUmVzcG9uc2USdQoYQWNjZXB0Q2FtcGFpZ25JbnZpdGF0aW9uEisucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0GiwucGxhbm5lci52MS5BY2NlcHRDYW1wYWlnbkludml0YXRpb25SZXNwb25zZRJ1ChhDcmVhdGVDYW1wYWlnbkludml0YXRpb24SKy5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLC5wbGFubmVyLnYxLkNyZWF0ZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlEngKGURlY2xpbmVDYW1wYWlnbkludml0YXRpb24SLC5wbGFubmVyLnYxLkRlY2xpbmVDYW1wYWlnbkludml0YXRpb25SZXF1ZXN0Gi0ucGxhbm5lci52MS5EZWNsaW5lQ2FtcGFpZ25JbnZpdGF0aW9uUmVzcG9uc2USgQEKHEdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW4SLy5wbGFubmVyLnYxLkdldENhbXBhaWduSW52aXRhdGlvbkJ5VG9rZW5SZXF1ZXN0GjAucGxhbm5lci52MS5HZXRDYW1wYWlnbkludml0YXRpb25CeVRva2VuUmVzcG9uc2UScgoXTGlzdENhbXBhaWduSW52aXRhdGlvbnMSKi5wbGFubmVyLnYxLkxpc3RDYW1wYWlnbkludml0YXRpb25zUmVxdWVzdBorLnBsYW5uZXIudjEuTGlzdENhbXBhaWduSW52aXRhdGlvbnNSZXNwb25zZRJ1ChhSZXZva2VDYW1wYWlnbkludml0YXRpb24SKy5wbGFubmVyLnYxLlJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlcXVlc3QaLC5wbGFubmVyLnYxLlJldm9rZUNhbXBhaWduSW52aXRhdGlvblJlc3BvbnNlQqgBCg5jb20ucGxhbm5lci52MUILTWVtYmVyUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Member
@@ -50,6 +50,58 @@ export type Member = Message<"planner.v1.Member"> & {
  */
 export const MemberSchema: GenMessage<Member> = /*@__PURE__*/
   messageDesc(file_planner_v1_member, 0);
+
+/**
+ * @generated from message planner.v1.MemberProfile
+ */
+export type MemberProfile = Message<"planner.v1.MemberProfile"> & {
+  /**
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+
+  /**
+   * @generated from field: string user_id = 2;
+   */
+  userId: string;
+
+  /**
+   * @generated from field: planner.v1.MemberRole role = 3;
+   */
+  role: MemberRole;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 4;
+   */
+  createdAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp updated_at = 5;
+   */
+  updatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: string email = 6;
+   */
+  email: string;
+
+  /**
+   * @generated from field: optional string first_name = 7;
+   */
+  firstName?: string | undefined;
+
+  /**
+   * @generated from field: optional string last_name = 8;
+   */
+  lastName?: string | undefined;
+};
+
+/**
+ * Describes the message planner.v1.MemberProfile.
+ * Use `create(MemberProfileSchema)` to create a new message.
+ */
+export const MemberProfileSchema: GenMessage<MemberProfile> = /*@__PURE__*/
+  messageDesc(file_planner_v1_member, 1);
 
 /**
  * @generated from message planner.v1.CampaignInvitation
@@ -111,7 +163,7 @@ export type CampaignInvitation = Message<"planner.v1.CampaignInvitation"> & {
  * Use `create(CampaignInvitationSchema)` to create a new message.
  */
 export const CampaignInvitationSchema: GenMessage<CampaignInvitation> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 1);
+  messageDesc(file_planner_v1_member, 2);
 
 /**
  * @generated from message planner.v1.CreateMemberRequest
@@ -138,7 +190,7 @@ export type CreateMemberRequest = Message<"planner.v1.CreateMemberRequest"> & {
  * Use `create(CreateMemberRequestSchema)` to create a new message.
  */
 export const CreateMemberRequestSchema: GenMessage<CreateMemberRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 2);
+  messageDesc(file_planner_v1_member, 3);
 
 /**
  * @generated from message planner.v1.CreateMemberResponse
@@ -155,7 +207,7 @@ export type CreateMemberResponse = Message<"planner.v1.CreateMemberResponse"> & 
  * Use `create(CreateMemberResponseSchema)` to create a new message.
  */
 export const CreateMemberResponseSchema: GenMessage<CreateMemberResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 3);
+  messageDesc(file_planner_v1_member, 4);
 
 /**
  * @generated from message planner.v1.GetMemberRequest
@@ -177,7 +229,7 @@ export type GetMemberRequest = Message<"planner.v1.GetMemberRequest"> & {
  * Use `create(GetMemberRequestSchema)` to create a new message.
  */
 export const GetMemberRequestSchema: GenMessage<GetMemberRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 4);
+  messageDesc(file_planner_v1_member, 5);
 
 /**
  * @generated from message planner.v1.GetMemberResponse
@@ -194,7 +246,7 @@ export type GetMemberResponse = Message<"planner.v1.GetMemberResponse"> & {
  * Use `create(GetMemberResponseSchema)` to create a new message.
  */
 export const GetMemberResponseSchema: GenMessage<GetMemberResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 5);
+  messageDesc(file_planner_v1_member, 6);
 
 /**
  * @generated from message planner.v1.ListMembersByCampaignRequest
@@ -211,16 +263,16 @@ export type ListMembersByCampaignRequest = Message<"planner.v1.ListMembersByCamp
  * Use `create(ListMembersByCampaignRequestSchema)` to create a new message.
  */
 export const ListMembersByCampaignRequestSchema: GenMessage<ListMembersByCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 6);
+  messageDesc(file_planner_v1_member, 7);
 
 /**
  * @generated from message planner.v1.ListMembersByCampaignResponse
  */
 export type ListMembersByCampaignResponse = Message<"planner.v1.ListMembersByCampaignResponse"> & {
   /**
-   * @generated from field: repeated planner.v1.Member members = 1;
+   * @generated from field: repeated planner.v1.MemberProfile members = 1;
    */
-  members: Member[];
+  members: MemberProfile[];
 };
 
 /**
@@ -228,7 +280,7 @@ export type ListMembersByCampaignResponse = Message<"planner.v1.ListMembersByCam
  * Use `create(ListMembersByCampaignResponseSchema)` to create a new message.
  */
 export const ListMembersByCampaignResponseSchema: GenMessage<ListMembersByCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 7);
+  messageDesc(file_planner_v1_member, 8);
 
 /**
  * @generated from message planner.v1.ListMembersByUserRequest
@@ -245,16 +297,16 @@ export type ListMembersByUserRequest = Message<"planner.v1.ListMembersByUserRequ
  * Use `create(ListMembersByUserRequestSchema)` to create a new message.
  */
 export const ListMembersByUserRequestSchema: GenMessage<ListMembersByUserRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 8);
+  messageDesc(file_planner_v1_member, 9);
 
 /**
  * @generated from message planner.v1.ListMembersByUserResponse
  */
 export type ListMembersByUserResponse = Message<"planner.v1.ListMembersByUserResponse"> & {
   /**
-   * @generated from field: repeated planner.v1.Member members = 1;
+   * @generated from field: repeated planner.v1.MemberProfile members = 1;
    */
-  members: Member[];
+  members: MemberProfile[];
 };
 
 /**
@@ -262,7 +314,7 @@ export type ListMembersByUserResponse = Message<"planner.v1.ListMembersByUserRes
  * Use `create(ListMembersByUserResponseSchema)` to create a new message.
  */
 export const ListMembersByUserResponseSchema: GenMessage<ListMembersByUserResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 9);
+  messageDesc(file_planner_v1_member, 10);
 
 /**
  * @generated from message planner.v1.RemoveMemberRequest
@@ -284,7 +336,7 @@ export type RemoveMemberRequest = Message<"planner.v1.RemoveMemberRequest"> & {
  * Use `create(RemoveMemberRequestSchema)` to create a new message.
  */
 export const RemoveMemberRequestSchema: GenMessage<RemoveMemberRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 10);
+  messageDesc(file_planner_v1_member, 11);
 
 /**
  * @generated from message planner.v1.RemoveMemberResponse
@@ -297,7 +349,7 @@ export type RemoveMemberResponse = Message<"planner.v1.RemoveMemberResponse"> & 
  * Use `create(RemoveMemberResponseSchema)` to create a new message.
  */
 export const RemoveMemberResponseSchema: GenMessage<RemoveMemberResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 11);
+  messageDesc(file_planner_v1_member, 12);
 
 /**
  * @generated from message planner.v1.AcceptCampaignInvitationRequest
@@ -314,7 +366,7 @@ export type AcceptCampaignInvitationRequest = Message<"planner.v1.AcceptCampaign
  * Use `create(AcceptCampaignInvitationRequestSchema)` to create a new message.
  */
 export const AcceptCampaignInvitationRequestSchema: GenMessage<AcceptCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 12);
+  messageDesc(file_planner_v1_member, 13);
 
 /**
  * @generated from message planner.v1.AcceptCampaignInvitationResponse
@@ -336,7 +388,7 @@ export type AcceptCampaignInvitationResponse = Message<"planner.v1.AcceptCampaig
  * Use `create(AcceptCampaignInvitationResponseSchema)` to create a new message.
  */
 export const AcceptCampaignInvitationResponseSchema: GenMessage<AcceptCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 13);
+  messageDesc(file_planner_v1_member, 14);
 
 /**
  * @generated from message planner.v1.CreateCampaignInvitationRequest
@@ -373,7 +425,7 @@ export type CreateCampaignInvitationRequest = Message<"planner.v1.CreateCampaign
  * Use `create(CreateCampaignInvitationRequestSchema)` to create a new message.
  */
 export const CreateCampaignInvitationRequestSchema: GenMessage<CreateCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 14);
+  messageDesc(file_planner_v1_member, 15);
 
 /**
  * @generated from message planner.v1.CreateCampaignInvitationResponse
@@ -390,7 +442,7 @@ export type CreateCampaignInvitationResponse = Message<"planner.v1.CreateCampaig
  * Use `create(CreateCampaignInvitationResponseSchema)` to create a new message.
  */
 export const CreateCampaignInvitationResponseSchema: GenMessage<CreateCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 15);
+  messageDesc(file_planner_v1_member, 16);
 
 /**
  * @generated from message planner.v1.GetCampaignInvitationByTokenRequest
@@ -407,7 +459,7 @@ export type GetCampaignInvitationByTokenRequest = Message<"planner.v1.GetCampaig
  * Use `create(GetCampaignInvitationByTokenRequestSchema)` to create a new message.
  */
 export const GetCampaignInvitationByTokenRequestSchema: GenMessage<GetCampaignInvitationByTokenRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 16);
+  messageDesc(file_planner_v1_member, 17);
 
 /**
  * @generated from message planner.v1.GetCampaignInvitationByTokenResponse
@@ -434,7 +486,7 @@ export type GetCampaignInvitationByTokenResponse = Message<"planner.v1.GetCampai
  * Use `create(GetCampaignInvitationByTokenResponseSchema)` to create a new message.
  */
 export const GetCampaignInvitationByTokenResponseSchema: GenMessage<GetCampaignInvitationByTokenResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 17);
+  messageDesc(file_planner_v1_member, 18);
 
 /**
  * @generated from message planner.v1.DeclineCampaignInvitationRequest
@@ -451,7 +503,7 @@ export type DeclineCampaignInvitationRequest = Message<"planner.v1.DeclineCampai
  * Use `create(DeclineCampaignInvitationRequestSchema)` to create a new message.
  */
 export const DeclineCampaignInvitationRequestSchema: GenMessage<DeclineCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 18);
+  messageDesc(file_planner_v1_member, 19);
 
 /**
  * @generated from message planner.v1.DeclineCampaignInvitationResponse
@@ -468,7 +520,7 @@ export type DeclineCampaignInvitationResponse = Message<"planner.v1.DeclineCampa
  * Use `create(DeclineCampaignInvitationResponseSchema)` to create a new message.
  */
 export const DeclineCampaignInvitationResponseSchema: GenMessage<DeclineCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 19);
+  messageDesc(file_planner_v1_member, 20);
 
 /**
  * @generated from message planner.v1.ListCampaignInvitationsRequest
@@ -485,7 +537,7 @@ export type ListCampaignInvitationsRequest = Message<"planner.v1.ListCampaignInv
  * Use `create(ListCampaignInvitationsRequestSchema)` to create a new message.
  */
 export const ListCampaignInvitationsRequestSchema: GenMessage<ListCampaignInvitationsRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 20);
+  messageDesc(file_planner_v1_member, 21);
 
 /**
  * @generated from message planner.v1.ListCampaignInvitationsResponse
@@ -502,7 +554,7 @@ export type ListCampaignInvitationsResponse = Message<"planner.v1.ListCampaignIn
  * Use `create(ListCampaignInvitationsResponseSchema)` to create a new message.
  */
 export const ListCampaignInvitationsResponseSchema: GenMessage<ListCampaignInvitationsResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 21);
+  messageDesc(file_planner_v1_member, 22);
 
 /**
  * @generated from message planner.v1.RevokeCampaignInvitationRequest
@@ -524,7 +576,7 @@ export type RevokeCampaignInvitationRequest = Message<"planner.v1.RevokeCampaign
  * Use `create(RevokeCampaignInvitationRequestSchema)` to create a new message.
  */
 export const RevokeCampaignInvitationRequestSchema: GenMessage<RevokeCampaignInvitationRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 22);
+  messageDesc(file_planner_v1_member, 23);
 
 /**
  * @generated from message planner.v1.RevokeCampaignInvitationResponse
@@ -541,7 +593,7 @@ export type RevokeCampaignInvitationResponse = Message<"planner.v1.RevokeCampaig
  * Use `create(RevokeCampaignInvitationResponseSchema)` to create a new message.
  */
 export const RevokeCampaignInvitationResponseSchema: GenMessage<RevokeCampaignInvitationResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_member, 23);
+  messageDesc(file_planner_v1_member, 24);
 
 /**
  * @generated from enum planner.v1.MemberRole

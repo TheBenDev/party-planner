@@ -35,6 +35,17 @@ message Member {
   google.protobuf.Timestamp updated_at = 5;
 }
 
+message MemberProfile {
+  string campaign_id = 1;
+  string user_id = 2;
+  MemberRole role = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  string email = 6;
+  optional string first_name = 7;
+  optional string last_name = 8;
+}
+
 message CampaignInvitation {
   string id = 1;
   string campaign_id = 2;
@@ -76,7 +87,7 @@ message ListMembersByCampaignRequest {
 }
 
 message ListMembersByCampaignResponse {
-  repeated Member members = 1;
+  repeated MemberProfile members = 1;
 }
 
 message ListMembersByUserRequest {
@@ -84,7 +95,7 @@ message ListMembersByUserRequest {
 }
 
 message ListMembersByUserResponse {
-  repeated Member members = 1;
+  repeated MemberProfile members = 1;
 }
 
 message RemoveMemberRequest {

@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { localTimeToUtc } from "./session-utils";
 import { RRuleBuilder } from "./RRuleBuilder";
+import { localTimeToUtc } from "./session-utils";
 
 export type CreateOneOffInput = {
 	title: string;
@@ -27,6 +27,19 @@ export type CreateSeriesInput = {
 	seriesStartDate: Date;
 	seriesEndDate?: Date;
 };
+
+function toLocalDatetimeString(date: Date): string {
+	const offset = date.getTimezoneOffset();
+	const local = new Date(date.getTime() - offset * 60_000);
+	return local.toISOString().slice(0, 16);
+}
+
+function toLocalDateString(date: Date): string {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
+}
 
 export function CreateSessionDialog({
 	open,
@@ -95,7 +108,10 @@ export function CreateSessionDialog({
 				? new Date(`${seriesEndDate}T00:00`)
 				: undefined,
 			seriesStartDate: new Date(`${seriesStartDate}T00:00`),
-			startTime: localTimeToUtc(startTime, new Date(`${seriesStartDate}T00:00`)),
+			startTime: localTimeToUtc(
+				startTime,
+				new Date(`${seriesStartDate}T00:00`),
+			),
 			timezone,
 			title: seriesTitle.trim(),
 		});
@@ -161,6 +177,7 @@ export function CreateSessionDialog({
 							</label>
 							<Input
 								id="oo-date"
+								min={toLocalDatetimeString(new Date())}
 								onChange={(e) => setStartsAt(e.target.value)}
 								type="datetime-local"
 								value={startsAt}
@@ -216,6 +233,7 @@ export function CreateSessionDialog({
 								</label>
 								<Input
 									id="s-start"
+									min={toLocalDateString(new Date())}
 									onChange={(e) => setSeriesStartDate(e.target.value)}
 									type="date"
 									value={seriesStartDate}
