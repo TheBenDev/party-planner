@@ -57,7 +57,7 @@ func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
 			Description:      ss.Description,
 			SeriesID:         sql.NullString{String: ss.ID, Valid: true},
 			OriginalStartsAt: sql.NullTime{Time: *next, Valid: true},
-			Status:           model.SessionStatusDraft,
+			Status:           model.SessionStatusConfirmed,
 			StartsAt:         sql.NullTime{Time: *next, Valid: true},
 		})
 		if err != nil {
@@ -101,7 +101,7 @@ func computeNextValidOccurrence(series *model.SessionSeries, exceptions []time.T
 		exceptionDates[e.In(loc).Format("2006-01-02")] = true
 	}
 
-	for !candidate.After(now) {
+	for !candidate.After(now.Add(time.Hour)) {
 		candidate = advance(candidate)
 	}
 
