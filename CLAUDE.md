@@ -60,7 +60,7 @@ buf generate
 
 ## Universal Conventions
 
-- TypeScript: no `any` (use `unknown` + type guards), no `console.*`, no raw `process.env`
+- TypeScript: no `any` (use `unknown` + type guards), no `console.*`, no raw `process.env`, no nested ternaries (use `if/else` or early returns instead)
 - Zod v4 via `catalog:` for all TS validation
 - oRPC for web server procedures, ConnectRPC for web→Go
 - Drizzle is **web-only**; Go API uses raw SQL via `database/sql` + `pgx/v5`

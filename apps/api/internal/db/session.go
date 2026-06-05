@@ -7,14 +7,14 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at, discord_event_id`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
 		&s.Status, &s.CreatedAt, &s.PollID, &s.AnnouncedAt, &s.UpdatedAt,
-		&s.SeriesID, &s.OriginalStartsAt,
+		&s.SeriesID, &s.OriginalStartsAt, &s.DiscordEventID,
 	)
 	if err != nil {
 		return nil, err
@@ -93,4 +93,40 @@ func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session
 		RETURNING `+sessionColumns,
 		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.ID, session.CampaignID)
 	return scanSession(row)
+}
+
+func (db *DB) SetSessionDiscordEventID(id, campaignID, eventID string) error {
+	result, err := db.conn.Exec(
+		`UPDATE session SET discord_event_id = $1, updated_at = NOW() WHERE id = $2 AND campaign_id = $3`,
+		eventID, id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("set session discord_event_id: %w", err)
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("set session discord_event_id rows affected: %w", err)
+	}
+	if n == 0 {
+		return fmt.Errorf("set session discord_event_id: no session found for id=%s campaignID=%s", id, campaignID)
+	}
+	return nil
+}
+
+func (db *DB) ClearSessionDiscordEventID(id, campaignID string) error {
+	result, err := db.conn.Exec(
+		`UPDATE session SET discord_event_id = NULL, updated_at = NOW() WHERE id = $1 AND campaign_id = $2`,
+		id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("clear session discord_event_id: %w", err)
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("clear session discord_event_id rows affected: %w", err)
+	}
+	if n == 0 {
+		return fmt.Errorf("clear session discord_event_id: no session found for id=%s campaignID=%s", id, campaignID)
+	}
+	return nil
 }

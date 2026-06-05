@@ -121,46 +121,53 @@
       "when": 1776128944840
     },
     {
+      "breakpoints": true,
       "idx": 17,
-      "version": "7",
-      "when": 1777001274121,
       "tag": "0017_token_on_invitation",
-      "breakpoints": true
+      "version": "7",
+      "when": 1777001274121
     },
     {
+      "breakpoints": true,
       "idx": 18,
-      "version": "7",
-      "when": 1779225495415,
       "tag": "0018_add_session_status",
-      "breakpoints": true
+      "version": "7",
+      "when": 1779225495415
     },
     {
+      "breakpoints": true,
       "idx": 19,
-      "version": "7",
-      "when": 1779470414933,
       "tag": "0019_add_session_poll_id",
-      "breakpoints": true
+      "version": "7",
+      "when": 1779470414933
     },
     {
+      "breakpoints": true,
       "idx": 20,
-      "version": "7",
-      "when": 1779921009819,
       "tag": "0020_npc_relation_status",
-      "breakpoints": true
+      "version": "7",
+      "when": 1779921009819
     },
     {
+      "breakpoints": true,
       "idx": 21,
-      "version": "7",
-      "when": 1780000127408,
       "tag": "0021_session_redesign",
-      "breakpoints": true
+      "version": "7",
+      "when": 1780000127408
     },
     {
+      "breakpoints": true,
       "idx": 22,
-      "version": "7",
-      "when": 1780339393685,
       "tag": "0022_session_series_timezone",
-      "breakpoints": true
+      "version": "7",
+      "when": 1780339393685
+    },
+    {
+      "breakpoints": true,
+      "idx": 23,
+      "tag": "0023_session_discord_event_id",
+      "version": "7",
+      "when": 1780616234133
     }
   ],
   "version": "7"

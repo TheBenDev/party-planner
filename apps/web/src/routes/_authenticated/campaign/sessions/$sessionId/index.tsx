@@ -86,7 +86,9 @@ function RouteComponent() {
 					session={{
 						announcedAt: session.announcedAt,
 						campaignId: session.campaignId,
+						discordEventId: session.discordEventId,
 						id: session.id,
+						seriesId: session.seriesId,
 						startsAt: session.startsAt,
 						status: session.status,
 					}}

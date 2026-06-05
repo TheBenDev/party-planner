@@ -52,7 +52,7 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid timezone"))
 	}
 
-	series, err := s.SessionSeries.Create(&model.CreateSessionSeriesRequest{
+	series, err := s.SessionSeries.Create(ctx, &model.CreateSessionSeriesRequest{
 		CampaignID:      req.Msg.CampaignId,
 		Title:           req.Msg.Title,
 		Description:     sqlNullString(req.Msg.Description),

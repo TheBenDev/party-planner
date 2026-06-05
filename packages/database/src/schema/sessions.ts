@@ -23,6 +23,7 @@ export const sessionsTable = pgTable(
 		campaignId: uuid("campaign_id").notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		description: varchar("description"),
+		discordEventId: varchar("discord_event_id"),
 		id: uuid("id").primaryKey().defaultRandom(),
 		originalStartsAt: timestamp("original_starts_at", { mode: "date" }),
 		pollId: varchar("poll_id"),

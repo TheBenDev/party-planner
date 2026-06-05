@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
@@ -96,6 +97,72 @@ func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.
 		return fmt.Errorf("add series exception: %w", err)
 	}
 	return nil
+}
+
+func (db *DB) ListActiveSeriesNeedingSession() ([]*model.SessionSeries, error) {
+	rows, err := db.conn.Query(`
+		SELECT ` + sessionSeriesColumns + ` FROM session_series ss
+		WHERE (ss.series_end_date IS NULL OR ss.series_end_date > NOW())
+		AND NOT EXISTS (
+			SELECT 1 FROM session s
+			WHERE s.series_id = ss.id
+			AND s.starts_at > NOW() + INTERVAL '1 hour'
+		)`)
+	if err != nil {
+		return nil, fmt.Errorf("list active series needing session: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var series []*model.SessionSeries
+	for rows.Next() {
+		s, err := scanSessionSeries(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan session series: %w", err)
+		}
+		series = append(series, s)
+	}
+	return series, rows.Err()
+}
+
+func (db *DB) ListExceptionsForSeries(seriesIDs []string) (map[string][]time.Time, error) {
+	result := make(map[string][]time.Time)
+	if len(seriesIDs) == 0 {
+		return result, nil
+	}
+
+	placeholders := make([]string, len(seriesIDs))
+	args := make([]any, len(seriesIDs))
+	for i, id := range seriesIDs {
+		placeholders[i] = fmt.Sprintf("$%d", i+1)
+		args[i] = id
+	}
+
+	rows, err := db.conn.Query(
+		`SELECT series_id, excluded_date FROM session_exceptions WHERE series_id IN (`+strings.Join(placeholders, ",")+`)`,
+		args...,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list exceptions for series: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	for rows.Next() {
+		var seriesID string
+		var excludedDate time.Time
+		if err := rows.Scan(&seriesID, &excludedDate); err != nil {
+			return nil, fmt.Errorf("scan series exception: %w", err)
+		}
+		result[seriesID] = append(result[seriesID], excludedDate)
+	}
+	return result, rows.Err()
 }
 
 func (db *DB) RemoveSeriesException(seriesID, campaignID string, excludedDate time.Time) error {
