@@ -58,6 +58,13 @@ Protobuf codegen (from packages/proto/):
 buf generate
 ```
 
+## Time & Timezone
+
+- All timestamps stored in the database are UTC
+- `Timezone` fields on models are kept for frontend display conversion only — never used for storage or server-side calculations
+- In Go: always call `.UTC()` before storing a `time.Time` or pass `time.UTC` when constructing one
+- In TypeScript/Drizzle: store `Date` values as UTC; convert to local time only at the UI layer
+
 ## Universal Conventions
 
 - TypeScript: no `any` (use `unknown` + type guards), no `console.*`, no raw `process.env`, no nested ternaries (use `if/else` or early returns instead)
