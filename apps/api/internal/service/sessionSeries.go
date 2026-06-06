@@ -28,7 +28,7 @@ func (s *SessionSeriesService) Create(ctx context.Context, req *model.CreateSess
 	var created *model.SessionSeries
 	var firstSession *model.Session
 
-	firstOccurrence := computeFirstOccurrence(req.SeriesStartDate, req.StartTime, req.Timezone)
+	firstOccurrence := computeFirstOccurrence(req.SeriesStartDate, req.StartTime)
 
 	err := s.DB.RunInTx(func(tx *db.DB) error {
 		var err error
@@ -159,19 +159,14 @@ func mapSessionSeriesPgError(err error) error {
 	return err
 }
 
-func computeFirstOccurrence(seriesStartDate time.Time, startTime string, timezone string) *time.Time {
-	loc, err := time.LoadLocation(timezone)
-	if err != nil {
-		loc = time.UTC
-	}
-
+func computeFirstOccurrence(seriesStartDate time.Time, startTime string) *time.Time {
 	h, m, sec, ok := parseStartTime(startTime)
 	if !ok {
 		return nil
 	}
 
-	year, month, day := seriesStartDate.In(loc).Date()
-	t := time.Date(year, month, day, h, m, sec, 0, loc)
+	year, month, day := seriesStartDate.UTC().Date()
+	t := time.Date(year, month, day, h, m, sec, 0, time.UTC)
 	return &t
 }
 

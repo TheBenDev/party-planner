@@ -77,11 +77,6 @@ func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
 }
 
 func computeNextValidOccurrence(series *model.SessionSeries, exceptions []time.Time) *time.Time {
-	loc, err := time.LoadLocation(series.Timezone)
-	if err != nil {
-		loc = time.UTC
-	}
-
 	h, m, sec, ok := parseStartTime(series.StartTime)
 	if !ok {
 		return nil
@@ -92,20 +87,20 @@ func computeNextValidOccurrence(series *model.SessionSeries, exceptions []time.T
 		return nil
 	}
 
-	year, month, day := series.SeriesStartDate.In(loc).Date()
-	candidate := time.Date(year, month, day, h, m, sec, 0, loc)
+	year, month, day := series.SeriesStartDate.UTC().Date()
+	candidate := time.Date(year, month, day, h, m, sec, 0, time.UTC)
 
-	now := time.Now()
+	now := time.Now().UTC()
 	exceptionDates := make(map[string]bool, len(exceptions))
 	for _, e := range exceptions {
-		exceptionDates[e.In(loc).Format("2006-01-02")] = true
+		exceptionDates[e.UTC().Format("2006-01-02")] = true
 	}
 
 	for !candidate.After(now.Add(time.Hour)) {
 		candidate = advance(candidate)
 	}
 
-	for exceptionDates[candidate.In(loc).Format("2006-01-02")] {
+	for exceptionDates[candidate.UTC().Format("2006-01-02")] {
 		candidate = advance(candidate)
 		if series.SeriesEndDate.Valid && candidate.After(series.SeriesEndDate.Time) {
 			return nil
