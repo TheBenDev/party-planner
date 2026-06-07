@@ -9,7 +9,7 @@ import {
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { createFileRoute } from "@tanstack/react-router";
 import pino from "pino";
-import appRouter from "@/server";
+import appRouter from "@/server/router";
 
 const logger = pino();
 

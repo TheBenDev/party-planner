@@ -39,8 +39,6 @@ privateProcedure.route({...}).input(schema).output(schema).handler(async ({ inpu
   // api.campaign, api.session, etc. — ConnectRPC clients
 })
 
-// Discord — requires Bot <api_key> header; used only for Beny Bot callbacks
-discordProcedure.route({...}).input(schema).output(schema).handler(...)
 ```
 
 ## ConnectRPC Clients (context.api)
@@ -54,8 +52,6 @@ Available in all `privateProcedure` handlers:
 - `api.quest` — QuestService
 - `api.session` — SessionService
 - `api.user` — UserService
-
-No `DiscordService` or `CharacterService` client exists yet.
 
 ## Auth Cookie Lifecycle
 
@@ -102,13 +98,6 @@ export const appRouter = {
 - No Drizzle queries for entities that have a Go API path
 - No direct SQL
 - Input validation via Zod on every procedure — never trust raw input
-
-## Known Violations (Do Not Replicate)
-
-| File | Issue |
-|---|---|
-| `src/server/routers/discord.ts` | Queries `userAvailabilitiesTable` etc. directly; has TODO: "needs to be reworked" |
-| `src/routes/api.webhooks.clerk.ts` | Multiple `console.error` calls (needs migration to `slog`-style logging) |
 
 ## Proto-Generated Types
 
