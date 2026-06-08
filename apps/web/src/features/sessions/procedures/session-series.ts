@@ -1,10 +1,10 @@
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/server";
 import {
-	AddSeriesExceptionRequestSchema,
-	AddSeriesExceptionResponseSchema,
 	CreateSessionSeriesRequestSchema,
 	CreateSessionSeriesResponseSchema,
+	ExcludeSessionFromSeriesRequestSchema,
+	ExcludeSessionFromSeriesResponseSchema,
 	GetSessionSeriesRequestSchema,
 	GetSessionSeriesResponseSchema,
 	ListSessionSeriesByCampaignRequestSchema,
@@ -18,7 +18,10 @@ import {
 } from "@/features/sessions/types";
 import { handleError } from "@/server/errors";
 import { campaignProcedure, dmProcedure } from "@/server/middleware";
-import { protoToSessionSeries } from "./proto/session-series";
+import {
+	protoToSessionSeries,
+	protoToSessionSeriesWithDetails,
+} from "./proto/session-series";
 
 const createSessionSeries = dmProcedure
 	.route({
@@ -132,7 +135,7 @@ const listSessionSeriesByCampaign = campaignProcedure
 			const res = await api.sessionSeries.listSessionSeriesByCampaign({
 				campaignId: input.campaignId,
 			});
-			return { series: res.series.map(protoToSessionSeries) };
+			return { series: res.series.map(protoToSessionSeriesWithDetails) };
 		} catch (err) {
 			handleError(
 				err,
@@ -219,28 +222,29 @@ const removeSessionSeries = dmProcedure
 		}
 	});
 
-const addSeriesException = dmProcedure
+const excludeSessionFromSeries = dmProcedure
 	.route({
 		method: "POST",
-		path: "/session-series/add-exception",
-		summary: "Cancel one occurrence in a series",
+		path: "/session-series/exclude-session",
+		summary: "Exclude a specific session occurrence from a series",
 	})
-	.input(AddSeriesExceptionRequestSchema)
-	.output(AddSeriesExceptionResponseSchema)
+	.input(ExcludeSessionFromSeriesRequestSchema)
+	.output(ExcludeSessionFromSeriesResponseSchema)
 	.handler(async ({ input, context }) => {
 		const api = context.api;
 		try {
-			await api.sessionSeries.addSeriesException({
+			await api.sessionSeries.excludeSessionFromSeries({
 				campaignId: context.campaignId,
 				excludedDate: timestampFromDate(input.excludedDate),
 				seriesId: input.seriesId,
+				sessionId: input.sessionId,
 			});
 			return {};
 		} catch (err) {
 			handleError(
 				err,
-				"failed to add series exception",
-				{ seriesId: input.seriesId },
+				"failed to exclude session from series",
+				{ seriesId: input.seriesId, sessionId: input.sessionId },
 				context.logger,
 			);
 		}
@@ -274,8 +278,8 @@ const removeSeriesException = dmProcedure
 	});
 
 export const sessionSeriesRouter = {
-	addSeriesException,
 	createSessionSeries,
+	excludeSessionFromSeries,
 	getSessionSeries,
 	listSessionSeriesByCampaign,
 	removeSeriesException,

@@ -9,8 +9,8 @@ import {
 	GetPollResponseSchema,
 	GetSessionRequestSchema,
 	GetSessionResponseSchema,
-	ListSessionsByCampaignRequestSchema,
-	ListSessionsByCampaignResponseSchema,
+	ListOneOffSessionsByCampaignRequestSchema,
+	ListOneOffSessionsByCampaignResponseSchema,
 	PollSessionRequestSchema,
 	PollSessionResponseSchema,
 	RemoveSessionRequestSchema,
@@ -133,14 +133,14 @@ const getSession = campaignProcedure
 		}
 	});
 
-const listSessions = campaignProcedure
+const listOneOffSessions = campaignProcedure
 	.route({
 		method: "POST",
 		path: "/session/list",
-		summary: "List sessions by campaign",
+		summary: "List one-off sessions by campaign",
 	})
-	.input(ListSessionsByCampaignRequestSchema)
-	.output(ListSessionsByCampaignResponseSchema)
+	.input(ListOneOffSessionsByCampaignRequestSchema)
+	.output(ListOneOffSessionsByCampaignResponseSchema)
 	.handler(async ({ input, context }) => {
 		const { campaignId } = input;
 		if (campaignId !== context.campaignId) {
@@ -148,12 +148,12 @@ const listSessions = campaignProcedure
 		}
 		const api = context.api;
 		try {
-			const res = await api.session.listSessionsByCampaign({ campaignId });
+			const res = await api.session.listOneOffSessionsByCampaign({ campaignId });
 			return { sessions: res.sessions.map(protoToSession) };
 		} catch (err) {
 			handleError(
 				err,
-				"failed to list sessions",
+				"failed to list one-off sessions",
 				{ campaignId },
 				context.logger,
 			);
@@ -284,7 +284,7 @@ export const sessionRouter = {
 	createSession,
 	getPoll,
 	getSession,
-	listSessions,
+	listOneOffSessions,
 	pollSession,
 	removeSession,
 	updateSession,

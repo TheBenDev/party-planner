@@ -1,6 +1,13 @@
-import type { Session, SessionSeries } from "@/features/sessions/types";
-import { ChevronDown, MoreHorizontal, Plus, Repeat2 } from "lucide-react";
+import {
+	Ban,
+	ChevronDown,
+	MoreHorizontal,
+	Plus,
+	Repeat2,
+	RotateCcw,
+} from "lucide-react";
 import { useMemo, useState } from "react";
+import type { Session, SessionSeries } from "@/features/sessions/types";
 import { Button } from "@/shared/components/ui/button";
 import {
 	DropdownMenu,
@@ -10,12 +17,21 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
-import { formatSessionDate, getNextOccurrence, rruleToHuman } from "./session-utils";
 import { SessionRow } from "./SessionRow";
+import {
+	formatSessionDate,
+	getNextOccurrence,
+	rruleToHuman,
+} from "./session-utils";
+
+type SeriesItem =
+	| { type: "session"; data: Session; date: Date | null }
+	| { type: "exception"; date: Date };
 
 export function SeriesGroup({
 	series,
 	sessions,
+	exceptions,
 	isDm,
 	onViewSession,
 	onEditSession,
@@ -24,10 +40,12 @@ export function SeriesGroup({
 	onEditSeries,
 	onEndSeries,
 	onRemoveSeries,
+	onRemoveException,
 	onScheduleNext,
 }: {
 	series: SessionSeries;
 	sessions: Session[];
+	exceptions: Date[];
 	isDm: boolean;
 	onViewSession: (id: string) => void;
 	onEditSession: (id: string) => void;
@@ -36,30 +54,39 @@ export function SeriesGroup({
 	onEditSeries: () => void;
 	onEndSeries: () => void;
 	onRemoveSeries: () => void;
+	onRemoveException: (date: Date) => void;
 	onScheduleNext: (startsAt: Date) => void;
 }) {
 	const [expanded, setExpanded] = useState(true);
+	const now = new Date();
 
 	const hasUpcoming = sessions.some(
-		(s) => s.startsAt && new Date(s.startsAt) > new Date(),
+		(s) => s.startsAt && new Date(s.startsAt) > now,
 	);
 
 	const nextOccurrence = useMemo(
-		() => (hasUpcoming ? null : getNextOccurrence(series)),
-		[hasUpcoming, series],
+		() => (hasUpcoming ? null : getNextOccurrence(series, exceptions)),
+		[hasUpcoming, series, exceptions],
 	);
 
-	const sorted = useMemo(
-		() =>
-			[...sessions].sort((a, b) => {
-				if (!a.startsAt) return 1;
-				if (!b.startsAt) return -1;
-				return (
-					new Date(b.startsAt).getTime() - new Date(a.startsAt).getTime()
-				);
-			}),
-		[sessions],
-	);
+	const merged = useMemo((): SeriesItem[] => {
+		const items: SeriesItem[] = [
+			...sessions.map((s) => ({
+				data: s,
+				date: s.startsAt ? new Date(s.startsAt) : null,
+				type: "session" as const,
+			})),
+			...exceptions.map((e) => ({
+				date: e,
+				type: "exception" as const,
+			})),
+		];
+		return items.sort((a, b) => {
+			if (!b.date) return 1;
+			if (!a.date) return -1;
+			return b.date.getTime() - a.date.getTime();
+		});
+	}, [sessions, exceptions]);
 
 	return (
 		<div className="border rounded-xl overflow-hidden">
@@ -77,8 +104,13 @@ export function SeriesGroup({
 							{series.title}
 						</p>
 						<p className="text-xs text-muted-foreground mt-0.5 truncate">
-							{rruleToHuman(series.rrule, series.startTime, series.seriesStartDate)} &middot;{" "}
-							{sessions.length} session{sessions.length !== 1 ? "s" : ""}
+							{rruleToHuman(
+								series.rrule,
+								series.startTime,
+								series.seriesStartDate,
+							)}{" "}
+							&middot; {sessions.length} session
+							{sessions.length !== 1 ? "s" : ""}
 						</p>
 					</div>
 					<ChevronDown
@@ -122,24 +154,58 @@ export function SeriesGroup({
 
 			{expanded && (
 				<div className="divide-y">
-					{sorted.length === 0 ? (
+					{merged.length === 0 ? (
 						<p className="px-6 py-3 text-xs text-muted-foreground italic">
 							No sessions yet.
 						</p>
 					) : (
-						sorted.map((s) => (
-							<SessionRow
-								indented
-								isDm={isDm}
-								isSeriesSession
-								key={s.id}
-								onCancelOccurrence={() => onCancelOccurrence(s)}
-								onDelete={() => onDeleteSession(s.id)}
-								onEdit={() => onEditSession(s.id)}
-								onView={() => onViewSession(s.id)}
-								session={s}
-							/>
-						))
+						merged.map((item) => {
+							if (item.type === "session") {
+								return (
+									<SessionRow
+										indented
+										isDm={isDm}
+										isSeriesSession
+										key={item.data.id}
+										onCancelOccurrence={() => onCancelOccurrence(item.data)}
+										onDelete={() => onDeleteSession(item.data.id)}
+										onEdit={() => onEditSession(item.data.id)}
+										onView={() => onViewSession(item.data.id)}
+										session={item.data}
+									/>
+								);
+							}
+							const isFuture = item.date > now;
+							return (
+								<div
+									className="flex items-center gap-3 pl-10 pr-4 py-3"
+									key={item.date.toISOString()}
+								>
+									<div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center shrink-0">
+										<Ban className="w-4 h-4 text-muted-foreground/60" />
+									</div>
+									<div className="flex-1 min-w-0">
+										<p className="text-sm text-muted-foreground line-through">
+											{formatSessionDate(item.date)}
+										</p>
+										<p className="text-xs text-muted-foreground/70">
+											Cancelled occurrence
+										</p>
+									</div>
+									{isDm && isFuture && (
+										<Button
+											className="h-7 text-xs shrink-0"
+											onClick={() => onRemoveException(item.date)}
+											size="sm"
+											variant="ghost"
+										>
+											<RotateCcw className="w-3.5 h-3.5 mr-1" />
+											Restore
+										</Button>
+									)}
+								</div>
+							);
+						})
 					)}
 
 					{isDm && !hasUpcoming && (

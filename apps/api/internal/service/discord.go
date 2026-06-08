@@ -159,6 +159,13 @@ func (s *DiscordService) AnnounceSession(
 	return eventID, nil
 }
 
+func (s *DiscordService) DeleteScheduledEvent(ctx context.Context, guildID, eventID string) error {
+	if err := s.Session.GuildScheduledEventDelete(guildID, eventID, discordgo.WithContext(ctx)); err != nil {
+		return fmt.Errorf("delete discord scheduled event: %w", err)
+	}
+	return nil
+}
+
 func (s *DiscordService) UpdateScheduledEvent(
 	ctx context.Context,
 	guildID string,

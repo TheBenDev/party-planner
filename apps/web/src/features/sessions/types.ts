@@ -61,10 +61,10 @@ export const GetPollRequestSchema = z.object({
 
 export const GetPollResponseSchema = z.object({ poll: PollSchema.nullable() });
 
-export const ListSessionsByCampaignRequestSchema = z.object({
+export const ListOneOffSessionsByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
-export const ListSessionsByCampaignResponseSchema = z.object({
+export const ListOneOffSessionsByCampaignResponseSchema = z.object({
 	sessions: z.array(SessionsSchema),
 });
 
@@ -125,11 +125,17 @@ export const GetSessionSeriesResponseSchema = z.object({
 	series: SessionSeriesSchema,
 });
 
+export const SessionSeriesWithDetailsSchema = z.object({
+	exceptions: z.array(z.date()),
+	series: SessionSeriesSchema,
+	sessions: z.array(SessionsSchema),
+});
+
 export const ListSessionSeriesByCampaignRequestSchema = z.object({
 	campaignId: z.uuid(),
 });
 export const ListSessionSeriesByCampaignResponseSchema = z.object({
-	series: z.array(SessionSeriesSchema),
+	series: z.array(SessionSeriesWithDetailsSchema),
 });
 
 export const UpdateSessionSeriesRequestSchema = z.object({
@@ -148,11 +154,12 @@ export const UpdateSessionSeriesResponseSchema = z.object({
 export const RemoveSessionSeriesRequestSchema = z.object({ id: z.uuid() });
 export const RemoveSessionSeriesResponseSchema = z.object({});
 
-export const AddSeriesExceptionRequestSchema = z.object({
-	excludedDate: z.date(),
+export const ExcludeSessionFromSeriesRequestSchema = z.object({
+	sessionId: z.uuid(),
 	seriesId: z.uuid(),
+	excludedDate: z.date(),
 });
-export const AddSeriesExceptionResponseSchema = z.object({});
+export const ExcludeSessionFromSeriesResponseSchema = z.object({});
 
 export const RemoveSeriesExceptionRequestSchema = z.object({
 	excludedDate: z.date(),
@@ -161,3 +168,4 @@ export const RemoveSeriesExceptionRequestSchema = z.object({
 export const RemoveSeriesExceptionResponseSchema = z.object({});
 
 export type SessionSeries = z.infer<typeof SessionSeriesSchema>;
+export type SessionSeriesWithDetails = z.infer<typeof SessionSeriesWithDetailsSchema>;

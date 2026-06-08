@@ -100,9 +100,21 @@ func (s *SessionSeriesServer) ListSessionSeriesByCampaign(ctx context.Context, r
 		return nil, mapServiceError(ctx, s.Log, err, "failed to list session series")
 	}
 
-	protoSeries := make([]*v1.SessionSeries, len(seriesList))
-	for i, ss := range seriesList {
-		protoSeries[i] = sessionSeriesToProto(ss)
+	protoSeries := make([]*v1.SessionSeriesWithDetails, len(seriesList))
+	for i, sd := range seriesList {
+		protoSessions := make([]*v1.Session, len(sd.Sessions))
+		for j, sess := range sd.Sessions {
+			protoSessions[j] = sessionToProto(sess)
+		}
+		protoExceptions := make([]*timestamppb.Timestamp, len(sd.Exceptions))
+		for j, exc := range sd.Exceptions {
+			protoExceptions[j] = timestamppb.New(exc)
+		}
+		protoSeries[i] = &v1.SessionSeriesWithDetails{
+			Series:     sessionSeriesToProto(sd.Series),
+			Sessions:   protoSessions,
+			Exceptions: protoExceptions,
+		}
 	}
 
 	return connect.NewResponse(&v1.ListSessionSeriesByCampaignResponse{
@@ -157,7 +169,10 @@ func (s *SessionSeriesServer) RemoveSessionSeries(ctx context.Context, req *conn
 	return connect.NewResponse(&v1.RemoveSessionSeriesResponse{}), nil
 }
 
-func (s *SessionSeriesServer) AddSeriesException(ctx context.Context, req *connect.Request[v1.AddSeriesExceptionRequest]) (*connect.Response[v1.AddSeriesExceptionResponse], error) {
+func (s *SessionSeriesServer) ExcludeSessionFromSeries(ctx context.Context, req *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error) {
+	if req.Msg.SessionId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
+	}
 	if req.Msg.SeriesId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
 	}
@@ -171,11 +186,11 @@ func (s *SessionSeriesServer) AddSeriesException(ctx context.Context, req *conne
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid excluded date"))
 	}
 
-	if err := s.SessionSeries.AddException(req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
-		return nil, mapServiceError(ctx, s.Log, err, "failed to add series exception")
+	if err := s.SessionSeries.ExcludeFromSeries(ctx, req.Msg.SessionId, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to exclude session from series")
 	}
 
-	return connect.NewResponse(&v1.AddSeriesExceptionResponse{}), nil
+	return connect.NewResponse(&v1.ExcludeSessionFromSeriesResponse{}), nil
 }
 
 func (s *SessionSeriesServer) RemoveSeriesException(ctx context.Context, req *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error) {

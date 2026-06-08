@@ -4,7 +4,7 @@ import { SessionScheduling } from "@/features/sessions/components/SessionSchedul
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useSession } from "@/shared/hooks/queries";
+import { useSession } from "@/features/sessions/hooks/useSession";
 
 function formatSessionDate(date: Date | string): string {
 	const d = typeof date === "string" ? new Date(date) : date;

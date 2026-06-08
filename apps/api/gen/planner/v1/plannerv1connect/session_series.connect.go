@@ -48,9 +48,9 @@ const (
 	// SessionSeriesServiceRemoveSessionSeriesProcedure is the fully-qualified name of the
 	// SessionSeriesService's RemoveSessionSeries RPC.
 	SessionSeriesServiceRemoveSessionSeriesProcedure = "/planner.v1.SessionSeriesService/RemoveSessionSeries"
-	// SessionSeriesServiceAddSeriesExceptionProcedure is the fully-qualified name of the
-	// SessionSeriesService's AddSeriesException RPC.
-	SessionSeriesServiceAddSeriesExceptionProcedure = "/planner.v1.SessionSeriesService/AddSeriesException"
+	// SessionSeriesServiceExcludeSessionFromSeriesProcedure is the fully-qualified name of the
+	// SessionSeriesService's ExcludeSessionFromSeries RPC.
+	SessionSeriesServiceExcludeSessionFromSeriesProcedure = "/planner.v1.SessionSeriesService/ExcludeSessionFromSeries"
 	// SessionSeriesServiceRemoveSeriesExceptionProcedure is the fully-qualified name of the
 	// SessionSeriesService's RemoveSeriesException RPC.
 	SessionSeriesServiceRemoveSeriesExceptionProcedure = "/planner.v1.SessionSeriesService/RemoveSeriesException"
@@ -63,7 +63,7 @@ type SessionSeriesServiceClient interface {
 	ListSessionSeriesByCampaign(context.Context, *connect.Request[v1.ListSessionSeriesByCampaignRequest]) (*connect.Response[v1.ListSessionSeriesByCampaignResponse], error)
 	UpdateSessionSeries(context.Context, *connect.Request[v1.UpdateSessionSeriesRequest]) (*connect.Response[v1.UpdateSessionSeriesResponse], error)
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
-	AddSeriesException(context.Context, *connect.Request[v1.AddSeriesExceptionRequest]) (*connect.Response[v1.AddSeriesExceptionResponse], error)
+	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
 }
 
@@ -108,10 +108,10 @@ func NewSessionSeriesServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSessionSeries")),
 			connect.WithClientOptions(opts...),
 		),
-		addSeriesException: connect.NewClient[v1.AddSeriesExceptionRequest, v1.AddSeriesExceptionResponse](
+		excludeSessionFromSeries: connect.NewClient[v1.ExcludeSessionFromSeriesRequest, v1.ExcludeSessionFromSeriesResponse](
 			httpClient,
-			baseURL+SessionSeriesServiceAddSeriesExceptionProcedure,
-			connect.WithSchema(sessionSeriesServiceMethods.ByName("AddSeriesException")),
+			baseURL+SessionSeriesServiceExcludeSessionFromSeriesProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("ExcludeSessionFromSeries")),
 			connect.WithClientOptions(opts...),
 		),
 		removeSeriesException: connect.NewClient[v1.RemoveSeriesExceptionRequest, v1.RemoveSeriesExceptionResponse](
@@ -130,7 +130,7 @@ type sessionSeriesServiceClient struct {
 	listSessionSeriesByCampaign *connect.Client[v1.ListSessionSeriesByCampaignRequest, v1.ListSessionSeriesByCampaignResponse]
 	updateSessionSeries         *connect.Client[v1.UpdateSessionSeriesRequest, v1.UpdateSessionSeriesResponse]
 	removeSessionSeries         *connect.Client[v1.RemoveSessionSeriesRequest, v1.RemoveSessionSeriesResponse]
-	addSeriesException          *connect.Client[v1.AddSeriesExceptionRequest, v1.AddSeriesExceptionResponse]
+	excludeSessionFromSeries    *connect.Client[v1.ExcludeSessionFromSeriesRequest, v1.ExcludeSessionFromSeriesResponse]
 	removeSeriesException       *connect.Client[v1.RemoveSeriesExceptionRequest, v1.RemoveSeriesExceptionResponse]
 }
 
@@ -159,9 +159,9 @@ func (c *sessionSeriesServiceClient) RemoveSessionSeries(ctx context.Context, re
 	return c.removeSessionSeries.CallUnary(ctx, req)
 }
 
-// AddSeriesException calls planner.v1.SessionSeriesService.AddSeriesException.
-func (c *sessionSeriesServiceClient) AddSeriesException(ctx context.Context, req *connect.Request[v1.AddSeriesExceptionRequest]) (*connect.Response[v1.AddSeriesExceptionResponse], error) {
-	return c.addSeriesException.CallUnary(ctx, req)
+// ExcludeSessionFromSeries calls planner.v1.SessionSeriesService.ExcludeSessionFromSeries.
+func (c *sessionSeriesServiceClient) ExcludeSessionFromSeries(ctx context.Context, req *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error) {
+	return c.excludeSessionFromSeries.CallUnary(ctx, req)
 }
 
 // RemoveSeriesException calls planner.v1.SessionSeriesService.RemoveSeriesException.
@@ -176,7 +176,7 @@ type SessionSeriesServiceHandler interface {
 	ListSessionSeriesByCampaign(context.Context, *connect.Request[v1.ListSessionSeriesByCampaignRequest]) (*connect.Response[v1.ListSessionSeriesByCampaignResponse], error)
 	UpdateSessionSeries(context.Context, *connect.Request[v1.UpdateSessionSeriesRequest]) (*connect.Response[v1.UpdateSessionSeriesResponse], error)
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
-	AddSeriesException(context.Context, *connect.Request[v1.AddSeriesExceptionRequest]) (*connect.Response[v1.AddSeriesExceptionResponse], error)
+	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
 }
 
@@ -217,10 +217,10 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 		connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSessionSeries")),
 		connect.WithHandlerOptions(opts...),
 	)
-	sessionSeriesServiceAddSeriesExceptionHandler := connect.NewUnaryHandler(
-		SessionSeriesServiceAddSeriesExceptionProcedure,
-		svc.AddSeriesException,
-		connect.WithSchema(sessionSeriesServiceMethods.ByName("AddSeriesException")),
+	sessionSeriesServiceExcludeSessionFromSeriesHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceExcludeSessionFromSeriesProcedure,
+		svc.ExcludeSessionFromSeries,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("ExcludeSessionFromSeries")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sessionSeriesServiceRemoveSeriesExceptionHandler := connect.NewUnaryHandler(
@@ -241,8 +241,8 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 			sessionSeriesServiceUpdateSessionSeriesHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceRemoveSessionSeriesProcedure:
 			sessionSeriesServiceRemoveSessionSeriesHandler.ServeHTTP(w, r)
-		case SessionSeriesServiceAddSeriesExceptionProcedure:
-			sessionSeriesServiceAddSeriesExceptionHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceExcludeSessionFromSeriesProcedure:
+			sessionSeriesServiceExcludeSessionFromSeriesHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceRemoveSeriesExceptionProcedure:
 			sessionSeriesServiceRemoveSeriesExceptionHandler.ServeHTTP(w, r)
 		default:
@@ -274,8 +274,8 @@ func (UnimplementedSessionSeriesServiceHandler) RemoveSessionSeries(context.Cont
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.RemoveSessionSeries is not implemented"))
 }
 
-func (UnimplementedSessionSeriesServiceHandler) AddSeriesException(context.Context, *connect.Request[v1.AddSeriesExceptionRequest]) (*connect.Response[v1.AddSeriesExceptionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.AddSeriesException is not implemented"))
+func (UnimplementedSessionSeriesServiceHandler) ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.ExcludeSessionFromSeries is not implemented"))
 }
 
 func (UnimplementedSessionSeriesServiceHandler) RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error) {

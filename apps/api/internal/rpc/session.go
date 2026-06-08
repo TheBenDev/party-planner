@@ -132,14 +132,14 @@ func (s *SessionServer) GetSessionPoll(ctx context.Context, req *connect.Request
 	}), nil
 }
 
-func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
+func (s *SessionServer) ListOneOffSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	sessions, err := s.Session.ListByCampaign(req.Msg.CampaignId)
+	sessions, err := s.Session.ListOneOffByCampaign(req.Msg.CampaignId)
 	if err != nil {
-		return nil, mapServiceError(ctx, s.Log, err, "failed to list sessions")
+		return nil, mapServiceError(ctx, s.Log, err, "failed to list one-off sessions")
 	}
 
 	protoSessions := make([]*v1.Session, len(sessions))
@@ -147,7 +147,7 @@ func (s *SessionServer) ListSessionsByCampaign(ctx context.Context, req *connect
 		protoSessions[i] = sessionToProto(session)
 	}
 
-	return connect.NewResponse(&v1.ListSessionsByCampaignResponse{
+	return connect.NewResponse(&v1.ListOneOffSessionsByCampaignResponse{
 		Sessions: protoSessions,
 	}), nil
 }

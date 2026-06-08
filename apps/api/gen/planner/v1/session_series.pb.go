@@ -146,6 +146,66 @@ func (x *SessionSeries) GetTimezone() string {
 	return ""
 }
 
+type SessionSeriesWithDetails struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Series        *SessionSeries           `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
+	Sessions      []*Session               `protobuf:"bytes,2,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	Exceptions    []*timestamppb.Timestamp `protobuf:"bytes,3,rep,name=exceptions,proto3" json:"exceptions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SessionSeriesWithDetails) Reset() {
+	*x = SessionSeriesWithDetails{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SessionSeriesWithDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SessionSeriesWithDetails) ProtoMessage() {}
+
+func (x *SessionSeriesWithDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SessionSeriesWithDetails.ProtoReflect.Descriptor instead.
+func (*SessionSeriesWithDetails) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SessionSeriesWithDetails) GetSeries() *SessionSeries {
+	if x != nil {
+		return x.Series
+	}
+	return nil
+}
+
+func (x *SessionSeriesWithDetails) GetSessions() []*Session {
+	if x != nil {
+		return x.Sessions
+	}
+	return nil
+}
+
+func (x *SessionSeriesWithDetails) GetExceptions() []*timestamppb.Timestamp {
+	if x != nil {
+		return x.Exceptions
+	}
+	return nil
+}
+
 type CreateSessionSeriesRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId      string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -162,7 +222,7 @@ type CreateSessionSeriesRequest struct {
 
 func (x *CreateSessionSeriesRequest) Reset() {
 	*x = CreateSessionSeriesRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[1]
+	mi := &file_planner_v1_session_series_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -174,7 +234,7 @@ func (x *CreateSessionSeriesRequest) String() string {
 func (*CreateSessionSeriesRequest) ProtoMessage() {}
 
 func (x *CreateSessionSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[1]
+	mi := &file_planner_v1_session_series_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -187,7 +247,7 @@ func (x *CreateSessionSeriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionSeriesRequest.ProtoReflect.Descriptor instead.
 func (*CreateSessionSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{1}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CreateSessionSeriesRequest) GetCampaignId() string {
@@ -255,7 +315,7 @@ type CreateSessionSeriesResponse struct {
 
 func (x *CreateSessionSeriesResponse) Reset() {
 	*x = CreateSessionSeriesResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[2]
+	mi := &file_planner_v1_session_series_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +327,7 @@ func (x *CreateSessionSeriesResponse) String() string {
 func (*CreateSessionSeriesResponse) ProtoMessage() {}
 
 func (x *CreateSessionSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[2]
+	mi := &file_planner_v1_session_series_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +340,7 @@ func (x *CreateSessionSeriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionSeriesResponse.ProtoReflect.Descriptor instead.
 func (*CreateSessionSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{2}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *CreateSessionSeriesResponse) GetSeries() *SessionSeries {
@@ -300,7 +360,7 @@ type GetSessionSeriesRequest struct {
 
 func (x *GetSessionSeriesRequest) Reset() {
 	*x = GetSessionSeriesRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[3]
+	mi := &file_planner_v1_session_series_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -312,7 +372,7 @@ func (x *GetSessionSeriesRequest) String() string {
 func (*GetSessionSeriesRequest) ProtoMessage() {}
 
 func (x *GetSessionSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[3]
+	mi := &file_planner_v1_session_series_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -325,7 +385,7 @@ func (x *GetSessionSeriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionSeriesRequest.ProtoReflect.Descriptor instead.
 func (*GetSessionSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{3}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetSessionSeriesRequest) GetId() string {
@@ -351,7 +411,7 @@ type GetSessionSeriesResponse struct {
 
 func (x *GetSessionSeriesResponse) Reset() {
 	*x = GetSessionSeriesResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[4]
+	mi := &file_planner_v1_session_series_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -363,7 +423,7 @@ func (x *GetSessionSeriesResponse) String() string {
 func (*GetSessionSeriesResponse) ProtoMessage() {}
 
 func (x *GetSessionSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[4]
+	mi := &file_planner_v1_session_series_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -376,7 +436,7 @@ func (x *GetSessionSeriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionSeriesResponse.ProtoReflect.Descriptor instead.
 func (*GetSessionSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{4}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetSessionSeriesResponse) GetSeries() *SessionSeries {
@@ -395,7 +455,7 @@ type ListSessionSeriesByCampaignRequest struct {
 
 func (x *ListSessionSeriesByCampaignRequest) Reset() {
 	*x = ListSessionSeriesByCampaignRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[5]
+	mi := &file_planner_v1_session_series_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -407,7 +467,7 @@ func (x *ListSessionSeriesByCampaignRequest) String() string {
 func (*ListSessionSeriesByCampaignRequest) ProtoMessage() {}
 
 func (x *ListSessionSeriesByCampaignRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[5]
+	mi := &file_planner_v1_session_series_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -420,7 +480,7 @@ func (x *ListSessionSeriesByCampaignRequest) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ListSessionSeriesByCampaignRequest.ProtoReflect.Descriptor instead.
 func (*ListSessionSeriesByCampaignRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{5}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListSessionSeriesByCampaignRequest) GetCampaignId() string {
@@ -431,15 +491,15 @@ func (x *ListSessionSeriesByCampaignRequest) GetCampaignId() string {
 }
 
 type ListSessionSeriesByCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Series        []*SessionSeries       `protobuf:"bytes,1,rep,name=series,proto3" json:"series,omitempty"`
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Series        []*SessionSeriesWithDetails `protobuf:"bytes,1,rep,name=series,proto3" json:"series,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListSessionSeriesByCampaignResponse) Reset() {
 	*x = ListSessionSeriesByCampaignResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[6]
+	mi := &file_planner_v1_session_series_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -451,7 +511,7 @@ func (x *ListSessionSeriesByCampaignResponse) String() string {
 func (*ListSessionSeriesByCampaignResponse) ProtoMessage() {}
 
 func (x *ListSessionSeriesByCampaignResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[6]
+	mi := &file_planner_v1_session_series_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -464,10 +524,10 @@ func (x *ListSessionSeriesByCampaignResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ListSessionSeriesByCampaignResponse.ProtoReflect.Descriptor instead.
 func (*ListSessionSeriesByCampaignResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{6}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *ListSessionSeriesByCampaignResponse) GetSeries() []*SessionSeries {
+func (x *ListSessionSeriesByCampaignResponse) GetSeries() []*SessionSeriesWithDetails {
 	if x != nil {
 		return x.Series
 	}
@@ -490,7 +550,7 @@ type UpdateSessionSeriesRequest struct {
 
 func (x *UpdateSessionSeriesRequest) Reset() {
 	*x = UpdateSessionSeriesRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[7]
+	mi := &file_planner_v1_session_series_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -502,7 +562,7 @@ func (x *UpdateSessionSeriesRequest) String() string {
 func (*UpdateSessionSeriesRequest) ProtoMessage() {}
 
 func (x *UpdateSessionSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[7]
+	mi := &file_planner_v1_session_series_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -515,7 +575,7 @@ func (x *UpdateSessionSeriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSessionSeriesRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSessionSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UpdateSessionSeriesRequest) GetId() string {
@@ -583,7 +643,7 @@ type UpdateSessionSeriesResponse struct {
 
 func (x *UpdateSessionSeriesResponse) Reset() {
 	*x = UpdateSessionSeriesResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[8]
+	mi := &file_planner_v1_session_series_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -595,7 +655,7 @@ func (x *UpdateSessionSeriesResponse) String() string {
 func (*UpdateSessionSeriesResponse) ProtoMessage() {}
 
 func (x *UpdateSessionSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[8]
+	mi := &file_planner_v1_session_series_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -608,7 +668,7 @@ func (x *UpdateSessionSeriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSessionSeriesResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSessionSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateSessionSeriesResponse) GetSeries() *SessionSeries {
@@ -628,7 +688,7 @@ type RemoveSessionSeriesRequest struct {
 
 func (x *RemoveSessionSeriesRequest) Reset() {
 	*x = RemoveSessionSeriesRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[9]
+	mi := &file_planner_v1_session_series_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -640,7 +700,7 @@ func (x *RemoveSessionSeriesRequest) String() string {
 func (*RemoveSessionSeriesRequest) ProtoMessage() {}
 
 func (x *RemoveSessionSeriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[9]
+	mi := &file_planner_v1_session_series_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -653,7 +713,7 @@ func (x *RemoveSessionSeriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSessionSeriesRequest.ProtoReflect.Descriptor instead.
 func (*RemoveSessionSeriesRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{9}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RemoveSessionSeriesRequest) GetId() string {
@@ -678,7 +738,7 @@ type RemoveSessionSeriesResponse struct {
 
 func (x *RemoveSessionSeriesResponse) Reset() {
 	*x = RemoveSessionSeriesResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[10]
+	mi := &file_planner_v1_session_series_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -690,7 +750,7 @@ func (x *RemoveSessionSeriesResponse) String() string {
 func (*RemoveSessionSeriesResponse) ProtoMessage() {}
 
 func (x *RemoveSessionSeriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[10]
+	mi := &file_planner_v1_session_series_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -703,33 +763,34 @@ func (x *RemoveSessionSeriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSessionSeriesResponse.ProtoReflect.Descriptor instead.
 func (*RemoveSessionSeriesResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{10}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{11}
 }
 
-type AddSeriesExceptionRequest struct {
+type ExcludeSessionFromSeriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
-	ExcludedDate  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=excluded_date,json=excludedDate,proto3" json:"excluded_date,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,3,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	SeriesId      string                 `protobuf:"bytes,2,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	ExcludedDate  *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=excluded_date,json=excludedDate,proto3" json:"excluded_date,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,4,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddSeriesExceptionRequest) Reset() {
-	*x = AddSeriesExceptionRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[11]
+func (x *ExcludeSessionFromSeriesRequest) Reset() {
+	*x = ExcludeSessionFromSeriesRequest{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddSeriesExceptionRequest) String() string {
+func (x *ExcludeSessionFromSeriesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddSeriesExceptionRequest) ProtoMessage() {}
+func (*ExcludeSessionFromSeriesRequest) ProtoMessage() {}
 
-func (x *AddSeriesExceptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[11]
+func (x *ExcludeSessionFromSeriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -740,53 +801,60 @@ func (x *AddSeriesExceptionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddSeriesExceptionRequest.ProtoReflect.Descriptor instead.
-func (*AddSeriesExceptionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{11}
+// Deprecated: Use ExcludeSessionFromSeriesRequest.ProtoReflect.Descriptor instead.
+func (*ExcludeSessionFromSeriesRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *AddSeriesExceptionRequest) GetSeriesId() string {
+func (x *ExcludeSessionFromSeriesRequest) GetSessionId() string {
+	if x != nil {
+		return x.SessionId
+	}
+	return ""
+}
+
+func (x *ExcludeSessionFromSeriesRequest) GetSeriesId() string {
 	if x != nil {
 		return x.SeriesId
 	}
 	return ""
 }
 
-func (x *AddSeriesExceptionRequest) GetExcludedDate() *timestamppb.Timestamp {
+func (x *ExcludeSessionFromSeriesRequest) GetExcludedDate() *timestamppb.Timestamp {
 	if x != nil {
 		return x.ExcludedDate
 	}
 	return nil
 }
 
-func (x *AddSeriesExceptionRequest) GetCampaignId() string {
+func (x *ExcludeSessionFromSeriesRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-type AddSeriesExceptionResponse struct {
+type ExcludeSessionFromSeriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AddSeriesExceptionResponse) Reset() {
-	*x = AddSeriesExceptionResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[12]
+func (x *ExcludeSessionFromSeriesResponse) Reset() {
+	*x = ExcludeSessionFromSeriesResponse{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AddSeriesExceptionResponse) String() string {
+func (x *ExcludeSessionFromSeriesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AddSeriesExceptionResponse) ProtoMessage() {}
+func (*ExcludeSessionFromSeriesResponse) ProtoMessage() {}
 
-func (x *AddSeriesExceptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[12]
+func (x *ExcludeSessionFromSeriesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -797,9 +865,9 @@ func (x *AddSeriesExceptionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AddSeriesExceptionResponse.ProtoReflect.Descriptor instead.
-func (*AddSeriesExceptionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{12}
+// Deprecated: Use ExcludeSessionFromSeriesResponse.ProtoReflect.Descriptor instead.
+func (*ExcludeSessionFromSeriesResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{13}
 }
 
 type RemoveSeriesExceptionRequest struct {
@@ -813,7 +881,7 @@ type RemoveSeriesExceptionRequest struct {
 
 func (x *RemoveSeriesExceptionRequest) Reset() {
 	*x = RemoveSeriesExceptionRequest{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[13]
+	mi := &file_planner_v1_session_series_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -825,7 +893,7 @@ func (x *RemoveSeriesExceptionRequest) String() string {
 func (*RemoveSeriesExceptionRequest) ProtoMessage() {}
 
 func (x *RemoveSeriesExceptionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[13]
+	mi := &file_planner_v1_session_series_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -838,7 +906,7 @@ func (x *RemoveSeriesExceptionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSeriesExceptionRequest.ProtoReflect.Descriptor instead.
 func (*RemoveSeriesExceptionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{13}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RemoveSeriesExceptionRequest) GetSeriesId() string {
@@ -870,7 +938,7 @@ type RemoveSeriesExceptionResponse struct {
 
 func (x *RemoveSeriesExceptionResponse) Reset() {
 	*x = RemoveSeriesExceptionResponse{}
-	mi := &file_planner_v1_session_series_proto_msgTypes[14]
+	mi := &file_planner_v1_session_series_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -882,7 +950,7 @@ func (x *RemoveSeriesExceptionResponse) String() string {
 func (*RemoveSeriesExceptionResponse) ProtoMessage() {}
 
 func (x *RemoveSeriesExceptionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_series_proto_msgTypes[14]
+	mi := &file_planner_v1_session_series_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -895,7 +963,7 @@ func (x *RemoveSeriesExceptionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSeriesExceptionResponse.ProtoReflect.Descriptor instead.
 func (*RemoveSeriesExceptionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{14}
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{15}
 }
 
 var File_planner_v1_session_series_proto protoreflect.FileDescriptor
@@ -903,7 +971,7 @@ var File_planner_v1_session_series_proto protoreflect.FileDescriptor
 const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"\x1fplanner/v1/session_series.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf9\x03\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18planner/v1/session.proto\"\xf9\x03\n" +
 	"\rSessionSeries\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -922,7 +990,13 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1a\n" +
 	"\btimezone\x18\v \x01(\tR\btimezoneB\x0e\n" +
 	"\f_descriptionB\x12\n" +
-	"\x10_series_end_date\"\x80\x03\n" +
+	"\x10_series_end_date\"\xba\x01\n" +
+	"\x18SessionSeriesWithDetails\x121\n" +
+	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\x12/\n" +
+	"\bsessions\x18\x02 \x03(\v2\x13.planner.v1.SessionR\bsessions\x12:\n" +
+	"\n" +
+	"exceptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\n" +
+	"exceptions\"\x80\x03\n" +
 	"\x1aCreateSessionSeriesRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
@@ -946,9 +1020,9 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"E\n" +
 	"\"ListSessionSeriesByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"X\n" +
-	"#ListSessionSeriesByCampaignResponse\x121\n" +
-	"\x06series\x18\x01 \x03(\v2\x19.planner.v1.SessionSeriesR\x06series\"\x8c\x03\n" +
+	"campaignId\"c\n" +
+	"#ListSessionSeriesByCampaignResponse\x12<\n" +
+	"\x06series\x18\x01 \x03(\v2$.planner.v1.SessionSeriesWithDetailsR\x06series\"\x8c\x03\n" +
 	"\x1aUpdateSessionSeriesRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
@@ -972,26 +1046,28 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"\x1d\n" +
-	"\x1bRemoveSessionSeriesResponse\"\x9a\x01\n" +
-	"\x19AddSeriesExceptionRequest\x12\x1b\n" +
-	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12?\n" +
-	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
-	"\vcampaign_id\x18\x03 \x01(\tR\n" +
-	"campaignId\"\x1c\n" +
-	"\x1aAddSeriesExceptionResponse\"\x9d\x01\n" +
+	"\x1bRemoveSessionSeriesResponse\"\xbf\x01\n" +
+	"\x1fExcludeSessionFromSeriesRequest\x12\x1d\n" +
+	"\n" +
+	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1b\n" +
+	"\tseries_id\x18\x02 \x01(\tR\bseriesId\x12?\n" +
+	"\rexcluded_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
+	"\vcampaign_id\x18\x04 \x01(\tR\n" +
+	"campaignId\"\"\n" +
+	" ExcludeSessionFromSeriesResponse\"\x9d\x01\n" +
 	"\x1cRemoveSeriesExceptionRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12?\n" +
 	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
 	"\vcampaign_id\x18\x03 \x01(\tR\n" +
 	"campaignId\"\x1f\n" +
-	"\x1dRemoveSeriesExceptionResponse2\x80\x06\n" +
+	"\x1dRemoveSeriesExceptionResponse2\x92\x06\n" +
 	"\x14SessionSeriesService\x12f\n" +
 	"\x13CreateSessionSeries\x12&.planner.v1.CreateSessionSeriesRequest\x1a'.planner.v1.CreateSessionSeriesResponse\x12]\n" +
 	"\x10GetSessionSeries\x12#.planner.v1.GetSessionSeriesRequest\x1a$.planner.v1.GetSessionSeriesResponse\x12~\n" +
 	"\x1bListSessionSeriesByCampaign\x12..planner.v1.ListSessionSeriesByCampaignRequest\x1a/.planner.v1.ListSessionSeriesByCampaignResponse\x12f\n" +
 	"\x13UpdateSessionSeries\x12&.planner.v1.UpdateSessionSeriesRequest\x1a'.planner.v1.UpdateSessionSeriesResponse\x12f\n" +
-	"\x13RemoveSessionSeries\x12&.planner.v1.RemoveSessionSeriesRequest\x1a'.planner.v1.RemoveSessionSeriesResponse\x12c\n" +
-	"\x12AddSeriesException\x12%.planner.v1.AddSeriesExceptionRequest\x1a&.planner.v1.AddSeriesExceptionResponse\x12l\n" +
+	"\x13RemoveSessionSeries\x12&.planner.v1.RemoveSessionSeriesRequest\x1a'.planner.v1.RemoveSessionSeriesResponse\x12u\n" +
+	"\x18ExcludeSessionFromSeries\x12+.planner.v1.ExcludeSessionFromSeriesRequest\x1a,.planner.v1.ExcludeSessionFromSeriesResponse\x12l\n" +
 	"\x15RemoveSeriesException\x12(.planner.v1.RemoveSeriesExceptionRequest\x1a).planner.v1.RemoveSeriesExceptionResponseB\xaf\x01\n" +
 	"\x0ecom.planner.v1B\x12SessionSeriesProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
@@ -1009,58 +1085,63 @@ func file_planner_v1_session_series_proto_rawDescGZIP() []byte {
 	return file_planner_v1_session_series_proto_rawDescData
 }
 
-var file_planner_v1_session_series_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
+var file_planner_v1_session_series_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_planner_v1_session_series_proto_goTypes = []any{
 	(*SessionSeries)(nil),                       // 0: planner.v1.SessionSeries
-	(*CreateSessionSeriesRequest)(nil),          // 1: planner.v1.CreateSessionSeriesRequest
-	(*CreateSessionSeriesResponse)(nil),         // 2: planner.v1.CreateSessionSeriesResponse
-	(*GetSessionSeriesRequest)(nil),             // 3: planner.v1.GetSessionSeriesRequest
-	(*GetSessionSeriesResponse)(nil),            // 4: planner.v1.GetSessionSeriesResponse
-	(*ListSessionSeriesByCampaignRequest)(nil),  // 5: planner.v1.ListSessionSeriesByCampaignRequest
-	(*ListSessionSeriesByCampaignResponse)(nil), // 6: planner.v1.ListSessionSeriesByCampaignResponse
-	(*UpdateSessionSeriesRequest)(nil),          // 7: planner.v1.UpdateSessionSeriesRequest
-	(*UpdateSessionSeriesResponse)(nil),         // 8: planner.v1.UpdateSessionSeriesResponse
-	(*RemoveSessionSeriesRequest)(nil),          // 9: planner.v1.RemoveSessionSeriesRequest
-	(*RemoveSessionSeriesResponse)(nil),         // 10: planner.v1.RemoveSessionSeriesResponse
-	(*AddSeriesExceptionRequest)(nil),           // 11: planner.v1.AddSeriesExceptionRequest
-	(*AddSeriesExceptionResponse)(nil),          // 12: planner.v1.AddSeriesExceptionResponse
-	(*RemoveSeriesExceptionRequest)(nil),        // 13: planner.v1.RemoveSeriesExceptionRequest
-	(*RemoveSeriesExceptionResponse)(nil),       // 14: planner.v1.RemoveSeriesExceptionResponse
-	(*timestamppb.Timestamp)(nil),               // 15: google.protobuf.Timestamp
+	(*SessionSeriesWithDetails)(nil),            // 1: planner.v1.SessionSeriesWithDetails
+	(*CreateSessionSeriesRequest)(nil),          // 2: planner.v1.CreateSessionSeriesRequest
+	(*CreateSessionSeriesResponse)(nil),         // 3: planner.v1.CreateSessionSeriesResponse
+	(*GetSessionSeriesRequest)(nil),             // 4: planner.v1.GetSessionSeriesRequest
+	(*GetSessionSeriesResponse)(nil),            // 5: planner.v1.GetSessionSeriesResponse
+	(*ListSessionSeriesByCampaignRequest)(nil),  // 6: planner.v1.ListSessionSeriesByCampaignRequest
+	(*ListSessionSeriesByCampaignResponse)(nil), // 7: planner.v1.ListSessionSeriesByCampaignResponse
+	(*UpdateSessionSeriesRequest)(nil),          // 8: planner.v1.UpdateSessionSeriesRequest
+	(*UpdateSessionSeriesResponse)(nil),         // 9: planner.v1.UpdateSessionSeriesResponse
+	(*RemoveSessionSeriesRequest)(nil),          // 10: planner.v1.RemoveSessionSeriesRequest
+	(*RemoveSessionSeriesResponse)(nil),         // 11: planner.v1.RemoveSessionSeriesResponse
+	(*ExcludeSessionFromSeriesRequest)(nil),     // 12: planner.v1.ExcludeSessionFromSeriesRequest
+	(*ExcludeSessionFromSeriesResponse)(nil),    // 13: planner.v1.ExcludeSessionFromSeriesResponse
+	(*RemoveSeriesExceptionRequest)(nil),        // 14: planner.v1.RemoveSeriesExceptionRequest
+	(*RemoveSeriesExceptionResponse)(nil),       // 15: planner.v1.RemoveSeriesExceptionResponse
+	(*timestamppb.Timestamp)(nil),               // 16: google.protobuf.Timestamp
+	(*Session)(nil),                             // 17: planner.v1.Session
 }
 var file_planner_v1_session_series_proto_depIdxs = []int32{
-	15, // 0: planner.v1.SessionSeries.series_start_date:type_name -> google.protobuf.Timestamp
-	15, // 1: planner.v1.SessionSeries.series_end_date:type_name -> google.protobuf.Timestamp
-	15, // 2: planner.v1.SessionSeries.created_at:type_name -> google.protobuf.Timestamp
-	15, // 3: planner.v1.SessionSeries.updated_at:type_name -> google.protobuf.Timestamp
-	15, // 4: planner.v1.CreateSessionSeriesRequest.series_start_date:type_name -> google.protobuf.Timestamp
-	15, // 5: planner.v1.CreateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
-	0,  // 6: planner.v1.CreateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
-	0,  // 7: planner.v1.GetSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
-	0,  // 8: planner.v1.ListSessionSeriesByCampaignResponse.series:type_name -> planner.v1.SessionSeries
-	15, // 9: planner.v1.UpdateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
-	0,  // 10: planner.v1.UpdateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
-	15, // 11: planner.v1.AddSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
-	15, // 12: planner.v1.RemoveSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
-	1,  // 13: planner.v1.SessionSeriesService.CreateSessionSeries:input_type -> planner.v1.CreateSessionSeriesRequest
-	3,  // 14: planner.v1.SessionSeriesService.GetSessionSeries:input_type -> planner.v1.GetSessionSeriesRequest
-	5,  // 15: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:input_type -> planner.v1.ListSessionSeriesByCampaignRequest
-	7,  // 16: planner.v1.SessionSeriesService.UpdateSessionSeries:input_type -> planner.v1.UpdateSessionSeriesRequest
-	9,  // 17: planner.v1.SessionSeriesService.RemoveSessionSeries:input_type -> planner.v1.RemoveSessionSeriesRequest
-	11, // 18: planner.v1.SessionSeriesService.AddSeriesException:input_type -> planner.v1.AddSeriesExceptionRequest
-	13, // 19: planner.v1.SessionSeriesService.RemoveSeriesException:input_type -> planner.v1.RemoveSeriesExceptionRequest
-	2,  // 20: planner.v1.SessionSeriesService.CreateSessionSeries:output_type -> planner.v1.CreateSessionSeriesResponse
-	4,  // 21: planner.v1.SessionSeriesService.GetSessionSeries:output_type -> planner.v1.GetSessionSeriesResponse
-	6,  // 22: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:output_type -> planner.v1.ListSessionSeriesByCampaignResponse
-	8,  // 23: planner.v1.SessionSeriesService.UpdateSessionSeries:output_type -> planner.v1.UpdateSessionSeriesResponse
-	10, // 24: planner.v1.SessionSeriesService.RemoveSessionSeries:output_type -> planner.v1.RemoveSessionSeriesResponse
-	12, // 25: planner.v1.SessionSeriesService.AddSeriesException:output_type -> planner.v1.AddSeriesExceptionResponse
-	14, // 26: planner.v1.SessionSeriesService.RemoveSeriesException:output_type -> planner.v1.RemoveSeriesExceptionResponse
-	20, // [20:27] is the sub-list for method output_type
-	13, // [13:20] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	16, // 0: planner.v1.SessionSeries.series_start_date:type_name -> google.protobuf.Timestamp
+	16, // 1: planner.v1.SessionSeries.series_end_date:type_name -> google.protobuf.Timestamp
+	16, // 2: planner.v1.SessionSeries.created_at:type_name -> google.protobuf.Timestamp
+	16, // 3: planner.v1.SessionSeries.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 4: planner.v1.SessionSeriesWithDetails.series:type_name -> planner.v1.SessionSeries
+	17, // 5: planner.v1.SessionSeriesWithDetails.sessions:type_name -> planner.v1.Session
+	16, // 6: planner.v1.SessionSeriesWithDetails.exceptions:type_name -> google.protobuf.Timestamp
+	16, // 7: planner.v1.CreateSessionSeriesRequest.series_start_date:type_name -> google.protobuf.Timestamp
+	16, // 8: planner.v1.CreateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
+	0,  // 9: planner.v1.CreateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
+	0,  // 10: planner.v1.GetSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
+	1,  // 11: planner.v1.ListSessionSeriesByCampaignResponse.series:type_name -> planner.v1.SessionSeriesWithDetails
+	16, // 12: planner.v1.UpdateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
+	0,  // 13: planner.v1.UpdateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
+	16, // 14: planner.v1.ExcludeSessionFromSeriesRequest.excluded_date:type_name -> google.protobuf.Timestamp
+	16, // 15: planner.v1.RemoveSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
+	2,  // 16: planner.v1.SessionSeriesService.CreateSessionSeries:input_type -> planner.v1.CreateSessionSeriesRequest
+	4,  // 17: planner.v1.SessionSeriesService.GetSessionSeries:input_type -> planner.v1.GetSessionSeriesRequest
+	6,  // 18: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:input_type -> planner.v1.ListSessionSeriesByCampaignRequest
+	8,  // 19: planner.v1.SessionSeriesService.UpdateSessionSeries:input_type -> planner.v1.UpdateSessionSeriesRequest
+	10, // 20: planner.v1.SessionSeriesService.RemoveSessionSeries:input_type -> planner.v1.RemoveSessionSeriesRequest
+	12, // 21: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:input_type -> planner.v1.ExcludeSessionFromSeriesRequest
+	14, // 22: planner.v1.SessionSeriesService.RemoveSeriesException:input_type -> planner.v1.RemoveSeriesExceptionRequest
+	3,  // 23: planner.v1.SessionSeriesService.CreateSessionSeries:output_type -> planner.v1.CreateSessionSeriesResponse
+	5,  // 24: planner.v1.SessionSeriesService.GetSessionSeries:output_type -> planner.v1.GetSessionSeriesResponse
+	7,  // 25: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:output_type -> planner.v1.ListSessionSeriesByCampaignResponse
+	9,  // 26: planner.v1.SessionSeriesService.UpdateSessionSeries:output_type -> planner.v1.UpdateSessionSeriesResponse
+	11, // 27: planner.v1.SessionSeriesService.RemoveSessionSeries:output_type -> planner.v1.RemoveSessionSeriesResponse
+	13, // 28: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:output_type -> planner.v1.ExcludeSessionFromSeriesResponse
+	15, // 29: planner.v1.SessionSeriesService.RemoveSeriesException:output_type -> planner.v1.RemoveSeriesExceptionResponse
+	23, // [23:30] is the sub-list for method output_type
+	16, // [16:23] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_session_series_proto_init() }
@@ -1068,16 +1149,17 @@ func file_planner_v1_session_series_proto_init() {
 	if File_planner_v1_session_series_proto != nil {
 		return
 	}
+	file_planner_v1_session_proto_init()
 	file_planner_v1_session_series_proto_msgTypes[0].OneofWrappers = []any{}
-	file_planner_v1_session_series_proto_msgTypes[1].OneofWrappers = []any{}
-	file_planner_v1_session_series_proto_msgTypes[7].OneofWrappers = []any{}
+	file_planner_v1_session_series_proto_msgTypes[2].OneofWrappers = []any{}
+	file_planner_v1_session_series_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_session_series_proto_rawDesc), len(file_planner_v1_session_series_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   15,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

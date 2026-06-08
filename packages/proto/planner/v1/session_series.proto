@@ -3,6 +3,7 @@ syntax = "proto3";
 package planner.v1;
 
 import "google/protobuf/timestamp.proto";
+import "planner/v1/session.proto";
 
 // -----------------------------------------------------------------------------
 // Core Messages
@@ -20,6 +21,12 @@ message SessionSeries {
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
   string timezone = 11;
+}
+
+message SessionSeriesWithDetails {
+  SessionSeries series = 1;
+  repeated Session sessions = 2;
+  repeated google.protobuf.Timestamp exceptions = 3;
 }
 
 // -----------------------------------------------------------------------------
@@ -55,7 +62,7 @@ message ListSessionSeriesByCampaignRequest {
 }
 
 message ListSessionSeriesByCampaignResponse {
-  repeated SessionSeries series = 1;
+  repeated SessionSeriesWithDetails series = 1;
 }
 
 message UpdateSessionSeriesRequest {
@@ -80,13 +87,14 @@ message RemoveSessionSeriesRequest {
 
 message RemoveSessionSeriesResponse {}
 
-message AddSeriesExceptionRequest {
-  string series_id = 1;
-  google.protobuf.Timestamp excluded_date = 2;
-  string campaign_id = 3;
+message ExcludeSessionFromSeriesRequest {
+  string session_id = 1;
+  string series_id = 2;
+  google.protobuf.Timestamp excluded_date = 3;
+  string campaign_id = 4;
 }
 
-message AddSeriesExceptionResponse {}
+message ExcludeSessionFromSeriesResponse {}
 
 message RemoveSeriesExceptionRequest {
   string series_id = 1;
@@ -106,6 +114,6 @@ service SessionSeriesService {
   rpc ListSessionSeriesByCampaign(ListSessionSeriesByCampaignRequest) returns (ListSessionSeriesByCampaignResponse);
   rpc UpdateSessionSeries(UpdateSessionSeriesRequest) returns (UpdateSessionSeriesResponse);
   rpc RemoveSessionSeries(RemoveSessionSeriesRequest) returns (RemoveSessionSeriesResponse);
-  rpc AddSeriesException(AddSeriesExceptionRequest) returns (AddSeriesExceptionResponse);
+  rpc ExcludeSessionFromSeries(ExcludeSessionFromSeriesRequest) returns (ExcludeSessionFromSeriesResponse);
   rpc RemoveSeriesException(RemoveSeriesExceptionRequest) returns (RemoveSeriesExceptionResponse);
 }

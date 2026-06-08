@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionPollRequest, GetSessionPollResponse, GetSessionRequest, GetSessionResponse, ListSessionsByCampaignRequest, ListSessionsByCampaignResponse, PollSessionRequest, PollSessionResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
+import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionPollRequest, GetSessionPollResponse, GetSessionRequest, GetSessionResponse, ListOneOffSessionsByCampaignRequest, ListOneOffSessionsByCampaignResponse, PollSessionRequest, PollSessionResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -49,12 +49,12 @@ export const SessionService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc planner.v1.SessionService.ListSessionsByCampaign
+     * @generated from rpc planner.v1.SessionService.ListOneOffSessionsByCampaign
      */
-    listSessionsByCampaign: {
-      name: "ListSessionsByCampaign",
-      I: ListSessionsByCampaignRequest,
-      O: ListSessionsByCampaignResponse,
+    listOneOffSessionsByCampaign: {
+      name: "ListOneOffSessionsByCampaign",
+      I: ListOneOffSessionsByCampaignRequest,
+      O: ListOneOffSessionsByCampaignResponse,
       kind: MethodKind.Unary,
     },
     /**

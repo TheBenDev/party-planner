@@ -175,10 +175,10 @@ func (s *SessionService) GetPoll(ctx context.Context, sessionId, campaignId stri
 	return poll, nil
 }
 
-func (s *SessionService) ListByCampaign(campaignId string) ([]*model.Session, error) {
-	sessions, err := s.DB.ListSessionsByCampaign(campaignId)
+func (s *SessionService) ListOneOffByCampaign(campaignId string) ([]*model.Session, error) {
+	sessions, err := s.DB.ListOneOffSessionsByCampaign(campaignId)
 	if err != nil {
-		return nil, fmt.Errorf("list sessions by campaign error: %w", err)
+		return nil, fmt.Errorf("list one-off sessions by campaign error: %w", err)
 	}
 	return sessions, nil
 }
@@ -251,19 +251,31 @@ func (s *SessionService) Remove(id, campaignID string) error {
 	if err != nil {
 		return err
 	}
-	if session.PollID.Valid {
-		integration, err := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
-		if err == nil {
+	if session.PollID.Valid || session.DiscordEventID.Valid {
+		integration, intErr := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
+		if intErr == nil {
+			ctx := context.Background()
 			var metadata struct {
 				ChannelID string `json:"channelId"`
 			}
-			if err := json.Unmarshal(integration.Metadata, &metadata); err == nil && metadata.ChannelID != "" {
-				ctx := context.Background()
+			_ = json.Unmarshal(integration.Metadata, &metadata)
+
+			if session.PollID.Valid && metadata.ChannelID != "" {
 				if err := s.Discord.ClosePoll(ctx, metadata.ChannelID, session.PollID.String); err == nil {
 					sessionInFuture := !session.StartsAt.Valid || session.StartsAt.Time.After(time.Now())
 					if sessionInFuture {
 						s.Discord.NotifyPollCancelled(ctx, metadata.ChannelID, session.PollID.String, session.Title)
 					}
+				}
+			}
+
+			if session.DiscordEventID.Valid {
+				if err := s.Discord.DeleteScheduledEvent(ctx, integration.ExternalID, session.DiscordEventID.String); err != nil {
+					s.Log.WarnContext(ctx, "failed to delete discord scheduled event",
+						"session_id", id,
+						"event_id", session.DiscordEventID.String,
+						"error", err,
+					)
 				}
 			}
 		}

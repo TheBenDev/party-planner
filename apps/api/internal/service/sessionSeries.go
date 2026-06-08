@@ -10,6 +10,7 @@ import (
 
 	"github.com/BBruington/party-planner/api/internal/db"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"golang.org/x/sync/errgroup"
 )
 
 var (
@@ -97,12 +98,54 @@ func (s *SessionSeriesService) Get(id, campaignId string) (*model.SessionSeries,
 	return series, nil
 }
 
-func (s *SessionSeriesService) ListByCampaign(campaignID string) ([]*model.SessionSeries, error) {
-	series, err := s.DB.ListSessionSeriesByCampaign(campaignID)
+func (s *SessionSeriesService) ListByCampaign(campaignID string) ([]*model.SessionSeriesWithDetails, error) {
+	seriesList, err := s.DB.ListSessionSeriesByCampaign(campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list session series by campaign error: %w", err)
 	}
-	return series, nil
+	if len(seriesList) == 0 {
+		return []*model.SessionSeriesWithDetails{}, nil
+	}
+
+	seriesIDs := make([]string, len(seriesList))
+	for i, ss := range seriesList {
+		seriesIDs[i] = ss.ID
+	}
+
+	var sessions []*model.Session
+	var exceptions map[string][]time.Time
+
+	var g errgroup.Group
+	g.Go(func() error {
+		var err error
+		sessions, err = s.DB.ListSeriesSessionsByCampaign(campaignID)
+		return err
+	})
+	g.Go(func() error {
+		var err error
+		exceptions, err = s.DB.ListExceptionsForSeries(seriesIDs)
+		return err
+	})
+	if err := g.Wait(); err != nil {
+		return nil, fmt.Errorf("list session series details error: %w", err)
+	}
+
+	sessionsBySeriesID := make(map[string][]*model.Session)
+	for _, sess := range sessions {
+		if sess.SeriesID.Valid {
+			sessionsBySeriesID[sess.SeriesID.String] = append(sessionsBySeriesID[sess.SeriesID.String], sess)
+		}
+	}
+
+	result := make([]*model.SessionSeriesWithDetails, len(seriesList))
+	for i, ss := range seriesList {
+		result[i] = &model.SessionSeriesWithDetails{
+			Series:     ss,
+			Sessions:   sessionsBySeriesID[ss.ID],
+			Exceptions: exceptions[ss.ID],
+		}
+	}
+	return result, nil
 }
 
 func (s *SessionSeriesService) Update(req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
@@ -129,13 +172,51 @@ func (s *SessionSeriesService) Remove(id, campaignID string) error {
 	return nil
 }
 
-func (s *SessionSeriesService) AddException(seriesID, campaignID string, excludedDate time.Time) error {
-	if _, err := s.Get(seriesID, campaignID); err != nil {
+func (s *SessionSeriesService) ExcludeFromSeries(ctx context.Context, sessionID, seriesID, campaignID string, excludedDate time.Time) error {
+	session, err := s.Session.Get(sessionID, campaignID)
+	if err != nil {
 		return err
 	}
-	if err := s.DB.AddSeriesException(seriesID, campaignID, excludedDate); err != nil {
-		return fmt.Errorf("add series exception error: %w", err)
+
+	if !session.SeriesID.Valid || session.SeriesID.String != seriesID {
+		return ErrSessionSeriesNotFound
 	}
+
+	if !session.StartsAt.Valid || !session.StartsAt.Time.UTC().Truncate(time.Second).Equal(excludedDate.UTC().Truncate(time.Second)) {
+		return fmt.Errorf("exclude from series: session starts_at does not match excluded date")
+	}
+
+	exceptionDate := excludedDate
+	if session.OriginalStartsAt.Valid {
+		exceptionDate = session.OriginalStartsAt.Time
+	}
+
+	if err := s.DB.RunInTx(func(tx *db.DB) error {
+		if err := tx.AddSeriesException(seriesID, campaignID, exceptionDate); err != nil {
+			return fmt.Errorf("exclude from series: write exception: %w", err)
+		}
+		if err := tx.RemoveSession(session.ID, campaignID); err != nil {
+			return fmt.Errorf("exclude from series: remove session: %w", err)
+		}
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	if session.DiscordEventID.Valid && s.Session.Discord != nil {
+		integration, err := s.DB.GetCampaignIntegration(campaignID, model.IntegrationSourceDiscord)
+		if err == nil {
+			if deleteErr := s.Session.Discord.DeleteScheduledEvent(ctx, integration.ExternalID, session.DiscordEventID.String); deleteErr != nil {
+				s.Log.WarnContext(ctx, "failed to cancel discord scheduled event for excluded series session",
+					"series_id", seriesID,
+					"session_id", session.ID,
+					"event_id", session.DiscordEventID.String,
+					"error", deleteErr,
+				)
+			}
+		}
+	}
+
 	return nil
 }
 

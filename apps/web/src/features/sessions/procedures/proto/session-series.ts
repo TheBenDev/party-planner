@@ -3,8 +3,29 @@ import { ORPCError } from "@orpc/client";
 import {
 	type SessionSeries,
 	SessionSeriesSchema,
+	type SessionSeriesWithDetails,
+	SessionSeriesWithDetailsSchema,
 } from "@/features/sessions/types";
-import type { SessionSeries as SessionSeriesProto } from "@/gen/proto/planner/v1/session_series_pb";
+import type {
+	SessionSeries as SessionSeriesProto,
+	SessionSeriesWithDetails as SessionSeriesWithDetailsProto,
+} from "@/gen/proto/planner/v1/session_series_pb";
+import { protoToSession } from "./session";
+
+export function protoToSessionSeriesWithDetails(
+	proto: SessionSeriesWithDetailsProto,
+): SessionSeriesWithDetails {
+	if (!proto.series) {
+		throw new ORPCError("INTERNAL_SERVER_ERROR", {
+			message: "SessionSeriesWithDetails missing series",
+		});
+	}
+	return SessionSeriesWithDetailsSchema.parse({
+		exceptions: proto.exceptions.map((ts) => timestampDate(ts)),
+		series: protoToSessionSeries(proto.series),
+		sessions: proto.sessions.map(protoToSession),
+	});
+}
 
 export function protoToSessionSeries(proto: SessionSeriesProto): SessionSeries {
 	if (!proto.createdAt) {

@@ -742,27 +742,27 @@ func (x *GetSessionPollResponse) GetPoll() *Poll {
 	return nil
 }
 
-type ListSessionsByCampaignRequest struct {
+type ListOneOffSessionsByCampaignRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListSessionsByCampaignRequest) Reset() {
-	*x = ListSessionsByCampaignRequest{}
+func (x *ListOneOffSessionsByCampaignRequest) Reset() {
+	*x = ListOneOffSessionsByCampaignRequest{}
 	mi := &file_planner_v1_session_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListSessionsByCampaignRequest) String() string {
+func (x *ListOneOffSessionsByCampaignRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListSessionsByCampaignRequest) ProtoMessage() {}
+func (*ListOneOffSessionsByCampaignRequest) ProtoMessage() {}
 
-func (x *ListSessionsByCampaignRequest) ProtoReflect() protoreflect.Message {
+func (x *ListOneOffSessionsByCampaignRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -774,39 +774,39 @@ func (x *ListSessionsByCampaignRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListSessionsByCampaignRequest.ProtoReflect.Descriptor instead.
-func (*ListSessionsByCampaignRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListOneOffSessionsByCampaignRequest.ProtoReflect.Descriptor instead.
+func (*ListOneOffSessionsByCampaignRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ListSessionsByCampaignRequest) GetCampaignId() string {
+func (x *ListOneOffSessionsByCampaignRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-type ListSessionsByCampaignResponse struct {
+type ListOneOffSessionsByCampaignResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sessions      []*Session             `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListSessionsByCampaignResponse) Reset() {
-	*x = ListSessionsByCampaignResponse{}
+func (x *ListOneOffSessionsByCampaignResponse) Reset() {
+	*x = ListOneOffSessionsByCampaignResponse{}
 	mi := &file_planner_v1_session_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListSessionsByCampaignResponse) String() string {
+func (x *ListOneOffSessionsByCampaignResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListSessionsByCampaignResponse) ProtoMessage() {}
+func (*ListOneOffSessionsByCampaignResponse) ProtoMessage() {}
 
-func (x *ListSessionsByCampaignResponse) ProtoReflect() protoreflect.Message {
+func (x *ListOneOffSessionsByCampaignResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -818,12 +818,12 @@ func (x *ListSessionsByCampaignResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListSessionsByCampaignResponse.ProtoReflect.Descriptor instead.
-func (*ListSessionsByCampaignResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListOneOffSessionsByCampaignResponse.ProtoReflect.Descriptor instead.
+func (*ListOneOffSessionsByCampaignResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_proto_rawDescGZIP(), []int{12}
 }
 
-func (x *ListSessionsByCampaignResponse) GetSessions() []*Session {
+func (x *ListOneOffSessionsByCampaignResponse) GetSessions() []*Session {
 	if x != nil {
 		return x.Sessions
 	}
@@ -1220,11 +1220,11 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\">\n" +
 	"\x16GetSessionPollResponse\x12$\n" +
-	"\x04poll\x18\x01 \x01(\v2\x10.planner.v1.PollR\x04poll\"@\n" +
-	"\x1dListSessionsByCampaignRequest\x12\x1f\n" +
+	"\x04poll\x18\x01 \x01(\v2\x10.planner.v1.PollR\x04poll\"F\n" +
+	"#ListOneOffSessionsByCampaignRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"Q\n" +
-	"\x1eListSessionsByCampaignResponse\x12/\n" +
+	"campaignId\"W\n" +
+	"$ListOneOffSessionsByCampaignResponse\x12/\n" +
 	"\bsessions\x18\x01 \x03(\v2\x13.planner.v1.SessionR\bsessions\"\x8a\x01\n" +
 	"\x12PollSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
@@ -1256,14 +1256,14 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\x1aSESSION_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14SESSION_STATUS_DRAFT\x10\x01\x12\x1a\n" +
 	"\x16SESSION_STATUS_POLLING\x10\x02\x12\x1c\n" +
-	"\x18SESSION_STATUS_CONFIRMED\x10\x032\xd5\x05\n" +
+	"\x18SESSION_STATUS_CONFIRMED\x10\x032\xe8\x05\n" +
 	"\x0eSessionService\x12Z\n" +
 	"\x0fAnnounceSession\x12\".planner.v1.AnnounceSessionRequest\x1a#.planner.v1.AnnounceSessionResponse\x12T\n" +
 	"\rCreateSession\x12 .planner.v1.CreateSessionRequest\x1a!.planner.v1.CreateSessionResponse\x12K\n" +
 	"\n" +
 	"GetSession\x12\x1d.planner.v1.GetSessionRequest\x1a\x1e.planner.v1.GetSessionResponse\x12W\n" +
-	"\x0eGetSessionPoll\x12!.planner.v1.GetSessionPollRequest\x1a\".planner.v1.GetSessionPollResponse\x12o\n" +
-	"\x16ListSessionsByCampaign\x12).planner.v1.ListSessionsByCampaignRequest\x1a*.planner.v1.ListSessionsByCampaignResponse\x12N\n" +
+	"\x0eGetSessionPoll\x12!.planner.v1.GetSessionPollRequest\x1a\".planner.v1.GetSessionPollResponse\x12\x81\x01\n" +
+	"\x1cListOneOffSessionsByCampaign\x12/.planner.v1.ListOneOffSessionsByCampaignRequest\x1a0.planner.v1.ListOneOffSessionsByCampaignResponse\x12N\n" +
 	"\vPollSession\x12\x1e.planner.v1.PollSessionRequest\x1a\x1f.planner.v1.PollSessionResponse\x12T\n" +
 	"\rRemoveSession\x12 .planner.v1.RemoveSessionRequest\x1a!.planner.v1.RemoveSessionResponse\x12T\n" +
 	"\rUpdateSession\x12 .planner.v1.UpdateSessionRequest\x1a!.planner.v1.UpdateSessionResponseB\xa9\x01\n" +
@@ -1286,27 +1286,27 @@ func file_planner_v1_session_proto_rawDescGZIP() []byte {
 var file_planner_v1_session_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_planner_v1_session_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_planner_v1_session_proto_goTypes = []any{
-	(SessionStatus)(0),                     // 0: planner.v1.SessionStatus
-	(*Session)(nil),                        // 1: planner.v1.Session
-	(*AnnounceSessionRequest)(nil),         // 2: planner.v1.AnnounceSessionRequest
-	(*AnnounceSessionResponse)(nil),        // 3: planner.v1.AnnounceSessionResponse
-	(*CreateSessionRequest)(nil),           // 4: planner.v1.CreateSessionRequest
-	(*PollAnswer)(nil),                     // 5: planner.v1.PollAnswer
-	(*Poll)(nil),                           // 6: planner.v1.Poll
-	(*CreateSessionResponse)(nil),          // 7: planner.v1.CreateSessionResponse
-	(*GetSessionRequest)(nil),              // 8: planner.v1.GetSessionRequest
-	(*GetSessionResponse)(nil),             // 9: planner.v1.GetSessionResponse
-	(*GetSessionPollRequest)(nil),          // 10: planner.v1.GetSessionPollRequest
-	(*GetSessionPollResponse)(nil),         // 11: planner.v1.GetSessionPollResponse
-	(*ListSessionsByCampaignRequest)(nil),  // 12: planner.v1.ListSessionsByCampaignRequest
-	(*ListSessionsByCampaignResponse)(nil), // 13: planner.v1.ListSessionsByCampaignResponse
-	(*PollSessionRequest)(nil),             // 14: planner.v1.PollSessionRequest
-	(*PollSessionResponse)(nil),            // 15: planner.v1.PollSessionResponse
-	(*RemoveSessionRequest)(nil),           // 16: planner.v1.RemoveSessionRequest
-	(*RemoveSessionResponse)(nil),          // 17: planner.v1.RemoveSessionResponse
-	(*UpdateSessionRequest)(nil),           // 18: planner.v1.UpdateSessionRequest
-	(*UpdateSessionResponse)(nil),          // 19: planner.v1.UpdateSessionResponse
-	(*timestamppb.Timestamp)(nil),          // 20: google.protobuf.Timestamp
+	(SessionStatus)(0),                           // 0: planner.v1.SessionStatus
+	(*Session)(nil),                              // 1: planner.v1.Session
+	(*AnnounceSessionRequest)(nil),               // 2: planner.v1.AnnounceSessionRequest
+	(*AnnounceSessionResponse)(nil),              // 3: planner.v1.AnnounceSessionResponse
+	(*CreateSessionRequest)(nil),                 // 4: planner.v1.CreateSessionRequest
+	(*PollAnswer)(nil),                           // 5: planner.v1.PollAnswer
+	(*Poll)(nil),                                 // 6: planner.v1.Poll
+	(*CreateSessionResponse)(nil),                // 7: planner.v1.CreateSessionResponse
+	(*GetSessionRequest)(nil),                    // 8: planner.v1.GetSessionRequest
+	(*GetSessionResponse)(nil),                   // 9: planner.v1.GetSessionResponse
+	(*GetSessionPollRequest)(nil),                // 10: planner.v1.GetSessionPollRequest
+	(*GetSessionPollResponse)(nil),               // 11: planner.v1.GetSessionPollResponse
+	(*ListOneOffSessionsByCampaignRequest)(nil),  // 12: planner.v1.ListOneOffSessionsByCampaignRequest
+	(*ListOneOffSessionsByCampaignResponse)(nil), // 13: planner.v1.ListOneOffSessionsByCampaignResponse
+	(*PollSessionRequest)(nil),                   // 14: planner.v1.PollSessionRequest
+	(*PollSessionResponse)(nil),                  // 15: planner.v1.PollSessionResponse
+	(*RemoveSessionRequest)(nil),                 // 16: planner.v1.RemoveSessionRequest
+	(*RemoveSessionResponse)(nil),                // 17: planner.v1.RemoveSessionResponse
+	(*UpdateSessionRequest)(nil),                 // 18: planner.v1.UpdateSessionRequest
+	(*UpdateSessionResponse)(nil),                // 19: planner.v1.UpdateSessionResponse
+	(*timestamppb.Timestamp)(nil),                // 20: google.protobuf.Timestamp
 }
 var file_planner_v1_session_proto_depIdxs = []int32{
 	0,  // 0: planner.v1.Session.status:type_name -> planner.v1.SessionStatus
@@ -1322,7 +1322,7 @@ var file_planner_v1_session_proto_depIdxs = []int32{
 	1,  // 10: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
 	1,  // 11: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
 	6,  // 12: planner.v1.GetSessionPollResponse.poll:type_name -> planner.v1.Poll
-	1,  // 13: planner.v1.ListSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
+	1,  // 13: planner.v1.ListOneOffSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
 	20, // 14: planner.v1.PollSessionRequest.options:type_name -> google.protobuf.Timestamp
 	20, // 15: planner.v1.UpdateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
 	0,  // 16: planner.v1.UpdateSessionRequest.status:type_name -> planner.v1.SessionStatus
@@ -1331,7 +1331,7 @@ var file_planner_v1_session_proto_depIdxs = []int32{
 	4,  // 19: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
 	8,  // 20: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
 	10, // 21: planner.v1.SessionService.GetSessionPoll:input_type -> planner.v1.GetSessionPollRequest
-	12, // 22: planner.v1.SessionService.ListSessionsByCampaign:input_type -> planner.v1.ListSessionsByCampaignRequest
+	12, // 22: planner.v1.SessionService.ListOneOffSessionsByCampaign:input_type -> planner.v1.ListOneOffSessionsByCampaignRequest
 	14, // 23: planner.v1.SessionService.PollSession:input_type -> planner.v1.PollSessionRequest
 	16, // 24: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
 	18, // 25: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
@@ -1339,7 +1339,7 @@ var file_planner_v1_session_proto_depIdxs = []int32{
 	7,  // 27: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
 	9,  // 28: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
 	11, // 29: planner.v1.SessionService.GetSessionPoll:output_type -> planner.v1.GetSessionPollResponse
-	13, // 30: planner.v1.SessionService.ListSessionsByCampaign:output_type -> planner.v1.ListSessionsByCampaignResponse
+	13, // 30: planner.v1.SessionService.ListOneOffSessionsByCampaign:output_type -> planner.v1.ListOneOffSessionsByCampaignResponse
 	15, // 31: planner.v1.SessionService.PollSession:output_type -> planner.v1.PollSessionResponse
 	17, // 32: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
 	19, // 33: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse

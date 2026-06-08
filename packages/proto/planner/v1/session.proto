@@ -89,11 +89,11 @@ message GetSessionPollResponse {
   Poll poll = 1;
 }
 
-message ListSessionsByCampaignRequest {
+message ListOneOffSessionsByCampaignRequest {
   string campaign_id = 1;
 }
 
-message ListSessionsByCampaignResponse {
+message ListOneOffSessionsByCampaignResponse {
   repeated Session sessions = 1;
 }
 
@@ -133,7 +133,7 @@ service SessionService {
   rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
   rpc GetSessionPoll(GetSessionPollRequest) returns (GetSessionPollResponse);
-  rpc ListSessionsByCampaign(ListSessionsByCampaignRequest) returns (ListSessionsByCampaignResponse);
+  rpc ListOneOffSessionsByCampaign(ListOneOffSessionsByCampaignRequest) returns (ListOneOffSessionsByCampaignResponse);
   rpc PollSession(PollSessionRequest) returns (PollSessionResponse);
   rpc RemoveSession(RemoveSessionRequest) returns (RemoveSessionResponse);
   rpc UpdateSession(UpdateSessionRequest) returns (UpdateSessionResponse);

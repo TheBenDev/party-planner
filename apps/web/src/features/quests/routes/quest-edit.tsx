@@ -17,7 +17,7 @@ import {
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useQuest } from "@/shared/hooks/queries";
+import { useQuest } from "@/features/quests/hooks/useQuest";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 
