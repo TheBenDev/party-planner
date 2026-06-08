@@ -11,11 +11,11 @@ import {
 	Outlet,
 	Scripts,
 } from "@tanstack/react-router";
-import ProfileButtonComponent from "@/components/profile-button";
-import { FOUC_PREVENTION_SCRIPT, ThemeProvider } from "@/hooks/theme";
-import AppClerkProvider from "@/integrations/clerk/provider";
-import TanStackQueryProvider from "@/integrations/tanstack-query/root-provider";
-import appCss from "@/styles.css?url";
+import appCss from "@/global.css?url";
+import ProfileButtonComponent from "@/shared/components/ProfileButton";
+import { FOUC_PREVENTION_SCRIPT, ThemeProvider } from "@/shared/hooks/theme";
+import AppClerkProvider from "@/shared/lib/clerk-provider";
+import TanStackQueryProvider from "@/shared/lib/tanstack-query-provider";
 
 interface RouterContext {
 	queryClient: QueryClient;

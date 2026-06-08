@@ -2,7 +2,7 @@ import { auth } from "@clerk/tanstack-react-start/server";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 
-import CampaignShell from "@/components/campaign-shell";
+import CampaignShell from "@/shared/components/CampaignShell";
 
 const fetchClerkAuth = createServerFn({ method: "GET" }).handler(async () => {
 	const { userId, isAuthenticated } = await auth();

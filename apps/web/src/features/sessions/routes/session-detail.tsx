@@ -1,0 +1,120 @@
+import { UserRole } from "@planner/enums/user";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { SessionScheduling } from "@/features/sessions/components/SessionScheduling";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
+import { useAuth } from "@/shared/hooks/auth";
+import { useSession } from "@/shared/hooks/queries";
+
+function formatSessionDate(date: Date | string): string {
+	const d = typeof date === "string" ? new Date(date) : date;
+	return d.toLocaleDateString("en-US", {
+		day: "numeric",
+		month: "long",
+		year: "numeric",
+	});
+}
+
+export function SessionDetailPage() {
+	const { sessionId } = useParams({ from: "/_authenticated/campaign/sessions/$sessionId/" });
+	const navigate = useNavigate();
+	const { role } = useAuth();
+
+	const { data, isLoading } = useSession(sessionId);
+
+	if (isLoading) {
+		return <div className="p-8 text-muted-foreground">Loading...</div>;
+	}
+
+	const session = data?.session;
+
+	if (!session) {
+		return <div className="p-8 text-muted-foreground">Session not found.</div>;
+	}
+
+	return (
+		<div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+			{/* Header */}
+			<div className="flex items-start justify-between gap-4">
+				<h1 className="text-3xl font-semibold tracking-tight">
+					{session.title}
+				</h1>
+				{role === UserRole.DUNGEON_MASTER && (
+					<Button
+						className="hover:cursor-pointer"
+						onClick={() =>
+							navigate({
+								params: { sessionId },
+								to: "/campaign/sessions/$sessionId/edit",
+							})
+						}
+						size="sm"
+						variant="outline"
+					>
+						Edit
+					</Button>
+				)}
+			</div>
+
+			{/* Date badge — only shown when confirmed */}
+			{session.startsAt && (
+				<div>
+					<span className="text-xs font-medium px-2.5 py-1 rounded-full border bg-zinc-500/15 text-zinc-400 border-zinc-500/30">
+						{formatSessionDate(session.startsAt)}
+					</span>
+				</div>
+			)}
+
+			<Separator />
+
+			<div className="space-y-6">
+				<Section
+					content={session.description}
+					placeholder="No description recorded."
+					title="Description"
+				/>
+
+				<Separator />
+
+				<SessionScheduling
+					session={{
+						announcedAt: session.announcedAt,
+						campaignId: session.campaignId,
+						discordEventId: session.discordEventId,
+						id: session.id,
+						seriesId: session.seriesId,
+						startsAt: session.startsAt,
+						status: session.status,
+					}}
+				/>
+			</div>
+
+			<p className="text-xs text-muted-foreground/50">
+				Last updated {formatSessionDate(session.updatedAt)}
+			</p>
+		</div>
+	);
+}
+
+function Section({
+	title,
+	content,
+	placeholder,
+}: {
+	title: string;
+	content?: string | null;
+	placeholder: string;
+}) {
+	return (
+		<div className="space-y-1.5">
+			<h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+				{title}
+			</h2>
+			{content ? (
+				<p className="text-sm leading-relaxed whitespace-pre-wrap">{content}</p>
+			) : (
+				<p className="text-sm italic text-muted-foreground/50">{placeholder}</p>
+			)}
+		</div>
+	);
+}

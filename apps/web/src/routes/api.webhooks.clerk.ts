@@ -3,8 +3,8 @@ import {
 	type WebhookEvent,
 } from "@clerk/tanstack-react-start/webhooks";
 import { createFileRoute } from "@tanstack/react-router";
-import { env } from "@/env";
-import { createApiClients } from "@/lib/api";
+import { createApiClients } from "@/shared/lib/api";
+import { env } from "@/shared/lib/env";
 
 // TODO: migrate webhooks to api
 export const Route = createFileRoute("/api/webhooks/clerk")({

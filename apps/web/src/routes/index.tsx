@@ -2,9 +2,9 @@ import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Suspense, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { client } from "@/lib/client";
-import { queryKeys } from "@/lib/queryKeys";
+import { Button } from "@/shared/components/ui/button";
+import { client } from "@/shared/lib/client";
+import { queryKeys } from "@/shared/lib/query-keys";
 
 export const Route = createFileRoute("/")({
 	component: Page,

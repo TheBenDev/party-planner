@@ -68,19 +68,14 @@ buf generate
 ## Universal Conventions
 
 - TypeScript: no `any` (use `unknown` + type guards), no `console.*`, no raw `process.env`, no nested ternaries (use `if/else` or early returns instead)
-- Zod v4 via `catalog:` for all TS validation
 - oRPC for web server procedures, ConnectRPC for web→Go
-- Drizzle is **web-only**; Go API uses raw SQL via `database/sql` + `pgx/v5`
+- Go API uses raw SQL via `database/sql` + `pgx/v5`
 - All enums in `packages/enums/src/` — import from there, never redefine
-- All Zod schemas in `packages/schemas/src/` — export request/response pairs
-- Named exports everywhere, no default exports
 - Conventional commits: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`
 
 ## Known Architectural Violations (do not replicate)
 
-1. `apps/web/src/server/routers/character.ts` — queries Drizzle directly, bypassing Go API
-2. `apps/web/src/server/routers/discord.ts` — queries Drizzle directly; has TODO to rework
-3. `apps/web/src/routes/api.webhooks.clerk.ts` — uses `console.error` (biome lint exemptions)
+1. `apps/web/src/routes/api.webhooks.clerk.ts` — uses `console.error` (biome lint exemptions)
 
 These are explicitly tracked as P0 items for 2.0 remediation. Do not add new direct Drizzle queries in oRPC routers unless the data has no Go API path.
 
@@ -116,15 +111,6 @@ These are explicitly tracked as P0 items for 2.0 remediation. Do not add new dir
 | `player_character` | ⚠️ DB + Drizzle only, no Go API |
 | `user_availabilities` | ⚠️ DB + Drizzle only, no Go API |
 | `user_integrations` | ❌ DB only, no service layer |
-
-## Critical Enum Inconsistency
-
-`RelationToParty` has a mismatch between layers:
-- Go model: `"ENEMY"`
-- TypeScript enum: `"HOSTILE"` (in `packages/enums/src/character.ts`)
-- Proto: `RELATION_TO_PARTY_ENEMY = 3`
-
-Data written through Go API stores `"ENEMY"`; data written via Drizzle stores `"HOSTILE"`. Resolve before adding any character-facing features.
 
 ## No Tests
 
