@@ -6,13 +6,15 @@ import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegen
 import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Session } from "./session_pb";
+import { file_planner_v1_session } from "./session_pb";
 import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file planner/v1/session_series.proto.
  */
 export const file_planner_v1_session_series: GenFile = /*@__PURE__*/
-  fileDesc("Ch9wbGFubmVyL3YxL3Nlc3Npb25fc2VyaWVzLnByb3RvEgpwbGFubmVyLnYxIoMDCg1TZXNzaW9uU2VyaWVzEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDQoFcnJ1bGUYBSABKAkSEgoKc3RhcnRfdGltZRgGIAEoCRI1ChFzZXJpZXNfc3RhcnRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoPc2VyaWVzX2VuZF9kYXRlGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHRpbWV6b25lGAsgASgJQg4KDF9kZXNjcmlwdGlvbkISChBfc2VyaWVzX2VuZF9kYXRlIqQCChpDcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEg0KBXJydWxlGAQgASgJEhIKCnN0YXJ0X3RpbWUYBSABKAkSNQoRc2VyaWVzX3N0YXJ0X2RhdGUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjgKD3Nlcmllc19lbmRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAYgBARIQCgh0aW1lem9uZRgIIAEoCUIOCgxfZGVzY3JpcHRpb25CEgoQX3Nlcmllc19lbmRfZGF0ZSJIChtDcmVhdGVTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIjoKF0dldFNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIkUKGEdldFNlc3Npb25TZXJpZXNSZXNwb25zZRIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMiOQoiTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSJQCiNMaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRIpCgZzZXJpZXMYASADKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMivQIKGlVwZGF0ZVNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESGAoLZGVzY3JpcHRpb24YAyABKAlIAYgBARISCgVycnVsZRgEIAEoCUgCiAEBEhcKCnN0YXJ0X3RpbWUYBSABKAlIA4gBARI4Cg9zZXJpZXNfZW5kX2RhdGUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSASIAQESFQoIdGltZXpvbmUYByABKAlIBYgBARITCgtjYW1wYWlnbl9pZBgIIAEoCUIICgZfdGl0bGVCDgoMX2Rlc2NyaXB0aW9uQggKBl9ycnVsZUINCgtfc3RhcnRfdGltZUISChBfc2VyaWVzX2VuZF9kYXRlQgsKCV90aW1lem9uZSJIChtVcGRhdGVTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIj0KGlJlbW92ZVNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIh0KG1JlbW92ZVNlc3Npb25TZXJpZXNSZXNwb25zZSJ2ChlBZGRTZXJpZXNFeGNlcHRpb25SZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRIxCg1leGNsdWRlZF9kYXRlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjYW1wYWlnbl9pZBgDIAEoCSIcChpBZGRTZXJpZXNFeGNlcHRpb25SZXNwb25zZSJ5ChxSZW1vdmVTZXJpZXNFeGNlcHRpb25SZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRIxCg1leGNsdWRlZF9kYXRlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjYW1wYWlnbl9pZBgDIAEoCSIfCh1SZW1vdmVTZXJpZXNFeGNlcHRpb25SZXNwb25zZTKABgoUU2Vzc2lvblNlcmllc1NlcnZpY2USZgoTQ3JlYXRlU2Vzc2lvblNlcmllcxImLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblNlcmllc1JlcXVlc3QaJy5wbGFubmVyLnYxLkNyZWF0ZVNlc3Npb25TZXJpZXNSZXNwb25zZRJdChBHZXRTZXNzaW9uU2VyaWVzEiMucGxhbm5lci52MS5HZXRTZXNzaW9uU2VyaWVzUmVxdWVzdBokLnBsYW5uZXIudjEuR2V0U2Vzc2lvblNlcmllc1Jlc3BvbnNlEn4KG0xpc3RTZXNzaW9uU2VyaWVzQnlDYW1wYWlnbhIuLnBsYW5uZXIudjEuTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVxdWVzdBovLnBsYW5uZXIudjEuTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVzcG9uc2USZgoTVXBkYXRlU2Vzc2lvblNlcmllcxImLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblNlcmllc1JlcXVlc3QaJy5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25TZXJpZXNSZXNwb25zZRJmChNSZW1vdmVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuUmVtb3ZlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEmMKEkFkZFNlcmllc0V4Y2VwdGlvbhIlLnBsYW5uZXIudjEuQWRkU2VyaWVzRXhjZXB0aW9uUmVxdWVzdBomLnBsYW5uZXIudjEuQWRkU2VyaWVzRXhjZXB0aW9uUmVzcG9uc2USbAoVUmVtb3ZlU2VyaWVzRXhjZXB0aW9uEigucGxhbm5lci52MS5SZW1vdmVTZXJpZXNFeGNlcHRpb25SZXF1ZXN0GikucGxhbm5lci52MS5SZW1vdmVTZXJpZXNFeGNlcHRpb25SZXNwb25zZUKvAQoOY29tLnBsYW5uZXIudjFCElNlc3Npb25TZXJpZXNQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+  fileDesc("Ch9wbGFubmVyL3YxL3Nlc3Npb25fc2VyaWVzLnByb3RvEgpwbGFubmVyLnYxIoMDCg1TZXNzaW9uU2VyaWVzEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDQoFcnJ1bGUYBSABKAkSEgoKc3RhcnRfdGltZRgGIAEoCRI1ChFzZXJpZXNfc3RhcnRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoPc2VyaWVzX2VuZF9kYXRlGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHRpbWV6b25lGAsgASgJQg4KDF9kZXNjcmlwdGlvbkISChBfc2VyaWVzX2VuZF9kYXRlIpwBChhTZXNzaW9uU2VyaWVzV2l0aERldGFpbHMSKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzEiUKCHNlc3Npb25zGAIgAygLMhMucGxhbm5lci52MS5TZXNzaW9uEi4KCmV4Y2VwdGlvbnMYAyADKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIqQCChpDcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEg0KBXJydWxlGAQgASgJEhIKCnN0YXJ0X3RpbWUYBSABKAkSNQoRc2VyaWVzX3N0YXJ0X2RhdGUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjgKD3Nlcmllc19lbmRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAYgBARIQCgh0aW1lem9uZRgIIAEoCUIOCgxfZGVzY3JpcHRpb25CEgoQX3Nlcmllc19lbmRfZGF0ZSJIChtDcmVhdGVTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIjoKF0dldFNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIkUKGEdldFNlc3Npb25TZXJpZXNSZXNwb25zZRIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMiOQoiTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSJbCiNMaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRI0CgZzZXJpZXMYASADKAsyJC5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXNXaXRoRGV0YWlscyK9AgoaVXBkYXRlU2Vzc2lvblNlcmllc1JlcXVlc3QSCgoCaWQYASABKAkSEgoFdGl0bGUYAiABKAlIAIgBARIYCgtkZXNjcmlwdGlvbhgDIAEoCUgBiAEBEhIKBXJydWxlGAQgASgJSAKIAQESFwoKc3RhcnRfdGltZRgFIAEoCUgDiAEBEjgKD3Nlcmllc19lbmRfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIBIgBARIVCgh0aW1lem9uZRgHIAEoCUgFiAEBEhMKC2NhbXBhaWduX2lkGAggASgJQggKBl90aXRsZUIOCgxfZGVzY3JpcHRpb25CCAoGX3JydWxlQg0KC19zdGFydF90aW1lQhIKEF9zZXJpZXNfZW5kX2RhdGVCCwoJX3RpbWV6b25lIkgKG1VwZGF0ZVNlc3Npb25TZXJpZXNSZXNwb25zZRIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMiPQoaUmVtb3ZlU2Vzc2lvblNlcmllc1JlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiHQobUmVtb3ZlU2Vzc2lvblNlcmllc1Jlc3BvbnNlIpABCh9FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkSEQoJc2VyaWVzX2lkGAIgASgJEjEKDWV4Y2x1ZGVkX2RhdGUYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2NhbXBhaWduX2lkGAQgASgJIiIKIEV4Y2x1ZGVTZXNzaW9uRnJvbVNlcmllc1Jlc3BvbnNlInkKHFJlbW92ZVNlcmllc0V4Y2VwdGlvblJlcXVlc3QSEQoJc2VyaWVzX2lkGAEgASgJEjEKDWV4Y2x1ZGVkX2RhdGUYAiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhMKC2NhbXBhaWduX2lkGAMgASgJIh8KHVJlbW92ZVNlcmllc0V4Y2VwdGlvblJlc3BvbnNlMpIGChRTZXNzaW9uU2VyaWVzU2VydmljZRJmChNDcmVhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEl0KEEdldFNlc3Npb25TZXJpZXMSIy5wbGFubmVyLnYxLkdldFNlc3Npb25TZXJpZXNSZXF1ZXN0GiQucGxhbm5lci52MS5HZXRTZXNzaW9uU2VyaWVzUmVzcG9uc2USfgobTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduEi4ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXF1ZXN0Gi8ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRJmChNVcGRhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEmYKE1JlbW92ZVNlc3Npb25TZXJpZXMSJi5wbGFubmVyLnYxLlJlbW92ZVNlc3Npb25TZXJpZXNSZXF1ZXN0GicucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uU2VyaWVzUmVzcG9uc2USdQoYRXhjbHVkZVNlc3Npb25Gcm9tU2VyaWVzEisucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXF1ZXN0GiwucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXNwb25zZRJsChVSZW1vdmVTZXJpZXNFeGNlcHRpb24SKC5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlcXVlc3QaKS5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlc3BvbnNlQq8BCg5jb20ucGxhbm5lci52MUISU2Vzc2lvblNlcmllc1Byb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp, file_planner_v1_session]);
 
 /**
  * @generated from message planner.v1.SessionSeries
@@ -82,6 +84,33 @@ export const SessionSeriesSchema: GenMessage<SessionSeries> = /*@__PURE__*/
   messageDesc(file_planner_v1_session_series, 0);
 
 /**
+ * @generated from message planner.v1.SessionSeriesWithDetails
+ */
+export type SessionSeriesWithDetails = Message<"planner.v1.SessionSeriesWithDetails"> & {
+  /**
+   * @generated from field: planner.v1.SessionSeries series = 1;
+   */
+  series?: SessionSeries | undefined;
+
+  /**
+   * @generated from field: repeated planner.v1.Session sessions = 2;
+   */
+  sessions: Session[];
+
+  /**
+   * @generated from field: repeated google.protobuf.Timestamp exceptions = 3;
+   */
+  exceptions: Timestamp[];
+};
+
+/**
+ * Describes the message planner.v1.SessionSeriesWithDetails.
+ * Use `create(SessionSeriesWithDetailsSchema)` to create a new message.
+ */
+export const SessionSeriesWithDetailsSchema: GenMessage<SessionSeriesWithDetails> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 1);
+
+/**
  * @generated from message planner.v1.CreateSessionSeriesRequest
  */
 export type CreateSessionSeriesRequest = Message<"planner.v1.CreateSessionSeriesRequest"> & {
@@ -131,7 +160,7 @@ export type CreateSessionSeriesRequest = Message<"planner.v1.CreateSessionSeries
  * Use `create(CreateSessionSeriesRequestSchema)` to create a new message.
  */
 export const CreateSessionSeriesRequestSchema: GenMessage<CreateSessionSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 1);
+  messageDesc(file_planner_v1_session_series, 2);
 
 /**
  * @generated from message planner.v1.CreateSessionSeriesResponse
@@ -148,7 +177,7 @@ export type CreateSessionSeriesResponse = Message<"planner.v1.CreateSessionSerie
  * Use `create(CreateSessionSeriesResponseSchema)` to create a new message.
  */
 export const CreateSessionSeriesResponseSchema: GenMessage<CreateSessionSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 2);
+  messageDesc(file_planner_v1_session_series, 3);
 
 /**
  * @generated from message planner.v1.GetSessionSeriesRequest
@@ -170,7 +199,7 @@ export type GetSessionSeriesRequest = Message<"planner.v1.GetSessionSeriesReques
  * Use `create(GetSessionSeriesRequestSchema)` to create a new message.
  */
 export const GetSessionSeriesRequestSchema: GenMessage<GetSessionSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 3);
+  messageDesc(file_planner_v1_session_series, 4);
 
 /**
  * @generated from message planner.v1.GetSessionSeriesResponse
@@ -187,7 +216,7 @@ export type GetSessionSeriesResponse = Message<"planner.v1.GetSessionSeriesRespo
  * Use `create(GetSessionSeriesResponseSchema)` to create a new message.
  */
 export const GetSessionSeriesResponseSchema: GenMessage<GetSessionSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 4);
+  messageDesc(file_planner_v1_session_series, 5);
 
 /**
  * @generated from message planner.v1.ListSessionSeriesByCampaignRequest
@@ -204,16 +233,16 @@ export type ListSessionSeriesByCampaignRequest = Message<"planner.v1.ListSession
  * Use `create(ListSessionSeriesByCampaignRequestSchema)` to create a new message.
  */
 export const ListSessionSeriesByCampaignRequestSchema: GenMessage<ListSessionSeriesByCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 5);
+  messageDesc(file_planner_v1_session_series, 6);
 
 /**
  * @generated from message planner.v1.ListSessionSeriesByCampaignResponse
  */
 export type ListSessionSeriesByCampaignResponse = Message<"planner.v1.ListSessionSeriesByCampaignResponse"> & {
   /**
-   * @generated from field: repeated planner.v1.SessionSeries series = 1;
+   * @generated from field: repeated planner.v1.SessionSeriesWithDetails series = 1;
    */
-  series: SessionSeries[];
+  series: SessionSeriesWithDetails[];
 };
 
 /**
@@ -221,7 +250,7 @@ export type ListSessionSeriesByCampaignResponse = Message<"planner.v1.ListSessio
  * Use `create(ListSessionSeriesByCampaignResponseSchema)` to create a new message.
  */
 export const ListSessionSeriesByCampaignResponseSchema: GenMessage<ListSessionSeriesByCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 6);
+  messageDesc(file_planner_v1_session_series, 7);
 
 /**
  * @generated from message planner.v1.UpdateSessionSeriesRequest
@@ -273,7 +302,7 @@ export type UpdateSessionSeriesRequest = Message<"planner.v1.UpdateSessionSeries
  * Use `create(UpdateSessionSeriesRequestSchema)` to create a new message.
  */
 export const UpdateSessionSeriesRequestSchema: GenMessage<UpdateSessionSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 7);
+  messageDesc(file_planner_v1_session_series, 8);
 
 /**
  * @generated from message planner.v1.UpdateSessionSeriesResponse
@@ -290,7 +319,7 @@ export type UpdateSessionSeriesResponse = Message<"planner.v1.UpdateSessionSerie
  * Use `create(UpdateSessionSeriesResponseSchema)` to create a new message.
  */
 export const UpdateSessionSeriesResponseSchema: GenMessage<UpdateSessionSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 8);
+  messageDesc(file_planner_v1_session_series, 9);
 
 /**
  * @generated from message planner.v1.RemoveSessionSeriesRequest
@@ -312,7 +341,7 @@ export type RemoveSessionSeriesRequest = Message<"planner.v1.RemoveSessionSeries
  * Use `create(RemoveSessionSeriesRequestSchema)` to create a new message.
  */
 export const RemoveSessionSeriesRequestSchema: GenMessage<RemoveSessionSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 9);
+  messageDesc(file_planner_v1_session_series, 10);
 
 /**
  * @generated from message planner.v1.RemoveSessionSeriesResponse
@@ -325,47 +354,52 @@ export type RemoveSessionSeriesResponse = Message<"planner.v1.RemoveSessionSerie
  * Use `create(RemoveSessionSeriesResponseSchema)` to create a new message.
  */
 export const RemoveSessionSeriesResponseSchema: GenMessage<RemoveSessionSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 10);
+  messageDesc(file_planner_v1_session_series, 11);
 
 /**
- * @generated from message planner.v1.AddSeriesExceptionRequest
+ * @generated from message planner.v1.ExcludeSessionFromSeriesRequest
  */
-export type AddSeriesExceptionRequest = Message<"planner.v1.AddSeriesExceptionRequest"> & {
+export type ExcludeSessionFromSeriesRequest = Message<"planner.v1.ExcludeSessionFromSeriesRequest"> & {
   /**
-   * @generated from field: string series_id = 1;
+   * @generated from field: string session_id = 1;
+   */
+  sessionId: string;
+
+  /**
+   * @generated from field: string series_id = 2;
    */
   seriesId: string;
 
   /**
-   * @generated from field: google.protobuf.Timestamp excluded_date = 2;
+   * @generated from field: google.protobuf.Timestamp excluded_date = 3;
    */
   excludedDate?: Timestamp | undefined;
 
   /**
-   * @generated from field: string campaign_id = 3;
+   * @generated from field: string campaign_id = 4;
    */
   campaignId: string;
 };
 
 /**
- * Describes the message planner.v1.AddSeriesExceptionRequest.
- * Use `create(AddSeriesExceptionRequestSchema)` to create a new message.
+ * Describes the message planner.v1.ExcludeSessionFromSeriesRequest.
+ * Use `create(ExcludeSessionFromSeriesRequestSchema)` to create a new message.
  */
-export const AddSeriesExceptionRequestSchema: GenMessage<AddSeriesExceptionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 11);
+export const ExcludeSessionFromSeriesRequestSchema: GenMessage<ExcludeSessionFromSeriesRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 12);
 
 /**
- * @generated from message planner.v1.AddSeriesExceptionResponse
+ * @generated from message planner.v1.ExcludeSessionFromSeriesResponse
  */
-export type AddSeriesExceptionResponse = Message<"planner.v1.AddSeriesExceptionResponse"> & {
+export type ExcludeSessionFromSeriesResponse = Message<"planner.v1.ExcludeSessionFromSeriesResponse"> & {
 };
 
 /**
- * Describes the message planner.v1.AddSeriesExceptionResponse.
- * Use `create(AddSeriesExceptionResponseSchema)` to create a new message.
+ * Describes the message planner.v1.ExcludeSessionFromSeriesResponse.
+ * Use `create(ExcludeSessionFromSeriesResponseSchema)` to create a new message.
  */
-export const AddSeriesExceptionResponseSchema: GenMessage<AddSeriesExceptionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 12);
+export const ExcludeSessionFromSeriesResponseSchema: GenMessage<ExcludeSessionFromSeriesResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 13);
 
 /**
  * @generated from message planner.v1.RemoveSeriesExceptionRequest
@@ -392,7 +426,7 @@ export type RemoveSeriesExceptionRequest = Message<"planner.v1.RemoveSeriesExcep
  * Use `create(RemoveSeriesExceptionRequestSchema)` to create a new message.
  */
 export const RemoveSeriesExceptionRequestSchema: GenMessage<RemoveSeriesExceptionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 13);
+  messageDesc(file_planner_v1_session_series, 14);
 
 /**
  * @generated from message planner.v1.RemoveSeriesExceptionResponse
@@ -405,7 +439,7 @@ export type RemoveSeriesExceptionResponse = Message<"planner.v1.RemoveSeriesExce
  * Use `create(RemoveSeriesExceptionResponseSchema)` to create a new message.
  */
 export const RemoveSeriesExceptionResponseSchema: GenMessage<RemoveSeriesExceptionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 14);
+  messageDesc(file_planner_v1_session_series, 15);
 
 /**
  * @generated from service planner.v1.SessionSeriesService
@@ -452,12 +486,12 @@ export const SessionSeriesService: GenService<{
     output: typeof RemoveSessionSeriesResponseSchema;
   },
   /**
-   * @generated from rpc planner.v1.SessionSeriesService.AddSeriesException
+   * @generated from rpc planner.v1.SessionSeriesService.ExcludeSessionFromSeries
    */
-  addSeriesException: {
+  excludeSessionFromSeries: {
     methodKind: "unary";
-    input: typeof AddSeriesExceptionRequestSchema;
-    output: typeof AddSeriesExceptionResponseSchema;
+    input: typeof ExcludeSessionFromSeriesRequestSchema;
+    output: typeof ExcludeSessionFromSeriesResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.SessionSeriesService.RemoveSeriesException

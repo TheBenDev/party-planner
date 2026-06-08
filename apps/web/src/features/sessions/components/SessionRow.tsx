@@ -1,5 +1,5 @@
-import type { Session } from "@/features/sessions/types";
 import { Clock, MoreHorizontal } from "lucide-react";
+import type { Session } from "@/features/sessions/types";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
-import { formatSessionDate } from "./session-utils";
+import { formatDateTime, formatSessionDate } from "./session-utils";
 
 const SESSION_COLORS = [
 	"bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
@@ -59,6 +59,43 @@ export function SessionRow({
 }) {
 	const label = getSessionLabel(session.title);
 	const color = getSessionColor(session.title);
+	const isRescheduled =
+		session.originalStartsAt != null &&
+		session.startsAt != null &&
+		new Date(session.originalStartsAt).getTime() !==
+			new Date(session.startsAt).getTime();
+
+	let dateDisplay: React.ReactNode;
+	if (session.startsAt && isRescheduled) {
+		dateDisplay = (
+			<div className="text-xs text-muted-foreground mt-0.5 space-y-0.5">
+				<p className="flex items-center gap-1">
+					<Clock className="w-3 h-3 shrink-0" />
+					<span className="line-through opacity-50 truncate">
+						{formatDateTime(session.originalStartsAt)}
+					</span>
+				</p>
+				<p className="truncate">
+					→ moved to {formatDateTime(session.startsAt)}
+				</p>
+			</div>
+		);
+	} else if (session.startsAt) {
+		dateDisplay = (
+			<p className="text-xs text-muted-foreground mt-0.5 truncate flex items-center gap-1">
+				<Clock className="w-3 h-3 shrink-0" />
+				{formatSessionDate(session.startsAt)}
+			</p>
+		);
+	} else {
+		dateDisplay = (
+			<p className="text-xs text-muted-foreground mt-0.5 truncate">
+				{session.description ?? (
+					<span className="italic text-muted-foreground/50">No date set</span>
+				)}
+			</p>
+		);
+	}
 
 	return (
 		<div
@@ -81,20 +118,7 @@ export function SessionRow({
 				<p className="font-medium text-sm leading-tight truncate">
 					{session.title}
 				</p>
-				<p className="text-xs text-muted-foreground mt-0.5 truncate flex items-center gap-1">
-					{session.startsAt ? (
-						<>
-							<Clock className="w-3 h-3 shrink-0" />
-							{formatSessionDate(session.startsAt)}
-						</>
-					) : (
-						(session.description ?? (
-							<span className="italic text-muted-foreground/50">
-								No date set
-							</span>
-						))
-					)}
-				</p>
+				{dateDisplay}
 			</button>
 
 			<DropdownMenu>

@@ -45,9 +45,9 @@ const (
 	// SessionServiceGetSessionPollProcedure is the fully-qualified name of the SessionService's
 	// GetSessionPoll RPC.
 	SessionServiceGetSessionPollProcedure = "/planner.v1.SessionService/GetSessionPoll"
-	// SessionServiceListSessionsByCampaignProcedure is the fully-qualified name of the SessionService's
-	// ListSessionsByCampaign RPC.
-	SessionServiceListSessionsByCampaignProcedure = "/planner.v1.SessionService/ListSessionsByCampaign"
+	// SessionServiceListOneOffSessionsByCampaignProcedure is the fully-qualified name of the
+	// SessionService's ListOneOffSessionsByCampaign RPC.
+	SessionServiceListOneOffSessionsByCampaignProcedure = "/planner.v1.SessionService/ListOneOffSessionsByCampaign"
 	// SessionServicePollSessionProcedure is the fully-qualified name of the SessionService's
 	// PollSession RPC.
 	SessionServicePollSessionProcedure = "/planner.v1.SessionService/PollSession"
@@ -65,7 +65,7 @@ type SessionServiceClient interface {
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
-	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error)
 	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
@@ -106,10 +106,10 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
 			connect.WithClientOptions(opts...),
 		),
-		listSessionsByCampaign: connect.NewClient[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse](
+		listOneOffSessionsByCampaign: connect.NewClient[v1.ListOneOffSessionsByCampaignRequest, v1.ListOneOffSessionsByCampaignResponse](
 			httpClient,
-			baseURL+SessionServiceListSessionsByCampaignProcedure,
-			connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
+			baseURL+SessionServiceListOneOffSessionsByCampaignProcedure,
+			connect.WithSchema(sessionServiceMethods.ByName("ListOneOffSessionsByCampaign")),
 			connect.WithClientOptions(opts...),
 		),
 		pollSession: connect.NewClient[v1.PollSessionRequest, v1.PollSessionResponse](
@@ -135,14 +135,14 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // sessionServiceClient implements SessionServiceClient.
 type sessionServiceClient struct {
-	announceSession        *connect.Client[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse]
-	createSession          *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
-	getSession             *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
-	getSessionPoll         *connect.Client[v1.GetSessionPollRequest, v1.GetSessionPollResponse]
-	listSessionsByCampaign *connect.Client[v1.ListSessionsByCampaignRequest, v1.ListSessionsByCampaignResponse]
-	pollSession            *connect.Client[v1.PollSessionRequest, v1.PollSessionResponse]
-	removeSession          *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
-	updateSession          *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
+	announceSession              *connect.Client[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse]
+	createSession                *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
+	getSession                   *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
+	getSessionPoll               *connect.Client[v1.GetSessionPollRequest, v1.GetSessionPollResponse]
+	listOneOffSessionsByCampaign *connect.Client[v1.ListOneOffSessionsByCampaignRequest, v1.ListOneOffSessionsByCampaignResponse]
+	pollSession                  *connect.Client[v1.PollSessionRequest, v1.PollSessionResponse]
+	removeSession                *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
+	updateSession                *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
 }
 
 // AnnounceSession calls planner.v1.SessionService.AnnounceSession.
@@ -165,9 +165,9 @@ func (c *sessionServiceClient) GetSessionPoll(ctx context.Context, req *connect.
 	return c.getSessionPoll.CallUnary(ctx, req)
 }
 
-// ListSessionsByCampaign calls planner.v1.SessionService.ListSessionsByCampaign.
-func (c *sessionServiceClient) ListSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
-	return c.listSessionsByCampaign.CallUnary(ctx, req)
+// ListOneOffSessionsByCampaign calls planner.v1.SessionService.ListOneOffSessionsByCampaign.
+func (c *sessionServiceClient) ListOneOffSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error) {
+	return c.listOneOffSessionsByCampaign.CallUnary(ctx, req)
 }
 
 // PollSession calls planner.v1.SessionService.PollSession.
@@ -191,7 +191,7 @@ type SessionServiceHandler interface {
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
 	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
-	ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error)
+	ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error)
 	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
@@ -228,10 +228,10 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 		connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
 		connect.WithHandlerOptions(opts...),
 	)
-	sessionServiceListSessionsByCampaignHandler := connect.NewUnaryHandler(
-		SessionServiceListSessionsByCampaignProcedure,
-		svc.ListSessionsByCampaign,
-		connect.WithSchema(sessionServiceMethods.ByName("ListSessionsByCampaign")),
+	sessionServiceListOneOffSessionsByCampaignHandler := connect.NewUnaryHandler(
+		SessionServiceListOneOffSessionsByCampaignProcedure,
+		svc.ListOneOffSessionsByCampaign,
+		connect.WithSchema(sessionServiceMethods.ByName("ListOneOffSessionsByCampaign")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sessionServicePollSessionHandler := connect.NewUnaryHandler(
@@ -262,8 +262,8 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 			sessionServiceGetSessionHandler.ServeHTTP(w, r)
 		case SessionServiceGetSessionPollProcedure:
 			sessionServiceGetSessionPollHandler.ServeHTTP(w, r)
-		case SessionServiceListSessionsByCampaignProcedure:
-			sessionServiceListSessionsByCampaignHandler.ServeHTTP(w, r)
+		case SessionServiceListOneOffSessionsByCampaignProcedure:
+			sessionServiceListOneOffSessionsByCampaignHandler.ServeHTTP(w, r)
 		case SessionServicePollSessionProcedure:
 			sessionServicePollSessionHandler.ServeHTTP(w, r)
 		case SessionServiceRemoveSessionProcedure:
@@ -295,8 +295,8 @@ func (UnimplementedSessionServiceHandler) GetSessionPoll(context.Context, *conne
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.GetSessionPoll is not implemented"))
 }
 
-func (UnimplementedSessionServiceHandler) ListSessionsByCampaign(context.Context, *connect.Request[v1.ListSessionsByCampaignRequest]) (*connect.Response[v1.ListSessionsByCampaignResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.ListSessionsByCampaign is not implemented"))
+func (UnimplementedSessionServiceHandler) ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.ListOneOffSessionsByCampaign is not implemented"))
 }
 
 func (UnimplementedSessionServiceHandler) PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {

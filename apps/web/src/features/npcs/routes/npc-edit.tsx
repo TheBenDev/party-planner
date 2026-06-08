@@ -20,7 +20,7 @@ import {
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useNpc } from "@/shared/hooks/queries";
+import { useNpc } from "@/features/npcs/hooks/useNpc";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 

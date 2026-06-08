@@ -1,11 +1,13 @@
-import { Status } from "@planner/enums/session";
 import { UserRole } from "@planner/enums/user";
-import type { Session } from "@/features/sessions/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { CalendarDays, Plus, Search } from "lucide-react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
+import { CreateSessionDialog } from "@/features/sessions/components/CreateSessionDialog";
+import { EditSeriesDialog } from "@/features/sessions/components/EditSeriesDialog";
+import { SeriesGroup } from "@/features/sessions/components/SeriesGroup";
+import { SessionRow } from "@/features/sessions/components/SessionRow";
+import { useSessionsData } from "@/features/sessions/hooks/useSessionsData";
+
 import { Button } from "@/shared/components/ui/button";
 import {
 	DropdownMenu,
@@ -16,16 +18,6 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
-import type {
-	CreateOneOffInput,
-	CreateSeriesInput,
-} from "@/features/sessions/components/CreateSessionDialog";
-import { CreateSessionDialog } from "@/features/sessions/components/CreateSessionDialog";
-import { EditSeriesDialog } from "@/features/sessions/components/EditSeriesDialog";
-import { SeriesGroup } from "@/features/sessions/components/SeriesGroup";
-import { SessionRow } from "@/features/sessions/components/SessionRow";
 
 function SessionCardSkeleton() {
 	return (
@@ -44,206 +36,47 @@ export function SessionsPage() {
 	const { campaign, role } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
 	const [createMode, setCreateMode] = useState<"oneoff" | "series">("oneoff");
 	const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
 
-	const campaignId = campaign?.campaign.id ?? "";
+	const {
+		oneOffSessionsQuery,
+		seriesQuery,
+		deleteSession,
+		createSession,
+		createSeries,
+		updateSeries,
+		removeSeries,
+		removeSeriesException,
+		endSeries,
+		scheduleNext,
+		excludeFromSeries,
+		isCreatingSession,
+		isCreatingSeries,
+		isUpdatingSeries,
+	} = useSessionsData();
 
-	const { data: sessionsData = { sessions: [] }, isLoading: loadingSessions } =
-		useQuery({
-			enabled: Boolean(campaign),
-			queryFn: () => {
-				if (!campaign) throw new Error("campaign required");
-				return client.session.listSessions({
-					campaignId: campaign.campaign.id,
-				});
-			},
-			queryKey: queryKeys.sessions.list(campaignId),
-		});
-
+	const { data: oneOffData = { sessions: [] }, isLoading: loadingSessions } =
+		oneOffSessionsQuery;
 	const { data: seriesData = { series: [] }, isLoading: loadingSeries } =
-		useQuery({
-			enabled: Boolean(campaign),
-			queryFn: () => {
-				if (!campaign) throw new Error("campaign required");
-				return client.sessionSeries.listSessionSeriesByCampaign({
-					campaignId: campaign.campaign.id,
-				});
-			},
-			queryKey: queryKeys.sessionSeries.list(campaignId),
-		});
-
+		seriesQuery;
 	const isLoading = loadingSessions || loadingSeries;
-
-	const { mutate: deleteSession } = useMutation({
-		mutationFn: (id: string) => client.session.removeSession({ id }),
-		onError: () => toast.error("Failed to delete session"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-		},
-	});
-
-	const { mutate: createSession, isPending: creatingSession } = useMutation({
-		mutationFn: (input: CreateOneOffInput) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.session.createSession({
-				campaignId: campaign.campaign.id,
-				description: input.description,
-				startsAt: input.startsAt,
-        status: Status.DRAFT,
-				title: input.title,
-			});
-		},
-		onError: () => toast.error("Failed to create session"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Session created");
-		},
-	});
-
-	const { mutate: createSeries, isPending: creatingSeries } = useMutation({
-		mutationFn: (input: CreateSeriesInput) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.sessionSeries.createSessionSeries({
-				campaignId: campaign.campaign.id,
-				...input,
-			});
-		},
-		onError: () => toast.error("Failed to create series"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessionSeries.list(campaignId),
-			});
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Series created");
-		},
-	});
-
-	const { mutate: updateSeries, isPending: updatingSeries } = useMutation({
-		mutationFn: (input: {
-			id: string;
-			title?: string;
-			description?: string;
-			rrule?: string;
-			startTime?: string;
-			timezone?: string;
-			seriesEndDate?: Date;
-		}) => client.sessionSeries.updateSessionSeries(input),
-		onError: () => toast.error("Failed to update series"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessionSeries.list(campaignId),
-			});
-			toast.success("Series updated");
-			setEditSeriesId(null);
-		},
-	});
-
-	const { mutate: removeSeries } = useMutation({
-		mutationFn: (id: string) =>
-			client.sessionSeries.removeSessionSeries({ id }),
-		onError: () => toast.error("Failed to remove series"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessionSeries.list(campaignId),
-			});
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Series removed");
-		},
-	});
-
-	const { mutate: endSeries } = useMutation({
-		mutationFn: (id: string) =>
-			client.sessionSeries.updateSessionSeries({
-				id,
-				seriesEndDate: new Date(),
-			}),
-		onError: () => toast.error("Failed to end series"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessionSeries.list(campaignId),
-			});
-			toast.success("Series ended");
-		},
-	});
-
-	const { mutate: scheduleNext } = useMutation({
-		mutationFn: (input: { seriesId: string; title: string; startsAt: Date }) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.session.createSession({
-				campaignId: campaign.campaign.id,
-				originalStartsAt: input.startsAt,
-				seriesId: input.seriesId,
-				startsAt: input.startsAt,
-				status: Status.CONFIRMED,
-				title: input.title,
-			});
-		},
-		onError: () => toast.error("Failed to schedule session"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Session scheduled");
-		},
-	});
-
-	const { mutate: addException } = useMutation({
-		mutationFn: (input: { seriesId: string; excludedDate: Date }) =>
-			client.sessionSeries.addSeriesException(input),
-		onError: () => toast.error("Failed to cancel occurrence"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Occurrence cancelled");
-		},
-	});
-
-	const seriesMap = useMemo(
-		() => new Map(seriesData.series.map((s) => [s.id, s])),
-		[seriesData.series],
-	);
-
-	const { sessionsBySeriesId, oneOffSessions } = useMemo(() => {
-		const map = new Map<string, Session[]>();
-		const oneOff: Session[] = [];
-		for (const session of sessionsData.sessions) {
-			if (session.seriesId && seriesMap.has(session.seriesId)) {
-				const list = map.get(session.seriesId) ?? [];
-				list.push(session);
-				map.set(session.seriesId, list);
-			} else {
-				oneOff.push(session);
-			}
-		}
-		return { oneOffSessions: oneOff, sessionsBySeriesId: map };
-	}, [sessionsData.sessions, seriesMap]);
 
 	const q = search.toLowerCase();
 
 	const filteredSeries = seriesData.series.filter((s) => {
 		if (!q) return true;
-		if (s.title.toLowerCase().includes(q)) return true;
-		return (sessionsBySeriesId.get(s.id) ?? []).some(
+		if (s.series.title.toLowerCase().includes(q)) return true;
+		return s.sessions.some(
 			(sess) =>
 				sess.title.toLowerCase().includes(q) ||
 				sess.description?.toLowerCase().includes(q),
 		);
 	});
 
-	const filteredOneOffs = oneOffSessions.filter((s) => {
+	const filteredOneOffs = oneOffData.sessions.filter((s) => {
 		if (!q) return true;
 		return (
 			s.title.toLowerCase().includes(q) ||
@@ -251,8 +84,14 @@ export function SessionsPage() {
 		);
 	});
 
-	const totalSessions = sessionsData.sessions.length;
-	const editingSeries = editSeriesId ? seriesMap.get(editSeriesId) : null;
+	const totalSessions =
+		oneOffData.sessions.length +
+		seriesData.series.reduce((sum, s) => sum + s.sessions.length, 0);
+
+	const editingSeries = editSeriesId
+		? (seriesData.series.find((s) => s.series.id === editSeriesId)?.series ??
+			null)
+		: null;
 
 	if (!campaign) {
 		return (
@@ -326,28 +165,40 @@ export function SessionsPage() {
 				{!isLoading &&
 					filteredSeries.map((s) => (
 						<SeriesGroup
+							exceptions={s.exceptions}
 							isDm={isDm}
-							key={s.id}
+							key={s.series.id}
 							onCancelOccurrence={(session) => {
 								if (session.startsAt) {
-									addException({
+									excludeFromSeries({
 										excludedDate: new Date(session.startsAt),
-										seriesId: s.id,
+										seriesId: s.series.id,
+										sessionId: session.id,
 									});
 								}
 							}}
 							onDeleteSession={deleteSession}
-							onEditSeries={() => setEditSeriesId(s.id)}
+							onEditSeries={() => setEditSeriesId(s.series.id)}
 							onEditSession={(id) =>
 								navigate({
 									params: { sessionId: id },
 									to: "/campaign/sessions/$sessionId/edit",
 								})
 							}
-							onEndSeries={() => endSeries(s.id)}
-							onRemoveSeries={() => removeSeries(s.id)}
+							onEndSeries={() => endSeries(s.series.id)}
+							onRemoveException={(date) =>
+								removeSeriesException({
+									excludedDate: date,
+									seriesId: s.series.id,
+								})
+							}
+							onRemoveSeries={() => removeSeries(s.series.id)}
 							onScheduleNext={(startsAt) =>
-								scheduleNext({ seriesId: s.id, startsAt, title: s.title })
+								scheduleNext({
+									seriesId: s.series.id,
+									startsAt,
+									title: s.series.title,
+								})
 							}
 							onViewSession={(id) =>
 								navigate({
@@ -355,8 +206,8 @@ export function SessionsPage() {
 									to: "/campaign/sessions/$sessionId",
 								})
 							}
-							series={s}
-							sessions={sessionsBySeriesId.get(s.id) ?? []}
+							series={s.series}
+							sessions={s.sessions}
 						/>
 					))}
 
@@ -415,7 +266,7 @@ export function SessionsPage() {
 											</p>
 											<Button
 												className="mt-4"
-												disabled={creatingSession}
+												disabled={isCreatingSession}
 												onClick={() => {
 													setCreateMode("oneoff");
 													setCreateDialogOpen(true);
@@ -435,8 +286,8 @@ export function SessionsPage() {
 			</div>
 
 			<CreateSessionDialog
-				isCreatingOneOff={creatingSession}
-				isCreatingSeries={creatingSeries}
+				isCreatingOneOff={isCreatingSession}
+				isCreatingSeries={isCreatingSeries}
 				mode={createMode}
 				onClose={() => setCreateDialogOpen(false)}
 				onCreateOneOff={createSession}
@@ -447,10 +298,13 @@ export function SessionsPage() {
 
 			{editingSeries && (
 				<EditSeriesDialog
-					isUpdating={updatingSeries}
+					isUpdating={isUpdatingSeries}
 					onClose={() => setEditSeriesId(null)}
 					onSave={(input) =>
-						updateSeries({ id: editingSeries.id, ...input })
+						updateSeries(
+							{ id: editingSeries.id, ...input },
+							{ onSuccess: () => setEditSeriesId(null) },
+						)
 					}
 					series={editingSeries}
 				/>

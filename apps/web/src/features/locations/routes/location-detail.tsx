@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useLocation } from "@/shared/hooks/queries";
+import { useLocation } from "@/features/locations/hooks/useLocation";
 
 export function LocationDetailPage() {
 	const { locationId } = useParams({ from: "/_authenticated/campaign/locations/$locationId/" });

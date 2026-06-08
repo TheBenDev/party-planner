@@ -14,15 +14,33 @@ TanStack Start (SSR) + TanStack Router + oRPC server. See root CLAUDE.md for mon
 - **Logging**: pino (via `context.logger`)
 - **Validation**: Zod v4 (import from `catalog:`)
 
+## Feature Folder Structure
+
+Code is organized by feature, not by type. Each feature owns its components, hooks, procedures, and types:
+
+```
+src/features/<entity>/
+  components/       — UI components scoped to this feature
+  hooks/            — TanStack Query hooks (useQuery/useMutation) for this feature
+  procedures/       — oRPC server-side procedure handlers
+  procedures/proto/ — helpers that convert proto types to domain types
+  routes/           — Page components rendered by TanStack Router
+  types.ts          — Zod schemas + inferred TypeScript types
+```
+
+Truly shared code (auth hook, theme hook, shadcn/ui primitives, query keys, oRPC client) lives in `src/shared/`.
+
+TanStack Router file-based routes under `src/routes/_authenticated/campaign/<entity>/` are thin — they import and render the page component from the matching feature folder.
+
 ## Key Files
 
 | File | Purpose |
 |---|---|
-| `src/server/orpc.ts` | Procedure factories, middleware, cookie helpers |
-| `src/server/index.ts` | Router registry (11 routers mounted) |
-| `src/lib/api/transport.ts` | ConnectRPC client factory |
-| `src/lib/client.ts` | Browser-side oRPC client |
-| `src/lib/serverClient.ts` | SSR-side oRPC client |
+| `src/server/middleware.ts` | Procedure factories, middleware, cookie helpers |
+| `src/server/router.ts` | Root router — registers all feature procedure routers |
+| `src/shared/lib/api/transport.ts` | ConnectRPC client factory |
+| `src/shared/lib/client.ts` | Browser-side oRPC client |
+| `src/shared/lib/serverClient.ts` | SSR-side oRPC client |
 | `src/env.ts` | Type-safe env (no raw `process.env` anywhere else) |
 | `src/routes/api.$.ts` | oRPC handler mount + OpenAPI docs |
 | `src/routes/api.webhooks.clerk.ts` | Clerk webhook handler |
@@ -64,29 +82,31 @@ Available in all `privateProcedure` handlers:
 After campaign create: call `updateAuthCookie(env.VITE_AUTH_PUBLIC_KEY_PEM, context, {...})`
 After campaign delete: call `deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME)`
 
-## Adding a New Router
+## Adding a New Feature
 
-1. Create `src/server/routers/<entity>.ts`
-2. Define procedures using `privateProcedure` (or `publicProcedure` / `discordProcedure`)
-3. Add Zod input/output schemas from `@planner/schemas/<entity>`
-4. Export a named `<entity>Router` object
-5. Register in `src/server/index.ts`
+1. Create `src/features/<entity>/` with subfolders: `components/`, `hooks/`, `procedures/`, `routes/`
+2. Add `src/features/<entity>/types.ts` — Zod schemas + inferred types
+3. Add `src/features/<entity>/procedures/<entity>.ts` — oRPC handlers using `privateProcedure`
+4. Export a named `<entity>Router` object from the procedures file
+5. Register in `src/server/router.ts`:
 
 ```typescript
-// src/server/index.ts
-import { entityRouter } from "./routers/entity";
-export const appRouter = {
+// src/server/router.ts
+import { entityRouter } from "@/features/<entity>/procedures/<entity>";
+const appRouter = {
   ...,
   entity: entityRouter,
 };
 ```
 
+6. Add TanStack Router file under `src/routes/_authenticated/campaign/<entity>/` — import and render the page component from `src/features/<entity>/routes/`
+7. Add TanStack Query hooks in `src/features/<entity>/hooks/` — one hook file per logical grouping (e.g. `useEntity.ts` for detail, `useEntityList.ts` for list + mutations)
+
 ## Route File Conventions
 
-- Routes live under `src/routes/_authenticated/campaign/<entity>/`
-- Use `createFileRoute` with TanStack Router
-- Data fetching: `useQuery` + `client.<router>.<procedure>()`
-- Mutations: `useMutation` + `queryClient.invalidateQueries`
+- TanStack Router files under `src/routes/_authenticated/campaign/<entity>/` are thin wrappers — they call `createFileRoute` and render the page component from `src/features/<entity>/routes/`
+- Page components live in `src/features/<entity>/routes/`
+- Data fetching and mutations belong in `src/features/<entity>/hooks/` — not inline in page components
 - Role guard: check `role === UserRole.DUNGEON_MASTER` for DM-only actions
 - Toast feedback: `toast.success()` / `toast.error()` from `sonner`
 

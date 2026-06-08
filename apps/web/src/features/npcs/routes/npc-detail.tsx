@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useNpc } from "@/shared/hooks/queries";
+import { useNpc } from "@/features/npcs/hooks/useNpc";
 
 export function NpcDetailPage() {
 	const { npcId } = useParams({ from: "/_authenticated/campaign/npcs/$npcId/" });

@@ -430,6 +430,12 @@ type UpdateSessionSeriesRequest struct {
 	CampaignID    string
 }
 
+type SessionSeriesWithDetails struct {
+	Series     *SessionSeries
+	Sessions   []*Session
+	Exceptions []time.Time
+}
+
 // -----------------------------------------------------------------------------
 // Locations
 // -----------------------------------------------------------------------------

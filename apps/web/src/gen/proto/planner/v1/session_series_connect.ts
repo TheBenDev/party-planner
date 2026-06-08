@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddSeriesExceptionRequest, AddSeriesExceptionResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
+import { CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -58,12 +58,12 @@ export const SessionSeriesService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc planner.v1.SessionSeriesService.AddSeriesException
+     * @generated from rpc planner.v1.SessionSeriesService.ExcludeSessionFromSeries
      */
-    addSeriesException: {
-      name: "AddSeriesException",
-      I: AddSeriesExceptionRequest,
-      O: AddSeriesExceptionResponse,
+    excludeSessionFromSeries: {
+      name: "ExcludeSessionFromSeries",
+      I: ExcludeSessionFromSeriesRequest,
+      O: ExcludeSessionFromSeriesResponse,
       kind: MethodKind.Unary,
     },
     /**

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useQuest } from "@/shared/hooks/queries";
+import { useQuest } from "@/features/quests/hooks/useQuest";
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 	ACTIVE: {

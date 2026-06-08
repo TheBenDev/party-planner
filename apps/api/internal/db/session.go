@@ -47,10 +47,32 @@ func (db *DB) GetNextSessionByCampaign(campaignID string) (*model.Session, error
 	return scanSession(row)
 }
 
-func (db *DB) ListSessionsByCampaign(campaignId string) ([]*model.Session, error) {
-	rows, err := db.conn.Query(`SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1`, campaignId)
+func (db *DB) ListOneOffSessionsByCampaign(campaignId string) ([]*model.Session, error) {
+	rows, err := db.conn.Query(`SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NULL`, campaignId)
 	if err != nil {
-		return nil, fmt.Errorf("list sessions: %w", err)
+		return nil, fmt.Errorf("list one-off sessions: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var sessions []*model.Session
+	for rows.Next() {
+		session, err := scanSession(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan session: %w", err)
+		}
+		sessions = append(sessions, session)
+	}
+	return sessions, rows.Err()
+}
+
+func (db *DB) ListSeriesSessionsByCampaign(campaignId string) ([]*model.Session, error) {
+	rows, err := db.conn.Query(`SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NOT NULL`, campaignId)
+	if err != nil {
+		return nil, fmt.Errorf("list series sessions: %w", err)
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
