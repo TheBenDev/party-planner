@@ -3,6 +3,14 @@ import { ORPCError } from "@orpc/client";
 import type pino from "pino";
 import { ZodError } from "zod";
 
+const SERVER_ERROR_CODES = new Set([
+	Code.Internal,
+	Code.Unknown,
+	Code.DataLoss,
+	Code.Unavailable,
+	Code.Unimplemented,
+]);
+
 const CONNECT_TO_ORPC_CODE = {
 	[Code.Canceled]: "CLIENT_CLOSED_REQUEST",
 	[Code.Unknown]: "INTERNAL_SERVER_ERROR",
@@ -30,15 +38,22 @@ export function handleError(
 ): never {
 	if (err instanceof ORPCError) throw err;
 	if (err instanceof ConnectError) {
-		const logMessage = err.message || fallbackMessage;
-		log?.error({ ...params, err }, logMessage);
+		if (SERVER_ERROR_CODES.has(err.code)) {
+			log?.error({ ...params, connectCode: Code[err.code], err }, err.message);
+		} else {
+			log?.warn({ ...params, connectCode: Code[err.code], err }, err.message);
+		}
 		throw new ORPCError(CONNECT_TO_ORPC_CODE[err.code], {
+			cause: err,
 			message: err.message,
 		});
 	}
 	if (err instanceof ZodError) {
-		log?.error({ ...params, err }, err.message);
-		throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
+		log?.warn({ ...params, err }, err.message);
+		throw new ORPCError("UNPROCESSABLE_CONTENT", {
+			cause: err,
+			message: err.message,
+		});
 	}
 	log?.error({ ...params, err }, fallbackMessage);
 	throw new ORPCError("INTERNAL_SERVER_ERROR", {
