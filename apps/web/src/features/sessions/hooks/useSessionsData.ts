@@ -18,7 +18,9 @@ export function useSessionsData() {
 		enabled: Boolean(campaign),
 		queryFn: () => {
 			if (!campaign) throw new Error("campaign required");
-			return client.session.listOneOffSessions({ campaignId: campaign.campaign.id });
+			return client.session.listOneOffSessions({
+				campaignId: campaign.campaign.id,
+			});
 		},
 		queryKey: queryKeys.sessions.list(campaignId),
 	});
@@ -56,7 +58,7 @@ export function useSessionsData() {
 				campaignId: campaign.campaign.id,
 				description: input.description,
 				startsAt: input.startsAt,
-				status: Status.DRAFT,
+				status: input.status,
 				title: input.title,
 			});
 		},

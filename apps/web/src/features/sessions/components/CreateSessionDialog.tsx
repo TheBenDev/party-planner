@@ -1,3 +1,4 @@
+import { Status } from "@planner/enums/session";
 import { useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -15,6 +16,7 @@ import { localTimeToUtc } from "./session-utils";
 export type CreateOneOffInput = {
 	title: string;
 	description?: string;
+	status: Status;
 	startsAt?: Date;
 };
 
@@ -90,9 +92,12 @@ export function CreateSessionDialog({
 
 	function handleSubmitOneOff() {
 		if (!title.trim()) return;
+		let status = Status.DRAFT;
+		if (startsAt) status = Status.CONFIRMED;
 		onCreateOneOff({
 			description: description.trim() || undefined,
 			startsAt: startsAt ? new Date(startsAt) : undefined,
+			status,
 			title: title.trim(),
 		});
 		handleClose();
