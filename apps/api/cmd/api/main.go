@@ -22,6 +22,7 @@ import (
 	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
 	"github.com/BBruington/party-planner/api/internal/service"
+	"github.com/BBruington/party-planner/api/internal/webhook"
 	discordgo "github.com/bwmarrin/discordgo"
 	cron "github.com/robfig/cron/v3"
 )
@@ -70,8 +71,18 @@ func main() {
 	registerHandlers(mux, svcs, interceptors)
 
 	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, middleware.WithInternalAPIKey(cfg.InternalAPIKey, logger.Logger, mux))
-	srv := server.New(cfg.Port, handler)
+	srv := server.New(cfg.APIPort, handler)
 	go server.Start(srv)
+
+	webhook.SetClerkKey(cfg.ClerkSecretKey)
+	clerkHandler := &webhook.ClerkWebhookHandler{User: svcs.User, Secret: cfg.ClerkWebhookSecret}
+	webhookMux := http.NewServeMux()
+	webhookMux.Handle("POST /webhooks/clerk", clerkHandler)
+	webhookMux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+	webhookSrv := server.New(cfg.WebhookPort, webhookMux)
+	go server.Start(webhookSrv)
 
 	c := startCronJobs(svcs)
 
@@ -95,6 +106,9 @@ func main() {
 
 	if err := srv.Shutdown(shutdownCtx); err != nil {
 		slog.Error("Failed to shut down HTTP server gracefully", "error", err)
+	}
+	if err := webhookSrv.Shutdown(shutdownCtx); err != nil {
+		slog.Error("Failed to shut down webhook server gracefully", "error", err)
 	}
 }
 

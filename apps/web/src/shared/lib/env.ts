@@ -35,7 +35,6 @@ export const env = createEnv({
 		AUTH_PRIVATE_KEY_PEM: z.string(),
 		AUTH_PUBLIC_KEY_PEM: z.string(),
 		CLERK_SECRET_KEY: z.string(),
-		CLERK_WEBHOOK_SIGNING_SECRET: z.string(),
 		DATABASE_URL: z.string(),
 		DISCORD_API_KEY: z.string(),
 		DISCORD_TOKEN: z.string(),

@@ -18,7 +18,6 @@ import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as AuthAcceptRouteImport } from './routes/_auth/accept'
 import { Route as AuthenticatedCampaignIndexRouteImport } from './routes/_authenticated/campaign/index'
-import { Route as ApiWebhooksClerkRouteImport } from './routes/api.webhooks.clerk'
 import { Route as AuthenticatedCampaignSettingsIndexRouteImport } from './routes/_authenticated/campaign/settings/index'
 import { Route as AuthenticatedCampaignSessionsIndexRouteImport } from './routes/_authenticated/campaign/sessions/index'
 import { Route as AuthenticatedCampaignQuestsIndexRouteImport } from './routes/_authenticated/campaign/quests/index'
@@ -83,11 +82,6 @@ const AuthenticatedCampaignIndexRoute =
     path: '/campaign/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const ApiWebhooksClerkRoute = ApiWebhooksClerkRouteImport.update({
-  id: '/api/webhooks/clerk',
-  path: '/api/webhooks/clerk',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedCampaignSettingsIndexRoute =
   AuthenticatedCampaignSettingsIndexRouteImport.update({
     id: '/campaign/settings/',
@@ -205,7 +199,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
@@ -234,7 +227,6 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/campaign': typeof AuthenticatedCampaignIndexRoute
   '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/integrations': typeof AuthenticatedCampaignIntegrationsIndexRoute
@@ -265,7 +257,6 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
-  '/api/webhooks/clerk': typeof ApiWebhooksClerkRoute
   '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/_authenticated/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
@@ -296,7 +287,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/join'
     | '/api/$'
-    | '/api/webhooks/clerk'
     | '/campaign/'
     | '/campaign/create/'
     | '/campaign/integrations/'
@@ -325,7 +315,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/join'
     | '/api/$'
-    | '/api/webhooks/clerk'
     | '/campaign'
     | '/campaign/create'
     | '/campaign/integrations'
@@ -355,7 +344,6 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/join'
     | '/api/$'
-    | '/api/webhooks/clerk'
     | '/_authenticated/campaign/'
     | '/_authenticated/campaign/create/'
     | '/_authenticated/campaign/integrations/'
@@ -384,7 +372,6 @@ export interface RootRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   ApiSplatRoute: typeof ApiSplatRoute
-  ApiWebhooksClerkRoute: typeof ApiWebhooksClerkRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -451,13 +438,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/campaign/'
       preLoaderRoute: typeof AuthenticatedCampaignIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
-    }
-    '/api/webhooks/clerk': {
-      id: '/api/webhooks/clerk'
-      path: '/api/webhooks/clerk'
-      fullPath: '/api/webhooks/clerk'
-      preLoaderRoute: typeof ApiWebhooksClerkRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/campaign/settings/': {
       id: '/_authenticated/campaign/settings/'
@@ -662,7 +642,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   ApiSplatRoute: ApiSplatRoute,
-  ApiWebhooksClerkRoute: ApiWebhooksClerkRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

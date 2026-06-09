@@ -12,6 +12,10 @@ const (
 	pgErrCheckViolation      = "23514"
 )
 
+func IsUniqueViolation(err error) bool {
+	return isPgError(err, pgErrUniqueViolation)
+}
+
 func isPgError(err error, code string) bool {
 	var pgErr *pgconn.PgError
 	return errors.As(err, &pgErr) && pgErr.Code == code
