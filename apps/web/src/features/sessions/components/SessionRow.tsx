@@ -1,5 +1,6 @@
 import { Clock, MoreHorizontal } from "lucide-react";
 import type { Session } from "@/features/sessions/types";
+import { Button } from "@/shared/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -44,6 +45,7 @@ export function SessionRow({
 	onEdit,
 	onDelete,
 	onCancelOccurrence,
+	onRecap,
 	isDm,
 	isSeriesSession = false,
 	indented = false,
@@ -53,6 +55,7 @@ export function SessionRow({
 	onEdit: () => void;
 	onDelete: () => void;
 	onCancelOccurrence?: () => void;
+	onRecap?: () => void;
 	isDm: boolean;
 	isSeriesSession?: boolean;
 	indented?: boolean;
@@ -97,6 +100,13 @@ export function SessionRow({
 		);
 	}
 
+	const showRecapButton =
+		isDm &&
+		onRecap &&
+		!session.recap &&
+		!!session.startsAt &&
+		new Date(session.startsAt) < new Date();
+
 	return (
 		<div
 			className={cn(
@@ -120,6 +130,21 @@ export function SessionRow({
 				</p>
 				{dateDisplay}
 			</button>
+
+			{showRecapButton && (
+				<Button
+					className="h-7 text-xs shrink-0"
+					onClick={(e) => {
+						e.stopPropagation();
+						onRecap();
+					}}
+					size="sm"
+					type="button"
+					variant="outline"
+				>
+					Recap
+				</Button>
+			)}
 
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>

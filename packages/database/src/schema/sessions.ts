@@ -27,6 +27,7 @@ export const sessionsTable = pgTable(
 		id: uuid("id").primaryKey().defaultRandom(),
 		originalStartsAt: timestamp("original_starts_at", { mode: "date" }),
 		pollId: varchar("poll_id"),
+		recap: varchar("recap"),
 		seriesId: uuid("series_id"),
 		startsAt: timestamp("starts_at", { mode: "date" }),
 		status: sessionStatusEnum("status").notNull(),

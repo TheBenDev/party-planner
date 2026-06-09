@@ -186,6 +186,12 @@ export function SessionsPage() {
 								})
 							}
 							onEndSeries={() => endSeries(s.series.id)}
+							onRecapSession={(id) =>
+								navigate({
+									params: { sessionId: id },
+									to: "/campaign/sessions/$sessionId/edit",
+								})
+							}
 							onRemoveException={(date) =>
 								removeSeriesException({
 									excludedDate: date,
@@ -224,6 +230,12 @@ export function SessionsPage() {
 									isDm={isDm}
 									onDelete={() => deleteSession(s.id)}
 									onEdit={() =>
+										navigate({
+											params: { sessionId: s.id },
+											to: "/campaign/sessions/$sessionId/edit",
+										})
+									}
+									onRecap={() =>
 										navigate({
 											params: { sessionId: s.id },
 											to: "/campaign/sessions/$sessionId/edit",

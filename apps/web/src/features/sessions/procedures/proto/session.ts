@@ -64,6 +64,7 @@ export function protoToSession(proto: SessionProto): Session {
 		id: proto.id,
 		originalStartsAt: proto.originalStartsAt ? timestampDate(proto.originalStartsAt) : undefined,
 		pollId: proto.pollId,
+		recap: proto.recap,
 		seriesId: proto.seriesId,
 		startsAt: proto.startsAt ? timestampDate(proto.startsAt) : undefined,
 		status: protoToSessionStatus(proto.status),

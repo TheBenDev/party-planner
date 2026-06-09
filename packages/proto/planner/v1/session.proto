@@ -33,6 +33,7 @@ message Session {
   optional string series_id = 11;
   optional google.protobuf.Timestamp original_starts_at = 12;
   optional string discord_event_id = 13;
+  optional string recap = 14;
 }
 
 // -----------------------------------------------------------------------------
@@ -118,6 +119,7 @@ message UpdateSessionRequest {
   SessionStatus status = 4;
   optional string title = 5;
   string campaign_id = 6;
+  optional string recap = 7;
 }
 
 message UpdateSessionResponse {

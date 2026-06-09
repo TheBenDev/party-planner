@@ -220,6 +220,7 @@ func (s *SessionServer) UpdateSession(ctx context.Context, req *connect.Request[
 		Description: sqlNullString(req.Msg.Description),
 		Status:      sessionStatus,
 		StartsAt:    sqlNullableTime(req.Msg.StartsAt),
+		Recap:       sqlNullString(req.Msg.Recap),
 	})
 
 	if err != nil {
@@ -289,6 +290,9 @@ func sessionToProto(session *model.Session) *v1.Session {
 	}
 	if session.DiscordEventID.Valid {
 		proto.DiscordEventId = &session.DiscordEventID.String
+	}
+	if session.Recap.Valid {
+		proto.Recap = &session.Recap.String
 	}
 	return proto
 }
