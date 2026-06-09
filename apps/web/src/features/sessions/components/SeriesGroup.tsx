@@ -42,6 +42,7 @@ export function SeriesGroup({
 	onRemoveSeries,
 	onRemoveException,
 	onScheduleNext,
+	onRecapSession,
 }: {
 	series: SessionSeries;
 	sessions: Session[];
@@ -56,6 +57,7 @@ export function SeriesGroup({
 	onRemoveSeries: () => void;
 	onRemoveException: (date: Date) => void;
 	onScheduleNext: (startsAt: Date) => void;
+	onRecapSession: (id: string) => void;
 }) {
 	const [expanded, setExpanded] = useState(true);
 	const now = new Date();
@@ -170,6 +172,7 @@ export function SeriesGroup({
 										onCancelOccurrence={() => onCancelOccurrence(item.data)}
 										onDelete={() => onDeleteSession(item.data.id)}
 										onEdit={() => onEditSession(item.data.id)}
+										onRecap={() => onRecapSession(item.data.id)}
 										onView={() => onViewSession(item.data.id)}
 										session={item.data}
 									/>

@@ -7,14 +7,14 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at, discord_event_id`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at, discord_event_id, recap`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
 		&s.Status, &s.CreatedAt, &s.PollID, &s.AnnouncedAt, &s.UpdatedAt,
-		&s.SeriesID, &s.OriginalStartsAt, &s.DiscordEventID,
+		&s.SeriesID, &s.OriginalStartsAt, &s.DiscordEventID, &s.Recap,
 	)
 	if err != nil {
 		return nil, err
@@ -110,10 +110,10 @@ func (db *DB) MarkSessionAnnounced(id, campaignId string) (*model.Session, error
 
 func (db *DB) UpdateSession(session *model.UpdateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4, poll_id = $5, updated_at = NOW()
-		WHERE id = $6 AND campaign_id = $7
+		UPDATE session SET title = COALESCE($1, title), description = $2, status = $3, starts_at = $4, poll_id = $5, recap = COALESCE($6, recap), updated_at = NOW()
+		WHERE id = $7 AND campaign_id = $8
 		RETURNING `+sessionColumns,
-		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.ID, session.CampaignID)
+		session.Title, session.Description, session.Status, session.StartsAt, session.PollId, session.Recap, session.ID, session.CampaignID)
 	return scanSession(row)
 }
 

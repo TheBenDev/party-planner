@@ -357,6 +357,7 @@ type Session struct {
 	Status           SessionStatus
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
+	Recap            sql.NullString
 }
 
 type Poll struct {
@@ -388,6 +389,7 @@ type UpdateSessionRequest struct {
 	Status      SessionStatus
 	StartsAt    sql.NullTime
 	CampaignID  string
+	Recap       sql.NullString
 }
 
 // -----------------------------------------------------------------------------

@@ -89,6 +89,7 @@ type Session struct {
 	SeriesId         *string                `protobuf:"bytes,11,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
 	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
 	DiscordEventId   *string                `protobuf:"bytes,13,opt,name=discord_event_id,json=discordEventId,proto3,oneof" json:"discord_event_id,omitempty"`
+	Recap            *string                `protobuf:"bytes,14,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -210,6 +211,13 @@ func (x *Session) GetOriginalStartsAt() *timestamppb.Timestamp {
 func (x *Session) GetDiscordEventId() string {
 	if x != nil && x.DiscordEventId != nil {
 		return *x.DiscordEventId
+	}
+	return ""
+}
+
+func (x *Session) GetRecap() string {
+	if x != nil && x.Recap != nil {
+		return *x.Recap
 	}
 	return ""
 }
@@ -1022,6 +1030,7 @@ type UpdateSessionRequest struct {
 	Status        SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
 	Title         *string                `protobuf:"bytes,5,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	CampaignId    string                 `protobuf:"bytes,6,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Recap         *string                `protobuf:"bytes,7,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1098,6 +1107,13 @@ func (x *UpdateSessionRequest) GetCampaignId() string {
 	return ""
 }
 
+func (x *UpdateSessionRequest) GetRecap() string {
+	if x != nil && x.Recap != nil {
+		return *x.Recap
+	}
+	return ""
+}
+
 type UpdateSessionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Session       *Session               `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
@@ -1147,7 +1163,7 @@ var File_planner_v1_session_proto protoreflect.FileDescriptor
 const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"\x18planner/v1/session.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd5\x05\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfa\x05\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1165,7 +1181,8 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vannouncedAt\x88\x01\x01\x12 \n" +
 	"\tseries_id\x18\v \x01(\tH\x04R\bseriesId\x88\x01\x01\x12M\n" +
 	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01\x12-\n" +
-	"\x10discord_event_id\x18\r \x01(\tH\x06R\x0ediscordEventId\x88\x01\x01B\x0e\n" +
+	"\x10discord_event_id\x18\r \x01(\tH\x06R\x0ediscordEventId\x88\x01\x01\x12\x19\n" +
+	"\x05recap\x18\x0e \x01(\tH\aR\x05recap\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\n" +
@@ -1175,7 +1192,8 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"_series_idB\x15\n" +
 	"\x13_original_starts_atB\x13\n" +
-	"\x11_discord_event_id\"X\n" +
+	"\x11_discord_event_idB\b\n" +
+	"\x06_recap\"X\n" +
 	"\x16AnnounceSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x1d\n" +
@@ -1237,7 +1255,7 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"\x17\n" +
-	"\x15RemoveSessionResponse\"\xa2\x02\n" +
+	"\x15RemoveSessionResponse\"\xc7\x02\n" +
 	"\x14UpdateSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
 	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
@@ -1245,11 +1263,13 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x19\n" +
 	"\x05title\x18\x05 \x01(\tH\x02R\x05title\x88\x01\x01\x12\x1f\n" +
 	"\vcampaign_id\x18\x06 \x01(\tR\n" +
-	"campaignIdB\x0e\n" +
+	"campaignId\x12\x19\n" +
+	"\x05recap\x18\a \x01(\tH\x03R\x05recap\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\b\n" +
-	"\x06_title\"F\n" +
+	"\x06_titleB\b\n" +
+	"\x06_recap\"F\n" +
 	"\x15UpdateSessionResponse\x12-\n" +
 	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession*\x83\x01\n" +
 	"\rSessionStatus\x12\x1e\n" +

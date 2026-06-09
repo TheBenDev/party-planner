@@ -4,24 +4,19 @@ import { UserRole } from "@planner/enums/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { useSession } from "@/features/sessions/hooks/useSession";
+import {
+	type SessionEditForm,
+	SessionEditSchema,
+} from "@/features/sessions/types";
 import { DateTimePicker } from "@/shared/components/DateTimePicker";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useSession } from "@/features/sessions/hooks/useSession";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
-
-export const sessionEditSchema = z.object({
-	description: z.string().optional(),
-	startsAt: z.date().optional(),
-	title: z.string().min(1),
-});
-
-export type SessionEditForm = z.infer<typeof sessionEditSchema>;
 
 export function SessionEditPage() {
 	const { sessionId } = useParams({
@@ -67,14 +62,16 @@ function SessionEditFormInner({
 }) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
+	const isPast = !!session.startsAt && new Date(session.startsAt) < new Date();
 
 	const form = useForm<SessionEditForm>({
 		defaultValues: {
 			description: session.description ?? "",
+			recap: session.recap ?? "",
 			startsAt: toDate(session.startsAt),
 			title: session.title,
 		},
-		resolver: zodResolver(sessionEditSchema),
+		resolver: zodResolver(SessionEditSchema),
 	});
 
 	const updateMutation = useMutation({
@@ -83,6 +80,7 @@ function SessionEditFormInner({
 			if (values.startsAt !== undefined) status = Status.CONFIRMED;
 			return client.session.updateSession({
 				id: sessionId,
+				recap: values.recap,
 				status,
 				...values,
 			});
@@ -91,9 +89,15 @@ function SessionEditFormInner({
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.sessions.detail(sessionId),
 			});
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(session.campaignId),
-			});
+			if (session.seriesId) {
+				queryClient.invalidateQueries({
+					queryKey: queryKeys.sessionSeries.list(session.campaignId),
+				});
+			} else {
+				queryClient.invalidateQueries({
+					queryKey: queryKeys.sessions.list(session.campaignId),
+				});
+			}
 			navigate({
 				params: { sessionId },
 				to: "/campaign/sessions/$sessionId",
@@ -138,6 +142,17 @@ function SessionEditFormInner({
 					placeholder="Describe the session..."
 				/>
 			</div>
+
+			{isPast && (
+				<div className="space-y-2">
+					<Label>Session Recap</Label>
+					<Textarea
+						{...form.register("recap")}
+						placeholder="Write a recap of what happened in this session..."
+						rows={6}
+					/>
+				</div>
+			)}
 
 			<div className="flex justify-end gap-2 pt-4">
 				<Button

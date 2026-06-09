@@ -11,6 +11,7 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	discordEventId: z.string().nullable().optional(),
 	originalStartsAt: z.date().nullable().optional(),
 	pollId: z.string().nullable().optional(),
+	recap: z.string().nullable().optional(),
 	seriesId: z.uuid().nullable().optional(),
 	startsAt: z.date().nullable().optional(),
 	status: z.enum(Status),
@@ -81,6 +82,7 @@ export const RemoveSessionResponseSchema = z.object({});
 export const UpdateSessionRequestSchema = z.object({
 	description: z.string().optional(),
 	id: z.uuid(),
+	recap: z.string().optional(),
 	startsAt: z.date().optional(),
 	status: z.enum(Status),
 	title: z.string().optional(),
@@ -155,9 +157,9 @@ export const RemoveSessionSeriesRequestSchema = z.object({ id: z.uuid() });
 export const RemoveSessionSeriesResponseSchema = z.object({});
 
 export const ExcludeSessionFromSeriesRequestSchema = z.object({
-	sessionId: z.uuid(),
-	seriesId: z.uuid(),
 	excludedDate: z.date(),
+	seriesId: z.uuid(),
+	sessionId: z.uuid(),
 });
 export const ExcludeSessionFromSeriesResponseSchema = z.object({});
 
@@ -168,4 +170,17 @@ export const RemoveSeriesExceptionRequestSchema = z.object({
 export const RemoveSeriesExceptionResponseSchema = z.object({});
 
 export type SessionSeries = z.infer<typeof SessionSeriesSchema>;
-export type SessionSeriesWithDetails = z.infer<typeof SessionSeriesWithDetailsSchema>;
+export type SessionSeriesWithDetails = z.infer<
+	typeof SessionSeriesWithDetailsSchema
+>;
+
+// ─── session-edit route ─────────────────────────────────────────────────────────────
+
+export const SessionEditSchema = z.object({
+	description: z.string().optional(),
+	recap: z.string().optional(),
+	startsAt: z.date().optional(),
+	title: z.string().min(1),
+});
+
+export type SessionEditForm = z.infer<typeof SessionEditSchema>;
