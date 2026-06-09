@@ -20,7 +20,10 @@ type Config struct {
 	DiscordToken        string
 	Environment         string
 	InternalAPIKey      string
-	Port                string
+	ClerkSecretKey      string
+	ClerkWebhookSecret  string
+	APIPort             string
+	WebhookPort         string
 }
 
 func Load() (*Config, error) {
@@ -51,8 +54,11 @@ func Load() (*Config, error) {
 		DiscordRedirectURI:  os.Getenv("DISCORD_REDIRECT_URI"),
 		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
 		Environment:         os.Getenv("ENVIRONMENT"),
-		InternalAPIKey:      os.Getenv("INTERNAL_API_KEY"),
-		Port:                os.Getenv("PORT"),
+		InternalAPIKey:     os.Getenv("INTERNAL_API_KEY"),
+		ClerkSecretKey:     os.Getenv("CLERK_SECRET_KEY"),
+		ClerkWebhookSecret: os.Getenv("CLERK_WEBHOOK_SECRET"),
+		APIPort:            os.Getenv("API_PORT"),
+		WebhookPort:        os.Getenv("WEBHOOK_PORT"),
 	}
 
 	if cfg.APIKey == "" {
@@ -73,11 +79,23 @@ func Load() (*Config, error) {
 	if cfg.DiscordToken == "" {
 		return nil, fmt.Errorf("DISCORD_TOKEN is required")
 	}
+	if cfg.ClerkSecretKey == "" {
+		return nil, fmt.Errorf("CLERK_SECRET_KEY is required")
+	}
+	if cfg.ClerkWebhookSecret == "" {
+		return nil, fmt.Errorf("CLERK_WEBHOOK_SECRET is required")
+	}
 	if cfg.DatabaseUrl == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
 	}
-	if cfg.Port == "" {
-		cfg.Port = "8000"
+	if cfg.APIPort == "" {
+		cfg.APIPort = "8000"
+	}
+	if cfg.WebhookPort == "" {
+		cfg.WebhookPort = os.Getenv("PORT")
+	}
+	if cfg.WebhookPort == "" {
+		cfg.WebhookPort = "8001"
 	}
 
 	return cfg, nil
