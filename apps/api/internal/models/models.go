@@ -79,7 +79,8 @@ type UpdateCampaignRequest struct {
 type IntegrationSource string
 
 const (
-	IntegrationSourceDiscord IntegrationSource = "DISCORD"
+	IntegrationSourceDiscord      IntegrationSource = "DISCORD"
+	IntegrationSourceGoogleCalendar IntegrationSource = "GOOGLE_CALENDAR"
 	// TODO: Implement foundry
 	// IntegrationSourceFoundry IntegrationSource = "FOUNDRY"
 )
@@ -358,6 +359,7 @@ type Session struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 	Recap            sql.NullString
+	DurationMinutes  int32
 }
 
 type Poll struct {
@@ -379,6 +381,7 @@ type CreateSessionRequest struct {
 	OriginalStartsAt sql.NullTime
 	Status           SessionStatus
 	StartsAt         sql.NullTime
+	DurationMinutes  int32
 }
 
 type UpdateSessionRequest struct {
@@ -408,6 +411,7 @@ type SessionSeries struct {
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 	Timezone        string
+	DurationMinutes int32
 }
 
 type CreateSessionSeriesRequest struct {
@@ -419,6 +423,7 @@ type CreateSessionSeriesRequest struct {
 	SeriesStartDate time.Time
 	SeriesEndDate   sql.NullTime
 	Timezone        string
+	DurationMinutes int32
 }
 
 type UpdateSessionSeriesRequest struct {
@@ -469,4 +474,44 @@ type UpdateLocationRequest struct {
 	Notes       sql.NullString
 	DmNotes     sql.NullString
 	CampaignID  string
+}
+
+// -----------------------------------------------------------------------------
+// User Integrations
+// -----------------------------------------------------------------------------
+
+type GoogleCalendarTokenMetadata struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	TokenExpiry  int64  `json:"tokenExpiry"`
+}
+
+type UserIntegration struct {
+	ID        string
+	UserID    string
+	Source    IntegrationSource
+	Metadata  json.RawMessage
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
+type UpsertUserIntegrationRequest struct {
+	UserID   string
+	Source   IntegrationSource
+	Metadata json.RawMessage
+}
+
+type CampaignMemberIntegration struct {
+	UserID   string
+	Metadata json.RawMessage
+}
+
+type CalendarEventWindow struct {
+	Start time.Time
+	End   time.Time
+}
+
+type CalendarConflict struct {
+	UserID    string
+	BusySlots []CalendarEventWindow
 }

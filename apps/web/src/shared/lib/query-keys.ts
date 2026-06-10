@@ -36,4 +36,11 @@ export const queryKeys = {
 		list: (campaignId: string) => ["sessions", campaignId] as const,
 		poll: (sessionId: string) => ["session-poll", sessionId] as const,
 	},
+	userIntegrations: {
+		bySource: (userId: string, source: string) =>
+			["user-integrations", userId, source] as const,
+		list: (userId: string) => ["user-integrations", userId] as const,
+	},
+	calendarConflicts: (campaignId: string, startsAt: string, durationMinutes: number) =>
+		["calendar-conflicts", campaignId, startsAt, durationMinutes] as const,
 } as const;

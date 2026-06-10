@@ -1,6 +1,6 @@
 import { useClerk } from "@clerk/clerk-react";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Settings, Sun } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/shared/hooks/auth";
 import { useTheme } from "@/shared/hooks/theme";
@@ -93,6 +93,12 @@ export default function ProfileButton() {
 					)}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
+				<DropdownMenuItem className="w-full justify-center">
+					<Link className="w-full text-center flex items-center justify-center gap-2" to="/settings">
+						<Settings className="w-3.5 h-3.5" />
+						Settings
+					</Link>
+				</DropdownMenuItem>
 				<DropdownMenuItem
 					className="w-full justify-center gap-2"
 					onClick={toggleTheme}

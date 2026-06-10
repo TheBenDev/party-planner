@@ -7,14 +7,14 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at, discord_event_id, recap`
+const sessionColumns = `id, campaign_id, title, description, starts_at, status, created_at, poll_id, announced_at, updated_at, series_id, original_starts_at, discord_event_id, recap, duration_minutes`
 
 func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	var s model.Session
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.StartsAt,
 		&s.Status, &s.CreatedAt, &s.PollID, &s.AnnouncedAt, &s.UpdatedAt,
-		&s.SeriesID, &s.OriginalStartsAt, &s.DiscordEventID, &s.Recap,
+		&s.SeriesID, &s.OriginalStartsAt, &s.DiscordEventID, &s.Recap, &s.DurationMinutes,
 	)
 	if err != nil {
 		return nil, err
@@ -24,11 +24,11 @@ func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 
 func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session (campaign_id, title, description, status, starts_at, series_id, original_starts_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO session (campaign_id, title, description, status, starts_at, series_id, original_starts_at, duration_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING `+sessionColumns,
 		session.CampaignID, session.Title, session.Description, session.Status, session.StartsAt,
-		session.SeriesID, session.OriginalStartsAt,
+		session.SeriesID, session.OriginalStartsAt, session.DurationMinutes,
 	)
 	return scanSession(row)
 }

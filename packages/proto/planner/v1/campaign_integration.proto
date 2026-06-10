@@ -12,6 +12,7 @@ import "google/protobuf/timestamp.proto";
 enum IntegrationSource {
   INTEGRATION_SOURCE_UNSPECIFIED = 0;
   INTEGRATION_SOURCE_DISCORD = 1;
+  INTEGRATION_SOURCE_GOOGLE_CALENDAR = 2;
 }
 
 // -----------------------------------------------------------------------------

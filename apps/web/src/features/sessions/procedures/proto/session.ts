@@ -61,6 +61,7 @@ export function protoToSession(proto: SessionProto): Session {
 		createdAt: timestampDate(proto.createdAt),
 		description: proto.description,
 		discordEventId: proto.discordEventId,
+		durationMinutes: proto.durationMinutes > 0 ? proto.durationMinutes : undefined,
 		id: proto.id,
 		originalStartsAt: proto.originalStartsAt ? timestampDate(proto.originalStartsAt) : undefined,
 		pollId: proto.pollId,

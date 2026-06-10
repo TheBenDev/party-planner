@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"encoding/base64"
 
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
@@ -33,6 +36,7 @@ type appServices struct {
 	SessionSeries       *service.SessionSeriesService
 	Campaign            *service.CampaignService
 	CampaignIntegration *service.CampaignIntegrationService
+	GoogleCalendar      *service.GoogleCalendarService
 	Member              *service.MemberService
 	Npc                 *service.NpcService
 	Quest               *service.QuestService
@@ -62,7 +66,11 @@ func main() {
 		}
 	}()
 
-	svcs := buildServices(database, discordSvc)
+	svcs, err := buildServices(database, discordSvc, cfg)
+	if err != nil {
+		logger.Error("build services error", "error", err)
+		os.Exit(1)
+	}
 
 	rateLimiter := middleware.NewRateLimitInterceptor()
 	interceptors := connect.WithInterceptors(validate.NewInterceptor(), rateLimiter, logger.NewLoggingInterceptor(logger.Logger))
@@ -139,7 +147,13 @@ func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *ser
 	return session, discordSvc
 }
 
-func buildServices(database *db.DB, discord *service.DiscordService) *appServices {
+func buildServices(database *db.DB, discord *service.DiscordService, cfg *config.Config) (*appServices, error) {
+	integrationKey, err := base64.StdEncoding.DecodeString(cfg.IntegrationEncryptionKey)
+	if err != nil || len(integrationKey) != 32 {
+		slog.Error("INTEGRATION_ENCRYPTION_KEY is missing or invalid — Google Calendar token encryption will fail at runtime")
+		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
+
+	}
 	sessionSvc := &service.SessionService{DB: database, Discord: discord, Log: logger.Logger}
 	return &appServices{
 		Discord:             discord,
@@ -147,13 +161,23 @@ func buildServices(database *db.DB, discord *service.DiscordService) *appService
 		SessionSeries:       &service.SessionSeriesService{DB: database, Log: logger.Logger, Session: sessionSvc},
 		Campaign:            &service.CampaignService{DB: database, Log: logger.Logger},
 		CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger, Discord: discord},
-		Member:              &service.MemberService{DB: database, Log: logger.Logger},
-		Npc:                 &service.NpcService{DB: database, Log: logger.Logger},
-		Quest:               &service.QuestService{DB: database, Log: logger.Logger},
-		Location:            &service.LocationService{DB: database, Log: logger.Logger},
-		User:                &service.UserService{DB: database, Log: logger.Logger},
-		Scheduler:           &service.SeriesScheduler{DB: database, Session: sessionSvc, Log: logger.Logger},
-	}
+		GoogleCalendar: &service.GoogleCalendarService{
+			DB:            database,
+			EncryptionKey: integrationKey,
+			Log:           logger.Logger,
+			Config: service.GoogleCalendarConfig{
+				ClientID:     cfg.GoogleClientID,
+				ClientSecret: cfg.GoogleClientSecret,
+				RedirectURI:  cfg.WebURL + "/settings/google-calendar/callback",
+			},
+		},
+		Member:    &service.MemberService{DB: database, Log: logger.Logger},
+		Npc:       &service.NpcService{DB: database, Log: logger.Logger},
+		Quest:     &service.QuestService{DB: database, Log: logger.Logger},
+		Location:  &service.LocationService{DB: database, Log: logger.Logger},
+		User:      &service.UserService{DB: database, Log: logger.Logger},
+		Scheduler: &service.SeriesScheduler{DB: database, Session: sessionSvc, Log: logger.Logger},
+	}, nil
 }
 
 func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connect.Option) {
@@ -175,6 +199,10 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(
 		&rpc.CampaignIntegrationServer{CampaignIntegration: svcs.CampaignIntegration, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
+
+	userIntegrationPath, userIntegrationHandler := plannerv1connect.NewUserIntegrationServiceHandler(
+		&rpc.UserIntegrationServer{GoogleCalendar: svcs.GoogleCalendar, Log: logger.Logger}, interceptors)
+	mux.Handle(userIntegrationPath, userIntegrationHandler)
 
 	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(
 		&rpc.MemberServer{Member: svcs.Member, Log: logger.Logger}, interceptors)

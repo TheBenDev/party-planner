@@ -61,6 +61,7 @@ const createSessionSeries = dmProcedure
 			const res = await api.sessionSeries.createSessionSeries({
 				campaignId: input.campaignId,
 				description: input.description,
+				durationMinutes: input.durationMinutes,
 				rrule: input.rrule,
 				seriesEndDate: input.seriesEndDate
 					? timestampFromDate(input.seriesEndDate)

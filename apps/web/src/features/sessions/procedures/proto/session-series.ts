@@ -43,11 +43,11 @@ export function protoToSessionSeries(proto: SessionSeriesProto): SessionSeries {
 			message: "SessionSeries missing seriesStartDate",
 		});
 	}
-
 	return SessionSeriesSchema.parse({
 		campaignId: proto.campaignId,
 		createdAt: timestampDate(proto.createdAt),
 		description: proto.description,
+		durationMinutes: proto.durationMinutes,
 		id: proto.id,
 		rrule: proto.rrule,
 		seriesEndDate: proto.seriesEndDate

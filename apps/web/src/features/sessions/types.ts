@@ -9,6 +9,7 @@ export const SessionsSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().nullable().optional(),
 	discordEventId: z.string().nullable().optional(),
+	durationMinutes: z.number().int().min(15).optional(),
 	originalStartsAt: z.date().nullable().optional(),
 	pollId: z.string().nullable().optional(),
 	recap: z.string().nullable().optional(),
@@ -40,6 +41,7 @@ export const AnnounceSessionResponseSchema = z.object({});
 export const CreateSessionRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
+	durationMinutes: z.number().int().min(15).default(180),
 	originalStartsAt: z.date().optional(),
 	seriesId: z.uuid().optional(),
 	startsAt: z.date().optional(),
@@ -100,6 +102,7 @@ export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
 export const SessionSeriesSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
+	durationMinutes: z.number().int().min(15).default(180),
 	rrule: z.string(),
 	seriesEndDate: z.coerce.date().optional(),
 	seriesStartDate: z.coerce.date(),
@@ -111,6 +114,7 @@ export const SessionSeriesSchema = BaseEntitySchema.extend({
 export const CreateSessionSeriesRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
+	durationMinutes: z.number().int().min(15).default(180),
 	rrule: z.string(),
 	seriesEndDate: z.date().optional(),
 	seriesStartDate: z.date(),
@@ -184,3 +188,49 @@ export const SessionEditSchema = z.object({
 });
 
 export type SessionEditForm = z.infer<typeof SessionEditSchema>;
+
+// --- create session dialog ------------------------------------------------------------
+
+export type CreateOneOffInput = {
+	title: string;
+	description?: string;
+	status: Status;
+	startsAt?: Date;
+	durationMinutes: number;
+};
+
+export type CreateSeriesInput = {
+	title: string;
+	description?: string;
+	durationMinutes: number;
+	rrule: string;
+	startTime: string;
+	timezone: string;
+	seriesStartDate: Date;
+	seriesEndDate?: Date;
+};
+
+export const oneOffSchema = z.object({
+	description: z.string().optional(),
+	durationMinutes: z
+		.number({ error: "Duration must be a number" })
+		.int("Duration must be a whole number")
+		.min(15, "Duration must be at least 15 minutes"),
+	startsAt: z.string().optional(),
+	title: z.string().min(1, "Title is required"),
+});
+
+export const seriesSchema = z.object({
+	description: z.string().optional(),
+	durationMinutes: z
+		.number({ error: "Duration must be a number" })
+		.min(15, "Duration must be at least 15 minutes"),
+	rrule: z.string().min(1, "Recurrence pattern is required"),
+	seriesEndDate: z.string().optional(),
+	seriesStartDate: z.string().min(1, "First session date is required"),
+	startTime: z.string().min(1, "Start time is required"),
+	title: z.string().min(1, "Title is required"),
+});
+
+export type OneOffFormValues = z.infer<typeof oneOffSchema>;
+export type SeriesFormValues = z.infer<typeof seriesSchema>;

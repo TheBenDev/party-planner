@@ -1,6 +1,6 @@
 import { campaignRouter } from "@/features/campaigns/procedures/campaign";
 import { campaignIntegrationRouter } from "@/features/integrations/procedures/campaign-integration";
-
+import { userIntegrationRouter } from "@/features/integrations/procedures/user-integration";
 import { locationRouter } from "@/features/locations/procedures/location";
 import { nonPlayerCharacterRouter } from "@/features/npcs/procedures/non-player-character";
 import { memberRouter } from "@/features/players/procedures/member";
@@ -23,6 +23,7 @@ const appRouter = {
 	session: sessionRouter,
 	sessionSeries: sessionSeriesRouter,
 	user: userRouter,
+	userIntegration: userIntegrationRouter,
 };
 
 export type AppRouter = typeof appRouter;

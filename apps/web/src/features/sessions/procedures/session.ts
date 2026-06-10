@@ -80,6 +80,7 @@ const createSession = dmProcedure
 			const res = await api.session.createSession({
 				campaignId: input.campaignId,
 				description: input.description,
+				durationMinutes: input.durationMinutes,
 				originalStartsAt,
 				seriesId: input.seriesId ?? undefined,
 				startsAt,

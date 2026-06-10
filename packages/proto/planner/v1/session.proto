@@ -34,6 +34,7 @@ message Session {
   optional google.protobuf.Timestamp original_starts_at = 12;
   optional string discord_event_id = 13;
   optional string recap = 14;
+  int32 duration_minutes = 15;
 }
 
 // -----------------------------------------------------------------------------
@@ -55,6 +56,7 @@ message CreateSessionRequest {
   string title = 5;
   optional string series_id = 6;
   optional google.protobuf.Timestamp original_starts_at = 7;
+  optional int32 duration_minutes = 8;
 }
 
 message PollAnswer {

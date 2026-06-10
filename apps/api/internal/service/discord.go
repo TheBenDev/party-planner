@@ -18,6 +18,14 @@ import (
 
 var ErrDiscordEventNotFound = errors.New("discord scheduled event not found")
 
+func roundDownTo15(minutes int32) time.Duration {
+	floored := (minutes / 15) * 15
+	if floored < 15 {
+		floored = 15
+	}
+	return time.Duration(floored) * time.Minute
+}
+
 type DiscordService struct {
 	Session *discordgo.Session
 	Log     *slog.Logger
@@ -92,7 +100,7 @@ func (s *DiscordService) CreateScheduledEvent(
 		return "", errors.New("valid start time is required to create discord event")
 	}
 
-	endTime := session.StartsAt.Time.Add(2 * time.Hour)
+	endTime := session.StartsAt.Time.Add(roundDownTo15(session.DurationMinutes))
 	event, err := s.Session.GuildScheduledEventCreate(guildID, &discordgo.GuildScheduledEventParams{
 		Name: session.Title,
 		Description: func() string {
@@ -176,7 +184,7 @@ func (s *DiscordService) UpdateScheduledEvent(
 		return errors.New("valid start time is required to update discord event")
 	}
 
-	endTime := session.StartsAt.Time.Add(2 * time.Hour)
+	endTime := session.StartsAt.Time.Add(roundDownTo15(session.DurationMinutes))
 	_, err := s.Session.GuildScheduledEventEdit(guildID, eventID, &discordgo.GuildScheduledEventParams{
 		Name: session.Title,
 		Description: func() string {

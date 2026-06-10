@@ -10,20 +10,24 @@ import (
 )
 
 type Config struct {
-	APIKey              string
-	AppURL              string
-	CORSAllowedOrigins  []string
-	DatabaseUrl         string
-	DiscordClientID     string
-	DiscordClientSecret string
-	DiscordRedirectURI  string
-	DiscordToken        string
-	Environment         string
-	InternalAPIKey      string
-	ClerkSecretKey      string
-	ClerkWebhookSecret  string
-	APIPort             string
-	WebhookPort         string
+	APIKey                   string
+	AppURL                   string
+	WebURL                   string
+	CORSAllowedOrigins       []string
+	DatabaseUrl              string
+	DiscordClientID          string
+	DiscordClientSecret      string
+	DiscordRedirectURI       string
+	DiscordToken             string
+	Environment              string
+	InternalAPIKey           string
+	ClerkSecretKey           string
+	ClerkWebhookSecret       string
+	APIPort                  string
+	WebhookPort              string
+	GoogleClientID           string
+	GoogleClientSecret       string
+	IntegrationEncryptionKey string
 }
 
 func Load() (*Config, error) {
@@ -45,20 +49,24 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		APIKey:              os.Getenv("API_KEY"),
-		AppURL:              os.Getenv("APP_URL"),
-		CORSAllowedOrigins:  origins,
-		DatabaseUrl:         os.Getenv("DATABASE_URL"),
-		DiscordClientID:     os.Getenv("DISCORD_CLIENT_ID"),
-		DiscordClientSecret: os.Getenv("DISCORD_CLIENT_SECRET"),
-		DiscordRedirectURI:  os.Getenv("DISCORD_REDIRECT_URI"),
-		DiscordToken:        os.Getenv("DISCORD_TOKEN"),
-		Environment:         os.Getenv("ENVIRONMENT"),
-		InternalAPIKey:     os.Getenv("INTERNAL_API_KEY"),
-		ClerkSecretKey:     os.Getenv("CLERK_SECRET_KEY"),
-		ClerkWebhookSecret: os.Getenv("CLERK_WEBHOOK_SECRET"),
-		APIPort:            os.Getenv("API_PORT"),
-		WebhookPort:        os.Getenv("WEBHOOK_PORT"),
+		APIKey:                   os.Getenv("API_KEY"),
+		AppURL:                   os.Getenv("APP_URL"),
+		WebURL:                   os.Getenv("WEB_URL"),
+		CORSAllowedOrigins:       origins,
+		DatabaseUrl:              os.Getenv("DATABASE_URL"),
+		DiscordClientID:          os.Getenv("DISCORD_CLIENT_ID"),
+		DiscordClientSecret:      os.Getenv("DISCORD_CLIENT_SECRET"),
+		DiscordRedirectURI:       os.Getenv("DISCORD_REDIRECT_URI"),
+		DiscordToken:             os.Getenv("DISCORD_TOKEN"),
+		Environment:              os.Getenv("ENVIRONMENT"),
+		InternalAPIKey:           os.Getenv("INTERNAL_API_KEY"),
+		ClerkSecretKey:           os.Getenv("CLERK_SECRET_KEY"),
+		ClerkWebhookSecret:       os.Getenv("CLERK_WEBHOOK_SECRET"),
+		APIPort:                  os.Getenv("API_PORT"),
+		WebhookPort:              os.Getenv("WEBHOOK_PORT"),
+		GoogleClientID:           os.Getenv("GOOGLE_CLIENT_ID"),
+		GoogleClientSecret:       os.Getenv("GOOGLE_CLIENT_SECRET"),
+		IntegrationEncryptionKey: os.Getenv("INTEGRATION_ENCRYPTION_KEY"),
 	}
 
 	if cfg.APIKey == "" {
@@ -96,6 +104,21 @@ func Load() (*Config, error) {
 	}
 	if cfg.WebhookPort == "" {
 		cfg.WebhookPort = "8001"
+	}
+	if cfg.WebURL == "" {
+		return nil, fmt.Errorf("WEB_URL is required")
+	}
+	if cfg.GoogleClientID == "" {
+		return nil, fmt.Errorf("GOOGLE_CLIENT_ID is required")
+	}
+	if cfg.GoogleClientSecret == "" {
+		return nil, fmt.Errorf("GOOGLE_CLIENT_SECRET is required")
+	}
+	if cfg.GoogleClientSecret == "" {
+		return nil, fmt.Errorf("GOOGLE_CLIENT_SECRET is required")
+	}
+	if cfg.IntegrationEncryptionKey == "" {
+		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is required")
 	}
 
 	return cfg, nil

@@ -127,10 +127,10 @@ const ALL_INTEGRATIONS = [
 	},
 	{
 		description:
-			"Sync scheduled sessions to player calendars and surface availability conflicts automatically.",
-		href: "/campaign/integrations/google-calendar",
+			"Connect your personal Google Calendar to sync sessions and check availability.",
+		href: "/settings",
 		icon: <CalendarIcon />,
-		meta: "Calendar sync",
+		meta: "Personal · Connected Accounts",
 		metaIcon: null,
 		name: "Google Calendar",
 		source: null,

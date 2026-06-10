@@ -65,6 +65,11 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series_id and original_starts_at must be provided together"))
 	}
 
+	durationMinutes := int32(180)
+	if req.Msg.DurationMinutes != nil {
+		durationMinutes = *req.Msg.DurationMinutes
+	}
+
 	session, err := s.Session.Create(ctx, &model.CreateSessionRequest{
 		CampaignID:       req.Msg.CampaignId,
 		Title:            req.Msg.Title,
@@ -73,6 +78,7 @@ func (s *SessionServer) CreateSession(ctx context.Context, req *connect.Request[
 		OriginalStartsAt: sqlNullableTime(req.Msg.OriginalStartsAt),
 		Status:           sessionStatus,
 		StartsAt:         sqlNullableTime(req.Msg.StartsAt),
+		DurationMinutes:  durationMinutes,
 	})
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to create session")
@@ -263,12 +269,13 @@ func sessionToProto(session *model.Session) *v1.Session {
 		return nil
 	}
 	proto := &v1.Session{
-		Id:         session.ID,
-		CampaignId: session.CampaignID,
-		Status:     sessionStatusToProto(session.Status),
-		Title:      session.Title,
-		CreatedAt:  timestamppb.New(session.CreatedAt),
-		UpdatedAt:  timestamppb.New(session.UpdatedAt),
+		Id:              session.ID,
+		CampaignId:      session.CampaignID,
+		Status:          sessionStatusToProto(session.Status),
+		Title:           session.Title,
+		CreatedAt:       timestamppb.New(session.CreatedAt),
+		UpdatedAt:       timestamppb.New(session.UpdatedAt),
+		DurationMinutes: session.DurationMinutes,
 	}
 	if session.Description.Valid {
 		proto.Description = &session.Description.String

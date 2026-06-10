@@ -14,6 +14,12 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+const (
+	defaultDurationMinutes = int32(180)
+	minDurationMinutes     = int32(15)
+	maxDurationMinutes     = int32(720)
+)
+
 type SessionSeriesServer struct {
 	plannerv1connect.UnimplementedSessionSeriesServiceHandler
 	SessionSeries *service.SessionSeriesService
@@ -52,6 +58,14 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid timezone"))
 	}
 
+	durationMinutes := defaultDurationMinutes
+	if req.Msg.DurationMinutes != nil {
+		durationMinutes = *req.Msg.DurationMinutes
+		if durationMinutes < minDurationMinutes || durationMinutes > maxDurationMinutes {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("duration minutes must be between 15 and 720"))
+		}
+	}
+
 	series, err := s.SessionSeries.Create(ctx, &model.CreateSessionSeriesRequest{
 		CampaignID:      req.Msg.CampaignId,
 		Title:           req.Msg.Title,
@@ -61,6 +75,7 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 		SeriesStartDate: req.Msg.SeriesStartDate.AsTime(),
 		SeriesEndDate:   sqlNullableTime(req.Msg.SeriesEndDate),
 		Timezone:        req.Msg.Timezone,
+		DurationMinutes: durationMinutes,
 	})
 	if err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to create session series")
@@ -228,6 +243,7 @@ func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 		CreatedAt:       timestamppb.New(s.CreatedAt),
 		UpdatedAt:       timestamppb.New(s.UpdatedAt),
 		Timezone:        s.Timezone,
+		DurationMinutes: s.DurationMinutes,
 	}
 	if s.Description.Valid {
 		proto.Description = &s.Description.String

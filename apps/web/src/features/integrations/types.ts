@@ -91,3 +91,76 @@ export type DiscordIntegrationSettings = z.infer<
 >;
 
 export type CampaignIntegration = z.infer<typeof CampaignIntegrationSchema>;
+
+export const ConnectGoogleCalendarRequestSchema = z.object({
+	code: z.string(),
+});
+export const ConnectGoogleCalendarResponseSchema = z.object({
+	connected: z.boolean(),
+});
+export const DisconnectGoogleCalendarRequestSchema = z.object({});
+export const DisconnectGoogleCalendarResponseSchema = z.object({});
+export const GetGoogleCalendarStatusRequestSchema = z.object({});
+export const GetGoogleCalendarStatusResponseSchema = z.object({
+	connected: z.boolean(),
+});
+export const CalendarEventWindowSchema = z.object({
+	end: z.iso.datetime(),
+	start: z.iso.datetime(),
+});
+export const CalendarConflictSchema = z.object({
+	calendarEventWindows: z.array(CalendarEventWindowSchema),
+	userId: z.string(),
+});
+export const CheckCalendarConflictsRequestSchema = z.object({
+	campaignId: z.uuid(),
+	durationMinutes: z.number().int().positive(),
+	startsAt: z.iso.datetime(),
+});
+export const CheckCalendarConflictsResponseSchema = z.object({
+	conflicts: z.array(CalendarConflictSchema),
+});
+
+export type ConnectGoogleCalendarRequest = z.infer<
+	typeof ConnectGoogleCalendarRequestSchema
+>;
+export type ConnectGoogleCalendarResponse = z.infer<
+	typeof ConnectGoogleCalendarResponseSchema
+>;
+export type DisconnectGoogleCalendarRequest = z.infer<
+	typeof DisconnectGoogleCalendarRequestSchema
+>;
+export type DisconnectGoogleCalendarResponse = z.infer<
+	typeof DisconnectGoogleCalendarResponseSchema
+>;
+export type GetGoogleCalendarStatusRequest = z.infer<
+	typeof GetGoogleCalendarStatusRequestSchema
+>;
+export type GetGoogleCalendarStatusResponse = z.infer<
+	typeof GetGoogleCalendarStatusResponseSchema
+>;
+export type CalendarEventWindow = z.infer<typeof CalendarEventWindowSchema>;
+export type CalendarConflict = z.infer<typeof CalendarConflictSchema>;
+export type CheckCalendarConflictsRequest = z.infer<
+	typeof CheckCalendarConflictsRequestSchema
+>;
+export type CheckCalendarConflictsResponse = z.infer<
+	typeof CheckCalendarConflictsResponseSchema
+>;
+
+export const SyncSessionToCalendarRequestSchema = z.object({
+	description: z.string().optional(),
+	durationMinutes: z.number().int().positive(),
+	startsAt: z.iso.datetime(),
+	title: z.string(),
+});
+export const SyncSessionToCalendarResponseSchema = z.object({
+	synced: z.boolean(),
+});
+
+export type SyncSessionToCalendarRequest = z.infer<
+	typeof SyncSessionToCalendarRequestSchema
+>;
+export type SyncSessionToCalendarResponse = z.infer<
+	typeof SyncSessionToCalendarResponseSchema
+>;
