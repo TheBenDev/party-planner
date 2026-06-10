@@ -333,6 +333,21 @@ func (s *DiscordService) SendDiscordMessage(ctx context.Context, channelId, mess
 	return discordMessage, nil
 }
 
+func (s *DiscordService) NotifyUpcomingSession(ctx context.Context, channelID string, session *model.Session) {
+	if !session.StartsAt.Valid {
+		return
+	}
+	unix := session.StartsAt.Time.Unix()
+	msg := fmt.Sprintf("⏰ Reminder: **%s** is coming up <t:%d:R> (<t:%d:F>). Don't forget!", session.Title, unix, unix)
+	if _, err := s.Session.ChannelMessageSend(channelID, msg, discordgo.WithContext(ctx)); err != nil {
+		s.Log.WarnContext(ctx, "failed to send session reminder",
+			"channel_id", channelID,
+			"session_id", session.ID,
+			"error", err,
+		)
+	}
+}
+
 func formatPollTimestamps(title string, options []time.Time) string {
 	var sb strings.Builder
 

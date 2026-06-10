@@ -175,6 +175,53 @@ func (s *SessionService) GetPoll(ctx context.Context, sessionId, campaignId stri
 	return poll, nil
 }
 
+func (s *SessionService) NotifyUpcomingSessions(ctx context.Context) {
+	integrations, err := s.DB.ListDiscordIntegrationsWithReminders()
+	if err != nil {
+		s.Log.ErrorContext(ctx, "failed to list discord integrations for reminders", "error", err)
+		return
+	}
+
+	var totalReminders, campaignsNotified int
+	for _, integration := range integrations {
+		var metadata struct {
+			ChannelID string `json:"channelId"`
+		}
+		if err := json.Unmarshal(integration.Metadata, &metadata); err != nil || metadata.ChannelID == "" {
+			s.Log.WarnContext(ctx, "skipping reminder: missing channelId in integration metadata",
+				"campaign_id", integration.CampaignID,
+			)
+			continue
+		}
+
+		sessions, err := s.DB.ListSessionsInReminderWindow(integration.CampaignID)
+		if err != nil {
+			s.Log.ErrorContext(ctx, "failed to list sessions in reminder window",
+				"campaign_id", integration.CampaignID,
+				"error", err,
+			)
+			continue
+		}
+
+		for _, session := range sessions {
+			s.Discord.NotifyUpcomingSession(ctx, metadata.ChannelID, session)
+			s.Log.InfoContext(ctx, "session reminder dispatched",
+				"campaign_id", integration.CampaignID,
+				"session_id", session.ID,
+				"session_title", session.Title,
+			)
+			totalReminders++
+		}
+		if len(sessions) > 0 {
+			campaignsNotified++
+		}
+	}
+	s.Log.InfoContext(ctx, "session reminder run complete",
+		"reminders_sent", totalReminders,
+		"campaigns_notified", campaignsNotified,
+	)
+}
+
 func (s *SessionService) ListOneOffByCampaign(campaignId string) ([]*model.Session, error) {
 	sessions, err := s.DB.ListOneOffSessionsByCampaign(campaignId)
 	if err != nil {

@@ -207,10 +207,17 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 
 func startCronJobs(svcs *appServices) *cron.Cron {
 	c := cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
+
 	if _, err := c.AddFunc("@hourly", func() {
 		svcs.Scheduler.CheckAndScheduleSessions(context.Background())
 	}); err != nil {
 		logger.Error("failed to register series scheduler cron job", "error", err)
+		os.Exit(1)
+	}
+	if _, err := c.AddFunc("@daily", func() {
+		svcs.Scheduler.NotifyNextSession(context.Background())
+	}); err != nil {
+		logger.Error("failed to register notify next session cron job", "error", err)
 		os.Exit(1)
 	}
 	c.Start()
