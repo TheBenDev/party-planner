@@ -100,6 +100,31 @@ func (db *DB) RemoveCampaignIntegration(campaignId string, source model.Integrat
 	return nil
 }
 
+func (db *DB) ListDiscordIntegrationsWithReminders() ([]*model.CampaignIntegration, error) {
+	rows, err := db.conn.Query(`
+		SELECT ` + campaignIntegrationColumns + ` FROM campaign_integrations
+		WHERE source = 'DISCORD'
+		  AND (settings->>'enableSessionReminders')::boolean = true`)
+	if err != nil {
+		return nil, fmt.Errorf("list discord integrations with reminders: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var integrations []*model.CampaignIntegration
+	for rows.Next() {
+		integration, err := scanCampaignIntegration(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan campaign integration: %w", err)
+		}
+		integrations = append(integrations, integration)
+	}
+	return integrations, rows.Err()
+}
+
 func (db *DB) UpdateCampaignIntegrationChannelID(campaignId, channelId string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(source) {
 		return nil, fmt.Errorf("invalid campaign integration source: %q", source)

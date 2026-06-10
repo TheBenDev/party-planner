@@ -91,6 +91,35 @@ func (db *DB) ListSeriesSessionsByCampaign(campaignId string) ([]*model.Session,
 	return sessions, rows.Err()
 }
 
+func (db *DB) ListSessionsInReminderWindow(campaignID string) ([]*model.Session, error) {
+	rows, err := db.conn.Query(`
+		SELECT `+sessionColumns+` FROM session
+		WHERE campaign_id = $1
+		  AND status = 'CONFIRMED'
+		  AND starts_at > NOW() + INTERVAL '24 hours'
+		  AND starts_at <= NOW() + INTERVAL '48 hours'`,
+		campaignID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list sessions in reminder window: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var sessions []*model.Session
+	for rows.Next() {
+		session, err := scanSession(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan session: %w", err)
+		}
+		sessions = append(sessions, session)
+	}
+	return sessions, rows.Err()
+}
+
 func (db *DB) RemoveSession(id, campaignID string) error {
 	_, err := db.conn.Exec(`DELETE FROM session WHERE id = $1 AND campaign_id = $2`, id, campaignID)
 	if err != nil {

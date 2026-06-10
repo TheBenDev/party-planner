@@ -76,6 +76,10 @@ func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
 	}
 }
 
+func (s *SeriesScheduler) NotifyNextSession(ctx context.Context) {
+	s.Session.NotifyUpcomingSessions(ctx)
+}
+
 func computeNextValidOccurrence(series *model.SessionSeries, exceptions []time.Time) *time.Time {
 	h, m, sec, ok := parseStartTime(series.StartTime)
 	if !ok {
