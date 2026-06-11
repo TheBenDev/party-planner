@@ -9,13 +9,13 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-const sessionSeriesColumns = `id, campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, created_at, updated_at, timezone`
+const sessionSeriesColumns = `id, campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, created_at, updated_at, timezone, duration_minutes`
 
 func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSeries, error) {
 	var s model.SessionSeries
 	err := row.Scan(
 		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.RRule, &s.StartTime,
-		&s.SeriesStartDate, &s.SeriesEndDate, &s.CreatedAt, &s.UpdatedAt, &s.Timezone,
+		&s.SeriesStartDate, &s.SeriesEndDate, &s.CreatedAt, &s.UpdatedAt, &s.Timezone, &s.DurationMinutes,
 	)
 	if err != nil {
 		return nil, err
@@ -25,11 +25,11 @@ func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSerie
 
 func (db *DB) CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session_series (campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, timezone)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO session_series (campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, timezone, duration_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		RETURNING `+sessionSeriesColumns,
 		req.CampaignID, req.Title, req.Description, req.RRule, req.StartTime,
-		req.SeriesStartDate, req.SeriesEndDate, req.Timezone,
+		req.SeriesStartDate, req.SeriesEndDate, req.Timezone, req.DurationMinutes,
 	)
 	return scanSessionSeries(row)
 }

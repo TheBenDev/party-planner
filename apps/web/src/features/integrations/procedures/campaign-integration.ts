@@ -39,26 +39,25 @@ const createCampaignIntegration = dmProcedure
 						message: "missing code for Discord integration",
 					});
 				}
-				const result = await context.api.campaignIntegration
-					.createCampaignIntegration({
+				let result: Awaited<ReturnType<typeof context.api.campaignIntegration.createCampaignIntegration>>;
+				try {
+					result = await context.api.campaignIntegration.createCampaignIntegration({
 						campaignId,
 						integration: {
 							case: "discord",
-							value: {
-								code,
-							},
+							value: { code },
 						},
 						source: integrationSourceToProto(IntegrationSource.DISCORD),
-					})
-					.catch((err) => {
-						handleError(
-							err,
-							"failed to create campaign integration",
-							{ campaignId },
-							context.logger,
-						);
 					});
-				if (!result?.integration) {
+				} catch (err) {
+					handleError(
+						err,
+						"failed to create campaign integration",
+						{ campaignId },
+						context.logger,
+					);
+				}
+				if (!result.integration) {
 					throw new ORPCError("INTERNAL_SERVER_ERROR", {
 						message: "failed to create campaign integration",
 					});
@@ -183,23 +182,24 @@ const updateCampaignIntegration = dmProcedure
 				if (campaignId !== context.campaignId) {
 					throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
 				}
-				const result = await context.api.campaignIntegration
-					.updateCampaignIntegration({
+				let result: Awaited<ReturnType<typeof context.api.campaignIntegration.updateCampaignIntegration>>;
+				try {
+					result = await context.api.campaignIntegration.updateCampaignIntegration({
 						campaignId,
 						integration: {
 							case: "discord",
 							value: { channelId },
 						},
-					})
-					.catch((err) => {
-						handleError(
-							err,
-							"failed to update campaign integration",
-							{ campaignId },
-							context.logger,
-						);
 					});
-				if (!result?.integration) {
+				} catch (err) {
+					handleError(
+						err,
+						"failed to update campaign integration",
+						{ campaignId },
+						context.logger,
+					);
+				}
+				if (!result.integration) {
 					throw new ORPCError("INTERNAL_SERVER_ERROR", {
 						message: "failed to update campaign integration",
 					});

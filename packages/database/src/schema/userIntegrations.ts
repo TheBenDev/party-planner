@@ -2,71 +2,42 @@ import { relations } from "drizzle-orm";
 import {
 	foreignKey,
 	index,
-	pgEnum,
 	pgTable,
+	text,
 	timestamp,
 	uniqueIndex,
 	uuid,
-	varchar,
 } from "drizzle-orm/pg-core";
-import { enumToPgEnum } from "../lib/enums";
-import { campaignUsersTable } from "./campaignUsers";
+import { integrationSourceEnum } from "./campaignIntegrations";
 import { usersTable } from "./users";
-
-enum IntegrationSourceEnum {
-	DISCORD = "DISCORD",
-}
-const integrationSourceEnum = pgEnum(
-	"integration_source",
-	enumToPgEnum(IntegrationSourceEnum),
-);
 
 export const userIntegrationsTable = pgTable(
 	"user_integrations",
 	{
-		campaignId: uuid("campaign_id").notNull(),
-		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-		externalId: varchar("external_id").notNull().unique(),
 		id: uuid("id").primaryKey().defaultRandom(),
+		userId: uuid("user_id").notNull(),
 		source: integrationSourceEnum("source").notNull(),
+		metadata: text("metadata"),
+		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		updatedAt: timestamp("updated_at", { mode: "date" })
 			.defaultNow()
 			.notNull()
 			.$onUpdate(() => new Date()),
-		userId: uuid("user_id").notNull(),
 	},
 	(t) => [
 		foreignKey({
 			columns: [t.userId],
 			foreignColumns: [usersTable.id],
-			name: "fk_integrations_user_id",
-		}).onDelete("cascade"),
-		foreignKey({
-			columns: [t.userId, t.campaignId],
-			foreignColumns: [
-				campaignUsersTable.userId,
-				campaignUsersTable.campaignId,
-			],
-			name: "fk_integrations_org_user",
+			name: "fk_user_integrations_user_id",
 		}).onDelete("cascade"),
 		index("idx_user_integrations_user_id").on(t.userId),
-		index("idx_user_integrations_campaign_id").on(t.campaignId),
-		index("idx_user_integrations_external_id").on(t.externalId),
-		uniqueIndex("unique_user_campaign_source").on(
-			t.campaignId,
-			t.source,
-			t.userId,
-		),
+		uniqueIndex("unique_user_source").on(t.userId, t.source),
 	],
 );
 
 export const userIntegrationsRelations = relations(
 	userIntegrationsTable,
 	({ one }) => ({
-		campaignUser: one(campaignUsersTable, {
-			fields: [userIntegrationsTable.userId, userIntegrationsTable.campaignId],
-			references: [campaignUsersTable.userId, campaignUsersTable.campaignId],
-		}),
 		user: one(usersTable, {
 			fields: [userIntegrationsTable.userId],
 			references: [usersTable.id],

@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1";
+
+message ConnectGoogleCalendarRequest {
+  string user_id = 1;
+  string code = 2;
+}
+
+message ConnectGoogleCalendarResponse {}
+
+message DisconnectGoogleCalendarRequest {
+  string user_id = 1;
+}
+
+message DisconnectGoogleCalendarResponse {}
+
+message GetGoogleCalendarStatusRequest {
+  string user_id = 1;
+}
+
+message GetGoogleCalendarStatusResponse {
+  bool connected = 1;
+}
+
+message CalendarEventWindow {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+}
+
+message CalendarConflict {
+  string user_id = 1;
+  repeated CalendarEventWindow calendar_event_windows = 2;
+}
+
+message CheckCalendarConflictsRequest {
+  string campaign_id = 1;
+  google.protobuf.Timestamp starts_at = 2;
+  int32 duration_minutes = 3;
+}
+
+message CheckCalendarConflictsResponse {
+  repeated CalendarConflict conflicts = 1;
+}
+
+message SyncSessionToCalendarRequest {
+  string user_id = 1;
+  google.protobuf.Timestamp starts_at = 2;
+  int32 duration_minutes = 3;
+  string title = 4;
+  string description = 5;
+}
+
+message SyncSessionToCalendarResponse {
+  bool synced = 1;
+}
+
+service UserIntegrationService {
+  rpc ConnectGoogleCalendar(ConnectGoogleCalendarRequest) returns (ConnectGoogleCalendarResponse);
+  rpc DisconnectGoogleCalendar(DisconnectGoogleCalendarRequest) returns (DisconnectGoogleCalendarResponse);
+  rpc GetGoogleCalendarStatus(GetGoogleCalendarStatusRequest) returns (GetGoogleCalendarStatusResponse);
+  rpc CheckCalendarConflicts(CheckCalendarConflictsRequest) returns (CheckCalendarConflictsResponse);
+  rpc SyncSessionToCalendar(SyncSessionToCalendarRequest) returns (SyncSessionToCalendarResponse);
+}

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import type {
 	CreateOneOffInput,
 	CreateSeriesInput,
-} from "@/features/sessions/components/CreateSessionDialog";
+} from "@/features/sessions/types";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
@@ -57,17 +57,33 @@ export function useSessionsData() {
 			return client.session.createSession({
 				campaignId: campaign.campaign.id,
 				description: input.description,
+				durationMinutes: input.durationMinutes,
 				startsAt: input.startsAt,
 				status: input.status,
 				title: input.title,
 			});
 		},
 		onError: () => toast.error("Failed to create session"),
-		onSuccess: async () => {
+		onSuccess: async (_, vars) => {
 			await queryClient.invalidateQueries({
 				queryKey: queryKeys.sessions.list(campaignId),
 			});
 			toast.success("Session created");
+			if (vars.startsAt) {
+				client.userIntegration
+					.syncSessionToCalendar({
+						description: vars.description,
+						durationMinutes: vars.durationMinutes,
+						startsAt: vars.startsAt.toISOString(),
+						title: vars.title,
+					})
+					.then((res) => {
+						if (res.synced) toast.success("Added to your Google Calendar");
+					})
+					.catch(() => {
+						toast.error("Failed to add session to your google Calendar");
+					});
+			}
 		},
 	});
 

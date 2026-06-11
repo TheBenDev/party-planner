@@ -298,6 +298,7 @@ export function SessionsPage() {
 			</div>
 
 			<CreateSessionDialog
+				campaignId={campaign.campaign.id}
 				isCreatingOneOff={isCreatingSession}
 				isCreatingSeries={isCreatingSeries}
 				mode={createMode}

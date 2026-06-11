@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import {
 	foreignKey,
 	index,
+	integer,
 	pgEnum,
 	pgTable,
 	timestamp,
@@ -24,6 +25,7 @@ export const sessionsTable = pgTable(
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		description: varchar("description"),
 		discordEventId: varchar("discord_event_id"),
+		durationMinutes: integer("duration_minutes").notNull().default(180),
 		id: uuid("id").primaryKey().defaultRandom(),
 		originalStartsAt: timestamp("original_starts_at", { mode: "date" }),
 		pollId: varchar("poll_id"),

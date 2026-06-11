@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
 	foreignKey,
 	index,
+	integer,
 	pgTable,
 	time,
 	timestamp,
@@ -18,6 +19,7 @@ export const sessionSeriesTable = pgTable(
 		campaignId: uuid("campaign_id").notNull(),
 		createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 		description: varchar("description"),
+		durationMinutes: integer("duration_minutes").notNull().default(180),
 		id: uuid("id").primaryKey().defaultRandom(),
 		rrule: varchar("rrule").notNull(),
 		seriesEndDate: timestamp("series_end_date", { mode: "date" }),

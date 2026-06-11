@@ -26,8 +26,9 @@ const (
 type IntegrationSource int32
 
 const (
-	IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED IntegrationSource = 0
-	IntegrationSource_INTEGRATION_SOURCE_DISCORD     IntegrationSource = 1
+	IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED     IntegrationSource = 0
+	IntegrationSource_INTEGRATION_SOURCE_DISCORD         IntegrationSource = 1
+	IntegrationSource_INTEGRATION_SOURCE_GOOGLE_CALENDAR IntegrationSource = 2
 )
 
 // Enum value maps for IntegrationSource.
@@ -35,10 +36,12 @@ var (
 	IntegrationSource_name = map[int32]string{
 		0: "INTEGRATION_SOURCE_UNSPECIFIED",
 		1: "INTEGRATION_SOURCE_DISCORD",
+		2: "INTEGRATION_SOURCE_GOOGLE_CALENDAR",
 	}
 	IntegrationSource_value = map[string]int32{
-		"INTEGRATION_SOURCE_UNSPECIFIED": 0,
-		"INTEGRATION_SOURCE_DISCORD":     1,
+		"INTEGRATION_SOURCE_UNSPECIFIED":     0,
+		"INTEGRATION_SOURCE_DISCORD":         1,
+		"INTEGRATION_SOURCE_GOOGLE_CALENDAR": 2,
 	}
 )
 
@@ -827,10 +830,11 @@ const file_planner_v1_campaign_integration_proto_rawDesc = "" +
 	"\adiscord\x18\x02 \x01(\v2*.planner.v1.UpdateDiscordIntegrationParamsH\x00R\adiscordB\r\n" +
 	"\vintegration\"f\n" +
 	"!UpdateCampaignIntegrationResponse\x12A\n" +
-	"\vintegration\x18\x01 \x01(\v2\x1f.planner.v1.CampaignIntegrationR\vintegration*W\n" +
+	"\vintegration\x18\x01 \x01(\v2\x1f.planner.v1.CampaignIntegrationR\vintegration*\x7f\n" +
 	"\x11IntegrationSource\x12\"\n" +
 	"\x1eINTEGRATION_SOURCE_UNSPECIFIED\x10\x00\x12\x1e\n" +
-	"\x1aINTEGRATION_SOURCE_DISCORD\x10\x012\x91\x05\n" +
+	"\x1aINTEGRATION_SOURCE_DISCORD\x10\x01\x12&\n" +
+	"\"INTEGRATION_SOURCE_GOOGLE_CALENDAR\x10\x022\x91\x05\n" +
 	"\x1aCampaignIntegrationService\x12x\n" +
 	"\x19CreateCampaignIntegration\x12,.planner.v1.CreateCampaignIntegrationRequest\x1a-.planner.v1.CreateCampaignIntegrationResponse\x12o\n" +
 	"\x16GetCampaignIntegration\x12).planner.v1.GetCampaignIntegrationRequest\x1a*.planner.v1.GetCampaignIntegrationResponse\x12\x93\x01\n" +

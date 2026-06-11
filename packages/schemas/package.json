@@ -28,6 +28,11 @@
 			"require": "./dist/email.js",
 			"types": "./dist/email.d.ts"
 		},
+		"./google-calendar": {
+			"import": "./dist/google-calendar.js",
+			"require": "./dist/google-calendar.js",
+			"types": "./dist/google-calendar.d.ts"
+		},
 		"./integration": {
 			"import": "./dist/integration.js",
 			"require": "./dist/integration.js",

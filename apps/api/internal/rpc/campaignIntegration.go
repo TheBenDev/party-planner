@@ -133,6 +133,8 @@ func campaignIntegrationSourceToProto(source model.IntegrationSource) v1.Integra
 	switch source {
 	case model.IntegrationSourceDiscord:
 		return v1.IntegrationSource_INTEGRATION_SOURCE_DISCORD
+	case model.IntegrationSourceGoogleCalendar:
+		return v1.IntegrationSource_INTEGRATION_SOURCE_GOOGLE_CALENDAR
 	default:
 		return v1.IntegrationSource_INTEGRATION_SOURCE_UNSPECIFIED
 	}
@@ -179,6 +181,8 @@ func protoToIntegrationSource(s v1.IntegrationSource) (model.IntegrationSource, 
 	switch s {
 	case v1.IntegrationSource_INTEGRATION_SOURCE_DISCORD:
 		return model.IntegrationSourceDiscord, nil
+	case v1.IntegrationSource_INTEGRATION_SOURCE_GOOGLE_CALENDAR:
+		return model.IntegrationSourceGoogleCalendar, nil
 	default:
 		return "", fmt.Errorf("unknown integration source: %v", s)
 	}

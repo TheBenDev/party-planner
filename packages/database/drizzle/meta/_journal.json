@@ -175,6 +175,13 @@
       "when": 1780961141845,
       "tag": "0024_stiff_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1781123220836,
+      "tag": "0025_user_integrations_session_duration",
+      "breakpoints": true
     }
   ],
   "version": "7"

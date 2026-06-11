@@ -35,6 +35,7 @@ type SessionSeries struct {
 	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Timezone        string                 `protobuf:"bytes,11,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	DurationMinutes int32                  `protobuf:"varint,12,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -146,6 +147,13 @@ func (x *SessionSeries) GetTimezone() string {
 	return ""
 }
 
+func (x *SessionSeries) GetDurationMinutes() int32 {
+	if x != nil {
+		return x.DurationMinutes
+	}
+	return 0
+}
+
 type SessionSeriesWithDetails struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Series        *SessionSeries           `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
@@ -216,6 +224,7 @@ type CreateSessionSeriesRequest struct {
 	SeriesStartDate *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=series_start_date,json=seriesStartDate,proto3" json:"series_start_date,omitempty"`
 	SeriesEndDate   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
 	Timezone        string                 `protobuf:"bytes,8,opt,name=timezone,proto3" json:"timezone,omitempty"`
+	DurationMinutes *int32                 `protobuf:"varint,9,opt,name=duration_minutes,json=durationMinutes,proto3,oneof" json:"duration_minutes,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -304,6 +313,13 @@ func (x *CreateSessionSeriesRequest) GetTimezone() string {
 		return x.Timezone
 	}
 	return ""
+}
+
+func (x *CreateSessionSeriesRequest) GetDurationMinutes() int32 {
+	if x != nil && x.DurationMinutes != nil {
+		return *x.DurationMinutes
+	}
+	return 0
 }
 
 type CreateSessionSeriesResponse struct {
@@ -971,7 +987,7 @@ var File_planner_v1_session_series_proto protoreflect.FileDescriptor
 const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"\x1fplanner/v1/session_series.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18planner/v1/session.proto\"\xf9\x03\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18planner/v1/session.proto\"\xa4\x04\n" +
 	"\rSessionSeries\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -988,7 +1004,8 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1a\n" +
-	"\btimezone\x18\v \x01(\tR\btimezoneB\x0e\n" +
+	"\btimezone\x18\v \x01(\tR\btimezone\x12)\n" +
+	"\x10duration_minutes\x18\f \x01(\x05R\x0fdurationMinutesB\x0e\n" +
 	"\f_descriptionB\x12\n" +
 	"\x10_series_end_date\"\xba\x01\n" +
 	"\x18SessionSeriesWithDetails\x121\n" +
@@ -996,7 +1013,7 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\bsessions\x18\x02 \x03(\v2\x13.planner.v1.SessionR\bsessions\x12:\n" +
 	"\n" +
 	"exceptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\n" +
-	"exceptions\"\x80\x03\n" +
+	"exceptions\"\xc5\x03\n" +
 	"\x1aCreateSessionSeriesRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
@@ -1007,9 +1024,11 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"start_time\x18\x05 \x01(\tR\tstartTime\x12F\n" +
 	"\x11series_start_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x0fseriesStartDate\x12G\n" +
 	"\x0fseries_end_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rseriesEndDate\x88\x01\x01\x12\x1a\n" +
-	"\btimezone\x18\b \x01(\tR\btimezoneB\x0e\n" +
+	"\btimezone\x18\b \x01(\tR\btimezone\x12.\n" +
+	"\x10duration_minutes\x18\t \x01(\x05H\x02R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\x12\n" +
-	"\x10_series_end_date\"P\n" +
+	"\x10_series_end_dateB\x13\n" +
+	"\x11_duration_minutes\"P\n" +
 	"\x1bCreateSessionSeriesResponse\x121\n" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"J\n" +
 	"\x17GetSessionSeriesRequest\x12\x0e\n" +

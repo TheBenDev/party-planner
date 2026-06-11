@@ -90,6 +90,7 @@ type Session struct {
 	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
 	DiscordEventId   *string                `protobuf:"bytes,13,opt,name=discord_event_id,json=discordEventId,proto3,oneof" json:"discord_event_id,omitempty"`
 	Recap            *string                `protobuf:"bytes,14,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
+	DurationMinutes  int32                  `protobuf:"varint,15,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -222,6 +223,13 @@ func (x *Session) GetRecap() string {
 	return ""
 }
 
+func (x *Session) GetDurationMinutes() int32 {
+	if x != nil {
+		return x.DurationMinutes
+	}
+	return 0
+}
+
 type AnnounceSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -319,6 +327,7 @@ type CreateSessionRequest struct {
 	Title            string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
 	SeriesId         *string                `protobuf:"bytes,6,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
 	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
+	DurationMinutes  *int32                 `protobuf:"varint,8,opt,name=duration_minutes,json=durationMinutes,proto3,oneof" json:"duration_minutes,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -400,6 +409,13 @@ func (x *CreateSessionRequest) GetOriginalStartsAt() *timestamppb.Timestamp {
 		return x.OriginalStartsAt
 	}
 	return nil
+}
+
+func (x *CreateSessionRequest) GetDurationMinutes() int32 {
+	if x != nil && x.DurationMinutes != nil {
+		return *x.DurationMinutes
+	}
+	return 0
 }
 
 type PollAnswer struct {
@@ -1163,7 +1179,7 @@ var File_planner_v1_session_proto protoreflect.FileDescriptor
 const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"\x18planner/v1/session.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfa\x05\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa5\x06\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1182,7 +1198,8 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\tseries_id\x18\v \x01(\tH\x04R\bseriesId\x88\x01\x01\x12M\n" +
 	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01\x12-\n" +
 	"\x10discord_event_id\x18\r \x01(\tH\x06R\x0ediscordEventId\x88\x01\x01\x12\x19\n" +
-	"\x05recap\x18\x0e \x01(\tH\aR\x05recap\x88\x01\x01B\x0e\n" +
+	"\x05recap\x18\x0e \x01(\tH\aR\x05recap\x88\x01\x01\x12)\n" +
+	"\x10duration_minutes\x18\x0f \x01(\x05R\x0fdurationMinutesB\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\n" +
@@ -1199,7 +1216,7 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"campaignId\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x02 \x01(\tR\tsessionId\"\x19\n" +
-	"\x17AnnounceSessionResponse\"\x99\x03\n" +
+	"\x17AnnounceSessionResponse\"\xde\x03\n" +
 	"\x14CreateSessionRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12%\n" +
@@ -1208,13 +1225,15 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x14\n" +
 	"\x05title\x18\x05 \x01(\tR\x05title\x12 \n" +
 	"\tseries_id\x18\x06 \x01(\tH\x02R\bseriesId\x88\x01\x01\x12M\n" +
-	"\x12original_starts_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x10originalStartsAt\x88\x01\x01B\x0e\n" +
+	"\x12original_starts_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x10originalStartsAt\x88\x01\x01\x12.\n" +
+	"\x10duration_minutes\x18\b \x01(\x05H\x04R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
 	"_starts_atB\f\n" +
 	"\n" +
 	"_series_idB\x15\n" +
-	"\x13_original_starts_at\"?\n" +
+	"\x13_original_starts_atB\x13\n" +
+	"\x11_duration_minutes\"?\n" +
 	"\n" +
 	"PollAnswer\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1d\n" +

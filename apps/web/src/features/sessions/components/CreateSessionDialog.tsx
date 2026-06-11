@@ -1,5 +1,8 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@planner/enums/session";
-import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useCalendarConflicts } from "@/features/integrations/hooks/useCalendarConflicts";
+import type { CalendarConflict } from "@/features/integrations/types";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -10,25 +13,16 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { cn } from "@/shared/lib/utils";
+import {
+	type CreateOneOffInput,
+	type CreateSeriesInput,
+	type OneOffFormValues,
+	oneOffSchema,
+	type SeriesFormValues,
+	seriesSchema,
+} from "../types";
 import { RRuleBuilder } from "./RRuleBuilder";
 import { localTimeToUtc } from "./session-utils";
-
-export type CreateOneOffInput = {
-	title: string;
-	description?: string;
-	status: Status;
-	startsAt?: Date;
-};
-
-export type CreateSeriesInput = {
-	title: string;
-	description?: string;
-	rrule: string;
-	startTime: string;
-	timezone: string;
-	seriesStartDate: Date;
-	seriesEndDate?: Date;
-};
 
 function toLocalDatetimeString(date: Date): string {
 	const offset = date.getTimezoneOffset();
@@ -43,6 +37,50 @@ function toLocalDateString(date: Date): string {
 	return `${year}-${month}-${day}`;
 }
 
+function ConflictWarning({
+	conflicts,
+	isLoading,
+}: {
+	conflicts: CalendarConflict[];
+	isLoading: boolean;
+}) {
+	if (isLoading) {
+		return (
+			<p className="text-xs text-muted-foreground">
+				Checking calendar conflicts…
+			</p>
+		);
+	}
+	if (conflicts.length === 0) return null;
+	return (
+		<div className="rounded-md border border-amber-200 bg-amber-50 p-2.5 text-xs dark:border-amber-800 dark:bg-amber-950">
+			<p className="font-medium text-amber-800 dark:text-amber-300">
+				{conflicts.length === 1
+					? "1 member has"
+					: `${conflicts.length} members have`}{" "}
+				schedule conflicts
+			</p>
+			<ul className="mt-1 space-y-0.5 text-amber-700 dark:text-amber-400">
+				{conflicts.map((c) =>
+					c.calendarEventWindows.map((slot, i) => (
+						<li key={`${c.userId}-${i}`}>
+							{new Date(slot.start).toLocaleTimeString([], {
+								hour: "2-digit",
+								minute: "2-digit",
+							})}{" "}
+							–{" "}
+							{new Date(slot.end).toLocaleTimeString([], {
+								hour: "2-digit",
+								minute: "2-digit",
+							})}
+						</li>
+					)),
+				)}
+			</ul>
+		</div>
+	);
+}
+
 export function CreateSessionDialog({
 	open,
 	mode,
@@ -52,6 +90,7 @@ export function CreateSessionDialog({
 	onCreateSeries,
 	isCreatingOneOff,
 	isCreatingSeries,
+	campaignId,
 }: {
 	open: boolean;
 	mode: "oneoff" | "series";
@@ -61,73 +100,112 @@ export function CreateSessionDialog({
 	onCreateSeries: (input: CreateSeriesInput) => void;
 	isCreatingOneOff: boolean;
 	isCreatingSeries: boolean;
+	campaignId: string;
 }) {
-	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
-	const [startsAt, setStartsAt] = useState("");
+	const oneOffForm = useForm<OneOffFormValues>({
+		defaultValues: {
+			description: "",
+			durationMinutes: 180,
+			startsAt: "",
+			title: "",
+		},
+		mode: "onBlur",
+		resolver: zodResolver(oneOffSchema),
+	});
 
-	const [seriesTitle, setSeriesTitle] = useState("");
-	const [seriesDescription, setSeriesDescription] = useState("");
-	const [rrule, setRrule] = useState("");
-	const [startTime, setStartTime] = useState("19:00");
-	const [seriesStartDate, setSeriesStartDate] = useState("");
-	const [seriesEndDate, setSeriesEndDate] = useState("");
+	const seriesForm = useForm<SeriesFormValues>({
+		defaultValues: {
+			description: "",
+			durationMinutes: 180,
+			rrule: "",
+			seriesEndDate: "",
+			seriesStartDate: "",
+			startTime: "19:00",
+			title: "",
+		},
+		mode: "onBlur",
+		resolver: zodResolver(seriesSchema),
+	});
 
-	function reset() {
-		setTitle("");
-		setDescription("");
-		setStartsAt("");
-		setSeriesTitle("");
-		setSeriesDescription("");
-		setRrule("");
-		setStartTime("19:00");
-		setSeriesStartDate("");
-		setSeriesEndDate("");
-	}
+	const oneoffStartsAt = oneOffForm.watch("startsAt") ?? "";
+	const oneoffDuration = oneOffForm.watch("durationMinutes");
+	const seriesStartDate = seriesForm.watch("seriesStartDate") ?? "";
+	const seriesStartTime = seriesForm.watch("startTime") ?? "19:00";
+	const seriesDuration = seriesForm.watch("durationMinutes");
+
+	const effectiveOneoffDuration =
+		typeof oneoffDuration === "number" &&
+		!Number.isNaN(oneoffDuration) &&
+		oneoffDuration >= 15
+			? oneoffDuration
+			: 180;
+	const effectiveSeriesDuration =
+		typeof seriesDuration === "number" &&
+		!Number.isNaN(seriesDuration) &&
+		seriesDuration >= 15
+			? seriesDuration
+			: 180;
+
+	const oneOffStartsAtUtc = oneoffStartsAt
+		? new Date(oneoffStartsAt).toISOString()
+		: "";
+	const { conflicts: oneOffConflicts, isLoading: oneOffConflictsLoading } =
+		useCalendarConflicts({
+			campaignId,
+			durationMinutes: effectiveOneoffDuration,
+			startsAt: oneOffStartsAtUtc,
+		});
+
+	const seriesStartsAtUtc =
+		seriesStartDate && seriesStartTime
+			? new Date(`${seriesStartDate}T${seriesStartTime}`).toISOString()
+			: "";
+	const { conflicts: seriesConflicts, isLoading: seriesConflictsLoading } =
+		useCalendarConflicts({
+			campaignId,
+			durationMinutes: effectiveSeriesDuration,
+			startsAt: seriesStartsAtUtc,
+		});
 
 	function handleClose() {
-		reset();
+		oneOffForm.reset();
+		seriesForm.reset();
 		onClose();
 	}
 
-	function handleSubmitOneOff() {
-		if (!title.trim()) return;
-		let status = Status.DRAFT;
-		if (startsAt) status = Status.CONFIRMED;
+	const handleSubmitOneOff = oneOffForm.handleSubmit((data) => {
+		const status = data.startsAt ? Status.CONFIRMED : Status.DRAFT;
 		onCreateOneOff({
-			description: description.trim() || undefined,
-			startsAt: startsAt ? new Date(startsAt) : undefined,
+			description: data.description?.trim() || undefined,
+			durationMinutes: data.durationMinutes,
+			startsAt: data.startsAt ? new Date(data.startsAt) : undefined,
 			status,
-			title: title.trim(),
+			title: data.title.trim(),
 		});
 		handleClose();
-	}
+	});
 
-	function handleSubmitSeries() {
-		if (!(seriesTitle.trim() && rrule && startTime && seriesStartDate)) return;
+	const handleSubmitSeries = seriesForm.handleSubmit((data) => {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		onCreateSeries({
-			description: seriesDescription.trim() || undefined,
-			rrule,
-			seriesEndDate: seriesEndDate
-				? new Date(`${seriesEndDate}T00:00`)
+			description: data.description?.trim() || undefined,
+			durationMinutes: data.durationMinutes,
+			rrule: data.rrule,
+			seriesEndDate: data.seriesEndDate
+				? new Date(`${data.seriesEndDate}T00:00`)
 				: undefined,
-			seriesStartDate: new Date(`${seriesStartDate}T00:00`),
+			seriesStartDate: new Date(`${data.seriesStartDate}T00:00`),
 			startTime: localTimeToUtc(
-				startTime,
-				new Date(`${seriesStartDate}T00:00`),
+				data.startTime,
+				new Date(`${data.seriesStartDate}T00:00`),
 			),
 			timezone,
-			title: seriesTitle.trim(),
+			title: data.title.trim(),
 		});
 		handleClose();
-	}
+	});
 
 	const isPending = mode === "oneoff" ? isCreatingOneOff : isCreatingSeries;
-	const canSubmit =
-		mode === "oneoff"
-			? Boolean(title.trim())
-			: Boolean(seriesTitle.trim() && rrule && startTime && seriesStartDate);
 
 	return (
 		<Dialog onOpenChange={(o) => !o && handleClose()} open={open}>
@@ -164,128 +242,203 @@ export function CreateSessionDialog({
 				</div>
 
 				{mode === "oneoff" ? (
-					<div className="space-y-4">
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="oo-title">
-								Title <span className="text-destructive">*</span>
-							</label>
-							<Input
-								id="oo-title"
-								onChange={(e) => setTitle(e.target.value)}
-								placeholder="Session title"
-								value={title}
+					// SESSION ONE OFF
+					<form id="oneoff-form" onSubmit={handleSubmitOneOff}>
+						<div className="space-y-4">
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="oo-title">
+									Title <span className="text-destructive">*</span>
+								</label>
+								<Input
+									id="oo-title"
+									placeholder="Session title"
+									{...oneOffForm.register("title")}
+								/>
+								{oneOffForm.formState.errors.title && (
+									<p className="text-xs text-destructive">
+										{oneOffForm.formState.errors.title.message}
+									</p>
+								)}
+							</div>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="oo-date">
+									Date &amp; time
+								</label>
+								<Input
+									id="oo-date"
+									min={toLocalDatetimeString(new Date())}
+									type="datetime-local"
+									{...oneOffForm.register("startsAt")}
+								/>
+							</div>
+							<ConflictWarning
+								conflicts={oneOffConflicts}
+								isLoading={oneOffConflictsLoading}
 							/>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="oo-duration">
+									Duration (minutes)
+								</label>
+								<Input
+									id="oo-duration"
+									min={15}
+									type="number"
+									{...oneOffForm.register("durationMinutes", {
+										valueAsNumber: true,
+									})}
+								/>
+								{oneOffForm.formState.errors.durationMinutes && (
+									<p className="text-xs text-destructive">
+										{oneOffForm.formState.errors.durationMinutes.message}
+									</p>
+								)}
+							</div>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="oo-desc">
+									Description
+								</label>
+								<textarea
+									className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+									id="oo-desc"
+									placeholder="Optional description"
+									{...oneOffForm.register("description")}
+								/>
+							</div>
 						</div>
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="oo-date">
-								Date &amp; time
-							</label>
-							<Input
-								id="oo-date"
-								min={toLocalDatetimeString(new Date())}
-								onChange={(e) => setStartsAt(e.target.value)}
-								type="datetime-local"
-								value={startsAt}
-							/>
-						</div>
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="oo-desc">
-								Description
-							</label>
-							<textarea
-								className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-								id="oo-desc"
-								onChange={(e) => setDescription(e.target.value)}
-								placeholder="Optional description"
-								value={description}
-							/>
-						</div>
-					</div>
+					</form>
 				) : (
-					<div className="space-y-4">
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="s-title">
-								Series title <span className="text-destructive">*</span>
-							</label>
-							<Input
-								id="s-title"
-								onChange={(e) => setSeriesTitle(e.target.value)}
-								placeholder="e.g. Weekly Friday Campaign"
-								value={seriesTitle}
-							/>
-						</div>
-						<div className="space-y-1.5">
-							<p className="text-sm font-medium">
-								Repeats on <span className="text-destructive">*</span>
-							</p>
-							<RRuleBuilder onChange={setRrule} value={rrule} />
-						</div>
-						<div className="grid grid-cols-2 gap-3">
+					// SESSION SERIES
+					<form id="series-form" onSubmit={handleSubmitSeries}>
+						<div className="space-y-4">
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-time">
-									Start time <span className="text-destructive">*</span>
+								<label className="text-sm font-medium" htmlFor="s-title">
+									Series title <span className="text-destructive">*</span>
 								</label>
 								<Input
-									id="s-time"
-									onChange={(e) => setStartTime(e.target.value)}
-									type="time"
-									value={startTime}
+									id="s-title"
+									placeholder="e.g. Weekly Friday Campaign"
+									{...seriesForm.register("title")}
 								/>
+								{seriesForm.formState.errors.title && (
+									<p className="text-xs text-destructive">
+										{seriesForm.formState.errors.title.message}
+									</p>
+								)}
 							</div>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-start">
-									First session <span className="text-destructive">*</span>
+								<p className="text-sm font-medium">
+									Repeats on <span className="text-destructive">*</span>
+								</p>
+								<Controller
+									control={seriesForm.control}
+									name="rrule"
+									render={({ field }) => (
+										<RRuleBuilder
+											onChange={field.onChange}
+											value={field.value}
+										/>
+									)}
+								/>
+								{seriesForm.formState.errors.rrule && (
+									<p className="text-xs text-destructive">
+										{seriesForm.formState.errors.rrule.message}
+									</p>
+								)}
+							</div>
+							<div className="grid grid-cols-2 gap-3">
+								<div className="space-y-1.5">
+									<label className="text-sm font-medium" htmlFor="s-time">
+										Start time <span className="text-destructive">*</span>
+									</label>
+									<Input
+										id="s-time"
+										type="time"
+										{...seriesForm.register("startTime")}
+									/>
+									{seriesForm.formState.errors.startTime && (
+										<p className="text-xs text-destructive">
+											{seriesForm.formState.errors.startTime.message}
+										</p>
+									)}
+								</div>
+								<div className="space-y-1.5">
+									<label className="text-sm font-medium" htmlFor="s-start">
+										First session <span className="text-destructive">*</span>
+									</label>
+									<Input
+										id="s-start"
+										min={toLocalDateString(new Date())}
+										type="date"
+										{...seriesForm.register("seriesStartDate")}
+									/>
+									{seriesForm.formState.errors.seriesStartDate && (
+										<p className="text-xs text-destructive">
+											{seriesForm.formState.errors.seriesStartDate.message}
+										</p>
+									)}
+								</div>
+							</div>
+							<ConflictWarning
+								conflicts={seriesConflicts}
+								isLoading={seriesConflictsLoading}
+							/>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="s-end">
+									End date{" "}
+									<span className="font-normal text-muted-foreground">
+										(optional)
+									</span>
 								</label>
 								<Input
-									id="s-start"
-									min={toLocalDateString(new Date())}
-									onChange={(e) => setSeriesStartDate(e.target.value)}
+									id="s-end"
 									type="date"
-									value={seriesStartDate}
+									{...seriesForm.register("seriesEndDate")}
+								/>
+							</div>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="s-duration">
+									Duration (minutes)
+								</label>
+								<Input
+									id="s-duration"
+									min={15}
+									type="number"
+									{...seriesForm.register("durationMinutes", {
+										valueAsNumber: true,
+									})}
+								/>
+								{seriesForm.formState.errors.durationMinutes && (
+									<p className="text-xs text-destructive">
+										{seriesForm.formState.errors.durationMinutes.message}
+									</p>
+								)}
+							</div>
+							<div className="space-y-1.5">
+								<label className="text-sm font-medium" htmlFor="s-desc">
+									Description{" "}
+									<span className="font-normal text-muted-foreground">
+										(optional)
+									</span>
+								</label>
+								<textarea
+									className="flex min-h-[72px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+									id="s-desc"
+									placeholder="Optional description"
+									{...seriesForm.register("description")}
 								/>
 							</div>
 						</div>
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="s-end">
-								End date{" "}
-								<span className="font-normal text-muted-foreground">
-									(optional)
-								</span>
-							</label>
-							<Input
-								id="s-end"
-								onChange={(e) => setSeriesEndDate(e.target.value)}
-								type="date"
-								value={seriesEndDate}
-							/>
-						</div>
-						<div className="space-y-1.5">
-							<label className="text-sm font-medium" htmlFor="s-desc">
-								Description{" "}
-								<span className="font-normal text-muted-foreground">
-									(optional)
-								</span>
-							</label>
-							<textarea
-								className="flex min-h-[72px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
-								id="s-desc"
-								onChange={(e) => setSeriesDescription(e.target.value)}
-								placeholder="Optional description"
-								value={seriesDescription}
-							/>
-						</div>
-					</div>
+					</form>
 				)}
 
 				<DialogFooter>
-					<Button onClick={handleClose} variant="outline">
+					<Button onClick={handleClose} type="button" variant="outline">
 						Cancel
 					</Button>
 					<Button
-						disabled={!canSubmit || isPending}
-						onClick={
-							mode === "oneoff" ? handleSubmitOneOff : handleSubmitSeries
-						}
+						disabled={isPending}
+						form={mode === "oneoff" ? "oneoff-form" : "series-form"}
+						type="submit"
 					>
 						{mode === "oneoff" ? "Create Session" : "Create Series"}
 					</Button>
