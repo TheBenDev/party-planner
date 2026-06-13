@@ -53,13 +53,24 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 	data := i.ModalSubmitData()
 	campaignID := getModalTextInput(data, "campaignId")
 
-	metadata, err := json.Marshal(map[string]any{"channelId": i.ChannelID, "source": "DISCORD"})
+	metadata, err := json.Marshal(model.DiscordIntegrationMetadata{
+		ServerName: "",
+		Source:     model.IntegrationSourceDiscord,
+		DefaultChannel: model.DiscordChannel{
+			ID:   i.ChannelID,
+			Name: "",
+		},
+	})
 	if err != nil {
 		slog.Error("Failed to build integration metadata", "operation", "beny-bot.register", "guildID", i.GuildID, "error", err)
 		return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
 	}
 
-	settings, err := json.Marshal(map[string]any{"enableSessionReminders": true, "source": "DISCORD"})
+	settings, err := json.Marshal(model.DiscordIntegrationSettings{
+		EnableSessionReminders:     true,
+		SessionCreateAnnouncements: true,
+		Source:                     model.IntegrationSourceDiscord,
+	})
 	if err != nil {
 		slog.Error("Failed to build integration settings", "operation", "beny-bot.register", "guildID", i.GuildID, "error", err)
 		return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")

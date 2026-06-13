@@ -73,6 +73,7 @@ buf generate
 - Go API uses raw SQL via `database/sql` + `pgx/v5`
 - All enums in `packages/enums/src/` — import from there, never redefine
 - Conventional commits: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `test:`
+- No abbreviated variable names — use full descriptive names in all languages (e.g. `existingSettings` not `existingSets`, `campaignId` not `cid`, `integration` not `integ`)
 
 ## Known Architectural Violations (do not replicate)
 

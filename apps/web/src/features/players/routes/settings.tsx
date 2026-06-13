@@ -1,10 +1,10 @@
 import { UserRole } from "@planner/enums/user";
-import type { CampaignUserWithUser } from "@/features/players/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { UserPlus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { CampaignUserWithUser } from "@/features/players/types";
 import {
 	AlertDialog,
 	AlertDialogAction,

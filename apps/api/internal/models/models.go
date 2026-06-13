@@ -109,6 +109,41 @@ type CreateCampaignIntegrationRequest struct {
 	Settings   json.RawMessage
 }
 
+type DiscordChannel struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type DiscordIntegrationMetadata struct {
+	ServerName     string            `json:"serverName"`
+	DefaultChannel DiscordChannel    `json:"defaultChannel"`
+	Source         IntegrationSource `json:"source"`
+}
+
+type DiscordIntegrationSettings struct {
+	EnableSessionReminders     bool              `json:"enableSessionReminders"`
+	SessionCreateAnnouncements bool              `json:"sessionCreateAnnouncements"`
+	Timezone                   string            `json:"timezone"`
+	Source                     IntegrationSource `json:"source"`
+	RecapChannel               *DiscordChannel   `json:"recapChannel"`
+	SessionReminderChannel     *DiscordChannel   `json:"sessionReminderChannel"`
+}
+
+type UpdateDiscordIntegrationParams struct {
+	DefaultChannel             *DiscordChannel
+	EnableSessionReminders     bool
+	RecapChannel               *DiscordChannel
+	SessionCreateAnnouncements bool
+	SessionReminderChannel     *DiscordChannel
+	Timezone                   string
+}
+
+type UpdateCampaignIntegrationRequest struct {
+	CampaignID string
+	Source     IntegrationSource
+	Discord    *UpdateDiscordIntegrationParams
+}
+
 // -----------------------------------------------------------------------------
 // Campaign Invitations
 // -----------------------------------------------------------------------------

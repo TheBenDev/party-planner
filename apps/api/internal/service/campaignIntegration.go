@@ -59,21 +59,28 @@ func (s *CampaignIntegrationService) CreateDiscordIntegration(ctx context.Contex
 		return nil, fmt.Errorf("discord token exchange failed: %w", err)
 	}
 
-	metadata, err := json.Marshal(map[string]any{
-		"channelId": "",
-		"source":    "DISCORD",
+	serverName := ""
+	if guild, err := s.Discord.Session.Guild(tokenRes.GuildID, discordgo.WithContext(ctx)); err == nil {
+		serverName = guild.Name
+	}
+
+	metadata, err := json.Marshal(model.DiscordIntegrationMetadata{
+		ServerName: serverName,
+		Source:     model.IntegrationSourceDiscord,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to build metadata: %w", err)
 	}
 
-	settings, err := json.Marshal(map[string]any{
-		"enableSessionReminders": true,
-		"source":                 "DISCORD",
+	settings, err := json.Marshal(model.DiscordIntegrationSettings{
+		EnableSessionReminders:     true,
+		SessionCreateAnnouncements: true,
+		Source:                     model.IntegrationSourceDiscord,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to build settings: %w", err)
 	}
+
 	return s.Create(&model.CreateCampaignIntegrationRequest{
 		CampaignID: req.CampaignID,
 		ExternalID: tokenRes.GuildID,
@@ -91,36 +98,84 @@ func (s *CampaignIntegrationService) ListByCampaign(campaignId string) ([]*model
 	return integrations, nil
 }
 
-func (s *CampaignIntegrationService) UpdateDiscordChannelID(ctx context.Context, campaignId, channelId string) (*model.CampaignIntegration, error) {
-	integration, err := s.DB.GetCampaignIntegration(campaignId, model.IntegrationSourceDiscord)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrCampaignIntegrationNotFound
+func (s *CampaignIntegrationService) UpdateIntegration(ctx context.Context, req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+	switch req.Source {
+	case model.IntegrationSourceDiscord:
+		if req.Discord == nil {
+			return nil, fmt.Errorf("discord params required")
 		}
-		return nil, fmt.Errorf("get campaign integration: %w", err)
-	}
-	if integration == nil {
-		return nil, ErrCampaignIntegrationNotFound
-	}
-
-	if channelId != "" {
-		ch, err := s.Discord.Session.Channel(channelId, discordgo.WithContext(ctx))
+		existing, err := s.DB.GetCampaignIntegration(req.CampaignID, model.IntegrationSourceDiscord)
 		if err != nil {
-			return nil, ErrCampaignIntegrationChannelNotFound
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, ErrCampaignIntegrationNotFound
+			}
+			return nil, fmt.Errorf("get campaign integration: %w", err)
 		}
-		if ch.GuildID != integration.ExternalID {
-			return nil, ErrCampaignIntegrationInvalidChannel
-		}
-	}
-
-	updated, err := s.DB.UpdateCampaignIntegrationChannelID(campaignId, channelId, model.IntegrationSourceDiscord)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
+		if existing == nil {
 			return nil, ErrCampaignIntegrationNotFound
 		}
-		return nil, fmt.Errorf("update campaign integration channel id: %w", err)
+		guildID := existing.ExternalID
+
+		var (
+			existingMetadata model.DiscordIntegrationMetadata
+			existingSettings model.DiscordIntegrationSettings
+		)
+		if err := json.Unmarshal(existing.Metadata, &existingMetadata); err != nil {
+			return nil, fmt.Errorf("parse existing integration metadata: %w", err)
+		}
+		if err := json.Unmarshal(existing.Settings, &existingSettings); err != nil {
+			return nil, fmt.Errorf("parse existing integration settings: %w", err)
+		}
+
+		if req.Discord.DefaultChannel != nil && req.Discord.DefaultChannel.ID != "" {
+			name, err := s.resolveDiscordChannelName(ctx, req.Discord.DefaultChannel.ID, guildID, existingMetadata.DefaultChannel.Name)
+			if err != nil {
+				return nil, err
+			}
+			req.Discord.DefaultChannel.Name = name
+		} else {
+			req.Discord.DefaultChannel = &existingMetadata.DefaultChannel
+		}
+
+		if req.Discord.RecapChannel != nil && req.Discord.RecapChannel.ID != "" {
+			recapFallbackName := ""
+			if existingSettings.RecapChannel != nil {
+				recapFallbackName = existingSettings.RecapChannel.Name
+			}
+			name, err := s.resolveDiscordChannelName(ctx, req.Discord.RecapChannel.ID, guildID, recapFallbackName)
+			if err != nil {
+				return nil, err
+			}
+			req.Discord.RecapChannel.Name = name
+		} else {
+			req.Discord.RecapChannel = existingSettings.RecapChannel
+		}
+
+		if req.Discord.SessionReminderChannel != nil && req.Discord.SessionReminderChannel.ID != "" {
+			reminderFallbackName := ""
+			if existingSettings.SessionReminderChannel != nil {
+				reminderFallbackName = existingSettings.SessionReminderChannel.Name
+			}
+			name, err := s.resolveDiscordChannelName(ctx, req.Discord.SessionReminderChannel.ID, guildID, reminderFallbackName)
+			if err != nil {
+				return nil, err
+			}
+			req.Discord.SessionReminderChannel.Name = name
+		} else {
+			req.Discord.SessionReminderChannel = existingSettings.SessionReminderChannel
+		}
+
+		updated, err := s.DB.UpdateCampaignIntegration(req)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return nil, ErrCampaignIntegrationNotFound
+			}
+			return nil, fmt.Errorf("update campaign integration: %w", err)
+		}
+		return updated, nil
+	default:
+		return nil, fmt.Errorf("unsupported integration source: %s", req.Source)
 	}
-	return updated, nil
 }
 
 func (s *CampaignIntegrationService) Remove(campaignId string, source model.IntegrationSource) error {
@@ -129,6 +184,18 @@ func (s *CampaignIntegrationService) Remove(campaignId string, source model.Inte
 		return fmt.Errorf("remove campaign integration error: %w", err)
 	}
 	return nil
+}
+
+func (s *CampaignIntegrationService) resolveDiscordChannelName(ctx context.Context, channelID, guildID, fallback string) (string, error) {
+	ch, err := s.Discord.Session.Channel(channelID, discordgo.WithContext(ctx))
+	if err != nil {
+		s.Log.WarnContext(ctx, "could not verify discord channel", "channel_id", channelID, "error", err)
+		return fallback, nil
+	}
+	if ch.GuildID != guildID {
+		return "", ErrCampaignIntegrationInvalidChannel
+	}
+	return ch.Name, nil
 }
 
 func mapCampaignIntegrationPgError(err error) error {

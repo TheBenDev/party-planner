@@ -26,6 +26,8 @@ func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackM
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case service.ErrCampaignIntegrationInvalidCampaign:
 		return connect.NewError(connect.CodeInvalidArgument, err)
+	case service.ErrCampaignIntegrationChannelNotFound:
+		return connect.NewError(connect.CodeInvalidArgument, err)
 	case service.ErrCampaignIntegrationInvalidChannel:
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	case service.ErrInvitationExpired:
