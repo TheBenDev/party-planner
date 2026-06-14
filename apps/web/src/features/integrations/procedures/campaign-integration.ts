@@ -39,16 +39,21 @@ const createCampaignIntegration = dmProcedure
 						message: "missing code for Discord integration",
 					});
 				}
-				let result: Awaited<ReturnType<typeof context.api.campaignIntegration.createCampaignIntegration>>;
+				let result: Awaited<
+					ReturnType<
+						typeof context.api.campaignIntegration.createCampaignIntegration
+					>
+				>;
 				try {
-					result = await context.api.campaignIntegration.createCampaignIntegration({
-						campaignId,
-						integration: {
-							case: "discord",
-							value: { code },
-						},
-						source: integrationSourceToProto(IntegrationSource.DISCORD),
-					});
+					result =
+						await context.api.campaignIntegration.createCampaignIntegration({
+							campaignId,
+							integration: {
+								case: "discord",
+								value: { code },
+							},
+							source: integrationSourceToProto(IntegrationSource.DISCORD),
+						});
 				} catch (err) {
 					handleError(
 						err,
@@ -178,19 +183,54 @@ const updateCampaignIntegration = dmProcedure
 	.handler(async ({ input, context }) => {
 		switch (input.source) {
 			case IntegrationSource.DISCORD: {
-				const { campaignId, channelId } = input;
+				const {
+					campaignId,
+					defaultChannel,
+					enableSessionReminders,
+					sessionCreateAnnouncements,
+					sessionReminderChannel,
+					recapChannel,
+					timezone,
+				} = input;
 				if (campaignId !== context.campaignId) {
 					throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
 				}
-				let result: Awaited<ReturnType<typeof context.api.campaignIntegration.updateCampaignIntegration>>;
+				let result: Awaited<
+					ReturnType<
+						typeof context.api.campaignIntegration.updateCampaignIntegration
+					>
+				>;
 				try {
-					result = await context.api.campaignIntegration.updateCampaignIntegration({
-						campaignId,
-						integration: {
-							case: "discord",
-							value: { channelId },
-						},
-					});
+					result =
+						await context.api.campaignIntegration.updateCampaignIntegration({
+							campaignId,
+							integration: {
+								case: "discord",
+								value: {
+									defaultChannel: defaultChannel
+										? {
+												id: defaultChannel.id,
+												name: defaultChannel.name,
+											}
+										: undefined,
+									enableSessionReminders,
+									recapChannel: recapChannel
+										? {
+												id: recapChannel.id,
+												name: recapChannel.name,
+											}
+										: undefined,
+									sessionCreateAnnouncements,
+									sessionReminderChannel: sessionReminderChannel
+										? {
+												id: sessionReminderChannel.id,
+												name: sessionReminderChannel.name,
+											}
+										: undefined,
+									timezone,
+								},
+							},
+						});
 				} catch (err) {
 					handleError(
 						err,

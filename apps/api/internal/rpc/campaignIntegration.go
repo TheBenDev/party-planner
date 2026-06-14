@@ -100,7 +100,34 @@ func (s *CampaignIntegrationServer) UpdateCampaignIntegration(ctx context.Contex
 		if p.Discord == nil {
 			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("discord integration params required"))
 		}
-		updated, err := s.CampaignIntegration.UpdateDiscordChannelID(ctx, req.Msg.CampaignId, p.Discord.ChannelId)
+		discord := &model.UpdateDiscordIntegrationParams{
+			EnableSessionReminders:     p.Discord.EnableSessionReminders,
+			SessionCreateAnnouncements: p.Discord.SessionCreateAnnouncements,
+			Timezone:                   p.Discord.Timezone,
+		}
+		if p.Discord.DefaultChannel != nil {
+			discord.DefaultChannel = &model.DiscordChannel{
+				ID:   p.Discord.DefaultChannel.Id,
+				Name: p.Discord.DefaultChannel.Name,
+			}
+		}
+		if p.Discord.RecapChannel != nil {
+			discord.RecapChannel = &model.DiscordChannel{
+				ID:   p.Discord.RecapChannel.Id,
+				Name: p.Discord.RecapChannel.Name,
+			}
+		}
+		if p.Discord.SessionReminderChannel != nil {
+			discord.SessionReminderChannel = &model.DiscordChannel{
+				ID:   p.Discord.SessionReminderChannel.Id,
+				Name: p.Discord.SessionReminderChannel.Name,
+			}
+		}
+		updated, err := s.CampaignIntegration.UpdateIntegration(ctx, &model.UpdateCampaignIntegrationRequest{
+			CampaignID: req.Msg.CampaignId,
+			Source:     model.IntegrationSourceDiscord,
+			Discord:    discord,
+		})
 		if err != nil {
 			return nil, mapServiceError(ctx, s.Log, err, "failed to update discord integration")
 		}

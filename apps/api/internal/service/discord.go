@@ -129,10 +129,6 @@ func (s *DiscordService) AnnounceSession(
 	integration *model.CampaignIntegration,
 	session *model.Session,
 ) (string, error) {
-	var metadata struct {
-		ChannelID string `json:"channelId"`
-	}
-
 	if integration == nil {
 		return "", errors.New("campaign integration is required")
 	}
@@ -144,7 +140,8 @@ func (s *DiscordService) AnnounceSession(
 		return "", errors.New("valid start time is required to announce session")
 	}
 
-	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
+	var integrationMetadata model.DiscordIntegrationMetadata
+	if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err != nil {
 		return "", fmt.Errorf("failed to parse discord integration metadata: %w", err)
 	}
 
@@ -154,10 +151,10 @@ func (s *DiscordService) AnnounceSession(
 	}
 
 	msg := formatAnnounceMessage(session)
-	if metadata.ChannelID != "" {
-		if _, err := s.Session.ChannelMessageSend(metadata.ChannelID, msg, discordgo.WithContext(ctx)); err != nil {
+	if integrationMetadata.DefaultChannel.ID != "" {
+		if _, err := s.Session.ChannelMessageSend(integrationMetadata.DefaultChannel.ID, msg, discordgo.WithContext(ctx)); err != nil {
 			s.Log.WarnContext(ctx, "failed to send announcement message; event created",
-				"channel_id", metadata.ChannelID,
+				"channel_id", integrationMetadata.DefaultChannel.ID,
 				"event_id", eventID,
 				"error", err,
 			)
@@ -264,26 +261,38 @@ func (s *DiscordService) PollSession(
 		return nil, errors.New("at least one poll option is required")
 	}
 
-	var metadata struct {
-		ChannelID string `json:"channelId"`
-	}
-	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
+	var integrationMetadata model.DiscordIntegrationMetadata
+	if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err != nil {
 		return nil, fmt.Errorf("failed to parse discord integration metadata: %w", err)
 	}
-	if metadata.ChannelID == "" {
-		return nil, errors.New("discord integration missing channel_id in metadata")
+	if integrationMetadata.DefaultChannel.ID == "" {
+		return nil, errors.New("discord integration missing default channel")
+	}
+
+	var integrationSettings model.DiscordIntegrationSettings
+	pollLocation := time.UTC
+	if err := json.Unmarshal(integration.Settings, &integrationSettings); err != nil {
+		s.Log.Warn("failed to parse discord integration settings, using UTC",
+			"integrationID", integration.ID,
+			"externalID", integration.ExternalID,
+			"error", err,
+		)
+	} else if integrationSettings.Timezone != "" {
+		if loc, err := time.LoadLocation(integrationSettings.Timezone); err == nil {
+			pollLocation = loc
+		}
 	}
 
 	pollAnswers := make([]discordgo.PollAnswer, 0, len(options))
 	for _, opt := range options {
 		pollAnswers = append(pollAnswers, discordgo.PollAnswer{
 			Media: &discordgo.PollMedia{
-				Text: opt.UTC().Format("Mon Jan 2, 2006 3:04 PM UTC"),
+				Text: opt.In(pollLocation).Format("Mon Jan 2, 2006 3:04 PM MST"),
 			},
 		})
 	}
 
-	poll, err := s.Session.ChannelMessageSendComplex(metadata.ChannelID, &discordgo.MessageSend{
+	poll, err := s.Session.ChannelMessageSendComplex(integrationMetadata.DefaultChannel.ID, &discordgo.MessageSend{
 		Poll: &discordgo.Poll{
 			Question: discordgo.PollMedia{
 				Text: fmt.Sprintf("📅 When can you make it for %s?", session.Title),
@@ -296,10 +305,10 @@ func (s *DiscordService) PollSession(
 	if err != nil {
 		return nil, fmt.Errorf("discord poll send error: %w", err)
 	}
-	_, err = s.Session.ChannelMessageSend(metadata.ChannelID, formatPollTimestamps(session.Title, options), discordgo.WithContext(ctx))
+	_, err = s.Session.ChannelMessageSend(integrationMetadata.DefaultChannel.ID, formatPollTimestamps(session.Title, options), discordgo.WithContext(ctx))
 	if err != nil {
 		s.Log.WarnContext(ctx, "failed to send poll timestamp message",
-			"channel_id", metadata.ChannelID,
+			"channel_id", integrationMetadata.DefaultChannel.ID,
 			"poll_id", poll.ID,
 			"session_title", session.Title,
 			"error", err,

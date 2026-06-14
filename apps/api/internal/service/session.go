@@ -157,17 +157,15 @@ func (s *SessionService) GetPoll(ctx context.Context, sessionId, campaignId stri
 		return nil, err
 	}
 
-	var metadata struct {
-		ChannelID string `json:"channelId"`
-	}
-	if err := json.Unmarshal(integration.Metadata, &metadata); err != nil {
+	var integrationMetadata model.DiscordIntegrationMetadata
+	if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err != nil {
 		return nil, fmt.Errorf("failed to parse discord integration metadata: %w", err)
 	}
-	if metadata.ChannelID == "" {
-		return nil, errors.New("discord integration missing channel_id in metadata")
+	if integrationMetadata.DefaultChannel.ID == "" {
+		return nil, errors.New("discord integration missing default channel")
 	}
 
-	poll, err := s.Discord.GetPoll(ctx, metadata.ChannelID, session.PollID.String)
+	poll, err := s.Discord.GetPoll(ctx, integrationMetadata.DefaultChannel.ID, session.PollID.String)
 	if err != nil {
 		return nil, fmt.Errorf("get discord poll error: %w", err)
 	}
@@ -184,11 +182,9 @@ func (s *SessionService) NotifyUpcomingSessions(ctx context.Context) {
 
 	var totalReminders, campaignsNotified int
 	for _, integration := range integrations {
-		var metadata struct {
-			ChannelID string `json:"channelId"`
-		}
-		if err := json.Unmarshal(integration.Metadata, &metadata); err != nil || metadata.ChannelID == "" {
-			s.Log.WarnContext(ctx, "skipping reminder: missing channelId in integration metadata",
+		var integrationMetadata model.DiscordIntegrationMetadata
+		if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err != nil || integrationMetadata.DefaultChannel.ID == "" {
+			s.Log.WarnContext(ctx, "skipping reminder: missing default channel in integration metadata",
 				"campaign_id", integration.CampaignID,
 			)
 			continue
@@ -204,7 +200,7 @@ func (s *SessionService) NotifyUpcomingSessions(ctx context.Context) {
 		}
 
 		for _, session := range sessions {
-			s.Discord.NotifyUpcomingSession(ctx, metadata.ChannelID, session)
+			s.Discord.NotifyUpcomingSession(ctx, integrationMetadata.DefaultChannel.ID, session)
 			s.Log.InfoContext(ctx, "session reminder dispatched",
 				"campaign_id", integration.CampaignID,
 				"session_id", session.ID,
@@ -302,16 +298,14 @@ func (s *SessionService) Remove(id, campaignID string) error {
 		integration, intErr := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
 		if intErr == nil {
 			ctx := context.Background()
-			var metadata struct {
-				ChannelID string `json:"channelId"`
-			}
-			_ = json.Unmarshal(integration.Metadata, &metadata)
+			var integrationMetadata model.DiscordIntegrationMetadata
+			_ = json.Unmarshal(integration.Metadata, &integrationMetadata)
 
-			if session.PollID.Valid && metadata.ChannelID != "" {
-				if err := s.Discord.ClosePoll(ctx, metadata.ChannelID, session.PollID.String); err == nil {
+			if session.PollID.Valid && integrationMetadata.DefaultChannel.ID != "" {
+				if err := s.Discord.ClosePoll(ctx, integrationMetadata.DefaultChannel.ID, session.PollID.String); err == nil {
 					sessionInFuture := !session.StartsAt.Valid || session.StartsAt.Time.After(time.Now())
 					if sessionInFuture {
-						s.Discord.NotifyPollCancelled(ctx, metadata.ChannelID, session.PollID.String, session.Title)
+						s.Discord.NotifyPollCancelled(ctx, integrationMetadata.DefaultChannel.ID, session.PollID.String, session.Title)
 					}
 				}
 			}
@@ -350,11 +344,9 @@ func (s *SessionService) Update(ctx context.Context, req *model.UpdateSessionReq
 	if !session.StartsAt.Valid && session.PollID.Valid && req.StartsAt.Valid {
 		integration, err := s.DB.GetCampaignIntegration(session.CampaignID, model.IntegrationSourceDiscord)
 		if err == nil {
-			var metadata struct {
-				ChannelID string `json:"channelId"`
-			}
-			if err := json.Unmarshal(integration.Metadata, &metadata); err == nil && metadata.ChannelID != "" {
-				_ = s.Discord.ClosePoll(ctx, metadata.ChannelID, session.PollID.String)
+			var integrationMetadata model.DiscordIntegrationMetadata
+			if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err == nil && integrationMetadata.DefaultChannel.ID != "" {
+				_ = s.Discord.ClosePoll(ctx, integrationMetadata.DefaultChannel.ID, session.PollID.String)
 			}
 		}
 	}

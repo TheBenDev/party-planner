@@ -19,6 +19,11 @@ enum IntegrationSource {
 // Core Messages
 // -----------------------------------------------------------------------------
 
+message DiscordChannel {
+  string id = 1;
+  string name = 2;
+}
+
 message CampaignIntegration {
   string id = 1;
   string campaign_id = 2;
@@ -75,7 +80,12 @@ message RemoveCampaignIntegrationRequest {
 message RemoveCampaignIntegrationResponse {}
 
 message UpdateDiscordIntegrationParams {
-  string channel_id = 1;
+  DiscordChannel default_channel = 1;
+  bool enable_session_reminders = 2;
+  bool session_create_announcements = 3;
+  string timezone = 4;
+  optional DiscordChannel recap_channel = 5;
+  optional DiscordChannel session_reminder_channel = 6;
 }
 
 message UpdateCampaignIntegrationRequest {

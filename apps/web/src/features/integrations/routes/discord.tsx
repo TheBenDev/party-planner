@@ -1,10 +1,10 @@
-import { IntegrationSource } from "@planner/enums/integration";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
 import { BotIcon, ExternalLinkIcon, HashIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
+import { DiscordIntegrationSettings } from "@/features/integrations/components/DiscordIntegrationSettings";
+import { ToggleDisplayInput } from "@/features/integrations/components/ToggleDisplayInput";
+import { useDiscordIntegration } from "@/features/integrations/hooks/useDiscordIntegration";
+import type { CampaignIntegration } from "@/features/integrations/types";
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -25,14 +25,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/shared/components/ui/card";
-import { ORPCError } from "@orpc/client";
-import { Input } from "@/shared/components/ui/input";
-import { env } from "@/shared/lib/env";
 import { useAuth } from "@/shared/hooks/auth";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import { env } from "@/shared/lib/env";
 
-const DISCORD_PERMISSIONS = "2048";
+// VIEW_CHANNEL (1024) + SEND_MESSAGES (2048) + EMBED_LINKS (16384) +
+// READ_MESSAGE_HISTORY (65536) + MANAGE_EVENTS (8589934592)
+const DISCORD_PERMISSIONS = "8590019584";
 const DISCORD_SCOPES = "bot applications.commands";
 
 function buildDiscordOAuthUrl(campaignId: string) {
@@ -53,44 +51,11 @@ function buildDiscordOAuthUrl(campaignId: string) {
 }
 
 export function DiscordIntegrationPage() {
-	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const { campaign, role } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const campaignId = campaign?.campaign.id ?? "";
 
-	const { data, isLoading } = useQuery({
-		enabled: !!campaignId,
-		queryFn: () =>
-			client.campaignIntegration.getCampaignIntegration({
-				campaignId,
-				source: IntegrationSource.DISCORD,
-			}),
-		queryKey: queryKeys.integrations.bySource(
-			campaignId,
-			IntegrationSource.DISCORD,
-		),
-	});
-
-	const { mutate: remove, isPending: isRemoving } = useMutation({
-		mutationFn: () =>
-			client.campaignIntegration.removeCampaignIntegration({
-				campaignId,
-				source: IntegrationSource.DISCORD,
-			}),
-		onError: () =>
-			toast.error("Failed to remove Discord integration. Please try again."),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.integrations.list(campaignId),
-			});
-			toast.success("Discord integration removed.");
-			navigate({ to: "/campaign/integrations" });
-		},
-	});
-
-	const integration = data?.integration ?? null;
-	const isConnected = integration !== null;
+	const { integration, isConnected, isLoading, remove, isRemoving } = useDiscordIntegration({ campaignId });
 
 	const handleAddBot = () => {
 		window.location.assign(buildDiscordOAuthUrl(campaignId));
@@ -120,7 +85,7 @@ export function DiscordIntegrationPage() {
 		<div className="mx-auto max-w-2xl py-8">
 			<PageHeader isConnected={isConnected} />
 
-			{isConnected ? (
+			{integration ? (
 				<ConnectedState
 					campaignId={campaignId}
 					integration={integration}
@@ -187,42 +152,13 @@ function ConnectedState({
 	isDm,
 	campaignId,
 }: {
-	integration: NonNullable<{
-		externalId: string;
-		metaData: { channelId: string };
-	}>;
+	integration: CampaignIntegration;
 	campaignId: string;
 	isDm: boolean;
 	isRemoving: boolean;
 	onRemove: () => void;
 }) {
-	const queryClient = useQueryClient();
-	const [channelId, setChannelId] = useState(integration.metaData.channelId);
-
-	const { mutate: updateChannel, isPending: isSavingChannel } = useMutation({
-		mutationFn: (value: string) =>
-			client.campaignIntegration.updateCampaignIntegration({
-				campaignId,
-				channelId: value,
-				source: IntegrationSource.DISCORD,
-			}),
-		onError: (err) => {
-			if (err instanceof ORPCError && err.code === "BAD_REQUEST") {
-				toast.error("That channel ID isn't valid or doesn't belong to your server.");
-			} else {
-				toast.error("Failed to save channel ID. Please try again.");
-			}
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.integrations.bySource(
-					campaignId,
-					IntegrationSource.DISCORD,
-				),
-			});
-			toast.success("Channel ID saved.");
-		},
-	});
+	const [serverId, setServerId] = useState(integration.externalId);
 
 	return (
 		<div className="space-y-4">
@@ -235,36 +171,18 @@ function ConnectedState({
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3">
-						<DetailRow
-							icon={<HashIcon className="h-4 w-4" />}
-							label="Server ID"
-							value={integration.externalId}
-						/>
-						<div className="flex items-center justify-between gap-3 text-sm">
+						<div className="flex items-center justify-between text-sm">
 							<div className="flex items-center gap-2 text-muted-foreground">
 								<HashIcon className="h-4 w-4" />
-								<span>Channel ID</span>
+								<span>Server</span>
 							</div>
-							<div className="flex items-center gap-2">
-								{channelId !== integration.metaData.channelId && (<Button
-									className="h-7 gap-1.5 px-2 text-xs hover:cursor-pointer hover:opacity-80"
-									disabled={
-										isSavingChannel ||
-										channelId === integration.metaData.channelId
-									}
-									size="sm"
-									variant="outline"
-									onClick={() => updateChannel(channelId)}
-								>
-									{isSavingChannel ? "Saving…" : "Save"}
-								</Button>)}
-								<Input
-									className="h-7 w-48 font-mono text-xs"
-									placeholder="e.g. 1234567890"
-									value={channelId}
-									onChange={(e) => setChannelId(e.target.value)}
-								/>
-							</div>
+							<ToggleDisplayInput
+								disabled
+								initialValue={integration.metaData.serverName}
+								onChange={setServerId}
+								toggleLabel="View ID"
+								value={serverId}
+							/>
 						</div>
 					</CardContent>
 				</Card>
@@ -297,6 +215,10 @@ function ConnectedState({
 					)}
 				</CardContent>
 			</Card>
+
+			{isDm && (
+				<DiscordIntegrationSettings campaignId={campaignId} />
+			)}
 
 			{isDm && (
 				<Card className="border-destructive/40">
@@ -449,26 +371,6 @@ function DisconnectedState({
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
-
-function DetailRow({
-	icon,
-	label,
-	value,
-}: {
-	icon: React.ReactNode;
-	label: string;
-	value: string;
-}) {
-	return (
-		<div className="flex items-center justify-between text-sm">
-			<div className="flex items-center gap-2 text-muted-foreground">
-				{icon}
-				<span>{label}</span>
-			</div>
-			<span className="font-mono text-xs">{value}</span>
-		</div>
-	);
-}
 
 function DiscordIcon() {
 	return (

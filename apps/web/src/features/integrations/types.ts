@@ -2,13 +2,24 @@ import { IntegrationSource } from "@planner/enums/integration";
 import { z } from "zod";
 import { BaseEntitySchema } from "@/shared/types";
 
+export const DiscordChannelSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+});
+export type DiscordChannel = z.infer<typeof DiscordChannelSchema>;
+
 export const CampaignIntegrationMetadataSchema = z.object({
-	channelId: z.string(),
+	defaultChannel: DiscordChannelSchema,
+	serverName: z.string(),
 	source: z.enum(IntegrationSource),
 });
 export const CampaignIntegrationSettingsSchema = z.object({
 	enableSessionReminders: z.boolean(),
+	recapChannel: DiscordChannelSchema.nullable(),
+	sessionCreateAnnouncements: z.boolean(),
+	sessionReminderChannel: DiscordChannelSchema.nullable(),
 	source: z.enum(IntegrationSource),
+	timezone: z.string(),
 });
 
 export const CampaignIntegrationSchema = BaseEntitySchema.extend({
@@ -52,8 +63,13 @@ export const RemoveCampaignIntegrationResponseSchema = z.object({});
 
 export const UpdateDiscordIntegrationRequestSchema = z.object({
 	campaignId: z.uuid(),
-	channelId: z.string(),
+	defaultChannel: DiscordChannelSchema.optional(),
+	enableSessionReminders: z.boolean(),
+	recapChannel: DiscordChannelSchema.optional(),
+	sessionCreateAnnouncements: z.boolean(),
+	sessionReminderChannel: DiscordChannelSchema.optional(),
 	source: z.literal(IntegrationSource.DISCORD),
+	timezone: z.string(),
 });
 
 export const UpdateCampaignIntegrationRequestSchema = z.discriminatedUnion(
@@ -74,13 +90,18 @@ export const ListCampaignIntegrationsByCampaignResponseSchema = z.object({
 });
 
 export const DiscordIntegrationMetadataSchema = z.object({
-	channelId: z.string(),
+	defaultChannel: DiscordChannelSchema,
+	serverName: z.string(),
 	source: z.literal(IntegrationSource.DISCORD),
 });
 
 export const DiscordIntegrationSettingsSchema = z.object({
 	enableSessionReminders: z.boolean(),
+	recapChannel: DiscordChannelSchema.nullable(),
+	sessionCreateAnnouncements: z.boolean(),
+	sessionReminderChannel: DiscordChannelSchema.nullable(),
 	source: z.literal(IntegrationSource.DISCORD),
+	timezone: z.string(),
 });
 
 export type DiscordIntegrationMetadata = z.infer<

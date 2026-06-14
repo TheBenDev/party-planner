@@ -1,6 +1,7 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"log/slog"
 
@@ -125,17 +126,67 @@ func (db *DB) ListDiscordIntegrationsWithReminders() ([]*model.CampaignIntegrati
 	return integrations, rows.Err()
 }
 
-func (db *DB) UpdateCampaignIntegrationChannelID(campaignId, channelId string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
-	if !isValidIntegrationSource(source) {
-		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
+func (db *DB) UpdateCampaignIntegration(req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+	if !isValidIntegrationSource(req.Source) {
+		return nil, fmt.Errorf("invalid campaign integration source: %q", req.Source)
 	}
-	row := db.conn.QueryRow(`
-		UPDATE campaign_integrations
-		SET metadata = jsonb_set(metadata, '{channelId}', to_jsonb($1::text)),
-		    updated_at = NOW()
-		WHERE campaign_id = $2 AND source = $3
-		RETURNING `+campaignIntegrationColumns,
-		channelId, campaignId, source,
-	)
-	return scanCampaignIntegration(row)
+	switch req.Source {
+	case "DISCORD":
+		if req.Discord == nil {
+			return nil, fmt.Errorf("discord params required")
+		}
+		if req.Discord.DefaultChannel == nil {
+			return nil, fmt.Errorf("default channel required")
+		}
+		defaultChannelJSON, err := json.Marshal(req.Discord.DefaultChannel)
+		if err != nil {
+			return nil, fmt.Errorf("marshal default channel: %w", err)
+		}
+		var recapChannelJSON interface{}
+		if req.Discord.RecapChannel != nil {
+			b, err := json.Marshal(req.Discord.RecapChannel)
+			if err != nil {
+				return nil, fmt.Errorf("marshal recap channel: %w", err)
+			}
+			recapChannelJSON = string(b)
+		}
+		var sessionReminderChannelJSON interface{}
+		if req.Discord.SessionReminderChannel != nil {
+			b, err := json.Marshal(req.Discord.SessionReminderChannel)
+			if err != nil {
+				return nil, fmt.Errorf("marshal session reminder channel: %w", err)
+			}
+			sessionReminderChannelJSON = string(b)
+		}
+		row := db.conn.QueryRow(`
+			UPDATE campaign_integrations
+			SET metadata = jsonb_build_object(
+			        'serverName', metadata->>'serverName',
+			        'source',     'DISCORD',
+			        'defaultChannel', $1::jsonb
+			    ),
+			    settings = jsonb_build_object(
+			        'enableSessionReminders',    $2::boolean,
+			        'sessionCreateAnnouncements', $3::boolean,
+			        'timezone',                  $4::text,
+			        'source',                    'DISCORD',
+			        'recapChannel',              $5::jsonb,
+			        'sessionReminderChannel',    $6::jsonb
+			    ),
+			    updated_at = NOW()
+			WHERE campaign_id = $7 AND source = $8
+			RETURNING `+campaignIntegrationColumns,
+			string(defaultChannelJSON),
+			req.Discord.EnableSessionReminders,
+			req.Discord.SessionCreateAnnouncements,
+			req.Discord.Timezone,
+			recapChannelJSON,
+			sessionReminderChannelJSON,
+			req.CampaignID,
+			req.Source,
+		)
+		return scanCampaignIntegration(row)
+	default:
+		return nil, fmt.Errorf("unsupported integration source for update: %q", req.Source)
+	}
 }

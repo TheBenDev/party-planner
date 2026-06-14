@@ -1,3 +1,4 @@
+import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { IntegrationSource } from "@planner/enums/integration";
 import { UserRole } from "@planner/enums/user";
 import { useMutation } from "@tanstack/react-query";
@@ -18,19 +19,23 @@ function decodeState(
 
 export function DiscordCallbackPage() {
 	const navigate = useNavigate();
+	const { isLoaded: clerkIsLoaded } = useClerkAuth();
 	const { role, campaignIsLoading } = useAuth();
-	const { code, state } = useSearch({ from: "/_authenticated/campaign/integrations/discord/callback" });
+	const { code, state } = useSearch({
+		from: "/_authenticated/campaign/integrations/discord/callback",
+	});
 	const {
 		mutate: createIntegration,
 		isPending,
 		isError,
 	} = useMutation({
-		mutationFn: (campaignId: string) =>
-			client.campaignIntegration.createCampaignIntegration({
+		mutationFn: async (campaignId: string) => {
+			return await client.campaignIntegration.createCampaignIntegration({
 				campaignId,
 				code,
 				source: IntegrationSource.DISCORD,
-			}),
+			});
+		},
 		onError: () => {
 			navigate({ to: "/campaign/integrations/discord" });
 		},
@@ -45,7 +50,7 @@ export function DiscordCallbackPage() {
 			navigate({ to: "/campaign/integrations" });
 			return;
 		}
-		if (campaignIsLoading) return;
+		if (!clerkIsLoaded || campaignIsLoading) return;
 		if (role !== UserRole.DUNGEON_MASTER) {
 			sessionStorage.removeItem("discord_oauth_state");
 			navigate({ to: "/campaign/integrations" });
@@ -64,7 +69,15 @@ export function DiscordCallbackPage() {
 		}
 
 		createIntegration(decoded.campaignId);
-	}, [campaignIsLoading, role, code, state, navigate, createIntegration]);
+	}, [
+		clerkIsLoaded,
+		campaignIsLoading,
+		role,
+		code,
+		state,
+		navigate,
+		createIntegration,
+	]);
 
 	if (isError) {
 		return (
