@@ -18,6 +18,7 @@ import (
 
 var ErrDiscordEventNotFound = errors.New("discord scheduled event not found")
 
+// discord events need to be set to and increment of 15 minutes
 func roundDownTo15(minutes int32) time.Duration {
 	floored := (minutes / 15) * 15
 	if floored < 15 {
