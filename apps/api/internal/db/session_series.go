@@ -9,12 +9,14 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-const sessionSeriesColumns = `id, campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, created_at, updated_at, timezone, duration_minutes`
+const sessionSeriesColumns = `id, campaign_id, title, description, discord_event_id, google_calendar_event_id, poll_id, rrule, start_time, series_start_date, series_end_date, created_at, updated_at, timezone, duration_minutes`
 
 func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSeries, error) {
 	var s model.SessionSeries
 	err := row.Scan(
-		&s.ID, &s.CampaignID, &s.Title, &s.Description, &s.RRule, &s.StartTime,
+		&s.ID, &s.CampaignID, &s.Title, &s.Description,
+		&s.DiscordEventID, &s.GoogleCalendarEventID, &s.PollID,
+		&s.RRule, &s.StartTime,
 		&s.SeriesStartDate, &s.SeriesEndDate, &s.CreatedAt, &s.UpdatedAt, &s.Timezone, &s.DurationMinutes,
 	)
 	if err != nil {
@@ -25,10 +27,12 @@ func scanSessionSeries(row interface{ Scan(...any) error }) (*model.SessionSerie
 
 func (db *DB) CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
 	row := db.conn.QueryRow(`
-		INSERT INTO session_series (campaign_id, title, description, rrule, start_time, series_start_date, series_end_date, timezone, duration_minutes)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO session_series (campaign_id, title, description, discord_event_id, google_calendar_event_id, poll_id, rrule, start_time, series_start_date, series_end_date, timezone, duration_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 		RETURNING `+sessionSeriesColumns,
-		req.CampaignID, req.Title, req.Description, req.RRule, req.StartTime,
+		req.CampaignID, req.Title, req.Description,
+		req.DiscordEventID, req.GoogleCalendarEventID, req.PollID,
+		req.RRule, req.StartTime,
 		req.SeriesStartDate, req.SeriesEndDate, req.Timezone, req.DurationMinutes,
 	)
 	return scanSessionSeries(row)
@@ -36,6 +40,16 @@ func (db *DB) CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model
 
 func (db *DB) GetSessionSeries(id, campaignId string) (*model.SessionSeries, error) {
 	row := db.conn.QueryRow(`SELECT `+sessionSeriesColumns+` FROM session_series WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignId)
+	return scanSessionSeries(row)
+}
+
+func (db *DB) GetSessionSeriesForUpdate(id, campaignID string) (*model.SessionSeries, error) {
+	row := db.conn.QueryRow(`SELECT `+sessionSeriesColumns+` FROM session_series WHERE id = $1 AND campaign_id = $2 LIMIT 1 FOR UPDATE`, id, campaignID)
+	return scanSessionSeries(row)
+}
+
+func (db *DB) GetSessionSeriesByDiscordEventID(discordEventID string) (*model.SessionSeries, error) {
+	row := db.conn.QueryRow(`SELECT `+sessionSeriesColumns+` FROM session_series WHERE discord_event_id = $1 LIMIT 1`, discordEventID)
 	return scanSessionSeries(row)
 }
 
@@ -86,6 +100,17 @@ func (db *DB) RemoveSessionSeries(id, campaignID string) error {
 	return nil
 }
 
+func (db *DB) SetSeriesDiscordEventID(id, campaignID, eventID string) error {
+	_, err := db.conn.Exec(
+		`UPDATE session_series SET discord_event_id = $1, updated_at = NOW() WHERE id = $2 AND campaign_id = $3`,
+		eventID, id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("set series discord event id: %w", err)
+	}
+	return nil
+}
+
 func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.Time) error {
 	_, err := db.conn.Exec(`
 		INSERT INTO session_exceptions (series_id, excluded_date)
@@ -99,15 +124,13 @@ func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.
 	return nil
 }
 
+// ListActiveSeriesNeedingSession returns series that are still active but have no
+// Discord event assigned — the cron uses this to create events for unscheduled series.
 func (db *DB) ListActiveSeriesNeedingSession() ([]*model.SessionSeries, error) {
 	rows, err := db.conn.Query(`
-		SELECT ` + sessionSeriesColumns + ` FROM session_series ss
-		WHERE (ss.series_end_date IS NULL OR ss.series_end_date > NOW())
-		AND NOT EXISTS (
-			SELECT 1 FROM session s
-			WHERE s.series_id = ss.id
-			AND s.starts_at > NOW() + INTERVAL '1 hour'
-		)`)
+		SELECT ` + sessionSeriesColumns + ` FROM session_series
+		WHERE (series_end_date IS NULL OR series_end_date > NOW())
+		AND discord_event_id IS NULL`)
 	if err != nil {
 		return nil, fmt.Errorf("list active series needing session: %w", err)
 	}
@@ -163,6 +186,41 @@ func (db *DB) ListExceptionsForSeries(seriesIDs []string) (map[string][]time.Tim
 		result[seriesID] = append(result[seriesID], excludedDate)
 	}
 	return result, rows.Err()
+}
+
+func (db *DB) SetSeriesPollID(id, campaignID, pollID string) error {
+	_, err := db.conn.Exec(
+		`UPDATE session_series SET poll_id = $1, updated_at = NOW() WHERE id = $2 AND campaign_id = $3`,
+		pollID, id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("set series poll id: %w", err)
+	}
+	return nil
+}
+
+func (db *DB) ListActiveSeries() ([]*model.SessionSeries, error) {
+	rows, err := db.conn.Query(`
+		SELECT ` + sessionSeriesColumns + ` FROM session_series
+		WHERE (series_end_date IS NULL OR series_end_date > NOW())`)
+	if err != nil {
+		return nil, fmt.Errorf("list active series: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var series []*model.SessionSeries
+	for rows.Next() {
+		s, err := scanSessionSeries(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan session series: %w", err)
+		}
+		series = append(series, s)
+	}
+	return series, rows.Err()
 }
 
 func (db *DB) RemoveSeriesException(seriesID, campaignID string, excludedDate time.Time) error {

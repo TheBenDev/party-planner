@@ -1,21 +1,15 @@
-import { Status } from "@planner/enums/session";
 import z from "zod";
 import { BaseEntitySchema } from "@/shared/types";
 
 // ─── Session ──────────────────────────────────────────────────────────────────
 
 export const SessionsSchema = BaseEntitySchema.extend({
-	announcedAt: z.date().nullable().optional(),
 	campaignId: z.uuid(),
 	description: z.string().nullable().optional(),
-	discordEventId: z.string().nullable().optional(),
 	durationMinutes: z.number().int().min(15).optional(),
-	originalStartsAt: z.date().nullable().optional(),
-	pollId: z.string().nullable().optional(),
 	recap: z.string().nullable().optional(),
 	seriesId: z.uuid().nullable().optional(),
-	startsAt: z.date().nullable().optional(),
-	status: z.enum(Status),
+	startsAt: z.date(),
 	title: z.string(),
 });
 
@@ -32,20 +26,12 @@ export const PollSchema = z.object({
 	question: z.string(),
 });
 
-export const AnnounceSessionRequestSchema = z.object({
-	campaignId: z.uuid(),
-	sessionId: z.uuid(),
-});
-export const AnnounceSessionResponseSchema = z.object({});
-
 export const CreateSessionRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
 	durationMinutes: z.number().int().min(15).default(180),
-	originalStartsAt: z.date().optional(),
 	seriesId: z.uuid().optional(),
 	startsAt: z.date().optional(),
-	status: z.enum(Status),
 	title: z.string(),
 });
 
@@ -57,27 +43,6 @@ export const GetSessionResponseSchema = z.object({
 	session: SessionsSchema,
 });
 
-export const GetPollRequestSchema = z.object({
-	campaignId: z.uuid(),
-	sessionId: z.uuid(),
-});
-
-export const GetPollResponseSchema = z.object({ poll: PollSchema.nullable() });
-
-export const ListOneOffSessionsByCampaignRequestSchema = z.object({
-	campaignId: z.uuid(),
-});
-export const ListOneOffSessionsByCampaignResponseSchema = z.object({
-	sessions: z.array(SessionsSchema),
-});
-
-export const PollSessionRequestSchema = z.object({
-	campaignId: z.uuid(),
-	options: z.array(z.date()),
-	sessionId: z.uuid(),
-});
-export const PollSessionResponseSchema = z.object({});
-
 export const RemoveSessionRequestSchema = z.object({ id: z.uuid() });
 export const RemoveSessionResponseSchema = z.object({});
 
@@ -85,8 +50,6 @@ export const UpdateSessionRequestSchema = z.object({
 	description: z.string().optional(),
 	id: z.uuid(),
 	recap: z.string().optional(),
-	startsAt: z.date().optional(),
-	status: z.enum(Status),
 	title: z.string().optional(),
 });
 export const UpdateSessionResponseSchema = z.object({
@@ -102,8 +65,9 @@ export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
 export const SessionSeriesSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
+	discordEventId: z.string().optional(),
 	durationMinutes: z.number().int().min(15).default(180),
-	rrule: z.string(),
+	rrule: z.string().nullable(),
 	seriesEndDate: z.coerce.date().optional(),
 	seriesStartDate: z.coerce.date(),
 	startTime: z.string(),
@@ -115,7 +79,7 @@ export const CreateSessionSeriesRequestSchema = z.object({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
 	durationMinutes: z.number().int().min(15).default(180),
-	rrule: z.string(),
+	rrule: z.string().nullable(),
 	seriesEndDate: z.date().optional(),
 	seriesStartDate: z.date(),
 	startTime: z.string(),
@@ -163,7 +127,6 @@ export const RemoveSessionSeriesResponseSchema = z.object({});
 export const ExcludeSessionFromSeriesRequestSchema = z.object({
 	excludedDate: z.date(),
 	seriesId: z.uuid(),
-	sessionId: z.uuid(),
 });
 export const ExcludeSessionFromSeriesResponseSchema = z.object({});
 
@@ -172,6 +135,44 @@ export const RemoveSeriesExceptionRequestSchema = z.object({
 	seriesId: z.uuid(),
 });
 export const RemoveSeriesExceptionResponseSchema = z.object({});
+
+export const AnnounceToDiscordRequestSchema = z.object({
+	seriesId: z.uuid(),
+});
+export const AnnounceToDiscordResponseSchema = z.object({
+	series: SessionSeriesSchema,
+});
+
+export const DiscordEventInfoSchema = z.object({
+	eventId: z.string(),
+	guildId: z.string(),
+	name: z.string(),
+	startTime: z.date(),
+	endTime: z.date().optional(),
+	status: z.number(),
+});
+export type DiscordEventInfo = z.infer<typeof DiscordEventInfoSchema>;
+
+export const GetDiscordEventRequestSchema = z.object({
+	discordEventId: z.string(),
+	seriesId: z.uuid(),
+});
+export const GetDiscordEventResponseSchema = z.object({
+	event: DiscordEventInfoSchema,
+});
+
+export const GetSeriesPollRequestSchema = z.object({
+	seriesId: z.uuid(),
+});
+export const GetSeriesPollResponseSchema = z.object({
+	poll: PollSchema.nullable(),
+});
+
+export const PollSeriesRequestSchema = z.object({
+	options: z.array(z.date()).min(1),
+	seriesId: z.uuid(),
+});
+export const PollSeriesResponseSchema = z.object({});
 
 export type SessionSeries = z.infer<typeof SessionSeriesSchema>;
 export type SessionSeriesWithDetails = z.infer<
@@ -183,7 +184,6 @@ export type SessionSeriesWithDetails = z.infer<
 export const SessionEditSchema = z.object({
 	description: z.string().optional(),
 	recap: z.string().optional(),
-	startsAt: z.date().optional(),
 	title: z.string().min(1),
 });
 
@@ -191,34 +191,16 @@ export type SessionEditForm = z.infer<typeof SessionEditSchema>;
 
 // --- create session dialog ------------------------------------------------------------
 
-export type CreateOneOffInput = {
-	title: string;
-	description?: string;
-	status: Status;
-	startsAt?: Date;
-	durationMinutes: number;
-};
-
 export type CreateSeriesInput = {
 	title: string;
 	description?: string;
 	durationMinutes: number;
-	rrule: string;
+	rrule: string | null;
 	startTime: string;
 	timezone: string;
 	seriesStartDate: Date;
 	seriesEndDate?: Date;
 };
-
-export const oneOffSchema = z.object({
-	description: z.string().optional(),
-	durationMinutes: z
-		.number({ error: "Duration must be a number" })
-		.int("Duration must be a whole number")
-		.min(15, "Duration must be at least 15 minutes"),
-	startsAt: z.date().optional(),
-	title: z.string().min(1, "Title is required"),
-});
 
 export const seriesSchema = z.object({
 	description: z.string().optional(),
@@ -226,12 +208,11 @@ export const seriesSchema = z.object({
 		.number({ error: "Duration must be a number" })
 		.int("Duration must be a whole number")
 		.min(15, "Duration must be at least 15 minutes"),
-	rrule: z.string().min(1, "Recurrence pattern is required"),
+	rrule: z.string().min(1, "Recurrence pattern is required").nullable(),
 	seriesEndDate: z.string().optional(),
 	seriesStartDate: z.string().min(1, "First session date is required"),
 	startTime: z.string().min(1, "Start time is required"),
 	title: z.string().min(1, "Title is required"),
 });
 
-export type OneOffFormValues = z.infer<typeof oneOffSchema>;
 export type SeriesFormValues = z.infer<typeof seriesSchema>;

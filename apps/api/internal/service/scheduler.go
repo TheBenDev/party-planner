@@ -15,6 +15,7 @@ import (
 type SeriesScheduler struct {
 	DB      *db.DB
 	Session *SessionService
+	Series  *SessionSeriesService
 	Log     *slog.Logger
 }
 
@@ -52,13 +53,12 @@ func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
 		}
 
 		_, err := s.Session.Create(ctx, &model.CreateSessionRequest{
-			CampaignID:       ss.CampaignID,
-			Title:            ss.Title,
-			Description:      ss.Description,
-			SeriesID:         sql.NullString{String: ss.ID, Valid: true},
-			OriginalStartsAt: sql.NullTime{Time: *next, Valid: true},
-			Status:           model.SessionStatusConfirmed,
-			StartsAt:         sql.NullTime{Time: *next, Valid: true},
+			CampaignID:      ss.CampaignID,
+			Title:           ss.Title,
+			Description:     ss.Description,
+			SeriesID:        sql.NullString{String: ss.ID, Valid: true},
+			ScheduledAt:     *next,
+			DurationMinutes: ss.DurationMinutes,
 		})
 		if err != nil {
 			s.Log.ErrorContext(ctx, "series scheduler: failed to create session",
@@ -77,16 +77,19 @@ func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
 }
 
 func (s *SeriesScheduler) NotifyNextSession(ctx context.Context) {
-	s.Session.NotifyUpcomingSessions(ctx)
+	s.Series.NotifyUpcomingOccurrences(ctx)
 }
 
 func computeNextValidOccurrence(series *model.SessionSeries, exceptions []time.Time) *time.Time {
-	h, m, sec, ok := parseStartTime(series.StartTime)
+	if !series.StartTime.Valid || !series.RRule.Valid {
+		return nil
+	}
+	h, m, sec, ok := parseStartTime(series.StartTime.String)
 	if !ok {
 		return nil
 	}
 
-	advance, ok := rruleAdvanceFn(series.RRule)
+	advance, ok := rruleAdvanceFn(series.RRule.String)
 	if !ok {
 		return nil
 	}

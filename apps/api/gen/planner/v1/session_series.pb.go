@@ -36,6 +36,7 @@ type SessionSeries struct {
 	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Timezone        string                 `protobuf:"bytes,11,opt,name=timezone,proto3" json:"timezone,omitempty"`
 	DurationMinutes int32                  `protobuf:"varint,12,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
+	DiscordEventId  *string                `protobuf:"bytes,13,opt,name=discord_event_id,json=discordEventId,proto3,oneof" json:"discord_event_id,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -154,6 +155,13 @@ func (x *SessionSeries) GetDurationMinutes() int32 {
 	return 0
 }
 
+func (x *SessionSeries) GetDiscordEventId() string {
+	if x != nil && x.DiscordEventId != nil {
+		return *x.DiscordEventId
+	}
+	return ""
+}
+
 type SessionSeriesWithDetails struct {
 	state         protoimpl.MessageState   `protogen:"open.v1"`
 	Series        *SessionSeries           `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
@@ -219,7 +227,7 @@ type CreateSessionSeriesRequest struct {
 	CampaignId      string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	Title           string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Description     *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Rrule           string                 `protobuf:"bytes,4,opt,name=rrule,proto3" json:"rrule,omitempty"`
+	Rrule           *string                `protobuf:"bytes,4,opt,name=rrule,proto3,oneof" json:"rrule,omitempty"`
 	StartTime       string                 `protobuf:"bytes,5,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	SeriesStartDate *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=series_start_date,json=seriesStartDate,proto3" json:"series_start_date,omitempty"`
 	SeriesEndDate   *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=series_end_date,json=seriesEndDate,proto3,oneof" json:"series_end_date,omitempty"`
@@ -281,8 +289,8 @@ func (x *CreateSessionSeriesRequest) GetDescription() string {
 }
 
 func (x *CreateSessionSeriesRequest) GetRrule() string {
-	if x != nil {
-		return x.Rrule
+	if x != nil && x.Rrule != nil {
+		return *x.Rrule
 	}
 	return ""
 }
@@ -784,7 +792,6 @@ func (*RemoveSessionSeriesResponse) Descriptor() ([]byte, []int) {
 
 type ExcludeSessionFromSeriesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
 	SeriesId      string                 `protobuf:"bytes,2,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
 	ExcludedDate  *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=excluded_date,json=excludedDate,proto3" json:"excluded_date,omitempty"`
 	CampaignId    string                 `protobuf:"bytes,4,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -820,13 +827,6 @@ func (x *ExcludeSessionFromSeriesRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ExcludeSessionFromSeriesRequest.ProtoReflect.Descriptor instead.
 func (*ExcludeSessionFromSeriesRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ExcludeSessionFromSeriesRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
 }
 
 func (x *ExcludeSessionFromSeriesRequest) GetSeriesId() string {
@@ -982,12 +982,488 @@ func (*RemoveSeriesExceptionResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{15}
 }
 
+type AnnounceToDiscordRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnnounceToDiscordRequest) Reset() {
+	*x = AnnounceToDiscordRequest{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnnounceToDiscordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceToDiscordRequest) ProtoMessage() {}
+
+func (x *AnnounceToDiscordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceToDiscordRequest.ProtoReflect.Descriptor instead.
+func (*AnnounceToDiscordRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *AnnounceToDiscordRequest) GetSeriesId() string {
+	if x != nil {
+		return x.SeriesId
+	}
+	return ""
+}
+
+func (x *AnnounceToDiscordRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+type AnnounceToDiscordResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Series        *SessionSeries         `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AnnounceToDiscordResponse) Reset() {
+	*x = AnnounceToDiscordResponse{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AnnounceToDiscordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AnnounceToDiscordResponse) ProtoMessage() {}
+
+func (x *AnnounceToDiscordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AnnounceToDiscordResponse.ProtoReflect.Descriptor instead.
+func (*AnnounceToDiscordResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *AnnounceToDiscordResponse) GetSeries() *SessionSeries {
+	if x != nil {
+		return x.Series
+	}
+	return nil
+}
+
+type GetDiscordEventRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CampaignId     string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	SeriesId       string                 `protobuf:"bytes,2,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	DiscordEventId string                 `protobuf:"bytes,3,opt,name=discord_event_id,json=discordEventId,proto3" json:"discord_event_id,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *GetDiscordEventRequest) Reset() {
+	*x = GetDiscordEventRequest{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDiscordEventRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDiscordEventRequest) ProtoMessage() {}
+
+func (x *GetDiscordEventRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDiscordEventRequest.ProtoReflect.Descriptor instead.
+func (*GetDiscordEventRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *GetDiscordEventRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+func (x *GetDiscordEventRequest) GetSeriesId() string {
+	if x != nil {
+		return x.SeriesId
+	}
+	return ""
+}
+
+func (x *GetDiscordEventRequest) GetDiscordEventId() string {
+	if x != nil {
+		return x.DiscordEventId
+	}
+	return ""
+}
+
+type DiscordEventInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GuildId       string                 `protobuf:"bytes,1,opt,name=guild_id,json=guildId,proto3" json:"guild_id,omitempty"`
+	EventId       string                 `protobuf:"bytes,2,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	StartTime     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime       *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
+	Status        int32                  `protobuf:"varint,6,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DiscordEventInfo) Reset() {
+	*x = DiscordEventInfo{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DiscordEventInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DiscordEventInfo) ProtoMessage() {}
+
+func (x *DiscordEventInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DiscordEventInfo.ProtoReflect.Descriptor instead.
+func (*DiscordEventInfo) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *DiscordEventInfo) GetGuildId() string {
+	if x != nil {
+		return x.GuildId
+	}
+	return ""
+}
+
+func (x *DiscordEventInfo) GetEventId() string {
+	if x != nil {
+		return x.EventId
+	}
+	return ""
+}
+
+func (x *DiscordEventInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *DiscordEventInfo) GetStartTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartTime
+	}
+	return nil
+}
+
+func (x *DiscordEventInfo) GetEndTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndTime
+	}
+	return nil
+}
+
+func (x *DiscordEventInfo) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type GetDiscordEventResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Event         *DiscordEventInfo      `protobuf:"bytes,1,opt,name=event,proto3" json:"event,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDiscordEventResponse) Reset() {
+	*x = GetDiscordEventResponse{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDiscordEventResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDiscordEventResponse) ProtoMessage() {}
+
+func (x *GetDiscordEventResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDiscordEventResponse.ProtoReflect.Descriptor instead.
+func (*GetDiscordEventResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *GetDiscordEventResponse) GetEvent() *DiscordEventInfo {
+	if x != nil {
+		return x.Event
+	}
+	return nil
+}
+
+type GetSeriesPollRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSeriesPollRequest) Reset() {
+	*x = GetSeriesPollRequest{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSeriesPollRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSeriesPollRequest) ProtoMessage() {}
+
+func (x *GetSeriesPollRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSeriesPollRequest.ProtoReflect.Descriptor instead.
+func (*GetSeriesPollRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *GetSeriesPollRequest) GetSeriesId() string {
+	if x != nil {
+		return x.SeriesId
+	}
+	return ""
+}
+
+func (x *GetSeriesPollRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+type GetSeriesPollResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Poll          *Poll                  `protobuf:"bytes,1,opt,name=poll,proto3" json:"poll,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetSeriesPollResponse) Reset() {
+	*x = GetSeriesPollResponse{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetSeriesPollResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetSeriesPollResponse) ProtoMessage() {}
+
+func (x *GetSeriesPollResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetSeriesPollResponse.ProtoReflect.Descriptor instead.
+func (*GetSeriesPollResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *GetSeriesPollResponse) GetPoll() *Poll {
+	if x != nil {
+		return x.Poll
+	}
+	return nil
+}
+
+type PollSeriesRequest struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	SeriesId      string                   `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
+	CampaignId    string                   `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Options       []*timestamppb.Timestamp `protobuf:"bytes,3,rep,name=options,proto3" json:"options,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PollSeriesRequest) Reset() {
+	*x = PollSeriesRequest{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PollSeriesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PollSeriesRequest) ProtoMessage() {}
+
+func (x *PollSeriesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PollSeriesRequest.ProtoReflect.Descriptor instead.
+func (*PollSeriesRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *PollSeriesRequest) GetSeriesId() string {
+	if x != nil {
+		return x.SeriesId
+	}
+	return ""
+}
+
+func (x *PollSeriesRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+func (x *PollSeriesRequest) GetOptions() []*timestamppb.Timestamp {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+type PollSeriesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PollSeriesResponse) Reset() {
+	*x = PollSeriesResponse{}
+	mi := &file_planner_v1_session_series_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PollSeriesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PollSeriesResponse) ProtoMessage() {}
+
+func (x *PollSeriesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_session_series_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PollSeriesResponse.ProtoReflect.Descriptor instead.
+func (*PollSeriesResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{24}
+}
+
 var File_planner_v1_session_series_proto protoreflect.FileDescriptor
 
 const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\n" +
 	"\x1fplanner/v1/session_series.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18planner/v1/session.proto\"\xa4\x04\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x18planner/v1/session.proto\"\xe8\x04\n" +
 	"\rSessionSeries\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1005,28 +1481,31 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"updated_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1a\n" +
 	"\btimezone\x18\v \x01(\tR\btimezone\x12)\n" +
-	"\x10duration_minutes\x18\f \x01(\x05R\x0fdurationMinutesB\x0e\n" +
+	"\x10duration_minutes\x18\f \x01(\x05R\x0fdurationMinutes\x12-\n" +
+	"\x10discord_event_id\x18\r \x01(\tH\x02R\x0ediscordEventId\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\x12\n" +
-	"\x10_series_end_date\"\xba\x01\n" +
+	"\x10_series_end_dateB\x13\n" +
+	"\x11_discord_event_id\"\xba\x01\n" +
 	"\x18SessionSeriesWithDetails\x121\n" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\x12/\n" +
 	"\bsessions\x18\x02 \x03(\v2\x13.planner.v1.SessionR\bsessions\x12:\n" +
 	"\n" +
 	"exceptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\n" +
-	"exceptions\"\xc5\x03\n" +
+	"exceptions\"\xd4\x03\n" +
 	"\x1aCreateSessionSeriesRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x14\n" +
-	"\x05rrule\x18\x04 \x01(\tR\x05rrule\x12\x1d\n" +
+	"\vdescription\x18\x03 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x19\n" +
+	"\x05rrule\x18\x04 \x01(\tH\x01R\x05rrule\x88\x01\x01\x12\x1d\n" +
 	"\n" +
 	"start_time\x18\x05 \x01(\tR\tstartTime\x12F\n" +
 	"\x11series_start_date\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x0fseriesStartDate\x12G\n" +
-	"\x0fseries_end_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\rseriesEndDate\x88\x01\x01\x12\x1a\n" +
+	"\x0fseries_end_date\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x02R\rseriesEndDate\x88\x01\x01\x12\x1a\n" +
 	"\btimezone\x18\b \x01(\tR\btimezone\x12.\n" +
-	"\x10duration_minutes\x18\t \x01(\x05H\x02R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\x12\n" +
+	"\x10duration_minutes\x18\t \x01(\x05H\x03R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
+	"\f_descriptionB\b\n" +
+	"\x06_rruleB\x12\n" +
 	"\x10_series_end_dateB\x13\n" +
 	"\x11_duration_minutes\"P\n" +
 	"\x1bCreateSessionSeriesResponse\x121\n" +
@@ -1065,10 +1544,8 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"\x1d\n" +
-	"\x1bRemoveSessionSeriesResponse\"\xbf\x01\n" +
-	"\x1fExcludeSessionFromSeriesRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1b\n" +
+	"\x1bRemoveSessionSeriesResponse\"\xa0\x01\n" +
+	"\x1fExcludeSessionFromSeriesRequest\x12\x1b\n" +
 	"\tseries_id\x18\x02 \x01(\tR\bseriesId\x12?\n" +
 	"\rexcluded_date\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
 	"\vcampaign_id\x18\x04 \x01(\tR\n" +
@@ -1079,7 +1556,41 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\rexcluded_date\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\fexcludedDate\x12\x1f\n" +
 	"\vcampaign_id\x18\x03 \x01(\tR\n" +
 	"campaignId\"\x1f\n" +
-	"\x1dRemoveSeriesExceptionResponse2\x92\x06\n" +
+	"\x1dRemoveSeriesExceptionResponse\"X\n" +
+	"\x18AnnounceToDiscordRequest\x12\x1b\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"N\n" +
+	"\x19AnnounceToDiscordResponse\x121\n" +
+	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"\x80\x01\n" +
+	"\x16GetDiscordEventRequest\x12\x1f\n" +
+	"\vcampaign_id\x18\x01 \x01(\tR\n" +
+	"campaignId\x12\x1b\n" +
+	"\tseries_id\x18\x02 \x01(\tR\bseriesId\x12(\n" +
+	"\x10discord_event_id\x18\x03 \x01(\tR\x0ediscordEventId\"\xf8\x01\n" +
+	"\x10DiscordEventInfo\x12\x19\n" +
+	"\bguild_id\x18\x01 \x01(\tR\aguildId\x12\x19\n" +
+	"\bevent_id\x18\x02 \x01(\tR\aeventId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x129\n" +
+	"\n" +
+	"start_time\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tstartTime\x12:\n" +
+	"\bend_time\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\aendTime\x88\x01\x01\x12\x16\n" +
+	"\x06status\x18\x06 \x01(\x05R\x06statusB\v\n" +
+	"\t_end_time\"M\n" +
+	"\x17GetDiscordEventResponse\x122\n" +
+	"\x05event\x18\x01 \x01(\v2\x1c.planner.v1.DiscordEventInfoR\x05event\"T\n" +
+	"\x14GetSeriesPollRequest\x12\x1b\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"=\n" +
+	"\x15GetSeriesPollResponse\x12$\n" +
+	"\x04poll\x18\x01 \x01(\v2\x10.planner.v1.PollR\x04poll\"\x87\x01\n" +
+	"\x11PollSeriesRequest\x12\x1b\n" +
+	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\x124\n" +
+	"\aoptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\aoptions\"\x14\n" +
+	"\x12PollSeriesResponse2\xf3\b\n" +
 	"\x14SessionSeriesService\x12f\n" +
 	"\x13CreateSessionSeries\x12&.planner.v1.CreateSessionSeriesRequest\x1a'.planner.v1.CreateSessionSeriesResponse\x12]\n" +
 	"\x10GetSessionSeries\x12#.planner.v1.GetSessionSeriesRequest\x1a$.planner.v1.GetSessionSeriesResponse\x12~\n" +
@@ -1087,7 +1598,12 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x13UpdateSessionSeries\x12&.planner.v1.UpdateSessionSeriesRequest\x1a'.planner.v1.UpdateSessionSeriesResponse\x12f\n" +
 	"\x13RemoveSessionSeries\x12&.planner.v1.RemoveSessionSeriesRequest\x1a'.planner.v1.RemoveSessionSeriesResponse\x12u\n" +
 	"\x18ExcludeSessionFromSeries\x12+.planner.v1.ExcludeSessionFromSeriesRequest\x1a,.planner.v1.ExcludeSessionFromSeriesResponse\x12l\n" +
-	"\x15RemoveSeriesException\x12(.planner.v1.RemoveSeriesExceptionRequest\x1a).planner.v1.RemoveSeriesExceptionResponseB\xaf\x01\n" +
+	"\x15RemoveSeriesException\x12(.planner.v1.RemoveSeriesExceptionRequest\x1a).planner.v1.RemoveSeriesExceptionResponse\x12`\n" +
+	"\x11AnnounceToDiscord\x12$.planner.v1.AnnounceToDiscordRequest\x1a%.planner.v1.AnnounceToDiscordResponse\x12Z\n" +
+	"\x0fGetDiscordEvent\x12\".planner.v1.GetDiscordEventRequest\x1a#.planner.v1.GetDiscordEventResponse\x12T\n" +
+	"\rGetSeriesPoll\x12 .planner.v1.GetSeriesPollRequest\x1a!.planner.v1.GetSeriesPollResponse\x12K\n" +
+	"\n" +
+	"PollSeries\x12\x1d.planner.v1.PollSeriesRequest\x1a\x1e.planner.v1.PollSeriesResponseB\xaf\x01\n" +
 	"\x0ecom.planner.v1B\x12SessionSeriesProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
@@ -1104,7 +1620,7 @@ func file_planner_v1_session_series_proto_rawDescGZIP() []byte {
 	return file_planner_v1_session_series_proto_rawDescData
 }
 
-var file_planner_v1_session_series_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_planner_v1_session_series_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
 var file_planner_v1_session_series_proto_goTypes = []any{
 	(*SessionSeries)(nil),                       // 0: planner.v1.SessionSeries
 	(*SessionSeriesWithDetails)(nil),            // 1: planner.v1.SessionSeriesWithDetails
@@ -1122,45 +1638,69 @@ var file_planner_v1_session_series_proto_goTypes = []any{
 	(*ExcludeSessionFromSeriesResponse)(nil),    // 13: planner.v1.ExcludeSessionFromSeriesResponse
 	(*RemoveSeriesExceptionRequest)(nil),        // 14: planner.v1.RemoveSeriesExceptionRequest
 	(*RemoveSeriesExceptionResponse)(nil),       // 15: planner.v1.RemoveSeriesExceptionResponse
-	(*timestamppb.Timestamp)(nil),               // 16: google.protobuf.Timestamp
-	(*Session)(nil),                             // 17: planner.v1.Session
+	(*AnnounceToDiscordRequest)(nil),            // 16: planner.v1.AnnounceToDiscordRequest
+	(*AnnounceToDiscordResponse)(nil),           // 17: planner.v1.AnnounceToDiscordResponse
+	(*GetDiscordEventRequest)(nil),              // 18: planner.v1.GetDiscordEventRequest
+	(*DiscordEventInfo)(nil),                    // 19: planner.v1.DiscordEventInfo
+	(*GetDiscordEventResponse)(nil),             // 20: planner.v1.GetDiscordEventResponse
+	(*GetSeriesPollRequest)(nil),                // 21: planner.v1.GetSeriesPollRequest
+	(*GetSeriesPollResponse)(nil),               // 22: planner.v1.GetSeriesPollResponse
+	(*PollSeriesRequest)(nil),                   // 23: planner.v1.PollSeriesRequest
+	(*PollSeriesResponse)(nil),                  // 24: planner.v1.PollSeriesResponse
+	(*timestamppb.Timestamp)(nil),               // 25: google.protobuf.Timestamp
+	(*Session)(nil),                             // 26: planner.v1.Session
+	(*Poll)(nil),                                // 27: planner.v1.Poll
 }
 var file_planner_v1_session_series_proto_depIdxs = []int32{
-	16, // 0: planner.v1.SessionSeries.series_start_date:type_name -> google.protobuf.Timestamp
-	16, // 1: planner.v1.SessionSeries.series_end_date:type_name -> google.protobuf.Timestamp
-	16, // 2: planner.v1.SessionSeries.created_at:type_name -> google.protobuf.Timestamp
-	16, // 3: planner.v1.SessionSeries.updated_at:type_name -> google.protobuf.Timestamp
+	25, // 0: planner.v1.SessionSeries.series_start_date:type_name -> google.protobuf.Timestamp
+	25, // 1: planner.v1.SessionSeries.series_end_date:type_name -> google.protobuf.Timestamp
+	25, // 2: planner.v1.SessionSeries.created_at:type_name -> google.protobuf.Timestamp
+	25, // 3: planner.v1.SessionSeries.updated_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: planner.v1.SessionSeriesWithDetails.series:type_name -> planner.v1.SessionSeries
-	17, // 5: planner.v1.SessionSeriesWithDetails.sessions:type_name -> planner.v1.Session
-	16, // 6: planner.v1.SessionSeriesWithDetails.exceptions:type_name -> google.protobuf.Timestamp
-	16, // 7: planner.v1.CreateSessionSeriesRequest.series_start_date:type_name -> google.protobuf.Timestamp
-	16, // 8: planner.v1.CreateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
+	26, // 5: planner.v1.SessionSeriesWithDetails.sessions:type_name -> planner.v1.Session
+	25, // 6: planner.v1.SessionSeriesWithDetails.exceptions:type_name -> google.protobuf.Timestamp
+	25, // 7: planner.v1.CreateSessionSeriesRequest.series_start_date:type_name -> google.protobuf.Timestamp
+	25, // 8: planner.v1.CreateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
 	0,  // 9: planner.v1.CreateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
 	0,  // 10: planner.v1.GetSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
 	1,  // 11: planner.v1.ListSessionSeriesByCampaignResponse.series:type_name -> planner.v1.SessionSeriesWithDetails
-	16, // 12: planner.v1.UpdateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
+	25, // 12: planner.v1.UpdateSessionSeriesRequest.series_end_date:type_name -> google.protobuf.Timestamp
 	0,  // 13: planner.v1.UpdateSessionSeriesResponse.series:type_name -> planner.v1.SessionSeries
-	16, // 14: planner.v1.ExcludeSessionFromSeriesRequest.excluded_date:type_name -> google.protobuf.Timestamp
-	16, // 15: planner.v1.RemoveSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
-	2,  // 16: planner.v1.SessionSeriesService.CreateSessionSeries:input_type -> planner.v1.CreateSessionSeriesRequest
-	4,  // 17: planner.v1.SessionSeriesService.GetSessionSeries:input_type -> planner.v1.GetSessionSeriesRequest
-	6,  // 18: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:input_type -> planner.v1.ListSessionSeriesByCampaignRequest
-	8,  // 19: planner.v1.SessionSeriesService.UpdateSessionSeries:input_type -> planner.v1.UpdateSessionSeriesRequest
-	10, // 20: planner.v1.SessionSeriesService.RemoveSessionSeries:input_type -> planner.v1.RemoveSessionSeriesRequest
-	12, // 21: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:input_type -> planner.v1.ExcludeSessionFromSeriesRequest
-	14, // 22: planner.v1.SessionSeriesService.RemoveSeriesException:input_type -> planner.v1.RemoveSeriesExceptionRequest
-	3,  // 23: planner.v1.SessionSeriesService.CreateSessionSeries:output_type -> planner.v1.CreateSessionSeriesResponse
-	5,  // 24: planner.v1.SessionSeriesService.GetSessionSeries:output_type -> planner.v1.GetSessionSeriesResponse
-	7,  // 25: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:output_type -> planner.v1.ListSessionSeriesByCampaignResponse
-	9,  // 26: planner.v1.SessionSeriesService.UpdateSessionSeries:output_type -> planner.v1.UpdateSessionSeriesResponse
-	11, // 27: planner.v1.SessionSeriesService.RemoveSessionSeries:output_type -> planner.v1.RemoveSessionSeriesResponse
-	13, // 28: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:output_type -> planner.v1.ExcludeSessionFromSeriesResponse
-	15, // 29: planner.v1.SessionSeriesService.RemoveSeriesException:output_type -> planner.v1.RemoveSeriesExceptionResponse
-	23, // [23:30] is the sub-list for method output_type
-	16, // [16:23] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	25, // 14: planner.v1.ExcludeSessionFromSeriesRequest.excluded_date:type_name -> google.protobuf.Timestamp
+	25, // 15: planner.v1.RemoveSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
+	0,  // 16: planner.v1.AnnounceToDiscordResponse.series:type_name -> planner.v1.SessionSeries
+	25, // 17: planner.v1.DiscordEventInfo.start_time:type_name -> google.protobuf.Timestamp
+	25, // 18: planner.v1.DiscordEventInfo.end_time:type_name -> google.protobuf.Timestamp
+	19, // 19: planner.v1.GetDiscordEventResponse.event:type_name -> planner.v1.DiscordEventInfo
+	27, // 20: planner.v1.GetSeriesPollResponse.poll:type_name -> planner.v1.Poll
+	25, // 21: planner.v1.PollSeriesRequest.options:type_name -> google.protobuf.Timestamp
+	2,  // 22: planner.v1.SessionSeriesService.CreateSessionSeries:input_type -> planner.v1.CreateSessionSeriesRequest
+	4,  // 23: planner.v1.SessionSeriesService.GetSessionSeries:input_type -> planner.v1.GetSessionSeriesRequest
+	6,  // 24: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:input_type -> planner.v1.ListSessionSeriesByCampaignRequest
+	8,  // 25: planner.v1.SessionSeriesService.UpdateSessionSeries:input_type -> planner.v1.UpdateSessionSeriesRequest
+	10, // 26: planner.v1.SessionSeriesService.RemoveSessionSeries:input_type -> planner.v1.RemoveSessionSeriesRequest
+	12, // 27: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:input_type -> planner.v1.ExcludeSessionFromSeriesRequest
+	14, // 28: planner.v1.SessionSeriesService.RemoveSeriesException:input_type -> planner.v1.RemoveSeriesExceptionRequest
+	16, // 29: planner.v1.SessionSeriesService.AnnounceToDiscord:input_type -> planner.v1.AnnounceToDiscordRequest
+	18, // 30: planner.v1.SessionSeriesService.GetDiscordEvent:input_type -> planner.v1.GetDiscordEventRequest
+	21, // 31: planner.v1.SessionSeriesService.GetSeriesPoll:input_type -> planner.v1.GetSeriesPollRequest
+	23, // 32: planner.v1.SessionSeriesService.PollSeries:input_type -> planner.v1.PollSeriesRequest
+	3,  // 33: planner.v1.SessionSeriesService.CreateSessionSeries:output_type -> planner.v1.CreateSessionSeriesResponse
+	5,  // 34: planner.v1.SessionSeriesService.GetSessionSeries:output_type -> planner.v1.GetSessionSeriesResponse
+	7,  // 35: planner.v1.SessionSeriesService.ListSessionSeriesByCampaign:output_type -> planner.v1.ListSessionSeriesByCampaignResponse
+	9,  // 36: planner.v1.SessionSeriesService.UpdateSessionSeries:output_type -> planner.v1.UpdateSessionSeriesResponse
+	11, // 37: planner.v1.SessionSeriesService.RemoveSessionSeries:output_type -> planner.v1.RemoveSessionSeriesResponse
+	13, // 38: planner.v1.SessionSeriesService.ExcludeSessionFromSeries:output_type -> planner.v1.ExcludeSessionFromSeriesResponse
+	15, // 39: planner.v1.SessionSeriesService.RemoveSeriesException:output_type -> planner.v1.RemoveSeriesExceptionResponse
+	17, // 40: planner.v1.SessionSeriesService.AnnounceToDiscord:output_type -> planner.v1.AnnounceToDiscordResponse
+	20, // 41: planner.v1.SessionSeriesService.GetDiscordEvent:output_type -> planner.v1.GetDiscordEventResponse
+	22, // 42: planner.v1.SessionSeriesService.GetSeriesPoll:output_type -> planner.v1.GetSeriesPollResponse
+	24, // 43: planner.v1.SessionSeriesService.PollSeries:output_type -> planner.v1.PollSeriesResponse
+	33, // [33:44] is the sub-list for method output_type
+	22, // [22:33] is the sub-list for method input_type
+	22, // [22:22] is the sub-list for extension type_name
+	22, // [22:22] is the sub-list for extension extendee
+	0,  // [0:22] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_session_series_proto_init() }
@@ -1172,13 +1712,14 @@ func file_planner_v1_session_series_proto_init() {
 	file_planner_v1_session_series_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_session_series_proto_msgTypes[2].OneofWrappers = []any{}
 	file_planner_v1_session_series_proto_msgTypes[8].OneofWrappers = []any{}
+	file_planner_v1_session_series_proto_msgTypes[19].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_session_series_proto_rawDesc), len(file_planner_v1_session_series_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   16,
+			NumMessages:   25,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

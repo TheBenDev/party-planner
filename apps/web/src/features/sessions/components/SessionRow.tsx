@@ -9,7 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { cn } from "@/shared/lib/utils";
-import { formatDateTime, formatSessionDate } from "./session-utils";
+import { formatSessionDate } from "./session-utils";
 
 const SESSION_COLORS = [
 	"bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
@@ -62,28 +62,9 @@ export function SessionRow({
 }) {
 	const label = getSessionLabel(session.title);
 	const color = getSessionColor(session.title);
-	const isRescheduled =
-		session.originalStartsAt != null &&
-		session.startsAt != null &&
-		new Date(session.originalStartsAt).getTime() !==
-			new Date(session.startsAt).getTime();
 
 	let dateDisplay: React.ReactNode;
-	if (session.startsAt && isRescheduled) {
-		dateDisplay = (
-			<div className="text-xs text-muted-foreground mt-0.5 space-y-0.5">
-				<p className="flex items-center gap-1">
-					<Clock className="w-3 h-3 shrink-0" />
-					<span className="line-through opacity-50 truncate">
-						{formatDateTime(session.originalStartsAt)}
-					</span>
-				</p>
-				<p className="truncate">
-					→ moved to {formatDateTime(session.startsAt)}
-				</p>
-			</div>
-		);
-	} else if (session.startsAt) {
+	if (session.startsAt) {
 		dateDisplay = (
 			<p className="text-xs text-muted-foreground mt-0.5 truncate flex items-center gap-1">
 				<Clock className="w-3 h-3 shrink-0" />

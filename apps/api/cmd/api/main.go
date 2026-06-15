@@ -154,11 +154,12 @@ func buildServices(database *db.DB, discord *service.DiscordService, cfg *config
 		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
 
 	}
-	sessionSvc := &service.SessionService{DB: database, Discord: discord, Log: logger.Logger}
+	sessionSvc := &service.SessionService{DB: database}
+	sessionSeriesSvc := &service.SessionSeriesService{DB: database, Log: logger.Logger, Discord: discord}
 	return &appServices{
 		Discord:             discord,
 		Session:             sessionSvc,
-		SessionSeries:       &service.SessionSeriesService{DB: database, Log: logger.Logger, Session: sessionSvc},
+		SessionSeries:       sessionSeriesSvc,
 		Campaign:            &service.CampaignService{DB: database, Log: logger.Logger},
 		CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger, Discord: discord},
 		GoogleCalendar: &service.GoogleCalendarService{
@@ -176,7 +177,7 @@ func buildServices(database *db.DB, discord *service.DiscordService, cfg *config
 		Quest:     &service.QuestService{DB: database, Log: logger.Logger},
 		Location:  &service.LocationService{DB: database, Log: logger.Logger},
 		User:      &service.UserService{DB: database, Log: logger.Logger},
-		Scheduler: &service.SeriesScheduler{DB: database, Session: sessionSvc, Log: logger.Logger},
+		Scheduler: &service.SeriesScheduler{DB: database, Session: sessionSvc, Series: sessionSeriesSvc, Log: logger.Logger},
 	}, nil
 }
 

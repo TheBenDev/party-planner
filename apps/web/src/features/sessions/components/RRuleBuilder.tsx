@@ -1,31 +1,39 @@
 import { useState } from "react";
 import { cn } from "@/shared/lib/utils";
-import {
-	DAYS,
-	DAY_FULL,
-	DAY_SHORT,
-	parseRrule,
-} from "./session-utils";
+import { DAY_FULL, DAY_SHORT, DAYS, parseRrule } from "./session-utils";
+
+type Frequency = "WEEKLY" | "BIWEEKLY" | "ONE_OFF";
+
+function deriveFrequency(value: string | null): Frequency {
+	if (value === null) return "ONE_OFF";
+	return parseRrule(value).biWeekly ? "BIWEEKLY" : "WEEKLY";
+}
+
+function buildRrule(days: Set<string>, frequency: Frequency): string | null {
+	if (frequency === "ONE_OFF") return null;
+	if (days.size === 0) return "";
+	const byday = Array.from(days).join(",");
+	const interval = frequency === "BIWEEKLY" ? ";INTERVAL=2" : "";
+	return `FREQ=WEEKLY${interval};BYDAY=${byday}`;
+}
 
 export function RRuleBuilder({
 	value,
 	onChange,
 }: {
-	value: string;
-	onChange: (v: string) => void;
+	value: string | null;
+	onChange: (v: string | null) => void;
 }) {
-	const [initial] = useState(() => parseRrule(value));
-	const [biWeekly, setBiWeekly] = useState(initial.biWeekly);
-	const [selectedDays, setSelectedDays] = useState<Set<string>>(initial.days);
+	const [frequency, setFrequency] = useState<Frequency>(() =>
+		deriveFrequency(value),
+	);
+	const [selectedDays, setSelectedDays] = useState<Set<string>>(
+		() => parseRrule(value ?? "").days,
+	);
 
-	function build(days: Set<string>, bi: boolean) {
-		if (days.size === 0) {
-			onChange("");
-			return;
-		}
-		const byday = Array.from(days).join(",");
-		const interval = bi ? ";INTERVAL=2" : "";
-		onChange(`FREQ=WEEKLY${interval};BYDAY=${byday}`);
+	function handleFrequency(freq: Frequency) {
+		setFrequency(freq);
+		onChange(buildRrule(selectedDays, freq));
 	}
 
 	function toggleDay(day: string) {
@@ -33,79 +41,75 @@ export function RRuleBuilder({
 		if (next.has(day)) next.delete(day);
 		else next.add(day);
 		setSelectedDays(next);
-		build(next, biWeekly);
-	}
-
-	function handleFreq(bi: boolean) {
-		setBiWeekly(bi);
-		build(selectedDays, bi);
+		onChange(buildRrule(next, frequency));
 	}
 
 	const orderedSelected = DAYS.filter((d) => selectedDays.has(d));
 	const previewDays = orderedSelected.map((d) => DAY_FULL[d]).join(", ");
+	const FREQUENCY_OPTIONS = [
+		{ label: "Weekly", value: "WEEKLY" },
+		{ label: "Every 2 weeks", value: "BIWEEKLY" },
+		{ label: "One-off", value: "ONE_OFF" },
+	] as const;
 
 	return (
 		<div className="space-y-3">
 			<div className="space-y-1.5">
 				<p className="text-xs font-medium text-muted-foreground">Frequency</p>
 				<div className="flex gap-2">
-					<button
-						className={cn(
-							"flex-1 rounded-lg border py-2 text-sm font-medium transition-colors",
-							biWeekly
-								? "text-muted-foreground hover:bg-muted" : "bg-primary text-primary-foreground border-transparent",
-						)}
-						onClick={() => handleFreq(false)}
-						type="button"
-					>
-						Weekly
-					</button>
-					<button
-						className={cn(
-							"flex-1 rounded-lg border py-2 text-sm font-medium transition-colors",
-							biWeekly
-								? "bg-primary text-primary-foreground border-transparent"
-								: "text-muted-foreground hover:bg-muted",
-						)}
-						onClick={() => handleFreq(true)}
-						type="button"
-					>
-						Every 2 weeks
-					</button>
-				</div>
-			</div>
-
-			<div className="space-y-1.5">
-				<p className="text-xs font-medium text-muted-foreground">Day(s)</p>
-				<div className="grid grid-cols-7 gap-1">
-					{DAYS.map((day) => (
+					{FREQUENCY_OPTIONS.map((option) => (
 						<button
 							className={cn(
-								"py-2 rounded-md border text-xs font-medium transition-colors",
-								selectedDays.has(day)
-									? "bg-primary text-primary-foreground border-primary"
-									: "border-border text-muted-foreground hover:bg-muted",
+								"flex-1 rounded-lg border py-2 text-sm font-medium transition-colors",
+								frequency === option.value
+									? "bg-primary text-primary-foreground border-transparent"
+									: "text-muted-foreground hover:bg-muted",
 							)}
-							key={day}
-							onClick={() => toggleDay(day)}
-							title={DAY_FULL[day]}
+							key={option.value}
+							onClick={() => handleFrequency(option.value)}
 							type="button"
 						>
-							{DAY_SHORT[day]}
+							{option.label}
 						</button>
 					))}
 				</div>
 			</div>
 
-			{orderedSelected.length > 0 ? (
-				<div className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-					{biWeekly ? "Every other" : "Every"}{" "}
-					<span className="font-medium text-foreground">{previewDays}</span>
-				</div>
-			) : (
-				<p className="text-xs italic text-muted-foreground/60">
-					Select at least one day
-				</p>
+			{frequency !== "ONE_OFF" && (
+				<>
+					<div className="space-y-1.5">
+						<p className="text-xs font-medium text-muted-foreground">Day(s)</p>
+						<div className="grid grid-cols-7 gap-1">
+							{DAYS.map((day) => (
+								<button
+									className={cn(
+										"py-2 rounded-md border text-xs font-medium transition-colors",
+										selectedDays.has(day)
+											? "bg-primary text-primary-foreground border-primary"
+											: "border-border text-muted-foreground hover:bg-muted",
+									)}
+									key={day}
+									onClick={() => toggleDay(day)}
+									title={DAY_FULL[day]}
+									type="button"
+								>
+									{DAY_SHORT[day]}
+								</button>
+							))}
+						</div>
+					</div>
+
+					{orderedSelected.length > 0 ? (
+						<div className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
+							{frequency === "BIWEEKLY" ? "Every other" : "Every"}{" "}
+							<span className="font-medium text-foreground">{previewDays}</span>
+						</div>
+					) : (
+						<p className="text-xs italic text-muted-foreground/60">
+							Select at least one day
+						</p>
+					)}
+				</>
 			)}
 		</div>
 	);

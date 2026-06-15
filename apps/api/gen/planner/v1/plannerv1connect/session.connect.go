@@ -33,24 +33,12 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// SessionServiceAnnounceSessionProcedure is the fully-qualified name of the SessionService's
-	// AnnounceSession RPC.
-	SessionServiceAnnounceSessionProcedure = "/planner.v1.SessionService/AnnounceSession"
 	// SessionServiceCreateSessionProcedure is the fully-qualified name of the SessionService's
 	// CreateSession RPC.
 	SessionServiceCreateSessionProcedure = "/planner.v1.SessionService/CreateSession"
 	// SessionServiceGetSessionProcedure is the fully-qualified name of the SessionService's GetSession
 	// RPC.
 	SessionServiceGetSessionProcedure = "/planner.v1.SessionService/GetSession"
-	// SessionServiceGetSessionPollProcedure is the fully-qualified name of the SessionService's
-	// GetSessionPoll RPC.
-	SessionServiceGetSessionPollProcedure = "/planner.v1.SessionService/GetSessionPoll"
-	// SessionServiceListOneOffSessionsByCampaignProcedure is the fully-qualified name of the
-	// SessionService's ListOneOffSessionsByCampaign RPC.
-	SessionServiceListOneOffSessionsByCampaignProcedure = "/planner.v1.SessionService/ListOneOffSessionsByCampaign"
-	// SessionServicePollSessionProcedure is the fully-qualified name of the SessionService's
-	// PollSession RPC.
-	SessionServicePollSessionProcedure = "/planner.v1.SessionService/PollSession"
 	// SessionServiceRemoveSessionProcedure is the fully-qualified name of the SessionService's
 	// RemoveSession RPC.
 	SessionServiceRemoveSessionProcedure = "/planner.v1.SessionService/RemoveSession"
@@ -61,12 +49,8 @@ const (
 
 // SessionServiceClient is a client for the planner.v1.SessionService service.
 type SessionServiceClient interface {
-	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
-	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
-	ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error)
-	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
@@ -82,12 +66,6 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 	baseURL = strings.TrimRight(baseURL, "/")
 	sessionServiceMethods := v1.File_planner_v1_session_proto.Services().ByName("SessionService").Methods()
 	return &sessionServiceClient{
-		announceSession: connect.NewClient[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse](
-			httpClient,
-			baseURL+SessionServiceAnnounceSessionProcedure,
-			connect.WithSchema(sessionServiceMethods.ByName("AnnounceSession")),
-			connect.WithClientOptions(opts...),
-		),
 		createSession: connect.NewClient[v1.CreateSessionRequest, v1.CreateSessionResponse](
 			httpClient,
 			baseURL+SessionServiceCreateSessionProcedure,
@@ -98,24 +76,6 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 			httpClient,
 			baseURL+SessionServiceGetSessionProcedure,
 			connect.WithSchema(sessionServiceMethods.ByName("GetSession")),
-			connect.WithClientOptions(opts...),
-		),
-		getSessionPoll: connect.NewClient[v1.GetSessionPollRequest, v1.GetSessionPollResponse](
-			httpClient,
-			baseURL+SessionServiceGetSessionPollProcedure,
-			connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
-			connect.WithClientOptions(opts...),
-		),
-		listOneOffSessionsByCampaign: connect.NewClient[v1.ListOneOffSessionsByCampaignRequest, v1.ListOneOffSessionsByCampaignResponse](
-			httpClient,
-			baseURL+SessionServiceListOneOffSessionsByCampaignProcedure,
-			connect.WithSchema(sessionServiceMethods.ByName("ListOneOffSessionsByCampaign")),
-			connect.WithClientOptions(opts...),
-		),
-		pollSession: connect.NewClient[v1.PollSessionRequest, v1.PollSessionResponse](
-			httpClient,
-			baseURL+SessionServicePollSessionProcedure,
-			connect.WithSchema(sessionServiceMethods.ByName("PollSession")),
 			connect.WithClientOptions(opts...),
 		),
 		removeSession: connect.NewClient[v1.RemoveSessionRequest, v1.RemoveSessionResponse](
@@ -135,19 +95,10 @@ func NewSessionServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // sessionServiceClient implements SessionServiceClient.
 type sessionServiceClient struct {
-	announceSession              *connect.Client[v1.AnnounceSessionRequest, v1.AnnounceSessionResponse]
-	createSession                *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
-	getSession                   *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
-	getSessionPoll               *connect.Client[v1.GetSessionPollRequest, v1.GetSessionPollResponse]
-	listOneOffSessionsByCampaign *connect.Client[v1.ListOneOffSessionsByCampaignRequest, v1.ListOneOffSessionsByCampaignResponse]
-	pollSession                  *connect.Client[v1.PollSessionRequest, v1.PollSessionResponse]
-	removeSession                *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
-	updateSession                *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
-}
-
-// AnnounceSession calls planner.v1.SessionService.AnnounceSession.
-func (c *sessionServiceClient) AnnounceSession(ctx context.Context, req *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error) {
-	return c.announceSession.CallUnary(ctx, req)
+	createSession *connect.Client[v1.CreateSessionRequest, v1.CreateSessionResponse]
+	getSession    *connect.Client[v1.GetSessionRequest, v1.GetSessionResponse]
+	removeSession *connect.Client[v1.RemoveSessionRequest, v1.RemoveSessionResponse]
+	updateSession *connect.Client[v1.UpdateSessionRequest, v1.UpdateSessionResponse]
 }
 
 // CreateSession calls planner.v1.SessionService.CreateSession.
@@ -158,21 +109,6 @@ func (c *sessionServiceClient) CreateSession(ctx context.Context, req *connect.R
 // GetSession calls planner.v1.SessionService.GetSession.
 func (c *sessionServiceClient) GetSession(ctx context.Context, req *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error) {
 	return c.getSession.CallUnary(ctx, req)
-}
-
-// GetSessionPoll calls planner.v1.SessionService.GetSessionPoll.
-func (c *sessionServiceClient) GetSessionPoll(ctx context.Context, req *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error) {
-	return c.getSessionPoll.CallUnary(ctx, req)
-}
-
-// ListOneOffSessionsByCampaign calls planner.v1.SessionService.ListOneOffSessionsByCampaign.
-func (c *sessionServiceClient) ListOneOffSessionsByCampaign(ctx context.Context, req *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error) {
-	return c.listOneOffSessionsByCampaign.CallUnary(ctx, req)
-}
-
-// PollSession calls planner.v1.SessionService.PollSession.
-func (c *sessionServiceClient) PollSession(ctx context.Context, req *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {
-	return c.pollSession.CallUnary(ctx, req)
 }
 
 // RemoveSession calls planner.v1.SessionService.RemoveSession.
@@ -187,12 +123,8 @@ func (c *sessionServiceClient) UpdateSession(ctx context.Context, req *connect.R
 
 // SessionServiceHandler is an implementation of the planner.v1.SessionService service.
 type SessionServiceHandler interface {
-	AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error)
 	CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error)
 	GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error)
-	GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error)
-	ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error)
-	PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error)
 	RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error)
 	UpdateSession(context.Context, *connect.Request[v1.UpdateSessionRequest]) (*connect.Response[v1.UpdateSessionResponse], error)
 }
@@ -204,12 +136,6 @@ type SessionServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	sessionServiceMethods := v1.File_planner_v1_session_proto.Services().ByName("SessionService").Methods()
-	sessionServiceAnnounceSessionHandler := connect.NewUnaryHandler(
-		SessionServiceAnnounceSessionProcedure,
-		svc.AnnounceSession,
-		connect.WithSchema(sessionServiceMethods.ByName("AnnounceSession")),
-		connect.WithHandlerOptions(opts...),
-	)
 	sessionServiceCreateSessionHandler := connect.NewUnaryHandler(
 		SessionServiceCreateSessionProcedure,
 		svc.CreateSession,
@@ -220,24 +146,6 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 		SessionServiceGetSessionProcedure,
 		svc.GetSession,
 		connect.WithSchema(sessionServiceMethods.ByName("GetSession")),
-		connect.WithHandlerOptions(opts...),
-	)
-	sessionServiceGetSessionPollHandler := connect.NewUnaryHandler(
-		SessionServiceGetSessionPollProcedure,
-		svc.GetSessionPoll,
-		connect.WithSchema(sessionServiceMethods.ByName("GetSessionPoll")),
-		connect.WithHandlerOptions(opts...),
-	)
-	sessionServiceListOneOffSessionsByCampaignHandler := connect.NewUnaryHandler(
-		SessionServiceListOneOffSessionsByCampaignProcedure,
-		svc.ListOneOffSessionsByCampaign,
-		connect.WithSchema(sessionServiceMethods.ByName("ListOneOffSessionsByCampaign")),
-		connect.WithHandlerOptions(opts...),
-	)
-	sessionServicePollSessionHandler := connect.NewUnaryHandler(
-		SessionServicePollSessionProcedure,
-		svc.PollSession,
-		connect.WithSchema(sessionServiceMethods.ByName("PollSession")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sessionServiceRemoveSessionHandler := connect.NewUnaryHandler(
@@ -254,18 +162,10 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 	)
 	return "/planner.v1.SessionService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
-		case SessionServiceAnnounceSessionProcedure:
-			sessionServiceAnnounceSessionHandler.ServeHTTP(w, r)
 		case SessionServiceCreateSessionProcedure:
 			sessionServiceCreateSessionHandler.ServeHTTP(w, r)
 		case SessionServiceGetSessionProcedure:
 			sessionServiceGetSessionHandler.ServeHTTP(w, r)
-		case SessionServiceGetSessionPollProcedure:
-			sessionServiceGetSessionPollHandler.ServeHTTP(w, r)
-		case SessionServiceListOneOffSessionsByCampaignProcedure:
-			sessionServiceListOneOffSessionsByCampaignHandler.ServeHTTP(w, r)
-		case SessionServicePollSessionProcedure:
-			sessionServicePollSessionHandler.ServeHTTP(w, r)
 		case SessionServiceRemoveSessionProcedure:
 			sessionServiceRemoveSessionHandler.ServeHTTP(w, r)
 		case SessionServiceUpdateSessionProcedure:
@@ -279,28 +179,12 @@ func NewSessionServiceHandler(svc SessionServiceHandler, opts ...connect.Handler
 // UnimplementedSessionServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedSessionServiceHandler struct{}
 
-func (UnimplementedSessionServiceHandler) AnnounceSession(context.Context, *connect.Request[v1.AnnounceSessionRequest]) (*connect.Response[v1.AnnounceSessionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.AnnounceSession is not implemented"))
-}
-
 func (UnimplementedSessionServiceHandler) CreateSession(context.Context, *connect.Request[v1.CreateSessionRequest]) (*connect.Response[v1.CreateSessionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.CreateSession is not implemented"))
 }
 
 func (UnimplementedSessionServiceHandler) GetSession(context.Context, *connect.Request[v1.GetSessionRequest]) (*connect.Response[v1.GetSessionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.GetSession is not implemented"))
-}
-
-func (UnimplementedSessionServiceHandler) GetSessionPoll(context.Context, *connect.Request[v1.GetSessionPollRequest]) (*connect.Response[v1.GetSessionPollResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.GetSessionPoll is not implemented"))
-}
-
-func (UnimplementedSessionServiceHandler) ListOneOffSessionsByCampaign(context.Context, *connect.Request[v1.ListOneOffSessionsByCampaignRequest]) (*connect.Response[v1.ListOneOffSessionsByCampaignResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.ListOneOffSessionsByCampaign is not implemented"))
-}
-
-func (UnimplementedSessionServiceHandler) PollSession(context.Context, *connect.Request[v1.PollSessionRequest]) (*connect.Response[v1.PollSessionResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionService.PollSession is not implemented"))
 }
 
 func (UnimplementedSessionServiceHandler) RemoveSession(context.Context, *connect.Request[v1.RemoveSessionRequest]) (*connect.Response[v1.RemoveSessionResponse], error) {

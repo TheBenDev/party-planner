@@ -9,12 +9,7 @@ import { SessionRow } from "@/features/sessions/components/SessionRow";
 import { useSessionsData } from "@/features/sessions/hooks/useSessionsData";
 
 import { Button } from "@/shared/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
+
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
@@ -38,22 +33,20 @@ export function SessionsPage() {
 	const navigate = useNavigate();
 	const [search, setSearch] = useState("");
 	const [createDialogOpen, setCreateDialogOpen] = useState(false);
-	const [createMode, setCreateMode] = useState<"oneoff" | "series">("oneoff");
 	const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
 
 	const {
 		oneOffSessionsQuery,
 		seriesQuery,
 		deleteSession,
-		createSession,
 		createSeries,
 		updateSeries,
 		removeSeries,
 		removeSeriesException,
 		endSeries,
-		scheduleNext,
+		announceToDiscord,
 		excludeFromSeries,
-		isCreatingSession,
+		isAnnouncingToDiscord,
 		isCreatingSeries,
 		isUpdatingSeries,
 	} = useSessionsData();
@@ -117,32 +110,13 @@ export function SessionsPage() {
 					)}
 				</div>
 				{isDm && (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button className="shrink-0">
-								<Plus className="w-4 h-4 mr-2" />
-								New Session
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-44">
-							<DropdownMenuItem
-								onClick={() => {
-									setCreateMode("oneoff");
-									setCreateDialogOpen(true);
-								}}
-							>
-								One-off session
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => {
-									setCreateMode("series");
-									setCreateDialogOpen(true);
-								}}
-							>
-								Recurring series
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<Button
+						className="shrink-0"
+						onClick={() => setCreateDialogOpen(true)}
+					>
+						<Plus className="w-4 h-4 mr-2" />
+						New Session
+					</Button>
 				)}
 			</div>
 
@@ -166,14 +140,15 @@ export function SessionsPage() {
 					filteredSeries.map((s) => (
 						<SeriesGroup
 							exceptions={s.exceptions}
+							isAnnouncingToDiscord={isAnnouncingToDiscord}
 							isDm={isDm}
 							key={s.series.id}
+							onAnnounceToDiscord={() => announceToDiscord(s.series.id)}
 							onCancelOccurrence={(session) => {
 								if (session.startsAt) {
 									excludeFromSeries({
 										excludedDate: new Date(session.startsAt),
 										seriesId: s.series.id,
-										sessionId: session.id,
 									});
 								}
 							}}
@@ -199,13 +174,6 @@ export function SessionsPage() {
 								})
 							}
 							onRemoveSeries={() => removeSeries(s.series.id)}
-							onScheduleNext={(startsAt) =>
-								scheduleNext({
-									seriesId: s.series.id,
-									startsAt,
-									title: s.series.title,
-								})
-							}
 							onViewSession={(id) =>
 								navigate({
 									params: { sessionId: id },
@@ -278,11 +246,7 @@ export function SessionsPage() {
 											</p>
 											<Button
 												className="mt-4"
-												disabled={isCreatingSession}
-												onClick={() => {
-													setCreateMode("oneoff");
-													setCreateDialogOpen(true);
-												}}
+												onClick={() => setCreateDialogOpen(true)}
 												size="sm"
 												variant="outline"
 											>
@@ -299,13 +263,9 @@ export function SessionsPage() {
 
 			<CreateSessionDialog
 				campaignId={campaign.campaign.id}
-				isCreatingOneOff={isCreatingSession}
 				isCreatingSeries={isCreatingSeries}
-				mode={createMode}
 				onClose={() => setCreateDialogOpen(false)}
-				onCreateOneOff={createSession}
 				onCreateSeries={createSeries}
-				onModeChange={setCreateMode}
 				open={createDialogOpen}
 			/>
 

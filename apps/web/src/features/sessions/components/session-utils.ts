@@ -130,14 +130,14 @@ const DAY_OF_WEEK: Record<string, number> = {
 
 export function getNextOccurrence(
 	series: {
-		rrule: string;
+		rrule: string | null;
 		startTime: string;
 		seriesStartDate: Date | string;
 		seriesEndDate?: Date | string;
 	},
 	exceptions: Date[] = [],
 ): Date | null {
-	const { biWeekly, days } = parseRrule(series.rrule);
+	const { biWeekly, days } = parseRrule(series.rrule ?? "");
 	if (days.size === 0) return null;
 
 	const targetDows = Array.from(days)

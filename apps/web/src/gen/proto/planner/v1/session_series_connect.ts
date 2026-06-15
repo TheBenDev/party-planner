@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
+import { AnnounceToDiscordRequest, AnnounceToDiscordResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetDiscordEventRequest, GetDiscordEventResponse, GetSeriesPollRequest, GetSeriesPollResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, PollSeriesRequest, PollSeriesResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -73,6 +73,42 @@ export const SessionSeriesService = {
       name: "RemoveSeriesException",
       I: RemoveSeriesExceptionRequest,
       O: RemoveSeriesExceptionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.AnnounceToDiscord
+     */
+    announceToDiscord: {
+      name: "AnnounceToDiscord",
+      I: AnnounceToDiscordRequest,
+      O: AnnounceToDiscordResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.GetDiscordEvent
+     */
+    getDiscordEvent: {
+      name: "GetDiscordEvent",
+      I: GetDiscordEventRequest,
+      O: GetDiscordEventResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.GetSeriesPoll
+     */
+    getSeriesPoll: {
+      name: "GetSeriesPoll",
+      I: GetSeriesPollRequest,
+      O: GetSeriesPollResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.PollSeries
+     */
+    pollSeries: {
+      name: "PollSeries",
+      I: PollSeriesRequest,
+      O: PollSeriesResponse,
       kind: MethodKind.Unary,
     },
   }
