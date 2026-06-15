@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { CalendarClock } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Calendar } from "@/shared/components/ui/calendar";
 import {
@@ -27,7 +28,7 @@ export type DateTimePickerProps = {
 // ----------------------------------------------------------------
 
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1).reverse();
-const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
+const MINUTES = Array.from({ length: 4 }, (_, i) => i * 15);
 const AMPM = ["AM", "PM"] as const;
 
 export function applyTimeChange(
@@ -61,7 +62,23 @@ export function applyTimeChange(
 // Component
 // ----------------------------------------------------------------
 
-export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps) {
+export function DateTimePicker({
+	value,
+	onChange,
+	minDate,
+}: DateTimePickerProps) {
+	const [timeError, setTimeError] = useState<string | null>(null);
+
+	function handleTimeChange(type: TimeSegment, val: string) {
+		const next = applyTimeChange(value, type, val);
+		if (minDate && next < minDate) {
+			setTimeError(`Time must be on or after ${format(minDate, "hh:mm aa")}`);
+			return;
+		}
+		setTimeError(null);
+		onChange(next);
+	}
+
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
@@ -84,18 +101,7 @@ export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps
 			<PopoverContent className="w-auto p-0">
 				<div className="sm:flex">
 					<Calendar
-						disabled={
-							minDate
-								? (day) => {
-										const minDay = new Date(
-											minDate.getFullYear(),
-											minDate.getMonth(),
-											minDate.getDate(),
-										);
-										return day < minDay;
-									}
-								: undefined
-						}
+						disabled={minDate ? { before: minDate } : undefined}
 						mode="single"
 						onSelect={(day) => {
 							if (!day) return;
@@ -116,9 +122,7 @@ export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps
 									<Button
 										className="sm:w-full shrink-0 aspect-square"
 										key={hour}
-										onClick={() =>
-											onChange(applyTimeChange(value, "hour", hour.toString()))
-										}
+										onClick={() => handleTimeChange("hour", hour.toString())}
 										size="icon"
 										type="button"
 										variant={
@@ -141,9 +145,7 @@ export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps
 										className="sm:w-full shrink-0 aspect-square"
 										key={minute}
 										onClick={() =>
-											onChange(
-												applyTimeChange(value, "minute", minute.toString()),
-											)
+											handleTimeChange("minute", minute.toString())
 										}
 										size="icon"
 										type="button"
@@ -166,9 +168,7 @@ export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps
 									<Button
 										className="sm:w-full shrink-0 aspect-square"
 										key={ampm}
-										onClick={() =>
-											onChange(applyTimeChange(value, "ampm", ampm))
-										}
+										onClick={() => handleTimeChange("ampm", ampm)}
 										size="icon"
 										type="button"
 										variant={
@@ -186,6 +186,11 @@ export function DateTimePicker({ value, onChange, minDate }: DateTimePickerProps
 						</ScrollArea>
 					</div>
 				</div>
+				{timeError && (
+					<p className="text-destructive text-xs px-3 py-2 border-t">
+						{timeError}
+					</p>
+				)}
 			</PopoverContent>
 		</Popover>
 	);

@@ -216,7 +216,7 @@ export const oneOffSchema = z.object({
 		.number({ error: "Duration must be a number" })
 		.int("Duration must be a whole number")
 		.min(15, "Duration must be at least 15 minutes"),
-	startsAt: z.string().optional(),
+	startsAt: z.date().optional(),
 	title: z.string().min(1, "Title is required"),
 });
 
@@ -224,6 +224,7 @@ export const seriesSchema = z.object({
 	description: z.string().optional(),
 	durationMinutes: z
 		.number({ error: "Duration must be a number" })
+		.int("Duration must be a whole number")
 		.min(15, "Duration must be at least 15 minutes"),
 	rrule: z.string().min(1, "Recurrence pattern is required"),
 	seriesEndDate: z.string().optional(),
