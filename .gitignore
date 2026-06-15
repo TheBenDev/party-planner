@@ -69,3 +69,6 @@ out
 
 # Golang
 .go*
+
+# OMC (oh-my-claudecode)
+.omc/

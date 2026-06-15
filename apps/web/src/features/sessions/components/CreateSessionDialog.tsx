@@ -3,6 +3,7 @@ import { Status } from "@planner/enums/session";
 import { Controller, useForm } from "react-hook-form";
 import { useCalendarConflicts } from "@/features/integrations/hooks/useCalendarConflicts";
 import type { CalendarConflict } from "@/features/integrations/types";
+import { DateTimePicker } from "@/shared/components/DateTimePicker";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -12,6 +13,7 @@ import {
 	DialogTitle,
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
+import { Label } from "@/shared/components/ui/label";
 import { cn } from "@/shared/lib/utils";
 import {
 	type CreateOneOffInput,
@@ -23,12 +25,6 @@ import {
 } from "../types";
 import { RRuleBuilder } from "./RRuleBuilder";
 import { localTimeToUtc } from "./session-utils";
-
-function toLocalDatetimeString(date: Date): string {
-	const offset = date.getTimezoneOffset();
-	const local = new Date(date.getTime() - offset * 60_000);
-	return local.toISOString().slice(0, 16);
-}
 
 function toLocalDateString(date: Date): string {
 	const year = date.getFullYear();
@@ -106,7 +102,7 @@ export function CreateSessionDialog({
 		defaultValues: {
 			description: "",
 			durationMinutes: 180,
-			startsAt: "",
+			startsAt: undefined,
 			title: "",
 		},
 		mode: "onBlur",
@@ -127,7 +123,7 @@ export function CreateSessionDialog({
 		resolver: zodResolver(seriesSchema),
 	});
 
-	const oneoffStartsAt = oneOffForm.watch("startsAt") ?? "";
+	const oneoffStartsAt = oneOffForm.watch("startsAt");
 	const oneoffDuration = oneOffForm.watch("durationMinutes");
 	const seriesStartDate = seriesForm.watch("seriesStartDate") ?? "";
 	const seriesStartTime = seriesForm.watch("startTime") ?? "19:00";
@@ -146,9 +142,7 @@ export function CreateSessionDialog({
 			? seriesDuration
 			: 180;
 
-	const oneOffStartsAtUtc = oneoffStartsAt
-		? new Date(oneoffStartsAt).toISOString()
-		: "";
+	const oneOffStartsAtUtc = oneoffStartsAt ? oneoffStartsAt.toISOString() : "";
 	const { conflicts: oneOffConflicts, isLoading: oneOffConflictsLoading } =
 		useCalendarConflicts({
 			campaignId,
@@ -178,7 +172,7 @@ export function CreateSessionDialog({
 		onCreateOneOff({
 			description: data.description?.trim() || undefined,
 			durationMinutes: data.durationMinutes,
-			startsAt: data.startsAt ? new Date(data.startsAt) : undefined,
+			startsAt: data.startsAt,
 			status,
 			title: data.title.trim(),
 		});
@@ -246,9 +240,9 @@ export function CreateSessionDialog({
 					<form id="oneoff-form" onSubmit={handleSubmitOneOff}>
 						<div className="space-y-4">
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="oo-title">
+								<Label className="text-sm font-medium" htmlFor="oo-title">
 									Title <span className="text-destructive">*</span>
-								</label>
+								</Label>
 								<Input
 									id="oo-title"
 									placeholder="Session title"
@@ -261,14 +255,17 @@ export function CreateSessionDialog({
 								)}
 							</div>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="oo-date">
-									Date &amp; time
-								</label>
-								<Input
-									id="oo-date"
-									min={toLocalDatetimeString(new Date())}
-									type="datetime-local"
-									{...oneOffForm.register("startsAt")}
+								<Label className="text-sm font-medium">Date &amp; time</Label>
+								<Controller
+									control={oneOffForm.control}
+									name="startsAt"
+									render={({ field }) => (
+										<DateTimePicker
+											minDate={new Date()}
+											onChange={field.onChange}
+											value={field.value}
+										/>
+									)}
 								/>
 							</div>
 							<ConflictWarning
@@ -276,15 +273,15 @@ export function CreateSessionDialog({
 								isLoading={oneOffConflictsLoading}
 							/>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="oo-duration">
+								<Label className="text-sm font-medium" htmlFor="oo-duration">
 									Duration (minutes)
-								</label>
+								</Label>
 								<Input
 									id="oo-duration"
-									min={15}
-									type="number"
+									inputMode="numeric"
+									type="text"
 									{...oneOffForm.register("durationMinutes", {
-										valueAsNumber: true,
+										setValueAs: (v) => Number(v),
 									})}
 								/>
 								{oneOffForm.formState.errors.durationMinutes && (
@@ -294,9 +291,9 @@ export function CreateSessionDialog({
 								)}
 							</div>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="oo-desc">
+								<Label className="text-sm font-medium" htmlFor="oo-desc">
 									Description
-								</label>
+								</Label>
 								<textarea
 									className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
 									id="oo-desc"
@@ -311,9 +308,9 @@ export function CreateSessionDialog({
 					<form id="series-form" onSubmit={handleSubmitSeries}>
 						<div className="space-y-4">
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-title">
+								<Label className="text-sm font-medium" htmlFor="s-title">
 									Series title <span className="text-destructive">*</span>
-								</label>
+								</Label>
 								<Input
 									id="s-title"
 									placeholder="e.g. Weekly Friday Campaign"
@@ -347,9 +344,9 @@ export function CreateSessionDialog({
 							</div>
 							<div className="grid grid-cols-2 gap-3">
 								<div className="space-y-1.5">
-									<label className="text-sm font-medium" htmlFor="s-time">
+									<Label className="text-sm font-medium" htmlFor="s-time">
 										Start time <span className="text-destructive">*</span>
-									</label>
+									</Label>
 									<Input
 										id="s-time"
 										type="time"
@@ -362,9 +359,9 @@ export function CreateSessionDialog({
 									)}
 								</div>
 								<div className="space-y-1.5">
-									<label className="text-sm font-medium" htmlFor="s-start">
+									<Label className="text-sm font-medium" htmlFor="s-start">
 										First session <span className="text-destructive">*</span>
-									</label>
+									</Label>
 									<Input
 										id="s-start"
 										min={toLocalDateString(new Date())}
@@ -383,12 +380,12 @@ export function CreateSessionDialog({
 								isLoading={seriesConflictsLoading}
 							/>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-end">
+								<Label className="text-sm font-medium" htmlFor="s-end">
 									End date{" "}
 									<span className="font-normal text-muted-foreground">
 										(optional)
 									</span>
-								</label>
+								</Label>
 								<Input
 									id="s-end"
 									type="date"
@@ -396,15 +393,15 @@ export function CreateSessionDialog({
 								/>
 							</div>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-duration">
+								<Label className="text-sm font-medium" htmlFor="s-duration">
 									Duration (minutes)
-								</label>
+								</Label>
 								<Input
 									id="s-duration"
-									min={15}
-									type="number"
+									inputMode="numeric"
+									type="text"
 									{...seriesForm.register("durationMinutes", {
-										valueAsNumber: true,
+										setValueAs: (v) => Number(v),
 									})}
 								/>
 								{seriesForm.formState.errors.durationMinutes && (
@@ -414,12 +411,12 @@ export function CreateSessionDialog({
 								)}
 							</div>
 							<div className="space-y-1.5">
-								<label className="text-sm font-medium" htmlFor="s-desc">
+								<Label className="text-sm font-medium" htmlFor="s-desc">
 									Description{" "}
 									<span className="font-normal text-muted-foreground">
 										(optional)
 									</span>
-								</label>
+								</Label>
 								<textarea
 									className="flex min-h-[72px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
 									id="s-desc"
