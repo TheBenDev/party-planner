@@ -1,12 +1,13 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	Ban,
+	CheckCircle2,
 	ChevronDown,
 	MoreHorizontal,
-	Plus,
 	Repeat2,
 	RotateCcw,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Component, type ReactNode, Suspense, useMemo, useState } from "react";
 import type { Session, SessionSeries } from "@/features/sessions/types";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -16,22 +17,60 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { client } from "@/shared/lib/client";
 import { cn } from "@/shared/lib/utils";
 import { SessionRow } from "./SessionRow";
-import {
-	formatSessionDate,
-	getNextOccurrence,
-	rruleToHuman,
-} from "./session-utils";
+import { formatSessionDate, rruleToHuman } from "./session-utils";
 
 type SeriesItem =
 	| { type: "session"; data: Session; date: Date | null }
 	| { type: "exception"; date: Date };
 
+class DiscordEventErrorBoundary extends Component<
+	{ children: ReactNode; fallback: ReactNode },
+	{ hasError: boolean }
+> {
+	constructor(props: { children: ReactNode; fallback: ReactNode }) {
+		super(props);
+		this.state = { hasError: false };
+	}
+	static getDerivedStateFromError() {
+		return { hasError: true };
+	}
+	render() {
+		if (this.state.hasError) return this.props.fallback;
+		return this.props.children;
+	}
+}
+
+function DiscordEventVerified({
+	seriesId,
+	discordEventId,
+}: {
+	seriesId: string;
+	discordEventId: string;
+}) {
+	useSuspenseQuery({
+		queryFn: () =>
+			client.sessionSeries.getDiscordEvent({ discordEventId, seriesId }),
+		queryKey: ["discord-event", seriesId, discordEventId],
+		retry: false,
+		staleTime: 60_000,
+	});
+	return (
+		<span className="text-xs text-muted-foreground italic flex items-center gap-1.5">
+			<CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+			Announced to Discord
+		</span>
+	);
+}
+
 export function SeriesGroup({
 	series,
 	sessions,
 	exceptions,
+	isAnnouncingToDiscord,
 	isDm,
 	onViewSession,
 	onEditSession,
@@ -41,13 +80,14 @@ export function SeriesGroup({
 	onEndSeries,
 	onRemoveSeries,
 	onRemoveException,
-	onScheduleNext,
+	onAnnounceToDiscord,
 	onRecapSession,
 }: {
 	series: SessionSeries;
 	sessions: Session[];
 	exceptions: Date[];
 	isDm: boolean;
+	isAnnouncingToDiscord: boolean;
 	onViewSession: (id: string) => void;
 	onEditSession: (id: string) => void;
 	onDeleteSession: (id: string) => void;
@@ -56,20 +96,11 @@ export function SeriesGroup({
 	onEndSeries: () => void;
 	onRemoveSeries: () => void;
 	onRemoveException: (date: Date) => void;
-	onScheduleNext: (startsAt: Date) => void;
+	onAnnounceToDiscord: () => void;
 	onRecapSession: (id: string) => void;
 }) {
 	const [expanded, setExpanded] = useState(true);
 	const now = new Date();
-
-	const hasUpcoming = sessions.some(
-		(s) => s.startsAt && new Date(s.startsAt) > now,
-	);
-
-	const nextOccurrence = useMemo(
-		() => (hasUpcoming ? null : getNextOccurrence(series, exceptions)),
-		[hasUpcoming, series, exceptions],
-	);
 
 	const merged = useMemo((): SeriesItem[] => {
 		const items: SeriesItem[] = [
@@ -90,6 +121,18 @@ export function SeriesGroup({
 		});
 	}, [sessions, exceptions]);
 
+	const announceButton = (
+		<Button
+			className="h-8 text-sm"
+			disabled={isAnnouncingToDiscord}
+			onClick={onAnnounceToDiscord}
+			size="sm"
+			variant="outline"
+		>
+			Announce to Discord
+		</Button>
+	);
+
 	return (
 		<div className="border rounded-xl overflow-hidden">
 			<div className="flex items-center gap-3 px-4 py-3 bg-muted/30">
@@ -106,11 +149,13 @@ export function SeriesGroup({
 							{series.title}
 						</p>
 						<p className="text-xs text-muted-foreground mt-0.5 truncate">
-							{rruleToHuman(
-								series.rrule,
-								series.startTime,
-								series.seriesStartDate,
-							)}{" "}
+							{series.rrule
+								? rruleToHuman(
+										series.rrule,
+										series.startTime,
+										series.seriesStartDate,
+									)
+								: "One-off session"}{" "}
 							&middot; {sessions.length} session
 							{sessions.length !== 1 ? "s" : ""}
 						</p>
@@ -211,22 +256,22 @@ export function SeriesGroup({
 						})
 					)}
 
-					{isDm && !hasUpcoming && (
-						<div className="flex flex-col items-end px-4 py-3 bg-muted/20">
-							{nextOccurrence ? (
-								<Button
-									className="h-8 text-sm"
-									onClick={() => onScheduleNext(nextOccurrence)}
-									size="sm"
-									variant="outline"
+					{isDm && (
+						<div className="flex items-center justify-end px-4 py-3 bg-muted/20">
+							{series.discordEventId ? (
+								<DiscordEventErrorBoundary
+									fallback={announceButton}
+									key={series.discordEventId}
 								>
-									<Plus className="w-3.5 h-3.5 mr-1" />
-									Set Time - {formatSessionDate(nextOccurrence)}
-								</Button>
+									<Suspense fallback={<Skeleton className="h-5 w-40" />}>
+										<DiscordEventVerified
+											discordEventId={series.discordEventId}
+											seriesId={series.id}
+										/>
+									</Suspense>
+								</DiscordEventErrorBoundary>
 							) : (
-								<p className="text-xs text-muted-foreground italic">
-									No upcoming occurrences
-								</p>
+								announceButton
 							)}
 						</div>
 					)}

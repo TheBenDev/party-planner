@@ -22,77 +22,20 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SessionStatus int32
-
-const (
-	SessionStatus_SESSION_STATUS_UNSPECIFIED SessionStatus = 0
-	SessionStatus_SESSION_STATUS_DRAFT       SessionStatus = 1
-	SessionStatus_SESSION_STATUS_POLLING     SessionStatus = 2
-	SessionStatus_SESSION_STATUS_CONFIRMED   SessionStatus = 3
-)
-
-// Enum value maps for SessionStatus.
-var (
-	SessionStatus_name = map[int32]string{
-		0: "SESSION_STATUS_UNSPECIFIED",
-		1: "SESSION_STATUS_DRAFT",
-		2: "SESSION_STATUS_POLLING",
-		3: "SESSION_STATUS_CONFIRMED",
-	}
-	SessionStatus_value = map[string]int32{
-		"SESSION_STATUS_UNSPECIFIED": 0,
-		"SESSION_STATUS_DRAFT":       1,
-		"SESSION_STATUS_POLLING":     2,
-		"SESSION_STATUS_CONFIRMED":   3,
-	}
-)
-
-func (x SessionStatus) Enum() *SessionStatus {
-	p := new(SessionStatus)
-	*p = x
-	return p
-}
-
-func (x SessionStatus) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (SessionStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_planner_v1_session_proto_enumTypes[0].Descriptor()
-}
-
-func (SessionStatus) Type() protoreflect.EnumType {
-	return &file_planner_v1_session_proto_enumTypes[0]
-}
-
-func (x SessionStatus) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use SessionStatus.Descriptor instead.
-func (SessionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{0}
-}
-
 type Session struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CampaignId       string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Title            string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Description      *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Status           SessionStatus          `protobuf:"varint,5,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
-	StartsAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
-	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PollId           *string                `protobuf:"bytes,9,opt,name=poll_id,json=pollId,proto3,oneof" json:"poll_id,omitempty"`
-	AnnouncedAt      *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=announced_at,json=announcedAt,proto3,oneof" json:"announced_at,omitempty"`
-	SeriesId         *string                `protobuf:"bytes,11,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
-	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
-	DiscordEventId   *string                `protobuf:"bytes,13,opt,name=discord_event_id,json=discordEventId,proto3,oneof" json:"discord_event_id,omitempty"`
-	Recap            *string                `protobuf:"bytes,14,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
-	DurationMinutes  int32                  `protobuf:"varint,15,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId      string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Title           string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Description     *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	StartsAt        *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=starts_at,json=startsAt,proto3" json:"starts_at,omitempty"`
+	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	SeriesId        *string                `protobuf:"bytes,11,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
+	Recap           *string                `protobuf:"bytes,14,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
+	DurationMinutes int32                  `protobuf:"varint,15,opt,name=duration_minutes,json=durationMinutes,proto3" json:"duration_minutes,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Session) Reset() {
@@ -153,13 +96,6 @@ func (x *Session) GetDescription() string {
 	return ""
 }
 
-func (x *Session) GetStatus() SessionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return SessionStatus_SESSION_STATUS_UNSPECIFIED
-}
-
 func (x *Session) GetStartsAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.StartsAt
@@ -181,37 +117,9 @@ func (x *Session) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *Session) GetPollId() string {
-	if x != nil && x.PollId != nil {
-		return *x.PollId
-	}
-	return ""
-}
-
-func (x *Session) GetAnnouncedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.AnnouncedAt
-	}
-	return nil
-}
-
 func (x *Session) GetSeriesId() string {
 	if x != nil && x.SeriesId != nil {
 		return *x.SeriesId
-	}
-	return ""
-}
-
-func (x *Session) GetOriginalStartsAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.OriginalStartsAt
-	}
-	return nil
-}
-
-func (x *Session) GetDiscordEventId() string {
-	if x != nil && x.DiscordEventId != nil {
-		return *x.DiscordEventId
 	}
 	return ""
 }
@@ -230,28 +138,28 @@ func (x *Session) GetDurationMinutes() int32 {
 	return 0
 }
 
-type AnnounceSessionRequest struct {
+type PollAnswer struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	SessionId     string                 `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	VoteCount     uint32                 `protobuf:"varint,2,opt,name=vote_count,json=voteCount,proto3" json:"vote_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnnounceSessionRequest) Reset() {
-	*x = AnnounceSessionRequest{}
+func (x *PollAnswer) Reset() {
+	*x = PollAnswer{}
 	mi := &file_planner_v1_session_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AnnounceSessionRequest) String() string {
+func (x *PollAnswer) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AnnounceSessionRequest) ProtoMessage() {}
+func (*PollAnswer) ProtoMessage() {}
 
-func (x *AnnounceSessionRequest) ProtoReflect() protoreflect.Message {
+func (x *PollAnswer) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -263,45 +171,48 @@ func (x *AnnounceSessionRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AnnounceSessionRequest.ProtoReflect.Descriptor instead.
-func (*AnnounceSessionRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PollAnswer.ProtoReflect.Descriptor instead.
+func (*PollAnswer) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AnnounceSessionRequest) GetCampaignId() string {
+func (x *PollAnswer) GetText() string {
 	if x != nil {
-		return x.CampaignId
+		return x.Text
 	}
 	return ""
 }
 
-func (x *AnnounceSessionRequest) GetSessionId() string {
+func (x *PollAnswer) GetVoteCount() uint32 {
 	if x != nil {
-		return x.SessionId
+		return x.VoteCount
 	}
-	return ""
+	return 0
 }
 
-type AnnounceSessionResponse struct {
+type Poll struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Question      string                 `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
+	Answers       []*PollAnswer          `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers,omitempty"`
+	IsFinalized   bool                   `protobuf:"varint,3,opt,name=is_finalized,json=isFinalized,proto3" json:"is_finalized,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnnounceSessionResponse) Reset() {
-	*x = AnnounceSessionResponse{}
+func (x *Poll) Reset() {
+	*x = Poll{}
 	mi := &file_planner_v1_session_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AnnounceSessionResponse) String() string {
+func (x *Poll) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AnnounceSessionResponse) ProtoMessage() {}
+func (*Poll) ProtoMessage() {}
 
-func (x *AnnounceSessionResponse) ProtoReflect() protoreflect.Message {
+func (x *Poll) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -313,23 +224,42 @@ func (x *AnnounceSessionResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AnnounceSessionResponse.ProtoReflect.Descriptor instead.
-func (*AnnounceSessionResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use Poll.ProtoReflect.Descriptor instead.
+func (*Poll) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *Poll) GetQuestion() string {
+	if x != nil {
+		return x.Question
+	}
+	return ""
+}
+
+func (x *Poll) GetAnswers() []*PollAnswer {
+	if x != nil {
+		return x.Answers
+	}
+	return nil
+}
+
+func (x *Poll) GetIsFinalized() bool {
+	if x != nil {
+		return x.IsFinalized
+	}
+	return false
+}
+
 type CreateSessionRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId       string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	Description      *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	StartsAt         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
-	Status           SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
-	Title            string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	SeriesId         *string                `protobuf:"bytes,6,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
-	OriginalStartsAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=original_starts_at,json=originalStartsAt,proto3,oneof" json:"original_starts_at,omitempty"`
-	DurationMinutes  *int32                 `protobuf:"varint,8,opt,name=duration_minutes,json=durationMinutes,proto3,oneof" json:"duration_minutes,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	CampaignId      string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Description     *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	StartsAt        *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
+	Title           string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	SeriesId        *string                `protobuf:"bytes,6,opt,name=series_id,json=seriesId,proto3,oneof" json:"series_id,omitempty"`
+	DurationMinutes *int32                 `protobuf:"varint,8,opt,name=duration_minutes,json=durationMinutes,proto3,oneof" json:"duration_minutes,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *CreateSessionRequest) Reset() {
@@ -383,13 +313,6 @@ func (x *CreateSessionRequest) GetStartsAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *CreateSessionRequest) GetStatus() SessionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return SessionStatus_SESSION_STATUS_UNSPECIFIED
-}
-
 func (x *CreateSessionRequest) GetTitle() string {
 	if x != nil {
 		return x.Title
@@ -404,130 +327,11 @@ func (x *CreateSessionRequest) GetSeriesId() string {
 	return ""
 }
 
-func (x *CreateSessionRequest) GetOriginalStartsAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.OriginalStartsAt
-	}
-	return nil
-}
-
 func (x *CreateSessionRequest) GetDurationMinutes() int32 {
 	if x != nil && x.DurationMinutes != nil {
 		return *x.DurationMinutes
 	}
 	return 0
-}
-
-type PollAnswer struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	VoteCount     uint32                 `protobuf:"varint,2,opt,name=vote_count,json=voteCount,proto3" json:"vote_count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PollAnswer) Reset() {
-	*x = PollAnswer{}
-	mi := &file_planner_v1_session_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PollAnswer) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PollAnswer) ProtoMessage() {}
-
-func (x *PollAnswer) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PollAnswer.ProtoReflect.Descriptor instead.
-func (*PollAnswer) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *PollAnswer) GetText() string {
-	if x != nil {
-		return x.Text
-	}
-	return ""
-}
-
-func (x *PollAnswer) GetVoteCount() uint32 {
-	if x != nil {
-		return x.VoteCount
-	}
-	return 0
-}
-
-type Poll struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Question      string                 `protobuf:"bytes,1,opt,name=question,proto3" json:"question,omitempty"`
-	Answers       []*PollAnswer          `protobuf:"bytes,2,rep,name=answers,proto3" json:"answers,omitempty"`
-	IsFinalized   bool                   `protobuf:"varint,3,opt,name=is_finalized,json=isFinalized,proto3" json:"is_finalized,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Poll) Reset() {
-	*x = Poll{}
-	mi := &file_planner_v1_session_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Poll) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Poll) ProtoMessage() {}
-
-func (x *Poll) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Poll.ProtoReflect.Descriptor instead.
-func (*Poll) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *Poll) GetQuestion() string {
-	if x != nil {
-		return x.Question
-	}
-	return ""
-}
-
-func (x *Poll) GetAnswers() []*PollAnswer {
-	if x != nil {
-		return x.Answers
-	}
-	return nil
-}
-
-func (x *Poll) GetIsFinalized() bool {
-	if x != nil {
-		return x.IsFinalized
-	}
-	return false
 }
 
 type CreateSessionResponse struct {
@@ -539,7 +343,7 @@ type CreateSessionResponse struct {
 
 func (x *CreateSessionResponse) Reset() {
 	*x = CreateSessionResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[6]
+	mi := &file_planner_v1_session_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -551,7 +355,7 @@ func (x *CreateSessionResponse) String() string {
 func (*CreateSessionResponse) ProtoMessage() {}
 
 func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[6]
+	mi := &file_planner_v1_session_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -564,7 +368,7 @@ func (x *CreateSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSessionResponse.ProtoReflect.Descriptor instead.
 func (*CreateSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{6}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateSessionResponse) GetSession() *Session {
@@ -584,7 +388,7 @@ type GetSessionRequest struct {
 
 func (x *GetSessionRequest) Reset() {
 	*x = GetSessionRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[7]
+	mi := &file_planner_v1_session_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -596,7 +400,7 @@ func (x *GetSessionRequest) String() string {
 func (*GetSessionRequest) ProtoMessage() {}
 
 func (x *GetSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[7]
+	mi := &file_planner_v1_session_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -609,7 +413,7 @@ func (x *GetSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionRequest.ProtoReflect.Descriptor instead.
 func (*GetSessionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetSessionRequest) GetId() string {
@@ -635,7 +439,7 @@ type GetSessionResponse struct {
 
 func (x *GetSessionResponse) Reset() {
 	*x = GetSessionResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[8]
+	mi := &file_planner_v1_session_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -647,7 +451,7 @@ func (x *GetSessionResponse) String() string {
 func (*GetSessionResponse) ProtoMessage() {}
 
 func (x *GetSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[8]
+	mi := &file_planner_v1_session_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -660,7 +464,7 @@ func (x *GetSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSessionResponse.ProtoReflect.Descriptor instead.
 func (*GetSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetSessionResponse) GetSession() *Session {
@@ -668,286 +472,6 @@ func (x *GetSessionResponse) GetSession() *Session {
 		return x.Session
 	}
 	return nil
-}
-
-type GetSessionPollRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	SessionId     string                 `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetSessionPollRequest) Reset() {
-	*x = GetSessionPollRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[9]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetSessionPollRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetSessionPollRequest) ProtoMessage() {}
-
-func (x *GetSessionPollRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[9]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetSessionPollRequest.ProtoReflect.Descriptor instead.
-func (*GetSessionPollRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{9}
-}
-
-func (x *GetSessionPollRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *GetSessionPollRequest) GetCampaignId() string {
-	if x != nil {
-		return x.CampaignId
-	}
-	return ""
-}
-
-type GetSessionPollResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Poll          *Poll                  `protobuf:"bytes,1,opt,name=poll,proto3" json:"poll,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetSessionPollResponse) Reset() {
-	*x = GetSessionPollResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[10]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetSessionPollResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetSessionPollResponse) ProtoMessage() {}
-
-func (x *GetSessionPollResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[10]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetSessionPollResponse.ProtoReflect.Descriptor instead.
-func (*GetSessionPollResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{10}
-}
-
-func (x *GetSessionPollResponse) GetPoll() *Poll {
-	if x != nil {
-		return x.Poll
-	}
-	return nil
-}
-
-type ListOneOffSessionsByCampaignRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListOneOffSessionsByCampaignRequest) Reset() {
-	*x = ListOneOffSessionsByCampaignRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[11]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListOneOffSessionsByCampaignRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListOneOffSessionsByCampaignRequest) ProtoMessage() {}
-
-func (x *ListOneOffSessionsByCampaignRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[11]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListOneOffSessionsByCampaignRequest.ProtoReflect.Descriptor instead.
-func (*ListOneOffSessionsByCampaignRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{11}
-}
-
-func (x *ListOneOffSessionsByCampaignRequest) GetCampaignId() string {
-	if x != nil {
-		return x.CampaignId
-	}
-	return ""
-}
-
-type ListOneOffSessionsByCampaignResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sessions      []*Session             `protobuf:"bytes,1,rep,name=sessions,proto3" json:"sessions,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ListOneOffSessionsByCampaignResponse) Reset() {
-	*x = ListOneOffSessionsByCampaignResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[12]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ListOneOffSessionsByCampaignResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ListOneOffSessionsByCampaignResponse) ProtoMessage() {}
-
-func (x *ListOneOffSessionsByCampaignResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[12]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ListOneOffSessionsByCampaignResponse.ProtoReflect.Descriptor instead.
-func (*ListOneOffSessionsByCampaignResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ListOneOffSessionsByCampaignResponse) GetSessions() []*Session {
-	if x != nil {
-		return x.Sessions
-	}
-	return nil
-}
-
-type PollSessionRequest struct {
-	state         protoimpl.MessageState   `protogen:"open.v1"`
-	CampaignId    string                   `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	SessionId     string                   `protobuf:"bytes,2,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Options       []*timestamppb.Timestamp `protobuf:"bytes,3,rep,name=options,proto3" json:"options,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PollSessionRequest) Reset() {
-	*x = PollSessionRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[13]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PollSessionRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PollSessionRequest) ProtoMessage() {}
-
-func (x *PollSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[13]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PollSessionRequest.ProtoReflect.Descriptor instead.
-func (*PollSessionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{13}
-}
-
-func (x *PollSessionRequest) GetCampaignId() string {
-	if x != nil {
-		return x.CampaignId
-	}
-	return ""
-}
-
-func (x *PollSessionRequest) GetSessionId() string {
-	if x != nil {
-		return x.SessionId
-	}
-	return ""
-}
-
-func (x *PollSessionRequest) GetOptions() []*timestamppb.Timestamp {
-	if x != nil {
-		return x.Options
-	}
-	return nil
-}
-
-type PollSessionResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PollSessionResponse) Reset() {
-	*x = PollSessionResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PollSessionResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PollSessionResponse) ProtoMessage() {}
-
-func (x *PollSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PollSessionResponse.ProtoReflect.Descriptor instead.
-func (*PollSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{14}
 }
 
 type RemoveSessionRequest struct {
@@ -960,7 +484,7 @@ type RemoveSessionRequest struct {
 
 func (x *RemoveSessionRequest) Reset() {
 	*x = RemoveSessionRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[15]
+	mi := &file_planner_v1_session_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -972,7 +496,7 @@ func (x *RemoveSessionRequest) String() string {
 func (*RemoveSessionRequest) ProtoMessage() {}
 
 func (x *RemoveSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[15]
+	mi := &file_planner_v1_session_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -985,7 +509,7 @@ func (x *RemoveSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSessionRequest.ProtoReflect.Descriptor instead.
 func (*RemoveSessionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{15}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *RemoveSessionRequest) GetId() string {
@@ -1010,7 +534,7 @@ type RemoveSessionResponse struct {
 
 func (x *RemoveSessionResponse) Reset() {
 	*x = RemoveSessionResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[16]
+	mi := &file_planner_v1_session_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1022,7 +546,7 @@ func (x *RemoveSessionResponse) String() string {
 func (*RemoveSessionResponse) ProtoMessage() {}
 
 func (x *RemoveSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[16]
+	mi := &file_planner_v1_session_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1035,15 +559,13 @@ func (x *RemoveSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveSessionResponse.ProtoReflect.Descriptor instead.
 func (*RemoveSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{16}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{8}
 }
 
 type UpdateSessionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Description   *string                `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	StartsAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=starts_at,json=startsAt,proto3,oneof" json:"starts_at,omitempty"`
-	Status        SessionStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.SessionStatus" json:"status,omitempty"`
 	Title         *string                `protobuf:"bytes,5,opt,name=title,proto3,oneof" json:"title,omitempty"`
 	CampaignId    string                 `protobuf:"bytes,6,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	Recap         *string                `protobuf:"bytes,7,opt,name=recap,proto3,oneof" json:"recap,omitempty"`
@@ -1053,7 +575,7 @@ type UpdateSessionRequest struct {
 
 func (x *UpdateSessionRequest) Reset() {
 	*x = UpdateSessionRequest{}
-	mi := &file_planner_v1_session_proto_msgTypes[17]
+	mi := &file_planner_v1_session_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1065,7 +587,7 @@ func (x *UpdateSessionRequest) String() string {
 func (*UpdateSessionRequest) ProtoMessage() {}
 
 func (x *UpdateSessionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[17]
+	mi := &file_planner_v1_session_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1078,7 +600,7 @@ func (x *UpdateSessionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSessionRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSessionRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{17}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateSessionRequest) GetId() string {
@@ -1093,20 +615,6 @@ func (x *UpdateSessionRequest) GetDescription() string {
 		return *x.Description
 	}
 	return ""
-}
-
-func (x *UpdateSessionRequest) GetStartsAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.StartsAt
-	}
-	return nil
-}
-
-func (x *UpdateSessionRequest) GetStatus() SessionStatus {
-	if x != nil {
-		return x.Status
-	}
-	return SessionStatus_SESSION_STATUS_UNSPECIFIED
 }
 
 func (x *UpdateSessionRequest) GetTitle() string {
@@ -1139,7 +647,7 @@ type UpdateSessionResponse struct {
 
 func (x *UpdateSessionResponse) Reset() {
 	*x = UpdateSessionResponse{}
-	mi := &file_planner_v1_session_proto_msgTypes[18]
+	mi := &file_planner_v1_session_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1151,7 +659,7 @@ func (x *UpdateSessionResponse) String() string {
 func (*UpdateSessionResponse) ProtoMessage() {}
 
 func (x *UpdateSessionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_session_proto_msgTypes[18]
+	mi := &file_planner_v1_session_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1164,7 +672,7 @@ func (x *UpdateSessionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSessionResponse.ProtoReflect.Descriptor instead.
 func (*UpdateSessionResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_session_proto_rawDescGZIP(), []int{18}
+	return file_planner_v1_session_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UpdateSessionResponse) GetSession() *Session {
@@ -1179,61 +687,25 @@ var File_planner_v1_session_proto protoreflect.FileDescriptor
 const file_planner_v1_session_proto_rawDesc = "" +
 	"\n" +
 	"\x18planner/v1/session.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa5\x06\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb6\x03\n" +
 	"\aSession\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x121\n" +
-	"\x06status\x18\x05 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12<\n" +
-	"\tstarts_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x129\n" +
+	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x127\n" +
+	"\tstarts_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\bstartsAt\x129\n" +
 	"\n" +
 	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1c\n" +
-	"\apoll_id\x18\t \x01(\tH\x02R\x06pollId\x88\x01\x01\x12B\n" +
-	"\fannounced_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vannouncedAt\x88\x01\x01\x12 \n" +
-	"\tseries_id\x18\v \x01(\tH\x04R\bseriesId\x88\x01\x01\x12M\n" +
-	"\x12original_starts_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampH\x05R\x10originalStartsAt\x88\x01\x01\x12-\n" +
-	"\x10discord_event_id\x18\r \x01(\tH\x06R\x0ediscordEventId\x88\x01\x01\x12\x19\n" +
-	"\x05recap\x18\x0e \x01(\tH\aR\x05recap\x88\x01\x01\x12)\n" +
+	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12 \n" +
+	"\tseries_id\x18\v \x01(\tH\x01R\bseriesId\x88\x01\x01\x12\x19\n" +
+	"\x05recap\x18\x0e \x01(\tH\x02R\x05recap\x88\x01\x01\x12)\n" +
 	"\x10duration_minutes\x18\x0f \x01(\x05R\x0fdurationMinutesB\x0e\n" +
 	"\f_descriptionB\f\n" +
 	"\n" +
-	"_starts_atB\n" +
-	"\n" +
-	"\b_poll_idB\x0f\n" +
-	"\r_announced_atB\f\n" +
-	"\n" +
-	"_series_idB\x15\n" +
-	"\x13_original_starts_atB\x13\n" +
-	"\x11_discord_event_idB\b\n" +
-	"\x06_recap\"X\n" +
-	"\x16AnnounceSessionRequest\x12\x1f\n" +
-	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x02 \x01(\tR\tsessionId\"\x19\n" +
-	"\x17AnnounceSessionResponse\"\xde\x03\n" +
-	"\x14CreateSessionRequest\x12\x1f\n" +
-	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\x12%\n" +
-	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
-	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x121\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x14\n" +
-	"\x05title\x18\x05 \x01(\tR\x05title\x12 \n" +
-	"\tseries_id\x18\x06 \x01(\tH\x02R\bseriesId\x88\x01\x01\x12M\n" +
-	"\x12original_starts_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x10originalStartsAt\x88\x01\x01\x12.\n" +
-	"\x10duration_minutes\x18\b \x01(\x05H\x04R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\f\n" +
-	"\n" +
-	"_starts_atB\f\n" +
-	"\n" +
-	"_series_idB\x15\n" +
-	"\x13_original_starts_atB\x13\n" +
-	"\x11_duration_minutes\"?\n" +
+	"_series_idB\b\n" +
+	"\x06_recap\"?\n" +
 	"\n" +
 	"PollAnswer\x12\x12\n" +
 	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1d\n" +
@@ -1242,7 +714,21 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\x04Poll\x12\x1a\n" +
 	"\bquestion\x18\x01 \x01(\tR\bquestion\x120\n" +
 	"\aanswers\x18\x02 \x03(\v2\x16.planner.v1.PollAnswerR\aanswers\x12!\n" +
-	"\fis_finalized\x18\x03 \x01(\bR\visFinalized\"F\n" +
+	"\fis_finalized\x18\x03 \x01(\bR\visFinalized\"\xc5\x02\n" +
+	"\x14CreateSessionRequest\x12\x1f\n" +
+	"\vcampaign_id\x18\x01 \x01(\tR\n" +
+	"campaignId\x12%\n" +
+	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
+	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x12\x14\n" +
+	"\x05title\x18\x05 \x01(\tR\x05title\x12 \n" +
+	"\tseries_id\x18\x06 \x01(\tH\x02R\bseriesId\x88\x01\x01\x12.\n" +
+	"\x10duration_minutes\x18\b \x01(\x05H\x03R\x0fdurationMinutes\x88\x01\x01B\x0e\n" +
+	"\f_descriptionB\f\n" +
+	"\n" +
+	"_starts_atB\f\n" +
+	"\n" +
+	"_series_idB\x13\n" +
+	"\x11_duration_minutes\"F\n" +
 	"\x15CreateSessionResponse\x12-\n" +
 	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"D\n" +
 	"\x11GetSessionRequest\x12\x0e\n" +
@@ -1250,60 +736,28 @@ const file_planner_v1_session_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"C\n" +
 	"\x12GetSessionResponse\x12-\n" +
-	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"W\n" +
-	"\x15GetSessionPollRequest\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x01 \x01(\tR\tsessionId\x12\x1f\n" +
-	"\vcampaign_id\x18\x02 \x01(\tR\n" +
-	"campaignId\">\n" +
-	"\x16GetSessionPollResponse\x12$\n" +
-	"\x04poll\x18\x01 \x01(\v2\x10.planner.v1.PollR\x04poll\"F\n" +
-	"#ListOneOffSessionsByCampaignRequest\x12\x1f\n" +
-	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\"W\n" +
-	"$ListOneOffSessionsByCampaignResponse\x12/\n" +
-	"\bsessions\x18\x01 \x03(\v2\x13.planner.v1.SessionR\bsessions\"\x8a\x01\n" +
-	"\x12PollSessionRequest\x12\x1f\n" +
-	"\vcampaign_id\x18\x01 \x01(\tR\n" +
-	"campaignId\x12\x1d\n" +
-	"\n" +
-	"session_id\x18\x02 \x01(\tR\tsessionId\x124\n" +
-	"\aoptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\aoptions\"\x15\n" +
-	"\x13PollSessionResponse\"G\n" +
+	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession\"G\n" +
 	"\x14RemoveSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"\x17\n" +
-	"\x15RemoveSessionResponse\"\xc7\x02\n" +
+	"\x15RemoveSessionResponse\"\xc8\x01\n" +
 	"\x14UpdateSessionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12%\n" +
-	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12<\n" +
-	"\tstarts_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\bstartsAt\x88\x01\x01\x121\n" +
-	"\x06status\x18\x04 \x01(\x0e2\x19.planner.v1.SessionStatusR\x06status\x12\x19\n" +
-	"\x05title\x18\x05 \x01(\tH\x02R\x05title\x88\x01\x01\x12\x1f\n" +
+	"\vdescription\x18\x02 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x19\n" +
+	"\x05title\x18\x05 \x01(\tH\x01R\x05title\x88\x01\x01\x12\x1f\n" +
 	"\vcampaign_id\x18\x06 \x01(\tR\n" +
 	"campaignId\x12\x19\n" +
-	"\x05recap\x18\a \x01(\tH\x03R\x05recap\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\f\n" +
-	"\n" +
-	"_starts_atB\b\n" +
+	"\x05recap\x18\a \x01(\tH\x02R\x05recap\x88\x01\x01B\x0e\n" +
+	"\f_descriptionB\b\n" +
 	"\x06_titleB\b\n" +
 	"\x06_recap\"F\n" +
 	"\x15UpdateSessionResponse\x12-\n" +
-	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession*\x83\x01\n" +
-	"\rSessionStatus\x12\x1e\n" +
-	"\x1aSESSION_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
-	"\x14SESSION_STATUS_DRAFT\x10\x01\x12\x1a\n" +
-	"\x16SESSION_STATUS_POLLING\x10\x02\x12\x1c\n" +
-	"\x18SESSION_STATUS_CONFIRMED\x10\x032\xe8\x05\n" +
-	"\x0eSessionService\x12Z\n" +
-	"\x0fAnnounceSession\x12\".planner.v1.AnnounceSessionRequest\x1a#.planner.v1.AnnounceSessionResponse\x12T\n" +
+	"\asession\x18\x01 \x01(\v2\x13.planner.v1.SessionR\asession2\xdf\x02\n" +
+	"\x0eSessionService\x12T\n" +
 	"\rCreateSession\x12 .planner.v1.CreateSessionRequest\x1a!.planner.v1.CreateSessionResponse\x12K\n" +
 	"\n" +
-	"GetSession\x12\x1d.planner.v1.GetSessionRequest\x1a\x1e.planner.v1.GetSessionResponse\x12W\n" +
-	"\x0eGetSessionPoll\x12!.planner.v1.GetSessionPollRequest\x1a\".planner.v1.GetSessionPollResponse\x12\x81\x01\n" +
-	"\x1cListOneOffSessionsByCampaign\x12/.planner.v1.ListOneOffSessionsByCampaignRequest\x1a0.planner.v1.ListOneOffSessionsByCampaignResponse\x12N\n" +
-	"\vPollSession\x12\x1e.planner.v1.PollSessionRequest\x1a\x1f.planner.v1.PollSessionResponse\x12T\n" +
+	"GetSession\x12\x1d.planner.v1.GetSessionRequest\x1a\x1e.planner.v1.GetSessionResponse\x12T\n" +
 	"\rRemoveSession\x12 .planner.v1.RemoveSessionRequest\x1a!.planner.v1.RemoveSessionResponse\x12T\n" +
 	"\rUpdateSession\x12 .planner.v1.UpdateSessionRequest\x1a!.planner.v1.UpdateSessionResponseB\xa9\x01\n" +
 	"\x0ecom.planner.v1B\fSessionProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
@@ -1322,71 +776,43 @@ func file_planner_v1_session_proto_rawDescGZIP() []byte {
 	return file_planner_v1_session_proto_rawDescData
 }
 
-var file_planner_v1_session_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_planner_v1_session_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_planner_v1_session_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_session_proto_goTypes = []any{
-	(SessionStatus)(0),                           // 0: planner.v1.SessionStatus
-	(*Session)(nil),                              // 1: planner.v1.Session
-	(*AnnounceSessionRequest)(nil),               // 2: planner.v1.AnnounceSessionRequest
-	(*AnnounceSessionResponse)(nil),              // 3: planner.v1.AnnounceSessionResponse
-	(*CreateSessionRequest)(nil),                 // 4: planner.v1.CreateSessionRequest
-	(*PollAnswer)(nil),                           // 5: planner.v1.PollAnswer
-	(*Poll)(nil),                                 // 6: planner.v1.Poll
-	(*CreateSessionResponse)(nil),                // 7: planner.v1.CreateSessionResponse
-	(*GetSessionRequest)(nil),                    // 8: planner.v1.GetSessionRequest
-	(*GetSessionResponse)(nil),                   // 9: planner.v1.GetSessionResponse
-	(*GetSessionPollRequest)(nil),                // 10: planner.v1.GetSessionPollRequest
-	(*GetSessionPollResponse)(nil),               // 11: planner.v1.GetSessionPollResponse
-	(*ListOneOffSessionsByCampaignRequest)(nil),  // 12: planner.v1.ListOneOffSessionsByCampaignRequest
-	(*ListOneOffSessionsByCampaignResponse)(nil), // 13: planner.v1.ListOneOffSessionsByCampaignResponse
-	(*PollSessionRequest)(nil),                   // 14: planner.v1.PollSessionRequest
-	(*PollSessionResponse)(nil),                  // 15: planner.v1.PollSessionResponse
-	(*RemoveSessionRequest)(nil),                 // 16: planner.v1.RemoveSessionRequest
-	(*RemoveSessionResponse)(nil),                // 17: planner.v1.RemoveSessionResponse
-	(*UpdateSessionRequest)(nil),                 // 18: planner.v1.UpdateSessionRequest
-	(*UpdateSessionResponse)(nil),                // 19: planner.v1.UpdateSessionResponse
-	(*timestamppb.Timestamp)(nil),                // 20: google.protobuf.Timestamp
+	(*Session)(nil),               // 0: planner.v1.Session
+	(*PollAnswer)(nil),            // 1: planner.v1.PollAnswer
+	(*Poll)(nil),                  // 2: planner.v1.Poll
+	(*CreateSessionRequest)(nil),  // 3: planner.v1.CreateSessionRequest
+	(*CreateSessionResponse)(nil), // 4: planner.v1.CreateSessionResponse
+	(*GetSessionRequest)(nil),     // 5: planner.v1.GetSessionRequest
+	(*GetSessionResponse)(nil),    // 6: planner.v1.GetSessionResponse
+	(*RemoveSessionRequest)(nil),  // 7: planner.v1.RemoveSessionRequest
+	(*RemoveSessionResponse)(nil), // 8: planner.v1.RemoveSessionResponse
+	(*UpdateSessionRequest)(nil),  // 9: planner.v1.UpdateSessionRequest
+	(*UpdateSessionResponse)(nil), // 10: planner.v1.UpdateSessionResponse
+	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 }
 var file_planner_v1_session_proto_depIdxs = []int32{
-	0,  // 0: planner.v1.Session.status:type_name -> planner.v1.SessionStatus
-	20, // 1: planner.v1.Session.starts_at:type_name -> google.protobuf.Timestamp
-	20, // 2: planner.v1.Session.created_at:type_name -> google.protobuf.Timestamp
-	20, // 3: planner.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 4: planner.v1.Session.announced_at:type_name -> google.protobuf.Timestamp
-	20, // 5: planner.v1.Session.original_starts_at:type_name -> google.protobuf.Timestamp
-	20, // 6: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: planner.v1.CreateSessionRequest.status:type_name -> planner.v1.SessionStatus
-	20, // 8: planner.v1.CreateSessionRequest.original_starts_at:type_name -> google.protobuf.Timestamp
-	5,  // 9: planner.v1.Poll.answers:type_name -> planner.v1.PollAnswer
-	1,  // 10: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
-	1,  // 11: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
-	6,  // 12: planner.v1.GetSessionPollResponse.poll:type_name -> planner.v1.Poll
-	1,  // 13: planner.v1.ListOneOffSessionsByCampaignResponse.sessions:type_name -> planner.v1.Session
-	20, // 14: planner.v1.PollSessionRequest.options:type_name -> google.protobuf.Timestamp
-	20, // 15: planner.v1.UpdateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
-	0,  // 16: planner.v1.UpdateSessionRequest.status:type_name -> planner.v1.SessionStatus
-	1,  // 17: planner.v1.UpdateSessionResponse.session:type_name -> planner.v1.Session
-	2,  // 18: planner.v1.SessionService.AnnounceSession:input_type -> planner.v1.AnnounceSessionRequest
-	4,  // 19: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
-	8,  // 20: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
-	10, // 21: planner.v1.SessionService.GetSessionPoll:input_type -> planner.v1.GetSessionPollRequest
-	12, // 22: planner.v1.SessionService.ListOneOffSessionsByCampaign:input_type -> planner.v1.ListOneOffSessionsByCampaignRequest
-	14, // 23: planner.v1.SessionService.PollSession:input_type -> planner.v1.PollSessionRequest
-	16, // 24: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
-	18, // 25: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
-	3,  // 26: planner.v1.SessionService.AnnounceSession:output_type -> planner.v1.AnnounceSessionResponse
-	7,  // 27: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
-	9,  // 28: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
-	11, // 29: planner.v1.SessionService.GetSessionPoll:output_type -> planner.v1.GetSessionPollResponse
-	13, // 30: planner.v1.SessionService.ListOneOffSessionsByCampaign:output_type -> planner.v1.ListOneOffSessionsByCampaignResponse
-	15, // 31: planner.v1.SessionService.PollSession:output_type -> planner.v1.PollSessionResponse
-	17, // 32: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
-	19, // 33: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse
-	26, // [26:34] is the sub-list for method output_type
-	18, // [18:26] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	11, // 0: planner.v1.Session.starts_at:type_name -> google.protobuf.Timestamp
+	11, // 1: planner.v1.Session.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: planner.v1.Session.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: planner.v1.Poll.answers:type_name -> planner.v1.PollAnswer
+	11, // 4: planner.v1.CreateSessionRequest.starts_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: planner.v1.CreateSessionResponse.session:type_name -> planner.v1.Session
+	0,  // 6: planner.v1.GetSessionResponse.session:type_name -> planner.v1.Session
+	0,  // 7: planner.v1.UpdateSessionResponse.session:type_name -> planner.v1.Session
+	3,  // 8: planner.v1.SessionService.CreateSession:input_type -> planner.v1.CreateSessionRequest
+	5,  // 9: planner.v1.SessionService.GetSession:input_type -> planner.v1.GetSessionRequest
+	7,  // 10: planner.v1.SessionService.RemoveSession:input_type -> planner.v1.RemoveSessionRequest
+	9,  // 11: planner.v1.SessionService.UpdateSession:input_type -> planner.v1.UpdateSessionRequest
+	4,  // 12: planner.v1.SessionService.CreateSession:output_type -> planner.v1.CreateSessionResponse
+	6,  // 13: planner.v1.SessionService.GetSession:output_type -> planner.v1.GetSessionResponse
+	8,  // 14: planner.v1.SessionService.RemoveSession:output_type -> planner.v1.RemoveSessionResponse
+	10, // 15: planner.v1.SessionService.UpdateSession:output_type -> planner.v1.UpdateSessionResponse
+	12, // [12:16] is the sub-list for method output_type
+	8,  // [8:12] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_session_proto_init() }
@@ -1396,20 +822,19 @@ func file_planner_v1_session_proto_init() {
 	}
 	file_planner_v1_session_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_session_proto_msgTypes[3].OneofWrappers = []any{}
-	file_planner_v1_session_proto_msgTypes[17].OneofWrappers = []any{}
+	file_planner_v1_session_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_session_proto_rawDesc), len(file_planner_v1_session_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   19,
+			NumEnums:      0,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_planner_v1_session_proto_goTypes,
 		DependencyIndexes: file_planner_v1_session_proto_depIdxs,
-		EnumInfos:         file_planner_v1_session_proto_enumTypes,
 		MessageInfos:      file_planner_v1_session_proto_msgTypes,
 	}.Build()
 	File_planner_v1_session_proto = out.File

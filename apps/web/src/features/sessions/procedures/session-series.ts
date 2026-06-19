@@ -1,14 +1,22 @@
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/server";
 import {
+	AnnounceToDiscordRequestSchema,
+	AnnounceToDiscordResponseSchema,
 	CreateSessionSeriesRequestSchema,
 	CreateSessionSeriesResponseSchema,
 	ExcludeSessionFromSeriesRequestSchema,
 	ExcludeSessionFromSeriesResponseSchema,
+	GetDiscordEventRequestSchema,
+	GetDiscordEventResponseSchema,
+	GetSeriesPollRequestSchema,
+	GetSeriesPollResponseSchema,
 	GetSessionSeriesRequestSchema,
 	GetSessionSeriesResponseSchema,
 	ListSessionSeriesByCampaignRequestSchema,
 	ListSessionSeriesByCampaignResponseSchema,
+	PollSeriesRequestSchema,
+	PollSeriesResponseSchema,
 	RemoveSeriesExceptionRequestSchema,
 	RemoveSeriesExceptionResponseSchema,
 	RemoveSessionSeriesRequestSchema,
@@ -19,6 +27,8 @@ import {
 import { handleError } from "@/server/errors";
 import { campaignProcedure, dmProcedure } from "@/server/middleware";
 import {
+	protoToDiscordEventInfo,
+	protoToPoll,
 	protoToSessionSeries,
 	protoToSessionSeriesWithDetails,
 } from "./proto/session-series";
@@ -62,7 +72,7 @@ const createSessionSeries = dmProcedure
 				campaignId: input.campaignId,
 				description: input.description,
 				durationMinutes: input.durationMinutes,
-				rrule: input.rrule,
+				rrule: input.rrule ?? undefined,
 				seriesEndDate: input.seriesEndDate
 					? timestampFromDate(input.seriesEndDate)
 					: undefined,
@@ -238,14 +248,13 @@ const excludeSessionFromSeries = dmProcedure
 				campaignId: context.campaignId,
 				excludedDate: timestampFromDate(input.excludedDate),
 				seriesId: input.seriesId,
-				sessionId: input.sessionId,
 			});
 			return {};
 		} catch (err) {
 			handleError(
 				err,
 				"failed to exclude session from series",
-				{ seriesId: input.seriesId, sessionId: input.sessionId },
+				{ seriesId: input.seriesId },
 				context.logger,
 			);
 		}
@@ -278,11 +287,135 @@ const removeSeriesException = dmProcedure
 		}
 	});
 
+const announceToDiscord = dmProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/announce",
+		summary: "Announce a session series to Discord",
+	})
+	.input(AnnounceToDiscordRequestSchema)
+	.output(AnnounceToDiscordResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.announceToDiscord({
+				campaignId: context.campaignId,
+				seriesId: input.seriesId,
+			});
+			if (!res.series) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to announce series to discord",
+				});
+			}
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to announce series to discord",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const getDiscordEvent = campaignProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/discord-event",
+		summary: "Verify a Discord scheduled event still exists",
+	})
+	.input(GetDiscordEventRequestSchema)
+	.output(GetDiscordEventResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.getDiscordEvent({
+				campaignId: context.campaignId,
+				discordEventId: input.discordEventId,
+				seriesId: input.seriesId,
+			});
+			if (!res.event) {
+				throw new ORPCError("NOT_FOUND", {
+					message: "discord event not found",
+				});
+			}
+			return { event: protoToDiscordEventInfo(res.event) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to get discord event",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const getSeriesPoll = campaignProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/get-poll",
+		summary: "Get the current Discord poll results for a session series",
+	})
+	.input(GetSeriesPollRequestSchema)
+	.output(GetSeriesPollResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.sessionSeries.getSeriesPoll({
+				campaignId: context.campaignId,
+				seriesId: input.seriesId,
+			});
+			if (res.poll === undefined) {
+				return { poll: null };
+			}
+			return { poll: protoToPoll(res.poll) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to get series poll",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const pollSeries = dmProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/poll",
+		summary: "Start a Discord poll for available session dates in a series",
+	})
+	.input(PollSeriesRequestSchema)
+	.output(PollSeriesResponseSchema)
+	.handler(async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const options = input.options.map((option) => timestampFromDate(option));
+			await api.sessionSeries.pollSeries({
+				campaignId: context.campaignId,
+				options,
+				seriesId: input.seriesId,
+			});
+			return {};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to poll series",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
 export const sessionSeriesRouter = {
+	announceToDiscord,
 	createSessionSeries,
 	excludeSessionFromSeries,
+	getDiscordEvent,
+	getSeriesPoll,
 	getSessionSeries,
 	listSessionSeriesByCampaign,
+	pollSeries,
 	removeSeriesException,
 	removeSessionSeries,
 	updateSessionSeries,

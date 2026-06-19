@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"log/slog"
 	"time"
@@ -32,9 +33,6 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 	}
 	if req.Msg.Title == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("title required"))
-	}
-	if req.Msg.Rrule == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("rrule required"))
 	}
 	if req.Msg.StartTime == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("start time required"))
@@ -70,9 +68,9 @@ func (s *SessionSeriesServer) CreateSessionSeries(ctx context.Context, req *conn
 		CampaignID:      req.Msg.CampaignId,
 		Title:           req.Msg.Title,
 		Description:     sqlNullString(req.Msg.Description),
-		RRule:           req.Msg.Rrule,
-		StartTime:       req.Msg.StartTime,
-		SeriesStartDate: req.Msg.SeriesStartDate.AsTime(),
+		RRule:           sqlNullString(req.Msg.Rrule),
+		StartTime:       sql.NullString{String: req.Msg.StartTime, Valid: true},
+		SeriesStartDate: req.Msg.SeriesStartDate.AsTime().UTC(),
 		SeriesEndDate:   sqlNullableTime(req.Msg.SeriesEndDate),
 		Timezone:        req.Msg.Timezone,
 		DurationMinutes: durationMinutes,
@@ -177,7 +175,7 @@ func (s *SessionSeriesServer) RemoveSessionSeries(ctx context.Context, req *conn
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	if err := s.SessionSeries.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
+	if err := s.SessionSeries.Remove(ctx, req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove session series")
 	}
 
@@ -185,9 +183,6 @@ func (s *SessionSeriesServer) RemoveSessionSeries(ctx context.Context, req *conn
 }
 
 func (s *SessionSeriesServer) ExcludeSessionFromSeries(ctx context.Context, req *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error) {
-	if req.Msg.SessionId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("session id required"))
-	}
 	if req.Msg.SeriesId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
 	}
@@ -201,7 +196,7 @@ func (s *SessionSeriesServer) ExcludeSessionFromSeries(ctx context.Context, req 
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid excluded date"))
 	}
 
-	if err := s.SessionSeries.ExcludeFromSeries(ctx, req.Msg.SessionId, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
+	if err := s.SessionSeries.ExcludeFromSeries(ctx, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to exclude session from series")
 	}
 
@@ -229,6 +224,118 @@ func (s *SessionSeriesServer) RemoveSeriesException(ctx context.Context, req *co
 	return connect.NewResponse(&v1.RemoveSeriesExceptionResponse{}), nil
 }
 
+func (s *SessionSeriesServer) AnnounceToDiscord(ctx context.Context, req *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	series, err := s.SessionSeries.AnnounceToDiscord(ctx, req.Msg.SeriesId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to announce series to discord")
+	}
+
+	return connect.NewResponse(&v1.AnnounceToDiscordResponse{
+		Series: sessionSeriesToProto(series),
+	}), nil
+}
+
+func (s *SessionSeriesServer) GetDiscordEvent(ctx context.Context, req *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error) {
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.DiscordEventId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("discord event id required"))
+	}
+
+	info, err := s.SessionSeries.GetDiscordEvent(ctx, req.Msg.CampaignId, req.Msg.SeriesId, req.Msg.DiscordEventId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get discord event")
+	}
+
+	protoEvent := &v1.DiscordEventInfo{
+		GuildId:   info.GuildID,
+		EventId:   info.EventID,
+		Name:      info.Name,
+		StartTime: timestamppb.New(info.StartTime),
+		Status:    int32(info.Status),
+	}
+	if info.EndTime != nil {
+		protoEvent.EndTime = timestamppb.New(*info.EndTime)
+	}
+
+	return connect.NewResponse(&v1.GetDiscordEventResponse{
+		Event: protoEvent,
+	}), nil
+}
+
+func (s *SessionSeriesServer) GetSeriesPoll(ctx context.Context, req *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error) {
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	poll, err := s.SessionSeries.GetPoll(ctx, req.Msg.SeriesId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to get series poll")
+	}
+
+	return connect.NewResponse(&v1.GetSeriesPollResponse{
+		Poll: pollToProto(poll),
+	}), nil
+}
+
+func (s *SessionSeriesServer) PollSeries(ctx context.Context, req *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error) {
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if len(req.Msg.Options) == 0 {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("at least one option required"))
+	}
+
+	options := make([]time.Time, len(req.Msg.Options))
+	for i, ts := range req.Msg.Options {
+		if err := ts.CheckValid(); err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid option timestamp"))
+		}
+		options[i] = ts.AsTime()
+	}
+
+	if err := s.SessionSeries.CreateDiscordPoll(ctx, req.Msg.SeriesId, req.Msg.CampaignId, options); err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to create series poll")
+	}
+
+	return connect.NewResponse(&v1.PollSeriesResponse{}), nil
+}
+
+func pollToProto(p *model.Poll) *v1.Poll {
+	if p == nil {
+		return nil
+	}
+	answers := make([]*v1.PollAnswer, len(p.Answers))
+	for i, a := range p.Answers {
+		answers[i] = &v1.PollAnswer{
+			Text:      a.Text,
+			VoteCount: a.VoteCount,
+		}
+	}
+	return &v1.Poll{
+		Question:    p.Question,
+		Answers:     answers,
+		IsFinalized: p.IsFinalized,
+	}
+}
+
 func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 	if s == nil {
 		return nil
@@ -237,8 +344,8 @@ func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 		Id:              s.ID,
 		CampaignId:      s.CampaignID,
 		Title:           s.Title,
-		Rrule:           s.RRule,
-		StartTime:       s.StartTime,
+		Rrule:           s.RRule.String,
+		StartTime:       s.StartTime.String,
 		SeriesStartDate: timestamppb.New(s.SeriesStartDate),
 		CreatedAt:       timestamppb.New(s.CreatedAt),
 		UpdatedAt:       timestamppb.New(s.UpdatedAt),
@@ -250,6 +357,9 @@ func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 	}
 	if s.SeriesEndDate.Valid {
 		proto.SeriesEndDate = timestamppb.New(s.SeriesEndDate.Time)
+	}
+	if s.DiscordEventID.Valid {
+		proto.DiscordEventId = &s.DiscordEventID.String
 	}
 	return proto
 }

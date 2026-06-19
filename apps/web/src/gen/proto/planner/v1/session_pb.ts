@@ -2,8 +2,8 @@
 // @generated from file planner/v1/session.proto (package planner.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
-import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
+import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
+import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import type { Message } from "@bufbuild/protobuf";
@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/session.proto.
  */
 export const file_planner_v1_session: GenFile = /*@__PURE__*/
-  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEigAUKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARIpCgZzdGF0dXMYBSABKA4yGS5wbGFubmVyLnYxLlNlc3Npb25TdGF0dXMSMgoJc3RhcnRzX2F0GAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhQKB3BvbGxfaWQYCSABKAlIAogBARI1Cgxhbm5vdW5jZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAOIAQESFgoJc2VyaWVzX2lkGAsgASgJSASIAQESOwoSb3JpZ2luYWxfc3RhcnRzX2F0GAwgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgFiAEBEh0KEGRpc2NvcmRfZXZlbnRfaWQYDSABKAlIBogBARISCgVyZWNhcBgOIAEoCUgHiAEBEhgKEGR1cmF0aW9uX21pbnV0ZXMYDyABKAVCDgoMX2Rlc2NyaXB0aW9uQgwKCl9zdGFydHNfYXRCCgoIX3BvbGxfaWRCDwoNX2Fubm91bmNlZF9hdEIMCgpfc2VyaWVzX2lkQhUKE19vcmlnaW5hbF9zdGFydHNfYXRCEwoRX2Rpc2NvcmRfZXZlbnRfaWRCCAoGX3JlY2FwIkEKFkFubm91bmNlU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEgoKc2Vzc2lvbl9pZBgCIAEoCSIZChdBbm5vdW5jZVNlc3Npb25SZXNwb25zZSL/AgoUQ3JlYXRlU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSGAoLZGVzY3JpcHRpb24YAiABKAlIAIgBARIyCglzdGFydHNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESKQoGc3RhdHVzGAQgASgOMhkucGxhbm5lci52MS5TZXNzaW9uU3RhdHVzEg0KBXRpdGxlGAUgASgJEhYKCXNlcmllc19pZBgGIAEoCUgCiAEBEjsKEm9yaWdpbmFsX3N0YXJ0c19hdBgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIA4gBARIdChBkdXJhdGlvbl9taW51dGVzGAggASgFSASIAQFCDgoMX2Rlc2NyaXB0aW9uQgwKCl9zdGFydHNfYXRCDAoKX3Nlcmllc19pZEIVChNfb3JpZ2luYWxfc3RhcnRzX2F0QhMKEV9kdXJhdGlvbl9taW51dGVzIi4KClBvbGxBbnN3ZXISDAoEdGV4dBgBIAEoCRISCgp2b3RlX2NvdW50GAIgASgNIlcKBFBvbGwSEAoIcXVlc3Rpb24YASABKAkSJwoHYW5zd2VycxgCIAMoCzIWLnBsYW5uZXIudjEuUG9sbEFuc3dlchIUCgxpc19maW5hbGl6ZWQYAyABKAgiPQoVQ3JlYXRlU2Vzc2lvblJlc3BvbnNlEiQKB3Nlc3Npb24YASABKAsyEy5wbGFubmVyLnYxLlNlc3Npb24iNAoRR2V0U2Vzc2lvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiOgoSR2V0U2Vzc2lvblJlc3BvbnNlEiQKB3Nlc3Npb24YASABKAsyEy5wbGFubmVyLnYxLlNlc3Npb24iQAoVR2V0U2Vzc2lvblBvbGxSZXF1ZXN0EhIKCnNlc3Npb25faWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiOAoWR2V0U2Vzc2lvblBvbGxSZXNwb25zZRIeCgRwb2xsGAEgASgLMhAucGxhbm5lci52MS5Qb2xsIjoKI0xpc3RPbmVPZmZTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIk0KJExpc3RPbmVPZmZTZXNzaW9uc0J5Q2FtcGFpZ25SZXNwb25zZRIlCghzZXNzaW9ucxgBIAMoCzITLnBsYW5uZXIudjEuU2Vzc2lvbiJqChJQb2xsU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEgoKc2Vzc2lvbl9pZBgCIAEoCRIrCgdvcHRpb25zGAMgAygLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCIVChNQb2xsU2Vzc2lvblJlc3BvbnNlIjcKFFJlbW92ZVNlc3Npb25SZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIhcKFVJlbW92ZVNlc3Npb25SZXNwb25zZSKKAgoUVXBkYXRlU2Vzc2lvblJlcXVlc3QSCgoCaWQYASABKAkSGAoLZGVzY3JpcHRpb24YAiABKAlIAIgBARIyCglzdGFydHNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESKQoGc3RhdHVzGAQgASgOMhkucGxhbm5lci52MS5TZXNzaW9uU3RhdHVzEhIKBXRpdGxlGAUgASgJSAKIAQESEwoLY2FtcGFpZ25faWQYBiABKAkSEgoFcmVjYXAYByABKAlIA4gBAUIOCgxfZGVzY3JpcHRpb25CDAoKX3N0YXJ0c19hdEIICgZfdGl0bGVCCAoGX3JlY2FwIj0KFVVwZGF0ZVNlc3Npb25SZXNwb25zZRIkCgdzZXNzaW9uGAEgASgLMhMucGxhbm5lci52MS5TZXNzaW9uKoMBCg1TZXNzaW9uU3RhdHVzEh4KGlNFU1NJT05fU1RBVFVTX1VOU1BFQ0lGSUVEEAASGAoUU0VTU0lPTl9TVEFUVVNfRFJBRlQQARIaChZTRVNTSU9OX1NUQVRVU19QT0xMSU5HEAISHAoYU0VTU0lPTl9TVEFUVVNfQ09ORklSTUVEEAMy6AUKDlNlc3Npb25TZXJ2aWNlEloKD0Fubm91bmNlU2Vzc2lvbhIiLnBsYW5uZXIudjEuQW5ub3VuY2VTZXNzaW9uUmVxdWVzdBojLnBsYW5uZXIudjEuQW5ub3VuY2VTZXNzaW9uUmVzcG9uc2USVAoNQ3JlYXRlU2Vzc2lvbhIgLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblJlcXVlc3QaIS5wbGFubmVyLnYxLkNyZWF0ZVNlc3Npb25SZXNwb25zZRJLCgpHZXRTZXNzaW9uEh0ucGxhbm5lci52MS5HZXRTZXNzaW9uUmVxdWVzdBoeLnBsYW5uZXIudjEuR2V0U2Vzc2lvblJlc3BvbnNlElcKDkdldFNlc3Npb25Qb2xsEiEucGxhbm5lci52MS5HZXRTZXNzaW9uUG9sbFJlcXVlc3QaIi5wbGFubmVyLnYxLkdldFNlc3Npb25Qb2xsUmVzcG9uc2USgQEKHExpc3RPbmVPZmZTZXNzaW9uc0J5Q2FtcGFpZ24SLy5wbGFubmVyLnYxLkxpc3RPbmVPZmZTZXNzaW9uc0J5Q2FtcGFpZ25SZXF1ZXN0GjAucGxhbm5lci52MS5MaXN0T25lT2ZmU2Vzc2lvbnNCeUNhbXBhaWduUmVzcG9uc2USTgoLUG9sbFNlc3Npb24SHi5wbGFubmVyLnYxLlBvbGxTZXNzaW9uUmVxdWVzdBofLnBsYW5uZXIudjEuUG9sbFNlc3Npb25SZXNwb25zZRJUCg1SZW1vdmVTZXNzaW9uEiAucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uUmVxdWVzdBohLnBsYW5uZXIudjEuUmVtb3ZlU2Vzc2lvblJlc3BvbnNlElQKDVVwZGF0ZVNlc3Npb24SIC5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uUmVzcG9uc2VCqQEKDmNvbS5wbGFubmVyLnYxQgxTZXNzaW9uUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChhwbGFubmVyL3YxL3Nlc3Npb24ucHJvdG8SCnBsYW5uZXIudjEi0AIKB1Nlc3Npb24SCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSGAoLZGVzY3JpcHRpb24YBCABKAlIAIgBARItCglzdGFydHNfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCmNyZWF0ZWRfYXQYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhYKCXNlcmllc19pZBgLIAEoCUgBiAEBEhIKBXJlY2FwGA4gASgJSAKIAQESGAoQZHVyYXRpb25fbWludXRlcxgPIAEoBUIOCgxfZGVzY3JpcHRpb25CDAoKX3Nlcmllc19pZEIICgZfcmVjYXAiLgoKUG9sbEFuc3dlchIMCgR0ZXh0GAEgASgJEhIKCnZvdGVfY291bnQYAiABKA0iVwoEUG9sbBIQCghxdWVzdGlvbhgBIAEoCRInCgdhbnN3ZXJzGAIgAygLMhYucGxhbm5lci52MS5Qb2xsQW5zd2VyEhQKDGlzX2ZpbmFsaXplZBgDIAEoCCKAAgoUQ3JlYXRlU2Vzc2lvblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSGAoLZGVzY3JpcHRpb24YAiABKAlIAIgBARIyCglzdGFydHNfYXQYAyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAGIAQESDQoFdGl0bGUYBSABKAkSFgoJc2VyaWVzX2lkGAYgASgJSAKIAQESHQoQZHVyYXRpb25fbWludXRlcxgIIAEoBUgDiAEBQg4KDF9kZXNjcmlwdGlvbkIMCgpfc3RhcnRzX2F0QgwKCl9zZXJpZXNfaWRCEwoRX2R1cmF0aW9uX21pbnV0ZXMiPQoVQ3JlYXRlU2Vzc2lvblJlc3BvbnNlEiQKB3Nlc3Npb24YASABKAsyEy5wbGFubmVyLnYxLlNlc3Npb24iNAoRR2V0U2Vzc2lvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiOgoSR2V0U2Vzc2lvblJlc3BvbnNlEiQKB3Nlc3Npb24YASABKAsyEy5wbGFubmVyLnYxLlNlc3Npb24iNwoUUmVtb3ZlU2Vzc2lvblJlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiFwoVUmVtb3ZlU2Vzc2lvblJlc3BvbnNlIp0BChRVcGRhdGVTZXNzaW9uUmVxdWVzdBIKCgJpZBgBIAEoCRIYCgtkZXNjcmlwdGlvbhgCIAEoCUgAiAEBEhIKBXRpdGxlGAUgASgJSAGIAQESEwoLY2FtcGFpZ25faWQYBiABKAkSEgoFcmVjYXAYByABKAlIAogBAUIOCgxfZGVzY3JpcHRpb25CCAoGX3RpdGxlQggKBl9yZWNhcCI9ChVVcGRhdGVTZXNzaW9uUmVzcG9uc2USJAoHc2Vzc2lvbhgBIAEoCzITLnBsYW5uZXIudjEuU2Vzc2lvbjLfAgoOU2Vzc2lvblNlcnZpY2USVAoNQ3JlYXRlU2Vzc2lvbhIgLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblJlcXVlc3QaIS5wbGFubmVyLnYxLkNyZWF0ZVNlc3Npb25SZXNwb25zZRJLCgpHZXRTZXNzaW9uEh0ucGxhbm5lci52MS5HZXRTZXNzaW9uUmVxdWVzdBoeLnBsYW5uZXIudjEuR2V0U2Vzc2lvblJlc3BvbnNlElQKDVJlbW92ZVNlc3Npb24SIC5wbGFubmVyLnYxLlJlbW92ZVNlc3Npb25SZXF1ZXN0GiEucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uUmVzcG9uc2USVAoNVXBkYXRlU2Vzc2lvbhIgLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblJlcXVlc3QaIS5wbGFubmVyLnYxLlVwZGF0ZVNlc3Npb25SZXNwb25zZUKpAQoOY29tLnBsYW5uZXIudjFCDFNlc3Npb25Qcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.Session
@@ -39,12 +39,7 @@ export type Session = Message<"planner.v1.Session"> & {
   description?: string | undefined;
 
   /**
-   * @generated from field: planner.v1.SessionStatus status = 5;
-   */
-  status: SessionStatus;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp starts_at = 6;
+   * @generated from field: google.protobuf.Timestamp starts_at = 6;
    */
   startsAt?: Timestamp | undefined;
 
@@ -59,29 +54,9 @@ export type Session = Message<"planner.v1.Session"> & {
   updatedAt?: Timestamp | undefined;
 
   /**
-   * @generated from field: optional string poll_id = 9;
-   */
-  pollId?: string | undefined;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp announced_at = 10;
-   */
-  announcedAt?: Timestamp | undefined;
-
-  /**
    * @generated from field: optional string series_id = 11;
    */
   seriesId?: string | undefined;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp original_starts_at = 12;
-   */
-  originalStartsAt?: Timestamp | undefined;
-
-  /**
-   * @generated from field: optional string discord_event_id = 13;
-   */
-  discordEventId?: string | undefined;
 
   /**
    * @generated from field: optional string recap = 14;
@@ -100,93 +75,6 @@ export type Session = Message<"planner.v1.Session"> & {
  */
 export const SessionSchema: GenMessage<Session> = /*@__PURE__*/
   messageDesc(file_planner_v1_session, 0);
-
-/**
- * @generated from message planner.v1.AnnounceSessionRequest
- */
-export type AnnounceSessionRequest = Message<"planner.v1.AnnounceSessionRequest"> & {
-  /**
-   * @generated from field: string campaign_id = 1;
-   */
-  campaignId: string;
-
-  /**
-   * @generated from field: string session_id = 2;
-   */
-  sessionId: string;
-};
-
-/**
- * Describes the message planner.v1.AnnounceSessionRequest.
- * Use `create(AnnounceSessionRequestSchema)` to create a new message.
- */
-export const AnnounceSessionRequestSchema: GenMessage<AnnounceSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 1);
-
-/**
- * @generated from message planner.v1.AnnounceSessionResponse
- */
-export type AnnounceSessionResponse = Message<"planner.v1.AnnounceSessionResponse"> & {
-};
-
-/**
- * Describes the message planner.v1.AnnounceSessionResponse.
- * Use `create(AnnounceSessionResponseSchema)` to create a new message.
- */
-export const AnnounceSessionResponseSchema: GenMessage<AnnounceSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 2);
-
-/**
- * @generated from message planner.v1.CreateSessionRequest
- */
-export type CreateSessionRequest = Message<"planner.v1.CreateSessionRequest"> & {
-  /**
-   * @generated from field: string campaign_id = 1;
-   */
-  campaignId: string;
-
-  /**
-   * @generated from field: optional string description = 2;
-   */
-  description?: string | undefined;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
-   */
-  startsAt?: Timestamp | undefined;
-
-  /**
-   * @generated from field: planner.v1.SessionStatus status = 4;
-   */
-  status: SessionStatus;
-
-  /**
-   * @generated from field: string title = 5;
-   */
-  title: string;
-
-  /**
-   * @generated from field: optional string series_id = 6;
-   */
-  seriesId?: string | undefined;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp original_starts_at = 7;
-   */
-  originalStartsAt?: Timestamp | undefined;
-
-  /**
-   * @generated from field: optional int32 duration_minutes = 8;
-   */
-  durationMinutes?: number | undefined;
-};
-
-/**
- * Describes the message planner.v1.CreateSessionRequest.
- * Use `create(CreateSessionRequestSchema)` to create a new message.
- */
-export const CreateSessionRequestSchema: GenMessage<CreateSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 3);
 
 /**
  * @generated from message planner.v1.PollAnswer
@@ -208,7 +96,7 @@ export type PollAnswer = Message<"planner.v1.PollAnswer"> & {
  * Use `create(PollAnswerSchema)` to create a new message.
  */
 export const PollAnswerSchema: GenMessage<PollAnswer> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 4);
+  messageDesc(file_planner_v1_session, 1);
 
 /**
  * @generated from message planner.v1.Poll
@@ -235,7 +123,49 @@ export type Poll = Message<"planner.v1.Poll"> & {
  * Use `create(PollSchema)` to create a new message.
  */
 export const PollSchema: GenMessage<Poll> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 5);
+  messageDesc(file_planner_v1_session, 2);
+
+/**
+ * @generated from message planner.v1.CreateSessionRequest
+ */
+export type CreateSessionRequest = Message<"planner.v1.CreateSessionRequest"> & {
+  /**
+   * @generated from field: string campaign_id = 1;
+   */
+  campaignId: string;
+
+  /**
+   * @generated from field: optional string description = 2;
+   */
+  description?: string | undefined;
+
+  /**
+   * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
+   */
+  startsAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: string title = 5;
+   */
+  title: string;
+
+  /**
+   * @generated from field: optional string series_id = 6;
+   */
+  seriesId?: string | undefined;
+
+  /**
+   * @generated from field: optional int32 duration_minutes = 8;
+   */
+  durationMinutes?: number | undefined;
+};
+
+/**
+ * Describes the message planner.v1.CreateSessionRequest.
+ * Use `create(CreateSessionRequestSchema)` to create a new message.
+ */
+export const CreateSessionRequestSchema: GenMessage<CreateSessionRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session, 3);
 
 /**
  * @generated from message planner.v1.CreateSessionResponse
@@ -252,7 +182,7 @@ export type CreateSessionResponse = Message<"planner.v1.CreateSessionResponse"> 
  * Use `create(CreateSessionResponseSchema)` to create a new message.
  */
 export const CreateSessionResponseSchema: GenMessage<CreateSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 6);
+  messageDesc(file_planner_v1_session, 4);
 
 /**
  * @generated from message planner.v1.GetSessionRequest
@@ -274,7 +204,7 @@ export type GetSessionRequest = Message<"planner.v1.GetSessionRequest"> & {
  * Use `create(GetSessionRequestSchema)` to create a new message.
  */
 export const GetSessionRequestSchema: GenMessage<GetSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 7);
+  messageDesc(file_planner_v1_session, 5);
 
 /**
  * @generated from message planner.v1.GetSessionResponse
@@ -291,120 +221,7 @@ export type GetSessionResponse = Message<"planner.v1.GetSessionResponse"> & {
  * Use `create(GetSessionResponseSchema)` to create a new message.
  */
 export const GetSessionResponseSchema: GenMessage<GetSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 8);
-
-/**
- * @generated from message planner.v1.GetSessionPollRequest
- */
-export type GetSessionPollRequest = Message<"planner.v1.GetSessionPollRequest"> & {
-  /**
-   * @generated from field: string session_id = 1;
-   */
-  sessionId: string;
-
-  /**
-   * @generated from field: string campaign_id = 2;
-   */
-  campaignId: string;
-};
-
-/**
- * Describes the message planner.v1.GetSessionPollRequest.
- * Use `create(GetSessionPollRequestSchema)` to create a new message.
- */
-export const GetSessionPollRequestSchema: GenMessage<GetSessionPollRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 9);
-
-/**
- * @generated from message planner.v1.GetSessionPollResponse
- */
-export type GetSessionPollResponse = Message<"planner.v1.GetSessionPollResponse"> & {
-  /**
-   * @generated from field: planner.v1.Poll poll = 1;
-   */
-  poll?: Poll | undefined;
-};
-
-/**
- * Describes the message planner.v1.GetSessionPollResponse.
- * Use `create(GetSessionPollResponseSchema)` to create a new message.
- */
-export const GetSessionPollResponseSchema: GenMessage<GetSessionPollResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 10);
-
-/**
- * @generated from message planner.v1.ListOneOffSessionsByCampaignRequest
- */
-export type ListOneOffSessionsByCampaignRequest = Message<"planner.v1.ListOneOffSessionsByCampaignRequest"> & {
-  /**
-   * @generated from field: string campaign_id = 1;
-   */
-  campaignId: string;
-};
-
-/**
- * Describes the message planner.v1.ListOneOffSessionsByCampaignRequest.
- * Use `create(ListOneOffSessionsByCampaignRequestSchema)` to create a new message.
- */
-export const ListOneOffSessionsByCampaignRequestSchema: GenMessage<ListOneOffSessionsByCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 11);
-
-/**
- * @generated from message planner.v1.ListOneOffSessionsByCampaignResponse
- */
-export type ListOneOffSessionsByCampaignResponse = Message<"planner.v1.ListOneOffSessionsByCampaignResponse"> & {
-  /**
-   * @generated from field: repeated planner.v1.Session sessions = 1;
-   */
-  sessions: Session[];
-};
-
-/**
- * Describes the message planner.v1.ListOneOffSessionsByCampaignResponse.
- * Use `create(ListOneOffSessionsByCampaignResponseSchema)` to create a new message.
- */
-export const ListOneOffSessionsByCampaignResponseSchema: GenMessage<ListOneOffSessionsByCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 12);
-
-/**
- * @generated from message planner.v1.PollSessionRequest
- */
-export type PollSessionRequest = Message<"planner.v1.PollSessionRequest"> & {
-  /**
-   * @generated from field: string campaign_id = 1;
-   */
-  campaignId: string;
-
-  /**
-   * @generated from field: string session_id = 2;
-   */
-  sessionId: string;
-
-  /**
-   * @generated from field: repeated google.protobuf.Timestamp options = 3;
-   */
-  options: Timestamp[];
-};
-
-/**
- * Describes the message planner.v1.PollSessionRequest.
- * Use `create(PollSessionRequestSchema)` to create a new message.
- */
-export const PollSessionRequestSchema: GenMessage<PollSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 13);
-
-/**
- * @generated from message planner.v1.PollSessionResponse
- */
-export type PollSessionResponse = Message<"planner.v1.PollSessionResponse"> & {
-};
-
-/**
- * Describes the message planner.v1.PollSessionResponse.
- * Use `create(PollSessionResponseSchema)` to create a new message.
- */
-export const PollSessionResponseSchema: GenMessage<PollSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 14);
+  messageDesc(file_planner_v1_session, 6);
 
 /**
  * @generated from message planner.v1.RemoveSessionRequest
@@ -426,7 +243,7 @@ export type RemoveSessionRequest = Message<"planner.v1.RemoveSessionRequest"> & 
  * Use `create(RemoveSessionRequestSchema)` to create a new message.
  */
 export const RemoveSessionRequestSchema: GenMessage<RemoveSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 15);
+  messageDesc(file_planner_v1_session, 7);
 
 /**
  * @generated from message planner.v1.RemoveSessionResponse
@@ -439,7 +256,7 @@ export type RemoveSessionResponse = Message<"planner.v1.RemoveSessionResponse"> 
  * Use `create(RemoveSessionResponseSchema)` to create a new message.
  */
 export const RemoveSessionResponseSchema: GenMessage<RemoveSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 16);
+  messageDesc(file_planner_v1_session, 8);
 
 /**
  * @generated from message planner.v1.UpdateSessionRequest
@@ -454,16 +271,6 @@ export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & 
    * @generated from field: optional string description = 2;
    */
   description?: string | undefined;
-
-  /**
-   * @generated from field: optional google.protobuf.Timestamp starts_at = 3;
-   */
-  startsAt?: Timestamp | undefined;
-
-  /**
-   * @generated from field: planner.v1.SessionStatus status = 4;
-   */
-  status: SessionStatus;
 
   /**
    * @generated from field: optional string title = 5;
@@ -486,7 +293,7 @@ export type UpdateSessionRequest = Message<"planner.v1.UpdateSessionRequest"> & 
  * Use `create(UpdateSessionRequestSchema)` to create a new message.
  */
 export const UpdateSessionRequestSchema: GenMessage<UpdateSessionRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 17);
+  messageDesc(file_planner_v1_session, 9);
 
 /**
  * @generated from message planner.v1.UpdateSessionResponse
@@ -503,51 +310,12 @@ export type UpdateSessionResponse = Message<"planner.v1.UpdateSessionResponse"> 
  * Use `create(UpdateSessionResponseSchema)` to create a new message.
  */
 export const UpdateSessionResponseSchema: GenMessage<UpdateSessionResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session, 18);
-
-/**
- * @generated from enum planner.v1.SessionStatus
- */
-export enum SessionStatus {
-  /**
-   * @generated from enum value: SESSION_STATUS_UNSPECIFIED = 0;
-   */
-  UNSPECIFIED = 0,
-
-  /**
-   * @generated from enum value: SESSION_STATUS_DRAFT = 1;
-   */
-  DRAFT = 1,
-
-  /**
-   * @generated from enum value: SESSION_STATUS_POLLING = 2;
-   */
-  POLLING = 2,
-
-  /**
-   * @generated from enum value: SESSION_STATUS_CONFIRMED = 3;
-   */
-  CONFIRMED = 3,
-}
-
-/**
- * Describes the enum planner.v1.SessionStatus.
- */
-export const SessionStatusSchema: GenEnum<SessionStatus> = /*@__PURE__*/
-  enumDesc(file_planner_v1_session, 0);
+  messageDesc(file_planner_v1_session, 10);
 
 /**
  * @generated from service planner.v1.SessionService
  */
 export const SessionService: GenService<{
-  /**
-   * @generated from rpc planner.v1.SessionService.AnnounceSession
-   */
-  announceSession: {
-    methodKind: "unary";
-    input: typeof AnnounceSessionRequestSchema;
-    output: typeof AnnounceSessionResponseSchema;
-  },
   /**
    * @generated from rpc planner.v1.SessionService.CreateSession
    */
@@ -563,30 +331,6 @@ export const SessionService: GenService<{
     methodKind: "unary";
     input: typeof GetSessionRequestSchema;
     output: typeof GetSessionResponseSchema;
-  },
-  /**
-   * @generated from rpc planner.v1.SessionService.GetSessionPoll
-   */
-  getSessionPoll: {
-    methodKind: "unary";
-    input: typeof GetSessionPollRequestSchema;
-    output: typeof GetSessionPollResponseSchema;
-  },
-  /**
-   * @generated from rpc planner.v1.SessionService.ListOneOffSessionsByCampaign
-   */
-  listOneOffSessionsByCampaign: {
-    methodKind: "unary";
-    input: typeof ListOneOffSessionsByCampaignRequestSchema;
-    output: typeof ListOneOffSessionsByCampaignResponseSchema;
-  },
-  /**
-   * @generated from rpc planner.v1.SessionService.PollSession
-   */
-  pollSession: {
-    methodKind: "unary";
-    input: typeof PollSessionRequestSchema;
-    output: typeof PollSessionResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.SessionService.RemoveSession

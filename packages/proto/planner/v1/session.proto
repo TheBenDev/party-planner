@@ -5,17 +5,6 @@ package planner.v1;
 import "google/protobuf/timestamp.proto";
 
 // -----------------------------------------------------------------------------
-// Enums
-// -----------------------------------------------------------------------------
-
-enum SessionStatus {
-  SESSION_STATUS_UNSPECIFIED = 0;
-  SESSION_STATUS_DRAFT = 1;
-  SESSION_STATUS_POLLING = 2;
-  SESSION_STATUS_CONFIRMED = 3;
-}
-
-// -----------------------------------------------------------------------------
 // Core Messages
 // -----------------------------------------------------------------------------
 
@@ -24,39 +13,12 @@ message Session {
   string campaign_id = 2;
   string title = 3;
   optional string description = 4;
-  SessionStatus status = 5;
-  optional google.protobuf.Timestamp starts_at = 6;
+  google.protobuf.Timestamp starts_at = 6;
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
-  optional string poll_id = 9;
-  optional google.protobuf.Timestamp announced_at = 10;
   optional string series_id = 11;
-  optional google.protobuf.Timestamp original_starts_at = 12;
-  optional string discord_event_id = 13;
   optional string recap = 14;
   int32 duration_minutes = 15;
-}
-
-// -----------------------------------------------------------------------------
-// RPC Messages
-// -----------------------------------------------------------------------------
-
-message AnnounceSessionRequest {
-  string campaign_id = 1;
-  string session_id = 2;
-}
-
-message AnnounceSessionResponse {}
-
-message CreateSessionRequest {
-  string campaign_id = 1;
-  optional string description = 2;
-  optional google.protobuf.Timestamp starts_at = 3;
-  SessionStatus status = 4;
-  string title = 5;
-  optional string series_id = 6;
-  optional google.protobuf.Timestamp original_starts_at = 7;
-  optional int32 duration_minutes = 8;
 }
 
 message PollAnswer {
@@ -68,6 +30,19 @@ message Poll {
   string question = 1;
   repeated PollAnswer answers = 2;
   bool is_finalized = 3;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message CreateSessionRequest {
+  string campaign_id = 1;
+  optional string description = 2;
+  optional google.protobuf.Timestamp starts_at = 3;
+  string title = 5;
+  optional string series_id = 6;
+  optional int32 duration_minutes = 8;
 }
 
 message CreateSessionResponse {
@@ -83,31 +58,6 @@ message GetSessionResponse {
   Session session = 1;
 }
 
-message GetSessionPollRequest {
-  string session_id = 1;
-  string campaign_id = 2;
-}
-
-message GetSessionPollResponse {
-  Poll poll = 1;
-}
-
-message ListOneOffSessionsByCampaignRequest {
-  string campaign_id = 1;
-}
-
-message ListOneOffSessionsByCampaignResponse {
-  repeated Session sessions = 1;
-}
-
-message PollSessionRequest {
-  string campaign_id = 1;
-  string session_id = 2;
-  repeated google.protobuf.Timestamp options = 3;
-}
-
-message PollSessionResponse {}
-
 message RemoveSessionRequest {
   string id = 1;
   string campaign_id = 2;
@@ -117,8 +67,6 @@ message RemoveSessionResponse {}
 message UpdateSessionRequest {
   string id = 1;
   optional string description = 2;
-  optional google.protobuf.Timestamp starts_at = 3;
-  SessionStatus status = 4;
   optional string title = 5;
   string campaign_id = 6;
   optional string recap = 7;
@@ -133,12 +81,8 @@ message UpdateSessionResponse {
 // -----------------------------------------------------------------------------
 
 service SessionService {
-  rpc AnnounceSession(AnnounceSessionRequest) returns (AnnounceSessionResponse);
   rpc CreateSession(CreateSessionRequest) returns (CreateSessionResponse);
   rpc GetSession(GetSessionRequest) returns (GetSessionResponse);
-  rpc GetSessionPoll(GetSessionPollRequest) returns (GetSessionPollResponse);
-  rpc ListOneOffSessionsByCampaign(ListOneOffSessionsByCampaignRequest) returns (ListOneOffSessionsByCampaignResponse);
-  rpc PollSession(PollSessionRequest) returns (PollSessionResponse);
   rpc RemoveSession(RemoveSessionRequest) returns (RemoveSessionResponse);
   rpc UpdateSession(UpdateSessionRequest) returns (UpdateSessionResponse);
 }

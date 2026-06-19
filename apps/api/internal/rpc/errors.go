@@ -84,6 +84,18 @@ func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackM
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case service.ErrSessionSeriesInvalidCampaign:
 		return connect.NewError(connect.CodeInvalidArgument, err)
+	case service.ErrSeriesExceptionAlreadyExists:
+		return connect.NewError(connect.CodeAlreadyExists, err)
+	case service.ErrSeriesMissingStartTime:
+		return connect.NewError(connect.CodeFailedPrecondition, err)
+	case service.ErrSeriesDiscordIntegrationNotFound:
+		return connect.NewError(connect.CodeNotFound, err)
+	case service.ErrSeriesPollNotFound:
+		return connect.NewError(connect.CodeNotFound, err)
+	case service.ErrSeriesAlreadyPolling:
+		return connect.NewError(connect.CodeAlreadyExists, err)
+	case service.ErrSeriesDiscordEventAlreadyExists:
+		return connect.NewError(connect.CodeAlreadyExists, err)
 	// User
 	case service.ErrUserNotFound:
 		return connect.NewError(connect.CodeNotFound, err)

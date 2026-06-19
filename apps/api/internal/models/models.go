@@ -371,30 +371,65 @@ type UpdateQuestRequest struct {
 // Sessions
 // -----------------------------------------------------------------------------
 
-type SessionStatus string
-
-const (
-	SessionStatusDraft     SessionStatus = "DRAFT"
-	SessionStatusPolling   SessionStatus = "POLLING"
-	SessionStatusConfirmed SessionStatus = "CONFIRMED"
-)
-
 type Session struct {
-	ID               string
-	CampaignID       string
-	Title            string
-	Description      sql.NullString
-	PollID           sql.NullString
-	DiscordEventID   sql.NullString
-	SeriesID         sql.NullString
-	AnnouncedAt      sql.NullTime
-	OriginalStartsAt sql.NullTime
-	StartsAt         sql.NullTime
-	Status           SessionStatus
-	CreatedAt        time.Time
-	UpdatedAt        time.Time
-	Recap            sql.NullString
-	DurationMinutes  int32
+	ID              string
+	CampaignID      string
+	Title           string
+	Description     sql.NullString
+	SeriesID        sql.NullString
+	ScheduledAt     time.Time
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	Recap           sql.NullString
+	DurationMinutes int32
+}
+
+type CreateSessionRequest struct {
+	CampaignID      string
+	Title           string
+	Description     sql.NullString
+	SeriesID        sql.NullString
+	ScheduledAt     time.Time
+	DurationMinutes int32
+}
+
+type UpdateSessionRequest struct {
+	ID          string
+	Title       sql.NullString
+	Description sql.NullString
+	CampaignID  string
+	Recap       sql.NullString
+}
+
+// -----------------------------------------------------------------------------
+// Session Series
+// -----------------------------------------------------------------------------
+
+type SessionSeries struct {
+	ID                    string
+	CampaignID            string
+	Title                 string
+	Description           sql.NullString
+	DiscordEventID        sql.NullString
+	GoogleCalendarEventID sql.NullString
+	PollID                sql.NullString
+	RRule                 sql.NullString
+	StartTime             sql.NullString
+	SeriesStartDate       time.Time
+	SeriesEndDate         sql.NullTime
+	CreatedAt             time.Time
+	UpdatedAt             time.Time
+	Timezone              string
+	DurationMinutes       int32
+}
+
+type DiscordEventInfo struct {
+	GuildID   string
+	EventID   string
+	Name      string
+	StartTime time.Time
+	EndTime   *time.Time
+	Status    int
 }
 
 type Poll struct {
@@ -408,57 +443,19 @@ type PollAnswer struct {
 	VoteCount uint32
 }
 
-type CreateSessionRequest struct {
-	CampaignID       string
-	Title            string
-	Description      sql.NullString
-	SeriesID         sql.NullString
-	OriginalStartsAt sql.NullTime
-	Status           SessionStatus
-	StartsAt         sql.NullTime
-	DurationMinutes  int32
-}
-
-type UpdateSessionRequest struct {
-	ID          string
-	Title       sql.NullString
-	Description sql.NullString
-	PollId      sql.NullString
-	Status      SessionStatus
-	StartsAt    sql.NullTime
-	CampaignID  string
-	Recap       sql.NullString
-}
-
-// -----------------------------------------------------------------------------
-// Session Series
-// -----------------------------------------------------------------------------
-
-type SessionSeries struct {
-	ID              string
-	CampaignID      string
-	Title           string
-	Description     sql.NullString
-	RRule           string
-	StartTime       string
-	SeriesStartDate time.Time
-	SeriesEndDate   sql.NullTime
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	Timezone        string
-	DurationMinutes int32
-}
-
 type CreateSessionSeriesRequest struct {
-	CampaignID      string
-	Title           string
-	Description     sql.NullString
-	RRule           string
-	StartTime       string
-	SeriesStartDate time.Time
-	SeriesEndDate   sql.NullTime
-	Timezone        string
-	DurationMinutes int32
+	CampaignID            string
+	Title                 string
+	Description           sql.NullString
+	DiscordEventID        sql.NullString
+	GoogleCalendarEventID sql.NullString
+	PollID                sql.NullString
+	RRule                 sql.NullString
+	StartTime             sql.NullString
+	SeriesStartDate       time.Time
+	SeriesEndDate         sql.NullTime
+	Timezone              string
+	DurationMinutes       int32
 }
 
 type UpdateSessionSeriesRequest struct {

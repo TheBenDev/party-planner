@@ -38,11 +38,7 @@ var NextSessionCommand = Command{
 			return replyEphemeral(s, i, "Failed to check for the next session. Please try again later.")
 		}
 
-		if !session.StartsAt.Valid {
-			return replyPublic(s, i, "I don't see any sessions coming up.")
-		}
-
-		timeStr := session.StartsAt.Time.Format("Monday, January 2, 2006 at 3:04 PM MST")
+		timeStr := session.ScheduledAt.Format("Monday, January 2, 2006 at 3:04 PM MST")
 		return replyPublic(s, i, fmt.Sprintf("The next D&D session starts on %s!", timeStr))
 	},
 }

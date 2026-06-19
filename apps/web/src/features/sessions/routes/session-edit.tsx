@@ -1,15 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Status } from "@planner/enums/session";
 import { UserRole } from "@planner/enums/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useSession } from "@/features/sessions/hooks/useSession";
 import {
 	type SessionEditForm,
 	SessionEditSchema,
 } from "@/features/sessions/types";
-import { DateTimePicker } from "@/shared/components/DateTimePicker";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -47,12 +45,6 @@ type Session = NonNullable<
 	Awaited<ReturnType<typeof client.session.getSession>>["session"]
 >;
 
-function toDate(value: Date | string | null | undefined): Date | undefined {
-	if (!value) return undefined;
-	if (typeof value === "string") return new Date(value);
-	return value;
-}
-
 function SessionEditFormInner({
 	session,
 	sessionId,
@@ -62,29 +54,25 @@ function SessionEditFormInner({
 }) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const isPast = !!session.startsAt && new Date(session.startsAt) < new Date();
+	const isPast = new Date(session.startsAt) < new Date();
 
 	const form = useForm<SessionEditForm>({
 		defaultValues: {
 			description: session.description ?? "",
 			recap: session.recap ?? "",
-			startsAt: toDate(session.startsAt),
 			title: session.title,
 		},
 		resolver: zodResolver(SessionEditSchema),
 	});
 
 	const updateMutation = useMutation({
-		mutationFn: (values: SessionEditForm) => {
-			let status = session.status;
-			if (values.startsAt !== undefined) status = Status.CONFIRMED;
-			return client.session.updateSession({
+		mutationFn: (values: SessionEditForm) =>
+			client.session.updateSession({
+				description: values.description,
 				id: sessionId,
 				recap: values.recap,
-				status,
-				...values,
-			});
-		},
+				title: values.title,
+			}),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.sessions.detail(sessionId),
@@ -118,21 +106,6 @@ function SessionEditFormInner({
 			<div className="space-y-2">
 				<Label>Title</Label>
 				<Input {...form.register("title")} />
-			</div>
-
-			<div className="space-y-2">
-				<Label>Date &amp; Time</Label>
-				<Controller
-					control={form.control}
-					name="startsAt"
-					render={({ field }) => (
-						<DateTimePicker
-							minDate={new Date()}
-							onChange={field.onChange}
-							value={field.value}
-						/>
-					)}
-				/>
 			</div>
 
 			<div className="space-y-2">

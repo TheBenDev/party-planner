@@ -54,6 +54,18 @@ const (
 	// SessionSeriesServiceRemoveSeriesExceptionProcedure is the fully-qualified name of the
 	// SessionSeriesService's RemoveSeriesException RPC.
 	SessionSeriesServiceRemoveSeriesExceptionProcedure = "/planner.v1.SessionSeriesService/RemoveSeriesException"
+	// SessionSeriesServiceAnnounceToDiscordProcedure is the fully-qualified name of the
+	// SessionSeriesService's AnnounceToDiscord RPC.
+	SessionSeriesServiceAnnounceToDiscordProcedure = "/planner.v1.SessionSeriesService/AnnounceToDiscord"
+	// SessionSeriesServiceGetDiscordEventProcedure is the fully-qualified name of the
+	// SessionSeriesService's GetDiscordEvent RPC.
+	SessionSeriesServiceGetDiscordEventProcedure = "/planner.v1.SessionSeriesService/GetDiscordEvent"
+	// SessionSeriesServiceGetSeriesPollProcedure is the fully-qualified name of the
+	// SessionSeriesService's GetSeriesPoll RPC.
+	SessionSeriesServiceGetSeriesPollProcedure = "/planner.v1.SessionSeriesService/GetSeriesPoll"
+	// SessionSeriesServicePollSeriesProcedure is the fully-qualified name of the SessionSeriesService's
+	// PollSeries RPC.
+	SessionSeriesServicePollSeriesProcedure = "/planner.v1.SessionSeriesService/PollSeries"
 )
 
 // SessionSeriesServiceClient is a client for the planner.v1.SessionSeriesService service.
@@ -65,6 +77,10 @@ type SessionSeriesServiceClient interface {
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
 	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
+	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
+	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
+	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
+	PollSeries(context.Context, *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error)
 }
 
 // NewSessionSeriesServiceClient constructs a client for the planner.v1.SessionSeriesService
@@ -120,6 +136,30 @@ func NewSessionSeriesServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSeriesException")),
 			connect.WithClientOptions(opts...),
 		),
+		announceToDiscord: connect.NewClient[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse](
+			httpClient,
+			baseURL+SessionSeriesServiceAnnounceToDiscordProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("AnnounceToDiscord")),
+			connect.WithClientOptions(opts...),
+		),
+		getDiscordEvent: connect.NewClient[v1.GetDiscordEventRequest, v1.GetDiscordEventResponse](
+			httpClient,
+			baseURL+SessionSeriesServiceGetDiscordEventProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("GetDiscordEvent")),
+			connect.WithClientOptions(opts...),
+		),
+		getSeriesPoll: connect.NewClient[v1.GetSeriesPollRequest, v1.GetSeriesPollResponse](
+			httpClient,
+			baseURL+SessionSeriesServiceGetSeriesPollProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("GetSeriesPoll")),
+			connect.WithClientOptions(opts...),
+		),
+		pollSeries: connect.NewClient[v1.PollSeriesRequest, v1.PollSeriesResponse](
+			httpClient,
+			baseURL+SessionSeriesServicePollSeriesProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("PollSeries")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -132,6 +172,10 @@ type sessionSeriesServiceClient struct {
 	removeSessionSeries         *connect.Client[v1.RemoveSessionSeriesRequest, v1.RemoveSessionSeriesResponse]
 	excludeSessionFromSeries    *connect.Client[v1.ExcludeSessionFromSeriesRequest, v1.ExcludeSessionFromSeriesResponse]
 	removeSeriesException       *connect.Client[v1.RemoveSeriesExceptionRequest, v1.RemoveSeriesExceptionResponse]
+	announceToDiscord           *connect.Client[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse]
+	getDiscordEvent             *connect.Client[v1.GetDiscordEventRequest, v1.GetDiscordEventResponse]
+	getSeriesPoll               *connect.Client[v1.GetSeriesPollRequest, v1.GetSeriesPollResponse]
+	pollSeries                  *connect.Client[v1.PollSeriesRequest, v1.PollSeriesResponse]
 }
 
 // CreateSessionSeries calls planner.v1.SessionSeriesService.CreateSessionSeries.
@@ -169,6 +213,26 @@ func (c *sessionSeriesServiceClient) RemoveSeriesException(ctx context.Context, 
 	return c.removeSeriesException.CallUnary(ctx, req)
 }
 
+// AnnounceToDiscord calls planner.v1.SessionSeriesService.AnnounceToDiscord.
+func (c *sessionSeriesServiceClient) AnnounceToDiscord(ctx context.Context, req *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
+	return c.announceToDiscord.CallUnary(ctx, req)
+}
+
+// GetDiscordEvent calls planner.v1.SessionSeriesService.GetDiscordEvent.
+func (c *sessionSeriesServiceClient) GetDiscordEvent(ctx context.Context, req *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error) {
+	return c.getDiscordEvent.CallUnary(ctx, req)
+}
+
+// GetSeriesPoll calls planner.v1.SessionSeriesService.GetSeriesPoll.
+func (c *sessionSeriesServiceClient) GetSeriesPoll(ctx context.Context, req *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error) {
+	return c.getSeriesPoll.CallUnary(ctx, req)
+}
+
+// PollSeries calls planner.v1.SessionSeriesService.PollSeries.
+func (c *sessionSeriesServiceClient) PollSeries(ctx context.Context, req *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error) {
+	return c.pollSeries.CallUnary(ctx, req)
+}
+
 // SessionSeriesServiceHandler is an implementation of the planner.v1.SessionSeriesService service.
 type SessionSeriesServiceHandler interface {
 	CreateSessionSeries(context.Context, *connect.Request[v1.CreateSessionSeriesRequest]) (*connect.Response[v1.CreateSessionSeriesResponse], error)
@@ -178,6 +242,10 @@ type SessionSeriesServiceHandler interface {
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
 	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
+	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
+	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
+	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
+	PollSeries(context.Context, *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error)
 }
 
 // NewSessionSeriesServiceHandler builds an HTTP handler from the service implementation. It returns
@@ -229,6 +297,30 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 		connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSeriesException")),
 		connect.WithHandlerOptions(opts...),
 	)
+	sessionSeriesServiceAnnounceToDiscordHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceAnnounceToDiscordProcedure,
+		svc.AnnounceToDiscord,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("AnnounceToDiscord")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionSeriesServiceGetDiscordEventHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceGetDiscordEventProcedure,
+		svc.GetDiscordEvent,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("GetDiscordEvent")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionSeriesServiceGetSeriesPollHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceGetSeriesPollProcedure,
+		svc.GetSeriesPoll,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("GetSeriesPoll")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionSeriesServicePollSeriesHandler := connect.NewUnaryHandler(
+		SessionSeriesServicePollSeriesProcedure,
+		svc.PollSeries,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("PollSeries")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/planner.v1.SessionSeriesService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case SessionSeriesServiceCreateSessionSeriesProcedure:
@@ -245,6 +337,14 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 			sessionSeriesServiceExcludeSessionFromSeriesHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceRemoveSeriesExceptionProcedure:
 			sessionSeriesServiceRemoveSeriesExceptionHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceAnnounceToDiscordProcedure:
+			sessionSeriesServiceAnnounceToDiscordHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceGetDiscordEventProcedure:
+			sessionSeriesServiceGetDiscordEventHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceGetSeriesPollProcedure:
+			sessionSeriesServiceGetSeriesPollHandler.ServeHTTP(w, r)
+		case SessionSeriesServicePollSeriesProcedure:
+			sessionSeriesServicePollSeriesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -280,4 +380,20 @@ func (UnimplementedSessionSeriesServiceHandler) ExcludeSessionFromSeries(context
 
 func (UnimplementedSessionSeriesServiceHandler) RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.RemoveSeriesException is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.AnnounceToDiscord is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.GetDiscordEvent is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.GetSeriesPoll is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) PollSeries(context.Context, *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.PollSeries is not implemented"))
 }

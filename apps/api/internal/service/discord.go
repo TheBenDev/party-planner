@@ -1,13 +1,16 @@
 package service
 
 import (
+	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +20,76 @@ import (
 )
 
 var ErrDiscordEventNotFound = errors.New("discord scheduled event not found")
+
+type discordRecurrenceRule struct {
+	Start     time.Time  `json:"start"`
+	End       *time.Time `json:"end"`
+	Frequency int        `json:"frequency"`
+	Interval  int        `json:"interval"`
+	ByWeekday []int      `json:"by_weekday"`
+}
+
+var discordDayIndex = map[string]int{
+	"MO": 0, "TU": 1, "WE": 2, "TH": 3, "FR": 4, "SA": 5, "SU": 6,
+}
+
+var discordFreqMap = map[string]int{
+	"YEARLY":  0,
+	"MONTHLY": 1,
+	"WEEKLY":  2,
+	"DAILY":   3,
+}
+
+type discordScheduledEventPayload struct {
+	Name               string                 `json:"name"`
+	Description        string                 `json:"description,omitempty"`
+	ScheduledStartTime time.Time              `json:"scheduled_start_time"`
+	ScheduledEndTime   time.Time              `json:"scheduled_end_time"`
+	PrivacyLevel       int                    `json:"privacy_level"`
+	EntityType         int                    `json:"entity_type"`
+	EntityMetadata     map[string]string      `json:"entity_metadata"`
+	Status             int                    `json:"status"`
+	RecurrenceRule     *discordRecurrenceRule `json:"recurrence_rule,omitempty"`
+}
+
+type discordScheduledEventResponse struct {
+	ID string `json:"id"`
+}
+
+func rruleToDiscordRecurrence(rrule sql.NullString, start time.Time, end *time.Time) *discordRecurrenceRule {
+	if !rrule.Valid || rrule.String == "" {
+		return nil
+	}
+	parts := make(map[string]string)
+	for _, segment := range strings.Split(rrule.String, ";") {
+		kv := strings.SplitN(segment, "=", 2)
+		if len(kv) == 2 {
+			parts[kv[0]] = kv[1]
+		}
+	}
+	frequency, ok := discordFreqMap[strings.ToUpper(parts["FREQ"])]
+	if !ok {
+		return nil
+	}
+	interval := 1
+	if parsedInterval, err := strconv.Atoi(parts["INTERVAL"]); err == nil && parsedInterval > 0 {
+		interval = parsedInterval
+	}
+	var byWeekday []int
+	for _, code := range strings.Split(parts["BYDAY"], ",") {
+		if idx, ok := discordDayIndex[strings.TrimSpace(strings.ToUpper(code))]; ok {
+			byWeekday = append(byWeekday, idx)
+		}
+	}
+
+	return &discordRecurrenceRule{
+		Start:     start,
+		End:       end,
+		Frequency: frequency,
+		Interval:  interval,
+		ByWeekday: byWeekday,
+	}
+}
 
 // discord events need to be set to and increment of 15 minutes
 func roundDownTo15(minutes int32) time.Duration {
@@ -95,74 +168,107 @@ func (s *DiscordService) ExchangeCode(ctx context.Context, code string) (*discor
 func (s *DiscordService) CreateScheduledEvent(
 	ctx context.Context,
 	guildID string,
-	session *model.Session,
+	series *model.SessionSeries,
 ) (string, error) {
-	if !session.StartsAt.Valid {
+	startTime := computeFirstOccurrence(series.SeriesStartDate, series.StartTime)
+	if startTime == nil {
 		return "", errors.New("valid start time is required to create discord event")
 	}
 
-	endTime := session.StartsAt.Time.Add(roundDownTo15(session.DurationMinutes))
-	event, err := s.Session.GuildScheduledEventCreate(guildID, &discordgo.GuildScheduledEventParams{
-		Name: session.Title,
-		Description: func() string {
-			if session.Description.Valid {
-				return session.Description.String
-			}
-			return ""
-		}(),
-		ScheduledStartTime: &session.StartsAt.Time,
-		ScheduledEndTime:   &endTime,
-		EntityType:         discordgo.GuildScheduledEventEntityTypeExternal,
-		EntityMetadata: &discordgo.GuildScheduledEventEntityMetadata{
-			Location: "Forge + Discord Voice",
-		},
-		PrivacyLevel: discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
-		Status:       discordgo.GuildScheduledEventStatusScheduled,
-	}, discordgo.WithContext(ctx))
+	endTime := startTime.Add(roundDownTo15(series.DurationMinutes))
+
+	description := ""
+	if series.Description.Valid {
+		description = series.Description.String
+	}
+
+	var seriesEnd *time.Time
+	if series.SeriesEndDate.Valid {
+		t := series.SeriesEndDate.Time.UTC()
+		seriesEnd = &t
+	}
+	// discord go does not support events that use the frequency setting so i decided that a raw http request was required.
+	payload := discordScheduledEventPayload{
+		Name:               series.Title,
+		Description:        description,
+		ScheduledStartTime: *startTime,
+		ScheduledEndTime:   endTime,
+		PrivacyLevel:       2,
+		EntityType:         3,
+		EntityMetadata:     map[string]string{"location": "Forge + Discord Voice"},
+		Status:             1,
+		RecurrenceRule:     rruleToDiscordRecurrence(series.RRule, *startTime, seriesEnd),
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("discord event marshal error: %w", err)
+	}
+
+	apiURL := fmt.Sprintf("https://discord.com/api/v10/guilds/%s/scheduled-events", guildID)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, apiURL, bytes.NewReader(body))
+	if err != nil {
+		return "", fmt.Errorf("discord event request build error: %w", err)
+	}
+	req.Header.Set("Authorization", s.Session.Token)
+	req.Header.Set("Content-Type", "application/json")
+
+	httpClient := &http.Client{Timeout: 10 * time.Second}
+	resp, err := httpClient.Do(req)
+
 	if err != nil {
 		return "", fmt.Errorf("discord scheduled event create error: %w", err)
 	}
-	return event.ID, nil
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			s.Log.Error("failed to close discord event response body", "error", closeErr)
+		}
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("discord scheduled event create returned status %d", resp.StatusCode)
+	}
+
+	var created discordScheduledEventResponse
+	if err := json.NewDecoder(resp.Body).Decode(&created); err != nil {
+		return "", fmt.Errorf("failed to decode discord event response: %w", err)
+	}
+	return created.ID, nil
 }
 
-func (s *DiscordService) AnnounceSession(
-	ctx context.Context,
-	integration *model.CampaignIntegration,
-	session *model.Session,
-) (string, error) {
-	if integration == nil {
-		return "", errors.New("campaign integration is required")
-	}
-	if session == nil {
-		return "", errors.New("session is required")
-	}
-
-	if !session.StartsAt.Valid {
-		return "", errors.New("valid start time is required to announce session")
-	}
-
-	var integrationMetadata model.DiscordIntegrationMetadata
-	if err := json.Unmarshal(integration.Metadata, &integrationMetadata); err != nil {
-		return "", fmt.Errorf("failed to parse discord integration metadata: %w", err)
-	}
-
-	eventID, err := s.CreateScheduledEvent(ctx, integration.ExternalID, session)
+func (s *DiscordService) GetScheduledEvent(ctx context.Context, guildID, eventID string) (*model.DiscordEventInfo, error) {
+	event, err := s.Session.GuildScheduledEvent(guildID, eventID, false, discordgo.WithContext(ctx))
 	if err != nil {
-		return "", err
-	}
-
-	msg := formatAnnounceMessage(session)
-	if integrationMetadata.DefaultChannel.ID != "" {
-		if _, err := s.Session.ChannelMessageSend(integrationMetadata.DefaultChannel.ID, msg, discordgo.WithContext(ctx)); err != nil {
-			s.Log.WarnContext(ctx, "failed to send announcement message; event created",
-				"channel_id", integrationMetadata.DefaultChannel.ID,
-				"event_id", eventID,
-				"error", err,
-			)
+		var restErr *discordgo.RESTError
+		if errors.As(err, &restErr) && restErr.Response != nil && restErr.Response.StatusCode == http.StatusNotFound {
+			return nil, ErrDiscordEventNotFound
 		}
+		return nil, fmt.Errorf("get discord scheduled event: %w", err)
 	}
 
-	return eventID, nil
+	info := &model.DiscordEventInfo{
+		GuildID:   event.GuildID,
+		EventID:   event.ID,
+		Name:      event.Name,
+		StartTime: event.ScheduledStartTime,
+		Status:    int(event.Status),
+	}
+	if event.ScheduledEndTime != nil {
+		info.EndTime = event.ScheduledEndTime
+	}
+	return info, nil
+}
+
+func (s *DiscordService) GetNotificationChannelID(integration *model.CampaignIntegration) string {
+	var settings model.DiscordIntegrationSettings
+	if err := json.Unmarshal(integration.Settings, &settings); err == nil && settings.SessionReminderChannel != nil {
+		return settings.SessionReminderChannel.ID
+	}
+	var metadata model.DiscordIntegrationMetadata
+	if err := json.Unmarshal(integration.Metadata, &metadata); err == nil {
+		return metadata.DefaultChannel.ID
+	}
+	return ""
 }
 
 func (s *DiscordService) DeleteScheduledEvent(ctx context.Context, guildID, eventID string) error {
@@ -176,22 +282,23 @@ func (s *DiscordService) UpdateScheduledEvent(
 	ctx context.Context,
 	guildID string,
 	eventID string,
-	session *model.Session,
+	series *model.SessionSeries,
 ) error {
-	if !session.StartsAt.Valid {
+	startTime := computeFirstOccurrence(series.SeriesStartDate, series.StartTime)
+	if startTime == nil {
 		return errors.New("valid start time is required to update discord event")
 	}
 
-	endTime := session.StartsAt.Time.Add(roundDownTo15(session.DurationMinutes))
+	endTime := startTime.Add(roundDownTo15(series.DurationMinutes))
 	_, err := s.Session.GuildScheduledEventEdit(guildID, eventID, &discordgo.GuildScheduledEventParams{
-		Name: session.Title,
+		Name: series.Title,
 		Description: func() string {
-			if session.Description.Valid {
-				return session.Description.String
+			if series.Description.Valid {
+				return series.Description.String
 			}
 			return ""
 		}(),
-		ScheduledStartTime: &session.StartsAt.Time,
+		ScheduledStartTime: startTime,
 		ScheduledEndTime:   &endTime,
 	}, discordgo.WithContext(ctx))
 	if err != nil {
@@ -246,17 +353,17 @@ type PollProps struct {
 	ID string
 }
 
-func (s *DiscordService) PollSession(
+func (s *DiscordService) PollSeries(
 	ctx context.Context,
 	integration *model.CampaignIntegration,
-	session *model.Session,
+	series *model.SessionSeries,
 	options []time.Time,
 ) (*PollProps, error) {
 	if integration == nil {
 		return nil, errors.New("campaign integration is required")
 	}
-	if session == nil {
-		return nil, errors.New("session is required")
+	if series == nil {
+		return nil, errors.New("series is required")
 	}
 	if len(options) == 0 {
 		return nil, errors.New("at least one poll option is required")
@@ -296,7 +403,7 @@ func (s *DiscordService) PollSession(
 	poll, err := s.Session.ChannelMessageSendComplex(integrationMetadata.DefaultChannel.ID, &discordgo.MessageSend{
 		Poll: &discordgo.Poll{
 			Question: discordgo.PollMedia{
-				Text: fmt.Sprintf("📅 When can you make it for %s?", session.Title),
+				Text: fmt.Sprintf("📅 When can you make it for %s?", series.Title),
 			},
 			Answers:          pollAnswers,
 			Duration:         24,
@@ -306,12 +413,12 @@ func (s *DiscordService) PollSession(
 	if err != nil {
 		return nil, fmt.Errorf("discord poll send error: %w", err)
 	}
-	_, err = s.Session.ChannelMessageSend(integrationMetadata.DefaultChannel.ID, formatPollTimestamps(session.Title, options), discordgo.WithContext(ctx))
+	_, err = s.Session.ChannelMessageSend(integrationMetadata.DefaultChannel.ID, formatPollTimestamps(series.Title, options), discordgo.WithContext(ctx))
 	if err != nil {
 		s.Log.WarnContext(ctx, "failed to send poll timestamp message",
 			"channel_id", integrationMetadata.DefaultChannel.ID,
 			"poll_id", poll.ID,
-			"session_title", session.Title,
+			"series_title", series.Title,
 			"error", err,
 		)
 	}
@@ -351,16 +458,13 @@ func (s *DiscordService) SendDiscordMessage(ctx context.Context, channelId, mess
 	return discordMessage, nil
 }
 
-func (s *DiscordService) NotifyUpcomingSession(ctx context.Context, channelID string, session *model.Session) {
-	if !session.StartsAt.Valid {
-		return
-	}
-	unix := session.StartsAt.Time.Unix()
-	msg := fmt.Sprintf("⏰ Reminder: **%s** is coming up <t:%d:R> (<t:%d:F>). Don't forget!", session.Title, unix, unix)
+func (s *DiscordService) NotifyUpcomingOccurrence(ctx context.Context, channelID string, series *model.SessionSeries, occurrenceTime time.Time) {
+	unix := occurrenceTime.Unix()
+	msg := fmt.Sprintf("⏰ Reminder: **%s** is coming up <t:%d:R> (<t:%d:F>). Don't forget!", series.Title, unix, unix)
 	if _, err := s.Session.ChannelMessageSend(channelID, msg, discordgo.WithContext(ctx)); err != nil {
-		s.Log.WarnContext(ctx, "failed to send session reminder",
+		s.Log.WarnContext(ctx, "failed to send occurrence reminder",
 			"channel_id", channelID,
-			"session_id", session.ID,
+			"series_id", series.ID,
 			"error", err,
 		)
 	}
@@ -375,19 +479,4 @@ func formatPollTimestamps(title string, options []time.Time) string {
 	}
 
 	return sb.String()
-}
-
-func formatAnnounceMessage(session *model.Session) string {
-	if !session.StartsAt.Valid {
-		return fmt.Sprintf("📅 **%s** has been scheduled — date TBD.", session.Title)
-	}
-
-	timestamp := session.StartsAt.Time.Unix()
-
-	return fmt.Sprintf(
-		"📅 **%s** is scheduled for <t:%d:F> (<t:%d:R>). See you there!",
-		session.Title,
-		timestamp,
-		timestamp,
-	)
 }

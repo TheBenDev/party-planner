@@ -1,10 +1,6 @@
-import { Status } from "@planner/enums/session";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type {
-	CreateOneOffInput,
-	CreateSeriesInput,
-} from "@/features/sessions/types";
+import type { CreateSeriesInput, Session } from "@/features/sessions/types";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
@@ -16,12 +12,7 @@ export function useSessionsData() {
 
 	const oneOffSessionsQuery = useQuery({
 		enabled: Boolean(campaign),
-		queryFn: () => {
-			if (!campaign) throw new Error("campaign required");
-			return client.session.listOneOffSessions({
-				campaignId: campaign.campaign.id,
-			});
-		},
+		queryFn: async (): Promise<{ sessions: Session[] }> => ({ sessions: [] }),
 		queryKey: queryKeys.sessions.list(campaignId),
 	});
 
@@ -48,42 +39,6 @@ export function useSessionsData() {
 					queryKey: queryKeys.sessionSeries.list(campaignId),
 				}),
 			]);
-		},
-	});
-
-	const createSessionMutation = useMutation({
-		mutationFn: (input: CreateOneOffInput) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.session.createSession({
-				campaignId: campaign.campaign.id,
-				description: input.description,
-				durationMinutes: input.durationMinutes,
-				startsAt: input.startsAt,
-				status: input.status,
-				title: input.title,
-			});
-		},
-		onError: () => toast.error("Failed to create session"),
-		onSuccess: async (_, vars) => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.list(campaignId),
-			});
-			toast.success("Session created");
-			if (vars.startsAt) {
-				client.userIntegration
-					.syncSessionToCalendar({
-						description: vars.description,
-						durationMinutes: vars.durationMinutes,
-						startsAt: vars.startsAt.toISOString(),
-						title: vars.title,
-					})
-					.then((res) => {
-						if (res.synced) toast.success("Added to your Google Calendar");
-					})
-					.catch(() => {
-						toast.error("Failed to add session to your google Calendar");
-					});
-			}
 		},
 	});
 
@@ -156,37 +111,21 @@ export function useSessionsData() {
 		},
 	});
 
-	const scheduleNextMutation = useMutation({
-		mutationFn: (input: {
-			seriesId: string;
-			title: string;
-			startsAt: Date;
-		}) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.session.createSession({
-				campaignId: campaign.campaign.id,
-				originalStartsAt: input.startsAt,
-				seriesId: input.seriesId,
-				startsAt: input.startsAt,
-				status: Status.CONFIRMED,
-				title: input.title,
-			});
-		},
-		onError: () => toast.error("Failed to schedule session"),
+	const announceToDiscordMutation = useMutation({
+		mutationFn: (seriesId: string) =>
+			client.sessionSeries.announceToDiscord({ seriesId }),
+		onError: () => toast.error("Failed to announce to Discord"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: queryKeys.sessionSeries.list(campaignId),
 			});
-			toast.success("Session scheduled");
+			toast.success("Announced to Discord");
 		},
 	});
 
 	const excludeFromSeriesMutation = useMutation({
-		mutationFn: (input: {
-			sessionId: string;
-			seriesId: string;
-			excludedDate: Date;
-		}) => client.sessionSeries.excludeSessionFromSeries(input),
+		mutationFn: (input: { seriesId: string; excludedDate: Date }) =>
+			client.sessionSeries.excludeSessionFromSeries(input),
 		onError: () => toast.error("Failed to cancel occurrence"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
@@ -209,18 +148,17 @@ export function useSessionsData() {
 	});
 
 	return {
+		announceToDiscord: announceToDiscordMutation.mutate,
 		createSeries: createSeriesMutation.mutate,
-		createSession: createSessionMutation.mutate,
 		deleteSession: deleteSessionMutation.mutate,
 		endSeries: endSeriesMutation.mutate,
 		excludeFromSeries: excludeFromSeriesMutation.mutate,
+		isAnnouncingToDiscord: announceToDiscordMutation.isPending,
 		isCreatingSeries: createSeriesMutation.isPending,
-		isCreatingSession: createSessionMutation.isPending,
 		isUpdatingSeries: updateSeriesMutation.isPending,
 		oneOffSessionsQuery,
 		removeSeries: removeSeriesMutation.mutate,
 		removeSeriesException: removeSeriesExceptionMutation.mutate,
-		scheduleNext: scheduleNextMutation.mutate,
 		seriesQuery,
 		updateSeries: updateSeriesMutation.mutate,
 	};

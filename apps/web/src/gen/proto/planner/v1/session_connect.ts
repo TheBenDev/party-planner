@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnnounceSessionRequest, AnnounceSessionResponse, CreateSessionRequest, CreateSessionResponse, GetSessionPollRequest, GetSessionPollResponse, GetSessionRequest, GetSessionResponse, ListOneOffSessionsByCampaignRequest, ListOneOffSessionsByCampaignResponse, PollSessionRequest, PollSessionResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
+import { CreateSessionRequest, CreateSessionResponse, GetSessionRequest, GetSessionResponse, RemoveSessionRequest, RemoveSessionResponse, UpdateSessionRequest, UpdateSessionResponse } from "./session_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -12,15 +12,6 @@ import { MethodKind } from "@bufbuild/protobuf";
 export const SessionService = {
   typeName: "planner.v1.SessionService",
   methods: {
-    /**
-     * @generated from rpc planner.v1.SessionService.AnnounceSession
-     */
-    announceSession: {
-      name: "AnnounceSession",
-      I: AnnounceSessionRequest,
-      O: AnnounceSessionResponse,
-      kind: MethodKind.Unary,
-    },
     /**
      * @generated from rpc planner.v1.SessionService.CreateSession
      */
@@ -37,33 +28,6 @@ export const SessionService = {
       name: "GetSession",
       I: GetSessionRequest,
       O: GetSessionResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.SessionService.GetSessionPoll
-     */
-    getSessionPoll: {
-      name: "GetSessionPoll",
-      I: GetSessionPollRequest,
-      O: GetSessionPollResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.SessionService.ListOneOffSessionsByCampaign
-     */
-    listOneOffSessionsByCampaign: {
-      name: "ListOneOffSessionsByCampaign",
-      I: ListOneOffSessionsByCampaignRequest,
-      O: ListOneOffSessionsByCampaignResponse,
-      kind: MethodKind.Unary,
-    },
-    /**
-     * @generated from rpc planner.v1.SessionService.PollSession
-     */
-    pollSession: {
-      name: "PollSession",
-      I: PollSessionRequest,
-      O: PollSessionResponse,
       kind: MethodKind.Unary,
     },
     /**

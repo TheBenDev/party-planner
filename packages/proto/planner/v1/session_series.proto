@@ -22,6 +22,7 @@ message SessionSeries {
   google.protobuf.Timestamp updated_at = 10;
   string timezone = 11;
   int32 duration_minutes = 12;
+  optional string discord_event_id = 13;
 }
 
 message SessionSeriesWithDetails {
@@ -38,7 +39,7 @@ message CreateSessionSeriesRequest {
   string campaign_id = 1;
   string title = 2;
   optional string description = 3;
-  string rrule = 4;
+  optional string rrule = 4;
   string start_time = 5;
   google.protobuf.Timestamp series_start_date = 6;
   optional google.protobuf.Timestamp series_end_date = 7;
@@ -90,7 +91,6 @@ message RemoveSessionSeriesRequest {
 message RemoveSessionSeriesResponse {}
 
 message ExcludeSessionFromSeriesRequest {
-  string session_id = 1;
   string series_id = 2;
   google.protobuf.Timestamp excluded_date = 3;
   string campaign_id = 4;
@@ -106,6 +106,51 @@ message RemoveSeriesExceptionRequest {
 
 message RemoveSeriesExceptionResponse {}
 
+message AnnounceToDiscordRequest {
+  string series_id = 1;
+  string campaign_id = 2;
+}
+
+message AnnounceToDiscordResponse {
+  SessionSeries series = 1;
+}
+
+message GetDiscordEventRequest {
+  string campaign_id = 1;
+  string series_id = 2;
+  string discord_event_id = 3;
+}
+
+message DiscordEventInfo {
+  string guild_id = 1;
+  string event_id = 2;
+  string name = 3;
+  google.protobuf.Timestamp start_time = 4;
+  optional google.protobuf.Timestamp end_time = 5;
+  int32 status = 6;
+}
+
+message GetDiscordEventResponse {
+  DiscordEventInfo event = 1;
+}
+
+message GetSeriesPollRequest {
+  string series_id = 1;
+  string campaign_id = 2;
+}
+
+message GetSeriesPollResponse {
+  Poll poll = 1;
+}
+
+message PollSeriesRequest {
+  string series_id = 1;
+  string campaign_id = 2;
+  repeated google.protobuf.Timestamp options = 3;
+}
+
+message PollSeriesResponse {}
+
 // -----------------------------------------------------------------------------
 // Service
 // -----------------------------------------------------------------------------
@@ -118,4 +163,8 @@ service SessionSeriesService {
   rpc RemoveSessionSeries(RemoveSessionSeriesRequest) returns (RemoveSessionSeriesResponse);
   rpc ExcludeSessionFromSeries(ExcludeSessionFromSeriesRequest) returns (ExcludeSessionFromSeriesResponse);
   rpc RemoveSeriesException(RemoveSeriesExceptionRequest) returns (RemoveSeriesExceptionResponse);
+  rpc AnnounceToDiscord(AnnounceToDiscordRequest) returns (AnnounceToDiscordResponse);
+  rpc GetDiscordEvent(GetDiscordEventRequest) returns (GetDiscordEventResponse);
+  rpc GetSeriesPoll(GetSeriesPollRequest) returns (GetSeriesPollResponse);
+  rpc PollSeries(PollSeriesRequest) returns (PollSeriesResponse);
 }
