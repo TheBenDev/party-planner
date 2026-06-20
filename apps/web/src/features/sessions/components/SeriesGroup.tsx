@@ -72,6 +72,8 @@ export function SeriesGroup({
 	exceptions,
 	isAnnouncingToDiscord,
 	isDm,
+	onAddToGoogleCalendar,
+	onRemoveFromGoogleCalendar,
 	onViewSession,
 	onEditSession,
 	onDeleteSession,
@@ -88,6 +90,8 @@ export function SeriesGroup({
 	exceptions: Date[];
 	isDm: boolean;
 	isAnnouncingToDiscord: boolean;
+	onAddToGoogleCalendar: (seriesId: string) => void;
+	onRemoveFromGoogleCalendar: (seriesId: string) => void;
 	onViewSession: (id: string) => void;
 	onEditSession: (id: string) => void;
 	onDeleteSession: (id: string) => void;
@@ -138,7 +142,7 @@ export function SeriesGroup({
 			<div className="flex items-center gap-3 px-4 py-3 bg-muted/30">
 				<button
 					className="flex-1 flex items-center gap-3 text-left min-w-0"
-					onClick={() => setExpanded((v) => !v)}
+					onClick={() => setExpanded((expandedState) => !expandedState)}
 					type="button"
 				>
 					<div className="w-9 h-9 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
@@ -181,15 +185,30 @@ export function SeriesGroup({
 							</button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-44">
-							<DropdownMenuItem onClick={onEditSeries}>
+							<DropdownMenuItem className="text-xs" onClick={onEditSeries}>
 								Edit series
 							</DropdownMenuItem>
-							<DropdownMenuItem onClick={onEndSeries}>
+							<DropdownMenuItem className="text-xs" onClick={onEndSeries}>
 								End series
 							</DropdownMenuItem>
+							{series.googleCalendarEventId ? (
+								<DropdownMenuItem
+									className="text-xs"
+									onClick={() => onRemoveFromGoogleCalendar(series.id)}
+								>
+									Remove from Google Calendar
+								</DropdownMenuItem>
+							) : (
+								<DropdownMenuItem
+									className="text-xs"
+									onClick={() => onAddToGoogleCalendar(series.id)}
+								>
+									Add to Google Calendar
+								</DropdownMenuItem>
+							)}
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
-								className="text-destructive focus:text-destructive"
+								className="text-destructive focus:text-destructive text-xs"
 								onClick={onRemoveSeries}
 							>
 								Remove series

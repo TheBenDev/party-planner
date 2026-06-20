@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AnnounceToDiscordRequest, AnnounceToDiscordResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetDiscordEventRequest, GetDiscordEventResponse, GetSeriesPollRequest, GetSeriesPollResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, PollSeriesRequest, PollSeriesResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
+import { AddToGoogleCalendarRequest, AddToGoogleCalendarResponse, AnnounceToDiscordRequest, AnnounceToDiscordResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetDiscordEventRequest, GetDiscordEventResponse, GetSeriesPollRequest, GetSeriesPollResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, PollSeriesRequest, PollSeriesResponse, RemoveFromGoogleCalendarRequest, RemoveFromGoogleCalendarResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -73,6 +73,24 @@ export const SessionSeriesService = {
       name: "RemoveSeriesException",
       I: RemoveSeriesExceptionRequest,
       O: RemoveSeriesExceptionResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.AddToGoogleCalendar
+     */
+    addToGoogleCalendar: {
+      name: "AddToGoogleCalendar",
+      I: AddToGoogleCalendarRequest,
+      O: AddToGoogleCalendarResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.SessionSeriesService.RemoveFromGoogleCalendar
+     */
+    removeFromGoogleCalendar: {
+      name: "RemoveFromGoogleCalendar",
+      I: RemoveFromGoogleCalendarRequest,
+      O: RemoveFromGoogleCalendarResponse,
       kind: MethodKind.Unary,
     },
     /**

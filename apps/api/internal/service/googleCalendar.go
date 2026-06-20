@@ -100,6 +100,25 @@ func (s *GoogleCalendarService) oauthConfig() *oauth2.Config {
 	}
 }
 
+func (s *GoogleCalendarService) getHTTPClient(ctx context.Context, userID string) (*http.Client, error) {
+	integration, err := s.DB.GetUserIntegration(userID, model.IntegrationSourceGoogleCalendar)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrUserIntegrationNotFound
+		}
+		return nil, fmt.Errorf("get user integration: %w", err)
+	}
+	meta, err := s.decryptMeta(integration.Metadata)
+	if err != nil {
+		return nil, fmt.Errorf("decrypt google calendar metadata: %w", err)
+	}
+	token, err := s.refreshTokenIfNeeded(ctx, userID, meta)
+	if err != nil {
+		return nil, fmt.Errorf("refresh google calendar token: %w", err)
+	}
+	return s.oauthConfig().Client(ctx, token), nil
+}
+
 func (s *GoogleCalendarService) Connect(ctx context.Context, userID, code string) error {
 	token, err := s.oauthConfig().Exchange(ctx, code)
 	if err != nil {
@@ -208,6 +227,7 @@ func (s *GoogleCalendarService) CheckConflicts(ctx context.Context, campaignID s
 
 type calendarEventTime struct {
 	DateTime string `json:"dateTime"`
+	TimeZone string `json:"timeZone,omitempty"`
 }
 
 type calendarEventRequest struct {
@@ -215,61 +235,95 @@ type calendarEventRequest struct {
 	Description string            `json:"description,omitempty"`
 	Start       calendarEventTime `json:"start"`
 	End         calendarEventTime `json:"end"`
+	Recurrence  []string          `json:"recurrence,omitempty"`
 }
 
-func (s *GoogleCalendarService) SyncSession(ctx context.Context, userID string, startsAt time.Time, durationMinutes int32, title, description string) (bool, error) {
-	integration, err := s.DB.GetUserIntegration(userID, model.IntegrationSourceGoogleCalendar)
+type calendarEventResponse struct {
+	ID string `json:"id"`
+}
+
+func (s *GoogleCalendarService) SyncSession(ctx context.Context, userID string, series model.SessionSeries, exceptions []time.Time) (string, error) {
+	startTime, err := buildStartTime(series)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return false, nil
-		}
-		return false, fmt.Errorf("get user integration: %w", err)
+		return "", err
+	}
+	endTime := startTime.Add(time.Duration(series.DurationMinutes) * time.Minute)
+
+	description := ""
+	if series.Description.Valid {
+		description = series.Description.String
 	}
 
-	meta, err := s.decryptMeta(integration.Metadata)
+	recurrence := buildRecurrence(series, exceptions)
+
+	eventID, err := s.createCalendarEvent(ctx, userID, startTime, endTime, series.Timezone, series.Title, description, recurrence)
 	if err != nil {
-		return false, fmt.Errorf("decrypt google calendar metadata: %w", err)
-	}
-
-	token, err := s.refreshTokenIfNeeded(ctx, userID, meta)
-	if err != nil {
-		return false, fmt.Errorf("refresh google calendar token: %w", err)
-	}
-
-	startTime := startsAt.UTC()
-	endTime := startTime.Add(time.Duration(durationMinutes) * time.Minute)
-
-	httpClient := s.oauthConfig().Client(ctx, token)
-
-	busy, err := s.queryFreebusy(ctx, httpClient, startTime, endTime)
-	if err != nil {
-		return false, fmt.Errorf("check freebusy: %w", err)
-	}
-	if len(busy) > 0 {
-		return false, nil
-	}
-
-	if err := s.createCalendarEvent(ctx, httpClient, startTime, endTime, title, description); err != nil {
 		if errors.Is(err, errInsufficientCalendarScope) {
 			s.Log.WarnContext(ctx, "skipping calendar sync: token lacks write scope, user must reconnect", "userId", userID)
-			return false, nil
+			return "", errInsufficientCalendarScope
 		}
-		return false, fmt.Errorf("create calendar event: %w", err)
+		return "", fmt.Errorf("create calendar event: %w", err)
 	}
-	return true, nil
+	return eventID, nil
+}
+
+func buildStartTime(series model.SessionSeries) (time.Time, error) {
+	if !series.StartTime.Valid || series.StartTime.String == "" {
+		return time.Time{}, ErrSeriesMissingStartTime
+	}
+	loc, err := time.LoadLocation(series.Timezone)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("load series timezone %q: %w", series.Timezone, err)
+	}
+	var hour, minute int
+	if _, err := fmt.Sscanf(series.StartTime.String, "%d:%d", &hour, &minute); err != nil {
+		return time.Time{}, fmt.Errorf("parse series start time %q: %w", series.StartTime.String, err)
+	}
+	startDate := series.SeriesStartDate.In(loc)
+	return time.Date(startDate.Year(), startDate.Month(), startDate.Day(), hour, minute, 0, 0, time.UTC), nil
+}
+
+func buildRecurrence(series model.SessionSeries, exceptions []time.Time) []string {
+	if !series.RRule.Valid || series.RRule.String == "" {
+		return nil
+	}
+	rruleStr := series.RRule.String
+	if !strings.HasPrefix(rruleStr, "RRULE:") {
+		rruleStr = "RRULE:" + rruleStr
+	}
+	recurrence := []string{rruleStr}
+	for _, exception := range exceptions {
+		recurrence = append(recurrence, "EXDATE:"+exception.UTC().Format("20060102T150405")+"Z")
+	}
+	return recurrence
 }
 
 var errInsufficientCalendarScope = errors.New("google calendar token lacks write scope — user must reconnect")
 
-func (s *GoogleCalendarService) createCalendarEvent(ctx context.Context, client *http.Client, start, end time.Time, title, description string) error {
+func (s *GoogleCalendarService) createCalendarEvent(ctx context.Context, userID string, start, end time.Time, timezone, title, description string, recurrence []string) (string, error) {
+
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	client, err := s.getHTTPClient(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return "", fmt.Errorf("load timezone %q: %w", timezone, err)
+	}
+
 	body, err := json.Marshal(calendarEventRequest{
 		Summary:     title,
 		Description: description,
-		Start:       calendarEventTime{DateTime: start.UTC().Format(time.RFC3339)},
-		End:         calendarEventTime{DateTime: end.UTC().Format(time.RFC3339)},
+		Start:       calendarEventTime{DateTime: start.In(loc).Format(time.RFC3339), TimeZone: timezone},
+		End:         calendarEventTime{DateTime: end.In(loc).Format(time.RFC3339), TimeZone: timezone},
+		Recurrence:  recurrence,
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
@@ -277,13 +331,13 @@ func (s *GoogleCalendarService) createCalendarEvent(ctx context.Context, client 
 		strings.NewReader(string(body)),
 	)
 	if err != nil {
-		return err
+		return "", err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
@@ -292,10 +346,61 @@ func (s *GoogleCalendarService) createCalendarEvent(ctx context.Context, client 
 	}()
 
 	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusUnauthorized {
-		return errInsufficientCalendarScope
+		return "", errInsufficientCalendarScope
 	}
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("calendar events insert returned status %d", resp.StatusCode)
+		return "", fmt.Errorf("calendar events insert returned status %d", resp.StatusCode)
+	}
+
+	var calResp calendarEventResponse
+	if err := json.NewDecoder(resp.Body).Decode(&calResp); err != nil {
+		return "", fmt.Errorf("decode calendar event response: %w", err)
+	}
+	return calResp.ID, nil
+}
+
+func (s *GoogleCalendarService) RemoveCalendarEvent(ctx context.Context, userID, calendarEventID string) error {
+	if err := s.deleteCalendarEvent(ctx, userID, calendarEventID); err != nil {
+		if errors.Is(err, errInsufficientCalendarScope) {
+			s.Log.WarnContext(ctx, "skipping calendar remove: token lacks write scope, user must reconnect", "userId", userID)
+			return errInsufficientCalendarScope
+		}
+		return fmt.Errorf("delete calendar event: %w", err)
+	}
+	return nil
+}
+
+func (s *GoogleCalendarService) deleteCalendarEvent(ctx context.Context, userID, calendarEventID string) error {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	client, err := s.getHTTPClient(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodDelete,
+		"https://www.googleapis.com/calendar/v3/calendars/primary/events/"+calendarEventID,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := resp.Body.Close(); closeErr != nil {
+			s.Log.Warn("failed to close delete calendar event response body", "error", closeErr)
+		}
+	}()
+
+	if resp.StatusCode == http.StatusForbidden || resp.StatusCode == http.StatusUnauthorized {
+		return errInsufficientCalendarScope
+	}
+	if resp.StatusCode != http.StatusNoContent {
+		return fmt.Errorf("calendar events delete returned status %d", resp.StatusCode)
 	}
 	return nil
 }

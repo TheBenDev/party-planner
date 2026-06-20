@@ -84,19 +84,3 @@ func (s *UserIntegrationServer) CheckCalendarConflicts(ctx context.Context, req 
 	return connect.NewResponse(&v1.CheckCalendarConflictsResponse{Conflicts: protoConflicts}), nil
 }
 
-func (s *UserIntegrationServer) SyncSessionToCalendar(ctx context.Context, req *connect.Request[v1.SyncSessionToCalendarRequest]) (*connect.Response[v1.SyncSessionToCalendarResponse], error) {
-	if req.Msg.UserId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user_id required"))
-	}
-	if req.Msg.StartsAt == nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("starts_at required"))
-	}
-	if err := req.Msg.StartsAt.CheckValid(); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid starts_at"))
-	}
-	synced, err := s.GoogleCalendar.SyncSession(ctx, req.Msg.UserId, req.Msg.StartsAt.AsTime(), req.Msg.DurationMinutes, req.Msg.Title, req.Msg.Description)
-	if err != nil {
-		return nil, mapServiceError(ctx, s.Log, err, "failed to sync session to calendar")
-	}
-	return connect.NewResponse(&v1.SyncSessionToCalendarResponse{Synced: synced}), nil
-}

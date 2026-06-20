@@ -43,6 +43,8 @@ export function SessionsPage() {
 		updateSeries,
 		removeSeries,
 		removeSeriesException,
+		addToGoogleCalendar,
+		removeFromGoogleCalendar,
 		endSeries,
 		announceToDiscord,
 		excludeFromSeries,
@@ -143,6 +145,8 @@ export function SessionsPage() {
 							isAnnouncingToDiscord={isAnnouncingToDiscord}
 							isDm={isDm}
 							key={s.series.id}
+							onAddToGoogleCalendar={addToGoogleCalendar}
+							onRemoveFromGoogleCalendar={removeFromGoogleCalendar}
 							onAnnounceToDiscord={() => announceToDiscord(s.series.id)}
 							onCancelOccurrence={(session) => {
 								if (session.startsAt) {

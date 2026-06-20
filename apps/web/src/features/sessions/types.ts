@@ -66,6 +66,7 @@ export const SessionSeriesSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
 	discordEventId: z.string().optional(),
+	googleCalendarEventId: z.string().optional(),
 	durationMinutes: z.number().int().min(15).default(180),
 	rrule: z.string().nullable(),
 	seriesEndDate: z.coerce.date().optional(),
@@ -136,6 +137,20 @@ export const RemoveSeriesExceptionRequestSchema = z.object({
 });
 export const RemoveSeriesExceptionResponseSchema = z.object({});
 
+export const AddToGoogleCalendarRequestSchema = z.object({
+	seriesId: z.uuid(),
+});
+export const AddToGoogleCalendarResponseSchema = z.object({
+	series: SessionSeriesSchema,
+});
+
+export const RemoveFromGoogleCalendarRequestSchema = z.object({
+	seriesId: z.uuid(),
+});
+export const RemoveFromGoogleCalendarResponseSchema = z.object({
+	series: SessionSeriesSchema,
+});
+
 export const AnnounceToDiscordRequestSchema = z.object({
 	seriesId: z.uuid(),
 });
@@ -144,11 +159,11 @@ export const AnnounceToDiscordResponseSchema = z.object({
 });
 
 export const DiscordEventInfoSchema = z.object({
+	endTime: z.date().optional(),
 	eventId: z.string(),
 	guildId: z.string(),
 	name: z.string(),
 	startTime: z.date(),
-	endTime: z.date().optional(),
 	status: z.number(),
 });
 export type DiscordEventInfo = z.infer<typeof DiscordEventInfoSchema>;

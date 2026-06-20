@@ -96,6 +96,15 @@ func mapServiceError(ctx context.Context, log *slog.Logger, err error, fallbackM
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case service.ErrSeriesDiscordEventAlreadyExists:
 		return connect.NewError(connect.CodeAlreadyExists, err)
+	case service.ErrSeriesGoogleCalendarAlreadyExists:
+		return connect.NewError(connect.CodeAlreadyExists, err)
+	case service.ErrSeriesGoogleCalendarNotFound:
+		return connect.NewError(connect.CodeNotFound, err)
+	case service.ErrSeriesGoogleCalendarIntegrationNotSet:
+		return connect.NewError(connect.CodeFailedPrecondition, err)
+	// User Integration
+	case service.ErrUserIntegrationNotFound:
+		return connect.NewError(connect.CodeFailedPrecondition, err)
 	// User
 	case service.ErrUserNotFound:
 		return connect.NewError(connect.CodeNotFound, err)

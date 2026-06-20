@@ -23,6 +23,7 @@ message SessionSeries {
   string timezone = 11;
   int32 duration_minutes = 12;
   optional string discord_event_id = 13;
+  optional string google_calendar_event_id = 14;
 }
 
 message SessionSeriesWithDetails {
@@ -86,6 +87,7 @@ message UpdateSessionSeriesResponse {
 message RemoveSessionSeriesRequest {
   string id = 1;
   string campaign_id = 2;
+  string user_id = 3;
 }
 
 message RemoveSessionSeriesResponse {}
@@ -105,6 +107,25 @@ message RemoveSeriesExceptionRequest {
 }
 
 message RemoveSeriesExceptionResponse {}
+
+message AddToGoogleCalendarRequest {
+    string series_id = 1;
+    string campaign_id = 2;
+    string user_id = 3;
+}
+message AddToGoogleCalendarResponse {
+    SessionSeries series = 1;
+}
+
+message RemoveFromGoogleCalendarRequest {
+  string series_id = 1;
+  string campaign_id = 2;
+  string user_id = 3;
+}
+
+message RemoveFromGoogleCalendarResponse {
+  SessionSeries series = 1;
+}
 
 message AnnounceToDiscordRequest {
   string series_id = 1;
@@ -163,6 +184,8 @@ service SessionSeriesService {
   rpc RemoveSessionSeries(RemoveSessionSeriesRequest) returns (RemoveSessionSeriesResponse);
   rpc ExcludeSessionFromSeries(ExcludeSessionFromSeriesRequest) returns (ExcludeSessionFromSeriesResponse);
   rpc RemoveSeriesException(RemoveSeriesExceptionRequest) returns (RemoveSeriesExceptionResponse);
+  rpc AddToGoogleCalendar(AddToGoogleCalendarRequest) returns (AddToGoogleCalendarResponse);
+  rpc RemoveFromGoogleCalendar(RemoveFromGoogleCalendarRequest) returns (RemoveFromGoogleCalendarResponse);
   rpc AnnounceToDiscord(AnnounceToDiscordRequest) returns (AnnounceToDiscordResponse);
   rpc GetDiscordEvent(GetDiscordEventRequest) returns (GetDiscordEventResponse);
   rpc GetSeriesPoll(GetSeriesPollRequest) returns (GetSeriesPollResponse);

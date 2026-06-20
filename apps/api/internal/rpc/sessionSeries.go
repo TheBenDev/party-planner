@@ -175,7 +175,7 @@ func (s *SessionSeriesServer) RemoveSessionSeries(ctx context.Context, req *conn
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	if err := s.SessionSeries.Remove(ctx, req.Msg.Id, req.Msg.CampaignId); err != nil {
+	if err := s.SessionSeries.Remove(ctx, req.Msg.Id, req.Msg.CampaignId, req.Msg.UserId); err != nil {
 		return nil, mapServiceError(ctx, s.Log, err, "failed to remove session series")
 	}
 
@@ -222,6 +222,46 @@ func (s *SessionSeriesServer) RemoveSeriesException(ctx context.Context, req *co
 	}
 
 	return connect.NewResponse(&v1.RemoveSeriesExceptionResponse{}), nil
+}
+
+func (s *SessionSeriesServer) AddToGoogleCalendar(ctx context.Context, req *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error) {
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.UserId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
+	}
+
+	series, err := s.SessionSeries.AddToGoogleCalendar(ctx, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.UserId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to add series to google calendar")
+	}
+	return connect.NewResponse(&v1.AddToGoogleCalendarResponse{
+		Series: sessionSeriesToProto(series),
+	}), nil
+}
+
+func (s *SessionSeriesServer) RemoveFromGoogleCalendar(ctx context.Context, req *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error) {
+	if req.Msg.SeriesId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("series id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+	if req.Msg.UserId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
+	}
+
+	series, err := s.SessionSeries.RemoveFromGoogleCalendar(ctx, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.UserId)
+	if err != nil {
+		return nil, mapServiceError(ctx, s.Log, err, "failed to remove series from google calendar")
+	}
+	return connect.NewResponse(&v1.RemoveFromGoogleCalendarResponse{
+		Series: sessionSeriesToProto(series),
+	}), nil
 }
 
 func (s *SessionSeriesServer) AnnounceToDiscord(ctx context.Context, req *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
@@ -360,6 +400,9 @@ func sessionSeriesToProto(s *model.SessionSeries) *v1.SessionSeries {
 	}
 	if s.DiscordEventID.Valid {
 		proto.DiscordEventId = &s.DiscordEventID.String
+	}
+	if s.GoogleCalendarEventID.Valid {
+		proto.GoogleCalendarEventId = &s.GoogleCalendarEventID.String
 	}
 	return proto
 }
