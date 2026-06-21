@@ -21,7 +21,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { client } from "@/shared/lib/client";
 import { cn } from "@/shared/lib/utils";
 import { SessionRow } from "./SessionRow";
-import { formatSessionDate, rruleToHuman } from "./session-utils";
+import { describeRrule, formatSessionDate, getNextUntrackedSession } from "./session-utils";
 
 type SeriesItem =
 	| { type: "session"; data: Session; date: Date | null }
@@ -83,6 +83,7 @@ export function SeriesGroup({
 	onRemoveSeries,
 	onRemoveException,
 	onAnnounceToDiscord,
+	onCreateSession,
 	onRecapSession,
 }: {
 	series: SessionSeries;
@@ -101,10 +102,16 @@ export function SeriesGroup({
 	onRemoveSeries: () => void;
 	onRemoveException: (date: Date) => void;
 	onAnnounceToDiscord: () => void;
+	onCreateSession: (date: Date) => void;
 	onRecapSession: (id: string) => void;
 }) {
 	const [expanded, setExpanded] = useState(true);
 	const now = new Date();
+
+	const pendingDate = useMemo(
+		() => getNextUntrackedSession({ series, sessions, exceptions }),
+		[series, sessions, exceptions],
+	);
 
 	const merged = useMemo((): SeriesItem[] => {
 		const items: SeriesItem[] = [
@@ -154,7 +161,7 @@ export function SeriesGroup({
 						</p>
 						<p className="text-xs text-muted-foreground mt-0.5 truncate">
 							{series.rrule
-								? rruleToHuman(
+								? describeRrule(
 										series.rrule,
 										series.startTime,
 										series.seriesStartDate,
@@ -276,7 +283,19 @@ export function SeriesGroup({
 					)}
 
 					{isDm && (
-						<div className="flex items-center justify-end px-4 py-3 bg-muted/20">
+						<div className="flex items-center justify-between px-4 py-3 bg-muted/20">
+							{pendingDate ? (
+								<Button
+									className="h-8 text-sm"
+									onClick={() => onCreateSession(pendingDate)}
+									size="sm"
+									variant="outline"
+								>
+									Create session
+								</Button>
+							) : (
+								<span />
+							)}
 							{series.discordEventId ? (
 								<DiscordEventErrorBoundary
 									fallback={announceButton}

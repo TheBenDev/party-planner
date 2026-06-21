@@ -1,10 +1,11 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
 	foreignKey,
 	index,
 	integer,
 	pgTable,
 	timestamp,
+	uniqueIndex,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
@@ -43,6 +44,9 @@ export const sessionsTable = pgTable(
 		}).onDelete("set null"),
 		index("idx_session_series_id").on(table.seriesId),
 		index("idx_session_scheduled_at").on(table.scheduledAt),
+		uniqueIndex("uq_session_series_scheduled_at")
+			.on(table.seriesId, table.scheduledAt)
+			.where(sql`series_id IS NOT NULL AND scheduled_at IS NOT NULL`),
 	],
 );
 

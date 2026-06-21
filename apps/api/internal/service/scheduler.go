@@ -2,78 +2,17 @@ package service
 
 import (
 	"context"
-	"database/sql"
 	"log/slog"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/BBruington/party-planner/api/internal/db"
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
 type SeriesScheduler struct {
-	DB      *db.DB
-	Session *SessionService
-	Series  *SessionSeriesService
-	Log     *slog.Logger
-}
-
-func (s *SeriesScheduler) CheckAndScheduleSessions(ctx context.Context) {
-	s.Log.InfoContext(ctx, "series scheduler: running")
-
-	series, err := s.DB.ListActiveSeriesNeedingSession()
-	if err != nil {
-		s.Log.ErrorContext(ctx, "series scheduler: failed to list series", "error", err)
-		return
-	}
-	if len(series) == 0 {
-		s.Log.InfoContext(ctx, "series scheduler: no series need a new session")
-		return
-	}
-
-	ids := make([]string, len(series))
-	for i, ss := range series {
-		ids[i] = ss.ID
-	}
-
-	exceptions, err := s.DB.ListExceptionsForSeries(ids)
-	if err != nil {
-		s.Log.ErrorContext(ctx, "series scheduler: failed to list exceptions", "error", err)
-		return
-	}
-
-	for _, ss := range series {
-		next := computeNextValidOccurrence(ss, exceptions[ss.ID])
-		if next == nil {
-			s.Log.WarnContext(ctx, "series scheduler: no valid next occurrence",
-				"series_id", ss.ID,
-			)
-			continue
-		}
-
-		_, err := s.Session.Create(ctx, &model.CreateSessionRequest{
-			CampaignID:      ss.CampaignID,
-			Title:           ss.Title,
-			Description:     ss.Description,
-			SeriesID:        sql.NullString{String: ss.ID, Valid: true},
-			ScheduledAt:     *next,
-			DurationMinutes: ss.DurationMinutes,
-		})
-		if err != nil {
-			s.Log.ErrorContext(ctx, "series scheduler: failed to create session",
-				"series_id", ss.ID,
-				"starts_at", next,
-				"error", err,
-			)
-			continue
-		}
-
-		s.Log.InfoContext(ctx, "series scheduler: created session",
-			"series_id", ss.ID,
-			"starts_at", next,
-		)
-	}
+	Series *SessionSeriesService
+	Log    *slog.Logger
 }
 
 func (s *SeriesScheduler) NotifyNextSession(ctx context.Context) {
