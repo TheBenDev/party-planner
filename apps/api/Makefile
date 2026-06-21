@@ -9,7 +9,7 @@ build: download-go-deps
 		./cmd/api
 
 dev:
-	go run ./cmd/api/main.go
+	air
 
 lint:
 	golangci-lint run ./...
