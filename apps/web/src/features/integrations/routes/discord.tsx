@@ -1,4 +1,5 @@
 import { UserRole } from "@planner/enums/user";
+import { Link } from "@tanstack/react-router";
 import { BotIcon, ExternalLinkIcon, HashIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { DiscordIntegrationSettings } from "@/features/integrations/components/DiscordIntegrationSettings";
@@ -55,7 +56,8 @@ export function DiscordIntegrationPage() {
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const campaignId = campaign?.campaign.id ?? "";
 
-	const { integration, isConnected, isLoading, remove, isRemoving } = useDiscordIntegration({ campaignId });
+	const { integration, isConnected, isLoading, remove, isRemoving } =
+		useDiscordIntegration({ campaignId });
 
 	const handleAddBot = () => {
 		window.location.assign(buildDiscordOAuthUrl(campaignId));
@@ -96,6 +98,24 @@ export function DiscordIntegrationPage() {
 			) : (
 				<DisconnectedState isDm={isDm} onAddBot={handleAddBot} />
 			)}
+
+			<p className="mt-8 text-xs text-muted-foreground text-center">
+				By adding Beny Bot, you agree to our{" "}
+				<Link
+					className="underline underline-offset-4 hover:text-foreground"
+					to="/discord/terms"
+				>
+					Terms of Service
+				</Link>{" "}
+				and{" "}
+				<Link
+					className="underline underline-offset-4 hover:text-foreground"
+					to="/discord/privacy"
+				>
+					Privacy Policy
+				</Link>
+				.
+			</p>
 		</div>
 	);
 }
@@ -216,9 +236,7 @@ function ConnectedState({
 				</CardContent>
 			</Card>
 
-			{isDm && (
-				<DiscordIntegrationSettings campaignId={campaignId} />
-			)}
+			{isDm && <DiscordIntegrationSettings campaignId={campaignId} />}
 
 			{isDm && (
 				<Card className="border-destructive/40">
