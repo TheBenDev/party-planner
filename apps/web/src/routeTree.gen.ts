@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DiscordTermsRouteImport } from './routes/discord/terms'
+import { Route as DiscordPrivacyRouteImport } from './routes/discord/privacy'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AuthenticatedJoinRouteImport } from './routes/_authenticated/join'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
@@ -46,6 +48,16 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscordTermsRoute = DiscordTermsRouteImport.update({
+  id: '/discord/terms',
+  path: '/discord/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscordPrivacyRoute = DiscordPrivacyRouteImport.update({
+  id: '/discord/privacy',
+  path: '/discord/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
@@ -213,6 +225,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
+  '/discord/privacy': typeof DiscordPrivacyRoute
+  '/discord/terms': typeof DiscordTermsRoute
   '/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
@@ -243,6 +257,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
+  '/discord/privacy': typeof DiscordPrivacyRoute
+  '/discord/terms': typeof DiscordTermsRoute
   '/campaign': typeof AuthenticatedCampaignIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
@@ -275,6 +291,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/join': typeof AuthenticatedJoinRoute
   '/api/$': typeof ApiSplatRoute
+  '/discord/privacy': typeof DiscordPrivacyRoute
+  '/discord/terms': typeof DiscordTermsRoute
   '/_authenticated/campaign/': typeof AuthenticatedCampaignIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
@@ -307,6 +325,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/join'
     | '/api/$'
+    | '/discord/privacy'
+    | '/discord/terms'
     | '/campaign/'
     | '/settings/'
     | '/settings/google-calendar/callback'
@@ -337,6 +357,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/join'
     | '/api/$'
+    | '/discord/privacy'
+    | '/discord/terms'
     | '/campaign'
     | '/settings'
     | '/settings/google-calendar/callback'
@@ -368,6 +390,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/join'
     | '/api/$'
+    | '/discord/privacy'
+    | '/discord/terms'
     | '/_authenticated/campaign/'
     | '/_authenticated/settings/'
     | '/_authenticated/settings/google-calendar/callback'
@@ -398,6 +422,8 @@ export interface RootRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignUpRoute: typeof AuthSignUpRoute
   ApiSplatRoute: typeof ApiSplatRoute
+  DiscordPrivacyRoute: typeof DiscordPrivacyRoute
+  DiscordTermsRoute: typeof DiscordTermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -414,6 +440,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discord/terms': {
+      id: '/discord/terms'
+      path: '/discord/terms'
+      fullPath: '/discord/terms'
+      preLoaderRoute: typeof DiscordTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discord/privacy': {
+      id: '/discord/privacy'
+      path: '/discord/privacy'
+      fullPath: '/discord/privacy'
+      preLoaderRoute: typeof DiscordPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/$': {
@@ -687,6 +727,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignUpRoute: AuthSignUpRoute,
   ApiSplatRoute: ApiSplatRoute,
+  DiscordPrivacyRoute: DiscordPrivacyRoute,
+  DiscordTermsRoute: DiscordTermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
