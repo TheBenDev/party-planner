@@ -1,6 +1,10 @@
 import { timestampFromDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/server";
 import {
+	AddToGoogleCalendarRequestSchema,
+	AddToGoogleCalendarResponseSchema,
+	RemoveFromGoogleCalendarRequestSchema,
+	RemoveFromGoogleCalendarResponseSchema,
 	AnnounceToDiscordRequestSchema,
 	AnnounceToDiscordResponseSchema,
 	CreateSessionSeriesRequestSchema,
@@ -221,6 +225,7 @@ const removeSessionSeries = dmProcedure
 			await api.sessionSeries.removeSessionSeries({
 				campaignId: context.campaignId,
 				id: input.id,
+				userId: context.userId,
 			});
 			return {};
 		} catch (err) {
@@ -281,6 +286,77 @@ const removeSeriesException = dmProcedure
 			handleError(
 				err,
 				"failed to remove series exception",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const addToGoogleCalendar = dmProcedure
+	.route({
+		method: "POST",
+		path: "/session-series/google-calendar",
+		summary: "Add a user's session series to their google calendar.",
+	})
+	.input(AddToGoogleCalendarRequestSchema)
+	.output(AddToGoogleCalendarResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { api, campaignId, userId } = context;
+		const { seriesId } = input;
+
+		try {
+			// TODO switch to correct endpoint once built
+			const res = await api.sessionSeries.addToGoogleCalendar({
+				campaignId,
+				seriesId,
+				userId,
+			});
+			if (!res.series) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "Failed to add Calendar to session series",
+				});
+			}
+
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"Failed to add Calendar to session series",
+				{ seriesId: input.seriesId },
+				context.logger,
+			);
+		}
+	});
+
+const removeFromGoogleCalendar = dmProcedure
+	.route({
+		method: "DELETE",
+		path: "/session-series/google-calendar",
+		summary: "Remove a session series from a user's Google Calendar.",
+	})
+	.input(RemoveFromGoogleCalendarRequestSchema)
+	.output(RemoveFromGoogleCalendarResponseSchema)
+	.handler(async ({ input, context }) => {
+		const { api, campaignId, userId } = context;
+		const { seriesId } = input;
+
+		try {
+			const res = await api.sessionSeries.removeFromGoogleCalendar({
+				campaignId,
+				seriesId,
+				userId,
+			});
+			if (!res.series) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "Failed to remove Calendar from session series",
+				});
+			}
+
+			return { series: protoToSessionSeries(res.series) };
+		} catch (err) {
+			handleError(
+				err,
+				"Failed to remove Calendar from session series",
 				{ seriesId: input.seriesId },
 				context.logger,
 			);
@@ -408,6 +484,8 @@ const pollSeries = dmProcedure
 	});
 
 export const sessionSeriesRouter = {
+	addToGoogleCalendar,
+	removeFromGoogleCalendar,
 	announceToDiscord,
 	createSessionSeries,
 	excludeSessionFromSeries,

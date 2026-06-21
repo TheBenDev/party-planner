@@ -111,6 +111,28 @@ func (db *DB) SetSeriesDiscordEventID(id, campaignID, eventID string) error {
 	return nil
 }
 
+func (db *DB) SetSeriesGoogleCalendarEventID(id, campaignID, eventID string) error {
+	_, err := db.conn.Exec(
+		`UPDATE session_series SET google_calendar_event_id = $1, updated_at = NOW() WHERE id = $2 AND campaign_id = $3`,
+		eventID, id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("set series google calendar event id: %w", err)
+	}
+	return nil
+}
+
+func (db *DB) ClearSeriesGoogleCalendarEventID(id, campaignID string) error {
+	_, err := db.conn.Exec(
+		`UPDATE session_series SET google_calendar_event_id = NULL, updated_at = NOW() WHERE id = $1 AND campaign_id = $2`,
+		id, campaignID,
+	)
+	if err != nil {
+		return fmt.Errorf("clear series google calendar event id: %w", err)
+	}
+	return nil
+}
+
 func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.Time) error {
 	_, err := db.conn.Exec(`
 		INSERT INTO session_exceptions (series_id, excluded_date)

@@ -54,6 +54,12 @@ const (
 	// SessionSeriesServiceRemoveSeriesExceptionProcedure is the fully-qualified name of the
 	// SessionSeriesService's RemoveSeriesException RPC.
 	SessionSeriesServiceRemoveSeriesExceptionProcedure = "/planner.v1.SessionSeriesService/RemoveSeriesException"
+	// SessionSeriesServiceAddToGoogleCalendarProcedure is the fully-qualified name of the
+	// SessionSeriesService's AddToGoogleCalendar RPC.
+	SessionSeriesServiceAddToGoogleCalendarProcedure = "/planner.v1.SessionSeriesService/AddToGoogleCalendar"
+	// SessionSeriesServiceRemoveFromGoogleCalendarProcedure is the fully-qualified name of the
+	// SessionSeriesService's RemoveFromGoogleCalendar RPC.
+	SessionSeriesServiceRemoveFromGoogleCalendarProcedure = "/planner.v1.SessionSeriesService/RemoveFromGoogleCalendar"
 	// SessionSeriesServiceAnnounceToDiscordProcedure is the fully-qualified name of the
 	// SessionSeriesService's AnnounceToDiscord RPC.
 	SessionSeriesServiceAnnounceToDiscordProcedure = "/planner.v1.SessionSeriesService/AnnounceToDiscord"
@@ -77,6 +83,8 @@ type SessionSeriesServiceClient interface {
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
 	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
+	AddToGoogleCalendar(context.Context, *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error)
+	RemoveFromGoogleCalendar(context.Context, *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error)
 	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
 	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
 	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
@@ -136,6 +144,18 @@ func NewSessionSeriesServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSeriesException")),
 			connect.WithClientOptions(opts...),
 		),
+		addToGoogleCalendar: connect.NewClient[v1.AddToGoogleCalendarRequest, v1.AddToGoogleCalendarResponse](
+			httpClient,
+			baseURL+SessionSeriesServiceAddToGoogleCalendarProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("AddToGoogleCalendar")),
+			connect.WithClientOptions(opts...),
+		),
+		removeFromGoogleCalendar: connect.NewClient[v1.RemoveFromGoogleCalendarRequest, v1.RemoveFromGoogleCalendarResponse](
+			httpClient,
+			baseURL+SessionSeriesServiceRemoveFromGoogleCalendarProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveFromGoogleCalendar")),
+			connect.WithClientOptions(opts...),
+		),
 		announceToDiscord: connect.NewClient[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse](
 			httpClient,
 			baseURL+SessionSeriesServiceAnnounceToDiscordProcedure,
@@ -172,6 +192,8 @@ type sessionSeriesServiceClient struct {
 	removeSessionSeries         *connect.Client[v1.RemoveSessionSeriesRequest, v1.RemoveSessionSeriesResponse]
 	excludeSessionFromSeries    *connect.Client[v1.ExcludeSessionFromSeriesRequest, v1.ExcludeSessionFromSeriesResponse]
 	removeSeriesException       *connect.Client[v1.RemoveSeriesExceptionRequest, v1.RemoveSeriesExceptionResponse]
+	addToGoogleCalendar         *connect.Client[v1.AddToGoogleCalendarRequest, v1.AddToGoogleCalendarResponse]
+	removeFromGoogleCalendar    *connect.Client[v1.RemoveFromGoogleCalendarRequest, v1.RemoveFromGoogleCalendarResponse]
 	announceToDiscord           *connect.Client[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse]
 	getDiscordEvent             *connect.Client[v1.GetDiscordEventRequest, v1.GetDiscordEventResponse]
 	getSeriesPoll               *connect.Client[v1.GetSeriesPollRequest, v1.GetSeriesPollResponse]
@@ -213,6 +235,16 @@ func (c *sessionSeriesServiceClient) RemoveSeriesException(ctx context.Context, 
 	return c.removeSeriesException.CallUnary(ctx, req)
 }
 
+// AddToGoogleCalendar calls planner.v1.SessionSeriesService.AddToGoogleCalendar.
+func (c *sessionSeriesServiceClient) AddToGoogleCalendar(ctx context.Context, req *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error) {
+	return c.addToGoogleCalendar.CallUnary(ctx, req)
+}
+
+// RemoveFromGoogleCalendar calls planner.v1.SessionSeriesService.RemoveFromGoogleCalendar.
+func (c *sessionSeriesServiceClient) RemoveFromGoogleCalendar(ctx context.Context, req *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error) {
+	return c.removeFromGoogleCalendar.CallUnary(ctx, req)
+}
+
 // AnnounceToDiscord calls planner.v1.SessionSeriesService.AnnounceToDiscord.
 func (c *sessionSeriesServiceClient) AnnounceToDiscord(ctx context.Context, req *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
 	return c.announceToDiscord.CallUnary(ctx, req)
@@ -242,6 +274,8 @@ type SessionSeriesServiceHandler interface {
 	RemoveSessionSeries(context.Context, *connect.Request[v1.RemoveSessionSeriesRequest]) (*connect.Response[v1.RemoveSessionSeriesResponse], error)
 	ExcludeSessionFromSeries(context.Context, *connect.Request[v1.ExcludeSessionFromSeriesRequest]) (*connect.Response[v1.ExcludeSessionFromSeriesResponse], error)
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
+	AddToGoogleCalendar(context.Context, *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error)
+	RemoveFromGoogleCalendar(context.Context, *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error)
 	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
 	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
 	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
@@ -297,6 +331,18 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 		connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveSeriesException")),
 		connect.WithHandlerOptions(opts...),
 	)
+	sessionSeriesServiceAddToGoogleCalendarHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceAddToGoogleCalendarProcedure,
+		svc.AddToGoogleCalendar,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("AddToGoogleCalendar")),
+		connect.WithHandlerOptions(opts...),
+	)
+	sessionSeriesServiceRemoveFromGoogleCalendarHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceRemoveFromGoogleCalendarProcedure,
+		svc.RemoveFromGoogleCalendar,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveFromGoogleCalendar")),
+		connect.WithHandlerOptions(opts...),
+	)
 	sessionSeriesServiceAnnounceToDiscordHandler := connect.NewUnaryHandler(
 		SessionSeriesServiceAnnounceToDiscordProcedure,
 		svc.AnnounceToDiscord,
@@ -337,6 +383,10 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 			sessionSeriesServiceExcludeSessionFromSeriesHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceRemoveSeriesExceptionProcedure:
 			sessionSeriesServiceRemoveSeriesExceptionHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceAddToGoogleCalendarProcedure:
+			sessionSeriesServiceAddToGoogleCalendarHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceRemoveFromGoogleCalendarProcedure:
+			sessionSeriesServiceRemoveFromGoogleCalendarHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceAnnounceToDiscordProcedure:
 			sessionSeriesServiceAnnounceToDiscordHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceGetDiscordEventProcedure:
@@ -380,6 +430,14 @@ func (UnimplementedSessionSeriesServiceHandler) ExcludeSessionFromSeries(context
 
 func (UnimplementedSessionSeriesServiceHandler) RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.RemoveSeriesException is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) AddToGoogleCalendar(context.Context, *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.AddToGoogleCalendar is not implemented"))
+}
+
+func (UnimplementedSessionSeriesServiceHandler) RemoveFromGoogleCalendar(context.Context, *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.RemoveFromGoogleCalendar is not implemented"))
 }
 
 func (UnimplementedSessionSeriesServiceHandler) AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {

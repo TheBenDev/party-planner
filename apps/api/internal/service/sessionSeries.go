@@ -14,21 +14,25 @@ import (
 )
 
 var (
-	ErrSessionSeriesNotFound            = errors.New("session series not found")
-	ErrSessionSeriesAlreadyExists       = errors.New("session series already exists")
-	ErrSessionSeriesInvalidCampaign     = errors.New("campaign does not exist")
-	ErrSeriesExceptionAlreadyExists     = errors.New("series exception already exists")
-	ErrSeriesMissingStartTime           = errors.New("series has no start time set")
-	ErrSeriesDiscordIntegrationNotFound = errors.New("campaign has no discord integration")
-	ErrSeriesPollNotFound               = errors.New("series has no active poll")
-	ErrSeriesAlreadyPolling             = errors.New("series already has an active poll")
-	ErrSeriesDiscordEventAlreadyExists  = errors.New("series already has a discord event attached to it")
+	ErrSessionSeriesNotFound                 = errors.New("session series not found")
+	ErrSessionSeriesAlreadyExists            = errors.New("session series already exists")
+	ErrSessionSeriesInvalidCampaign          = errors.New("campaign does not exist")
+	ErrSeriesExceptionAlreadyExists          = errors.New("series exception already exists")
+	ErrSeriesMissingStartTime                = errors.New("series has no start time set")
+	ErrSeriesDiscordIntegrationNotFound      = errors.New("campaign has no discord integration")
+	ErrSeriesPollNotFound                    = errors.New("series has no active poll")
+	ErrSeriesAlreadyPolling                  = errors.New("series already has an active poll")
+	ErrSeriesDiscordEventAlreadyExists       = errors.New("series already has a discord event attached to it")
+	ErrSeriesGoogleCalendarAlreadyExists     = errors.New("series already has a google calendar event attached to it")
+	ErrSeriesGoogleCalendarNotFound          = errors.New("series has no google calendar event attached to it")
+	ErrSeriesGoogleCalendarIntegrationNotSet = errors.New("user has no google calendar integration connected")
 )
 
 type SessionSeriesService struct {
 	DB      *db.DB
 	Log     *slog.Logger
 	Discord *DiscordService
+	Google  *GoogleCalendarService
 }
 
 func (s *SessionSeriesService) Create(ctx context.Context, req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
@@ -40,91 +44,6 @@ func (s *SessionSeriesService) Create(ctx context.Context, req *model.CreateSess
 		return nil, fmt.Errorf("create session series error: %w", err)
 	}
 	return created, nil
-}
-
-func (s *SessionSeriesService) GetDiscordEvent(ctx context.Context, campaignID, seriesID, discordEventID string) (*model.DiscordEventInfo, error) {
-	var series *model.SessionSeries
-	var integration *model.CampaignIntegration
-
-	var g errgroup.Group
-	g.Go(func() error {
-		var err error
-		series, err = s.Get(seriesID, campaignID)
-		return err
-	})
-	g.Go(func() error {
-		var err error
-		integration, err = s.DB.GetCampaignIntegration(campaignID, model.IntegrationSourceDiscord)
-		if errors.Is(err, sql.ErrNoRows) {
-			return ErrSeriesDiscordIntegrationNotFound
-		}
-		return err
-	})
-	if err := g.Wait(); err != nil {
-		return nil, err
-	}
-
-	if !series.DiscordEventID.Valid || series.DiscordEventID.String != discordEventID {
-		return nil, ErrDiscordEventNotFound
-	}
-
-	return s.Discord.GetScheduledEvent(ctx, integration.ExternalID, discordEventID)
-}
-
-func (s *SessionSeriesService) AnnounceToDiscord(ctx context.Context, seriesID, campaignID string) (*model.SessionSeries, error) {
-	integration, err := s.DB.GetCampaignIntegration(campaignID, model.IntegrationSourceDiscord)
-	if errors.Is(err, sql.ErrNoRows) {
-		return nil, ErrSeriesDiscordIntegrationNotFound
-	}
-	if err != nil {
-		return nil, err
-	}
-
-	var newEventID string
-	var lockedSeries *model.SessionSeries
-
-	if err := s.DB.RunInTx(func(txDB *db.DB) error {
-		var txErr error
-		lockedSeries, txErr = txDB.GetSessionSeriesForUpdate(seriesID, campaignID)
-		if txErr != nil {
-			return txErr
-		}
-		if lockedSeries.DiscordEventID.Valid && lockedSeries.DiscordEventID.String != "" {
-			_, err := s.Discord.GetScheduledEvent(ctx, integration.ExternalID, lockedSeries.DiscordEventID.String)
-			if err == nil {
-				return ErrSeriesDiscordEventAlreadyExists
-			}
-		}
-		if computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime) == nil {
-			return ErrSeriesMissingStartTime
-		}
-		newEventID, txErr = s.Discord.CreateScheduledEvent(ctx, integration.ExternalID, lockedSeries)
-		if txErr != nil {
-			return fmt.Errorf("announce series: create discord event: %w", txErr)
-		}
-		if txErr = txDB.SetSeriesDiscordEventID(lockedSeries.ID, campaignID, newEventID); txErr != nil {
-			return fmt.Errorf("announce series: persist discord event id: %w", txErr)
-		}
-		return nil
-	}); err != nil {
-		return nil, err
-	}
-
-	if newEventID != "" {
-		channelID := s.Discord.GetNotificationChannelID(integration)
-		if channelID != "" {
-			firstOccurrence := computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime)
-			msg := fmt.Sprintf("📅 **%s** is scheduled for <t:%d:F> (<t:%d:R>). See you there!", lockedSeries.Title, firstOccurrence.Unix(), firstOccurrence.Unix())
-			if _, sendErr := s.Discord.SendDiscordMessage(ctx, channelID, msg); sendErr != nil {
-				s.Log.WarnContext(ctx, "failed to send series announcement message",
-					"series_id", lockedSeries.ID,
-					"error", sendErr,
-				)
-			}
-		}
-	}
-
-	return s.Get(seriesID, campaignID)
 }
 
 func (s *SessionSeriesService) Get(id, campaignId string) (*model.SessionSeries, error) {
@@ -202,7 +121,7 @@ func (s *SessionSeriesService) Update(req *model.UpdateSessionSeriesRequest) (*m
 	return updated, nil
 }
 
-func (s *SessionSeriesService) Remove(ctx context.Context, id, campaignID string) error {
+func (s *SessionSeriesService) Remove(ctx context.Context, id, campaignID, userID string) error {
 	series, err := s.Get(id, campaignID)
 	if err != nil {
 		return err
@@ -222,6 +141,15 @@ func (s *SessionSeriesService) Remove(ctx context.Context, id, campaignID string
 			s.Log.WarnContext(ctx, "failed to delete discord event when removing session series",
 				"series_id", id,
 				"discord_event_id", series.DiscordEventID.String,
+				"error", err,
+			)
+		}
+	}
+	if series.GoogleCalendarEventID.Valid {
+		if err := s.Google.RemoveCalendarEvent(ctx, userID, series.GoogleCalendarEventID.String); err != nil {
+			s.Log.WarnContext(ctx, "failed to remove google calendar event when removing session series",
+				"series_id", id,
+				"google_calendar_event_id", series.GoogleCalendarEventID.String,
 				"error", err,
 			)
 		}
@@ -283,6 +211,158 @@ func (s *SessionSeriesService) RemoveException(seriesID, campaignID string, excl
 		return fmt.Errorf("remove series exception error: %w", err)
 	}
 	return nil
+}
+
+// GOOGLE CALENDAR ACTIONS
+
+func (s *SessionSeriesService) AddToGoogleCalendar(ctx context.Context, seriesID, campaignID, userID string) (*model.SessionSeries, error) {
+
+	if err := s.DB.RunInTx(func(txDB *db.DB) error {
+		var group errgroup.Group
+		var sessionSeries *model.SessionSeries
+		var exceptions map[string][]time.Time
+		group.Go(func() error {
+			var err error
+			sessionSeries, err = txDB.GetSessionSeriesForUpdate(seriesID, campaignID)
+			return err
+		})
+
+		group.Go(func() error {
+			var err error
+			exceptions, err = txDB.ListExceptionsForSeries([]string{seriesID})
+			return err
+		})
+		if err := group.Wait(); err != nil {
+			return err
+		}
+
+		if sessionSeries.GoogleCalendarEventID.Valid {
+			return ErrSeriesGoogleCalendarAlreadyExists
+		}
+
+		eventID, err := s.Google.SyncSession(ctx, userID, *sessionSeries, exceptions[seriesID])
+		if err != nil {
+			return err
+		}
+
+		if err := txDB.SetSeriesGoogleCalendarEventID(seriesID, campaignID, eventID); err != nil {
+			return err
+
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	return s.DB.GetSessionSeries(seriesID, campaignID)
+}
+
+func (s *SessionSeriesService) RemoveFromGoogleCalendar(ctx context.Context, seriesID, campaignID, userID string) (*model.SessionSeries, error) {
+	lockedSeries, err := s.DB.GetSessionSeriesForUpdate(seriesID, campaignID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !lockedSeries.GoogleCalendarEventID.Valid {
+		return nil, ErrSeriesGoogleCalendarNotFound
+	}
+
+	if err := s.Google.RemoveCalendarEvent(ctx, userID, lockedSeries.GoogleCalendarEventID.String); err != nil {
+		return nil, err
+	}
+
+	if err := s.DB.ClearSeriesGoogleCalendarEventID(seriesID, campaignID); err != nil {
+		return nil, err
+	}
+
+	return s.DB.GetSessionSeries(seriesID, campaignID)
+}
+
+// DISCORD ACTIONS
+
+func (s *SessionSeriesService) GetDiscordEvent(ctx context.Context, campaignID, seriesID, discordEventID string) (*model.DiscordEventInfo, error) {
+	var series *model.SessionSeries
+	var integration *model.CampaignIntegration
+
+	var g errgroup.Group
+	g.Go(func() error {
+		var err error
+		series, err = s.Get(seriesID, campaignID)
+		return err
+	})
+	g.Go(func() error {
+		var err error
+		integration, err = s.DB.GetCampaignIntegration(campaignID, model.IntegrationSourceDiscord)
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrSeriesDiscordIntegrationNotFound
+		}
+		return err
+	})
+	if err := g.Wait(); err != nil {
+		return nil, err
+	}
+
+	if !series.DiscordEventID.Valid || series.DiscordEventID.String != discordEventID {
+		return nil, ErrDiscordEventNotFound
+	}
+
+	return s.Discord.GetScheduledEvent(ctx, integration.ExternalID, discordEventID)
+}
+
+func (s *SessionSeriesService) AnnounceToDiscord(ctx context.Context, seriesID, campaignID string) (*model.SessionSeries, error) {
+	integration, err := s.DB.GetCampaignIntegration(campaignID, model.IntegrationSourceDiscord)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrSeriesDiscordIntegrationNotFound
+		}
+		return nil, err
+	}
+
+	var newEventID string
+	var lockedSeries *model.SessionSeries
+
+	if err := s.DB.RunInTx(func(txDB *db.DB) error {
+		var txErr error
+		lockedSeries, txErr = txDB.GetSessionSeriesForUpdate(seriesID, campaignID)
+		if txErr != nil {
+			return txErr
+		}
+		if lockedSeries.DiscordEventID.Valid && lockedSeries.DiscordEventID.String != "" {
+			_, err := s.Discord.GetScheduledEvent(ctx, integration.ExternalID, lockedSeries.DiscordEventID.String)
+			if err == nil {
+				return ErrSeriesDiscordEventAlreadyExists
+			}
+		}
+		if computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime) == nil {
+			return ErrSeriesMissingStartTime
+		}
+		newEventID, txErr = s.Discord.CreateScheduledEvent(ctx, integration.ExternalID, lockedSeries)
+		if txErr != nil {
+			return fmt.Errorf("announce series: create discord event: %w", txErr)
+		}
+		if txErr = txDB.SetSeriesDiscordEventID(lockedSeries.ID, campaignID, newEventID); txErr != nil {
+			return fmt.Errorf("announce series: persist discord event id: %w", txErr)
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
+
+	if newEventID != "" {
+		channelID := s.Discord.GetNotificationChannelID(integration)
+		if channelID != "" {
+			firstOccurrence := computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime)
+			msg := fmt.Sprintf("📅 **%s** is scheduled for <t:%d:F> (<t:%d:R>). See you there!", lockedSeries.Title, firstOccurrence.Unix(), firstOccurrence.Unix())
+			if _, sendErr := s.Discord.SendDiscordMessage(ctx, channelID, msg); sendErr != nil {
+				s.Log.WarnContext(ctx, "failed to send series announcement message",
+					"series_id", lockedSeries.ID,
+					"error", sendErr,
+				)
+			}
+		}
+	}
+
+	return s.Get(seriesID, campaignID)
 }
 
 func (s *SessionSeriesService) GetPoll(ctx context.Context, seriesID, campaignID string) (*model.Poll, error) {

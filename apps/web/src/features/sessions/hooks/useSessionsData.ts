@@ -111,6 +111,30 @@ export function useSessionsData() {
 		},
 	});
 
+	const addToGoogleCalendarMutation = useMutation({
+		mutationFn: (seriesId: string) =>
+			client.sessionSeries.addToGoogleCalendar({ seriesId }),
+		onError: () => toast.error("Failed to add to Google Calendar"),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.sessionSeries.list(campaignId),
+			});
+			toast.success("Added to Google Calendar");
+		},
+	});
+
+	const removeFromGoogleCalendarMutation = useMutation({
+		mutationFn: (seriesId: string) =>
+			client.sessionSeries.removeFromGoogleCalendar({ seriesId }),
+		onError: () => toast.error("Failed to remove from Google Calendar"),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.sessionSeries.list(campaignId),
+			});
+			toast.success("Removed from Google Calendar");
+		},
+	});
+
 	const announceToDiscordMutation = useMutation({
 		mutationFn: (seriesId: string) =>
 			client.sessionSeries.announceToDiscord({ seriesId }),
@@ -148,6 +172,8 @@ export function useSessionsData() {
 	});
 
 	return {
+		addToGoogleCalendar: addToGoogleCalendarMutation.mutate,
+		removeFromGoogleCalendar: removeFromGoogleCalendarMutation.mutate,
 		announceToDiscord: announceToDiscordMutation.mutate,
 		createSeries: createSeriesMutation.mutate,
 		deleteSession: deleteSessionMutation.mutate,

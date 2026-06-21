@@ -123,7 +123,11 @@ type discordTokenAPIResponse struct {
 	} `json:"guild"`
 }
 
+// used for discord oauth where it takes the code from the browser to validate the user wanting to connect to discord
+// and returns the discord server id to give the the campaign integration
 func (s *DiscordService) ExchangeCode(ctx context.Context, code string) (*discordTokenResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	vals := url.Values{
 		"client_id":     {s.Config.ClientID},
 		"client_secret": {s.Config.ClientSecret},
@@ -170,6 +174,8 @@ func (s *DiscordService) CreateScheduledEvent(
 	guildID string,
 	series *model.SessionSeries,
 ) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	startTime := computeFirstOccurrence(series.SeriesStartDate, series.StartTime)
 	if startTime == nil {
 		return "", errors.New("valid start time is required to create discord event")
@@ -237,6 +243,9 @@ func (s *DiscordService) CreateScheduledEvent(
 }
 
 func (s *DiscordService) GetScheduledEvent(ctx context.Context, guildID, eventID string) (*model.DiscordEventInfo, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
 	event, err := s.Session.GuildScheduledEvent(guildID, eventID, false, discordgo.WithContext(ctx))
 	if err != nil {
 		var restErr *discordgo.RESTError
@@ -272,6 +281,8 @@ func (s *DiscordService) GetNotificationChannelID(integration *model.CampaignInt
 }
 
 func (s *DiscordService) DeleteScheduledEvent(ctx context.Context, guildID, eventID string) error {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	if err := s.Session.GuildScheduledEventDelete(guildID, eventID, discordgo.WithContext(ctx)); err != nil {
 		return fmt.Errorf("delete discord scheduled event: %w", err)
 	}
@@ -284,6 +295,8 @@ func (s *DiscordService) UpdateScheduledEvent(
 	eventID string,
 	series *model.SessionSeries,
 ) error {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	startTime := computeFirstOccurrence(series.SeriesStartDate, series.StartTime)
 	if startTime == nil {
 		return errors.New("valid start time is required to update discord event")
@@ -312,6 +325,8 @@ func (s *DiscordService) UpdateScheduledEvent(
 }
 
 func (s *DiscordService) GetPoll(ctx context.Context, channelId, pollId string) (*model.Poll, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	msg, err := s.Session.ChannelMessage(channelId, pollId, discordgo.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch discord poll message: %w", err)
@@ -359,6 +374,8 @@ func (s *DiscordService) PollSeries(
 	series *model.SessionSeries,
 	options []time.Time,
 ) (*PollProps, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	if integration == nil {
 		return nil, errors.New("campaign integration is required")
 	}
@@ -427,6 +444,8 @@ func (s *DiscordService) PollSeries(
 }
 
 func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId string) error {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	if _, err := s.Session.PollExpire(channelId, pollId); err != nil {
 		s.Log.WarnContext(ctx, "failed to close discord poll",
 			"channel_id", channelId,
@@ -439,6 +458,8 @@ func (s *DiscordService) ClosePoll(ctx context.Context, channelId, pollId string
 }
 
 func (s *DiscordService) NotifyPollCancelled(ctx context.Context, channelId, pollId, sessionTitle string) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	msg := fmt.Sprintf("❌ The poll for **%s** has been closed because the session was cancelled.", sessionTitle)
 	if _, err := s.Session.ChannelMessageSend(channelId, msg, discordgo.WithContext(ctx)); err != nil {
 		s.Log.WarnContext(ctx, "failed to send poll cancellation message",
@@ -451,6 +472,8 @@ func (s *DiscordService) NotifyPollCancelled(ctx context.Context, channelId, pol
 }
 
 func (s *DiscordService) SendDiscordMessage(ctx context.Context, channelId, message string) (*discordgo.Message, error) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	discordMessage, err := s.Session.ChannelMessageSend(channelId, message, discordgo.WithContext(ctx))
 	if err != nil {
 		return nil, fmt.Errorf("discord message send error: %w", err)
@@ -459,8 +482,10 @@ func (s *DiscordService) SendDiscordMessage(ctx context.Context, channelId, mess
 }
 
 func (s *DiscordService) NotifyUpcomingOccurrence(ctx context.Context, channelID string, series *model.SessionSeries, occurrenceTime time.Time) {
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 	unix := occurrenceTime.Unix()
-	msg := fmt.Sprintf("⏰ Reminder: **%s** is coming up <t:%d:R> (<t:%d:F>). Don't forget!", series.Title, unix, unix)
+	msg := fmt.Sprintf("Reminder: **%s** is coming up <t:%d:R> (<t:%d:F>). Don't forget!", series.Title, unix, unix)
 	if _, err := s.Session.ChannelMessageSend(channelID, msg, discordgo.WithContext(ctx)); err != nil {
 		s.Log.WarnContext(ctx, "failed to send occurrence reminder",
 			"channel_id", channelID,
@@ -473,7 +498,7 @@ func (s *DiscordService) NotifyUpcomingOccurrence(ctx context.Context, channelID
 func formatPollTimestamps(title string, options []time.Time) string {
 	var sb strings.Builder
 
-	fmt.Fprintf(&sb, "📅 **%s** — options in your local time:\n", title)
+	fmt.Fprintf(&sb, "**%s** — options in your local time:\n", title)
 	for i, opt := range options {
 		fmt.Fprintf(&sb, "%d. <t:%d:F>\n", i+1, opt.Unix())
 	}

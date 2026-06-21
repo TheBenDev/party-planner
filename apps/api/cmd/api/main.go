@@ -154,30 +154,31 @@ func buildServices(database *db.DB, discord *service.DiscordService, cfg *config
 		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
 
 	}
+	googleSvc := &service.GoogleCalendarService{
+		DB:            database,
+		EncryptionKey: integrationKey,
+		Log:           logger.Logger,
+		Config: service.GoogleCalendarConfig{
+			ClientID:     cfg.GoogleClientID,
+			ClientSecret: cfg.GoogleClientSecret,
+			RedirectURI:  cfg.WebURL + "/settings/google-calendar/callback",
+		},
+	}
 	sessionSvc := &service.SessionService{DB: database}
-	sessionSeriesSvc := &service.SessionSeriesService{DB: database, Log: logger.Logger, Discord: discord}
+	sessionSeriesSvc := &service.SessionSeriesService{DB: database, Log: logger.Logger, Discord: discord, Google: googleSvc}
 	return &appServices{
 		Discord:             discord,
 		Session:             sessionSvc,
 		SessionSeries:       sessionSeriesSvc,
 		Campaign:            &service.CampaignService{DB: database, Log: logger.Logger},
 		CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger, Discord: discord},
-		GoogleCalendar: &service.GoogleCalendarService{
-			DB:            database,
-			EncryptionKey: integrationKey,
-			Log:           logger.Logger,
-			Config: service.GoogleCalendarConfig{
-				ClientID:     cfg.GoogleClientID,
-				ClientSecret: cfg.GoogleClientSecret,
-				RedirectURI:  cfg.WebURL + "/settings/google-calendar/callback",
-			},
-		},
-		Member:    &service.MemberService{DB: database, Log: logger.Logger},
-		Npc:       &service.NpcService{DB: database, Log: logger.Logger},
-		Quest:     &service.QuestService{DB: database, Log: logger.Logger},
-		Location:  &service.LocationService{DB: database, Log: logger.Logger},
-		User:      &service.UserService{DB: database, Log: logger.Logger},
-		Scheduler: &service.SeriesScheduler{DB: database, Session: sessionSvc, Series: sessionSeriesSvc, Log: logger.Logger},
+		GoogleCalendar:      googleSvc,
+		Member:              &service.MemberService{DB: database, Log: logger.Logger},
+		Npc:                 &service.NpcService{DB: database, Log: logger.Logger},
+		Quest:               &service.QuestService{DB: database, Log: logger.Logger},
+		Location:            &service.LocationService{DB: database, Log: logger.Logger},
+		User:                &service.UserService{DB: database, Log: logger.Logger},
+		Scheduler:           &service.SeriesScheduler{DB: database, Session: sessionSvc, Series: sessionSeriesSvc, Log: logger.Logger},
 	}, nil
 }
 

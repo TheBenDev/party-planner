@@ -74,6 +74,7 @@ export function protoToSessionSeries(proto: SessionSeriesProto): SessionSeries {
 		createdAt: timestampDate(proto.createdAt),
 		description: proto.description,
 		discordEventId: proto.discordEventId ?? undefined,
+		googleCalendarEventId: proto.googleCalendarEventId ?? undefined,
 		durationMinutes: proto.durationMinutes,
 		id: proto.id,
 		rrule: proto.rrule,

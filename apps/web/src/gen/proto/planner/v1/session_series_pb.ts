@@ -14,7 +14,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/session_series.proto.
  */
 export const file_planner_v1_session_series: GenFile = /*@__PURE__*/
-  fileDesc("Ch9wbGFubmVyL3YxL3Nlc3Npb25fc2VyaWVzLnByb3RvEgpwbGFubmVyLnYxItEDCg1TZXNzaW9uU2VyaWVzEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDQoFcnJ1bGUYBSABKAkSEgoKc3RhcnRfdGltZRgGIAEoCRI1ChFzZXJpZXNfc3RhcnRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoPc2VyaWVzX2VuZF9kYXRlGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHRpbWV6b25lGAsgASgJEhgKEGR1cmF0aW9uX21pbnV0ZXMYDCABKAUSHQoQZGlzY29yZF9ldmVudF9pZBgNIAEoCUgCiAEBQg4KDF9kZXNjcmlwdGlvbkISChBfc2VyaWVzX2VuZF9kYXRlQhMKEV9kaXNjb3JkX2V2ZW50X2lkIpwBChhTZXNzaW9uU2VyaWVzV2l0aERldGFpbHMSKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzEiUKCHNlc3Npb25zGAIgAygLMhMucGxhbm5lci52MS5TZXNzaW9uEi4KCmV4Y2VwdGlvbnMYAyADKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wIucCChpDcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRIYCgtkZXNjcmlwdGlvbhgDIAEoCUgAiAEBEhIKBXJydWxlGAQgASgJSAGIAQESEgoKc3RhcnRfdGltZRgFIAEoCRI1ChFzZXJpZXNfc3RhcnRfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoPc2VyaWVzX2VuZF9kYXRlGAcgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgCiAEBEhAKCHRpbWV6b25lGAggASgJEh0KEGR1cmF0aW9uX21pbnV0ZXMYCSABKAVIA4gBAUIOCgxfZGVzY3JpcHRpb25CCAoGX3JydWxlQhIKEF9zZXJpZXNfZW5kX2RhdGVCEwoRX2R1cmF0aW9uX21pbnV0ZXMiSAobQ3JlYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEikKBnNlcmllcxgBIAEoCzIZLnBsYW5uZXIudjEuU2Vzc2lvblNlcmllcyI6ChdHZXRTZXNzaW9uU2VyaWVzUmVxdWVzdBIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCSJFChhHZXRTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIjkKIkxpc3RTZXNzaW9uU2VyaWVzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiWwojTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVzcG9uc2USNAoGc2VyaWVzGAEgAygLMiQucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzV2l0aERldGFpbHMivQIKGlVwZGF0ZVNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESGAoLZGVzY3JpcHRpb24YAyABKAlIAYgBARISCgVycnVsZRgEIAEoCUgCiAEBEhcKCnN0YXJ0X3RpbWUYBSABKAlIA4gBARI4Cg9zZXJpZXNfZW5kX2RhdGUYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSASIAQESFQoIdGltZXpvbmUYByABKAlIBYgBARITCgtjYW1wYWlnbl9pZBgIIAEoCUIICgZfdGl0bGVCDgoMX2Rlc2NyaXB0aW9uQggKBl9ycnVsZUINCgtfc3RhcnRfdGltZUISChBfc2VyaWVzX2VuZF9kYXRlQgsKCV90aW1lem9uZSJIChtVcGRhdGVTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIj0KGlJlbW92ZVNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIh0KG1JlbW92ZVNlc3Npb25TZXJpZXNSZXNwb25zZSJ8Ch9FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXF1ZXN0EhEKCXNlcmllc19pZBgCIAEoCRIxCg1leGNsdWRlZF9kYXRlGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjYW1wYWlnbl9pZBgEIAEoCSIiCiBFeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXNwb25zZSJ5ChxSZW1vdmVTZXJpZXNFeGNlcHRpb25SZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRIxCg1leGNsdWRlZF9kYXRlGAIgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgtjYW1wYWlnbl9pZBgDIAEoCSIfCh1SZW1vdmVTZXJpZXNFeGNlcHRpb25SZXNwb25zZSJCChhBbm5vdW5jZVRvRGlzY29yZFJlcXVlc3QSEQoJc2VyaWVzX2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIkYKGUFubm91bmNlVG9EaXNjb3JkUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIloKFkdldERpc2NvcmRFdmVudFJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEQoJc2VyaWVzX2lkGAIgASgJEhgKEGRpc2NvcmRfZXZlbnRfaWQYAyABKAkixAEKEERpc2NvcmRFdmVudEluZm8SEAoIZ3VpbGRfaWQYASABKAkSEAoIZXZlbnRfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIuCgpzdGFydF90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCghlbmRfdGltZRgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIOCgZzdGF0dXMYBiABKAVCCwoJX2VuZF90aW1lIkYKF0dldERpc2NvcmRFdmVudFJlc3BvbnNlEisKBWV2ZW50GAEgASgLMhwucGxhbm5lci52MS5EaXNjb3JkRXZlbnRJbmZvIj4KFEdldFNlcmllc1BvbGxSZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCSI3ChVHZXRTZXJpZXNQb2xsUmVzcG9uc2USHgoEcG9sbBgBIAEoCzIQLnBsYW5uZXIudjEuUG9sbCJoChFQb2xsU2VyaWVzUmVxdWVzdBIRCglzZXJpZXNfaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSKwoHb3B0aW9ucxgDIAMoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiFAoSUG9sbFNlcmllc1Jlc3BvbnNlMvMIChRTZXNzaW9uU2VyaWVzU2VydmljZRJmChNDcmVhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEl0KEEdldFNlc3Npb25TZXJpZXMSIy5wbGFubmVyLnYxLkdldFNlc3Npb25TZXJpZXNSZXF1ZXN0GiQucGxhbm5lci52MS5HZXRTZXNzaW9uU2VyaWVzUmVzcG9uc2USfgobTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduEi4ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXF1ZXN0Gi8ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRJmChNVcGRhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEmYKE1JlbW92ZVNlc3Npb25TZXJpZXMSJi5wbGFubmVyLnYxLlJlbW92ZVNlc3Npb25TZXJpZXNSZXF1ZXN0GicucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uU2VyaWVzUmVzcG9uc2USdQoYRXhjbHVkZVNlc3Npb25Gcm9tU2VyaWVzEisucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXF1ZXN0GiwucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXNwb25zZRJsChVSZW1vdmVTZXJpZXNFeGNlcHRpb24SKC5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlcXVlc3QaKS5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlc3BvbnNlEmAKEUFubm91bmNlVG9EaXNjb3JkEiQucGxhbm5lci52MS5Bbm5vdW5jZVRvRGlzY29yZFJlcXVlc3QaJS5wbGFubmVyLnYxLkFubm91bmNlVG9EaXNjb3JkUmVzcG9uc2USWgoPR2V0RGlzY29yZEV2ZW50EiIucGxhbm5lci52MS5HZXREaXNjb3JkRXZlbnRSZXF1ZXN0GiMucGxhbm5lci52MS5HZXREaXNjb3JkRXZlbnRSZXNwb25zZRJUCg1HZXRTZXJpZXNQb2xsEiAucGxhbm5lci52MS5HZXRTZXJpZXNQb2xsUmVxdWVzdBohLnBsYW5uZXIudjEuR2V0U2VyaWVzUG9sbFJlc3BvbnNlEksKClBvbGxTZXJpZXMSHS5wbGFubmVyLnYxLlBvbGxTZXJpZXNSZXF1ZXN0Gh4ucGxhbm5lci52MS5Qb2xsU2VyaWVzUmVzcG9uc2VCrwEKDmNvbS5wbGFubmVyLnYxQhJTZXNzaW9uU2VyaWVzUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp, file_planner_v1_session]);
+  fileDesc("Ch9wbGFubmVyL3YxL3Nlc3Npb25fc2VyaWVzLnByb3RvEgpwbGFubmVyLnYxIpUECg1TZXNzaW9uU2VyaWVzEgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEg0KBXRpdGxlGAMgASgJEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESDQoFcnJ1bGUYBSABKAkSEgoKc3RhcnRfdGltZRgGIAEoCRI1ChFzZXJpZXNfc3RhcnRfZGF0ZRgHIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASOAoPc2VyaWVzX2VuZF9kYXRlGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgBiAEBEi4KCmNyZWF0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEhAKCHRpbWV6b25lGAsgASgJEhgKEGR1cmF0aW9uX21pbnV0ZXMYDCABKAUSHQoQZGlzY29yZF9ldmVudF9pZBgNIAEoCUgCiAEBEiUKGGdvb2dsZV9jYWxlbmRhcl9ldmVudF9pZBgOIAEoCUgDiAEBQg4KDF9kZXNjcmlwdGlvbkISChBfc2VyaWVzX2VuZF9kYXRlQhMKEV9kaXNjb3JkX2V2ZW50X2lkQhsKGV9nb29nbGVfY2FsZW5kYXJfZXZlbnRfaWQinAEKGFNlc3Npb25TZXJpZXNXaXRoRGV0YWlscxIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMSJQoIc2Vzc2lvbnMYAiADKAsyEy5wbGFubmVyLnYxLlNlc3Npb24SLgoKZXhjZXB0aW9ucxgDIAMoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAi5wIKGkNyZWF0ZVNlc3Npb25TZXJpZXNSZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJEg0KBXRpdGxlGAIgASgJEhgKC2Rlc2NyaXB0aW9uGAMgASgJSACIAQESEgoFcnJ1bGUYBCABKAlIAYgBARISCgpzdGFydF90aW1lGAUgASgJEjUKEXNlcmllc19zdGFydF9kYXRlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBI4Cg9zZXJpZXNfZW5kX2RhdGUYByABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSAKIAQESEAoIdGltZXpvbmUYCCABKAkSHQoQZHVyYXRpb25fbWludXRlcxgJIAEoBUgDiAEBQg4KDF9kZXNjcmlwdGlvbkIICgZfcnJ1bGVCEgoQX3Nlcmllc19lbmRfZGF0ZUITChFfZHVyYXRpb25fbWludXRlcyJIChtDcmVhdGVTZXNzaW9uU2VyaWVzUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIjoKF0dldFNlc3Npb25TZXJpZXNSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIkUKGEdldFNlc3Npb25TZXJpZXNSZXNwb25zZRIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMiOQoiTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduUmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCSJbCiNMaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRI0CgZzZXJpZXMYASADKAsyJC5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXNXaXRoRGV0YWlscyK9AgoaVXBkYXRlU2Vzc2lvblNlcmllc1JlcXVlc3QSCgoCaWQYASABKAkSEgoFdGl0bGUYAiABKAlIAIgBARIYCgtkZXNjcmlwdGlvbhgDIAEoCUgBiAEBEhIKBXJydWxlGAQgASgJSAKIAQESFwoKc3RhcnRfdGltZRgFIAEoCUgDiAEBEjgKD3Nlcmllc19lbmRfZGF0ZRgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIBIgBARIVCgh0aW1lem9uZRgHIAEoCUgFiAEBEhMKC2NhbXBhaWduX2lkGAggASgJQggKBl90aXRsZUIOCgxfZGVzY3JpcHRpb25CCAoGX3JydWxlQg0KC19zdGFydF90aW1lQhIKEF9zZXJpZXNfZW5kX2RhdGVCCwoJX3RpbWV6b25lIkgKG1VwZGF0ZVNlc3Npb25TZXJpZXNSZXNwb25zZRIpCgZzZXJpZXMYASABKAsyGS5wbGFubmVyLnYxLlNlc3Npb25TZXJpZXMiTgoaUmVtb3ZlU2Vzc2lvblNlcmllc1JlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDwoHdXNlcl9pZBgDIAEoCSIdChtSZW1vdmVTZXNzaW9uU2VyaWVzUmVzcG9uc2UifAofRXhjbHVkZVNlc3Npb25Gcm9tU2VyaWVzUmVxdWVzdBIRCglzZXJpZXNfaWQYAiABKAkSMQoNZXhjbHVkZWRfZGF0ZRgDIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLY2FtcGFpZ25faWQYBCABKAkiIgogRXhjbHVkZVNlc3Npb25Gcm9tU2VyaWVzUmVzcG9uc2UieQocUmVtb3ZlU2VyaWVzRXhjZXB0aW9uUmVxdWVzdBIRCglzZXJpZXNfaWQYASABKAkSMQoNZXhjbHVkZWRfZGF0ZRgCIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLY2FtcGFpZ25faWQYAyABKAkiHwodUmVtb3ZlU2VyaWVzRXhjZXB0aW9uUmVzcG9uc2UiVQoaQWRkVG9Hb29nbGVDYWxlbmRhclJlcXVlc3QSEQoJc2VyaWVzX2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEg8KB3VzZXJfaWQYAyABKAkiSAobQWRkVG9Hb29nbGVDYWxlbmRhclJlc3BvbnNlEikKBnNlcmllcxgBIAEoCzIZLnBsYW5uZXIudjEuU2Vzc2lvblNlcmllcyJaCh9SZW1vdmVGcm9tR29vZ2xlQ2FsZW5kYXJSZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRIPCgd1c2VyX2lkGAMgASgJIk0KIFJlbW92ZUZyb21Hb29nbGVDYWxlbmRhclJlc3BvbnNlEikKBnNlcmllcxgBIAEoCzIZLnBsYW5uZXIudjEuU2Vzc2lvblNlcmllcyJCChhBbm5vdW5jZVRvRGlzY29yZFJlcXVlc3QSEQoJc2VyaWVzX2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIkYKGUFubm91bmNlVG9EaXNjb3JkUmVzcG9uc2USKQoGc2VyaWVzGAEgASgLMhkucGxhbm5lci52MS5TZXNzaW9uU2VyaWVzIloKFkdldERpc2NvcmRFdmVudFJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSEQoJc2VyaWVzX2lkGAIgASgJEhgKEGRpc2NvcmRfZXZlbnRfaWQYAyABKAkixAEKEERpc2NvcmRFdmVudEluZm8SEAoIZ3VpbGRfaWQYASABKAkSEAoIZXZlbnRfaWQYAiABKAkSDAoEbmFtZRgDIAEoCRIuCgpzdGFydF90aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBIxCghlbmRfdGltZRgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIAIgBARIOCgZzdGF0dXMYBiABKAVCCwoJX2VuZF90aW1lIkYKF0dldERpc2NvcmRFdmVudFJlc3BvbnNlEisKBWV2ZW50GAEgASgLMhwucGxhbm5lci52MS5EaXNjb3JkRXZlbnRJbmZvIj4KFEdldFNlcmllc1BvbGxSZXF1ZXN0EhEKCXNlcmllc19pZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCSI3ChVHZXRTZXJpZXNQb2xsUmVzcG9uc2USHgoEcG9sbBgBIAEoCzIQLnBsYW5uZXIudjEuUG9sbCJoChFQb2xsU2VyaWVzUmVxdWVzdBIRCglzZXJpZXNfaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSKwoHb3B0aW9ucxgDIAMoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiFAoSUG9sbFNlcmllc1Jlc3BvbnNlMtIKChRTZXNzaW9uU2VyaWVzU2VydmljZRJmChNDcmVhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5DcmVhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuQ3JlYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEl0KEEdldFNlc3Npb25TZXJpZXMSIy5wbGFubmVyLnYxLkdldFNlc3Npb25TZXJpZXNSZXF1ZXN0GiQucGxhbm5lci52MS5HZXRTZXNzaW9uU2VyaWVzUmVzcG9uc2USfgobTGlzdFNlc3Npb25TZXJpZXNCeUNhbXBhaWduEi4ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXF1ZXN0Gi8ucGxhbm5lci52MS5MaXN0U2Vzc2lvblNlcmllc0J5Q2FtcGFpZ25SZXNwb25zZRJmChNVcGRhdGVTZXNzaW9uU2VyaWVzEiYucGxhbm5lci52MS5VcGRhdGVTZXNzaW9uU2VyaWVzUmVxdWVzdBonLnBsYW5uZXIudjEuVXBkYXRlU2Vzc2lvblNlcmllc1Jlc3BvbnNlEmYKE1JlbW92ZVNlc3Npb25TZXJpZXMSJi5wbGFubmVyLnYxLlJlbW92ZVNlc3Npb25TZXJpZXNSZXF1ZXN0GicucGxhbm5lci52MS5SZW1vdmVTZXNzaW9uU2VyaWVzUmVzcG9uc2USdQoYRXhjbHVkZVNlc3Npb25Gcm9tU2VyaWVzEisucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXF1ZXN0GiwucGxhbm5lci52MS5FeGNsdWRlU2Vzc2lvbkZyb21TZXJpZXNSZXNwb25zZRJsChVSZW1vdmVTZXJpZXNFeGNlcHRpb24SKC5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlcXVlc3QaKS5wbGFubmVyLnYxLlJlbW92ZVNlcmllc0V4Y2VwdGlvblJlc3BvbnNlEmYKE0FkZFRvR29vZ2xlQ2FsZW5kYXISJi5wbGFubmVyLnYxLkFkZFRvR29vZ2xlQ2FsZW5kYXJSZXF1ZXN0GicucGxhbm5lci52MS5BZGRUb0dvb2dsZUNhbGVuZGFyUmVzcG9uc2USdQoYUmVtb3ZlRnJvbUdvb2dsZUNhbGVuZGFyEisucGxhbm5lci52MS5SZW1vdmVGcm9tR29vZ2xlQ2FsZW5kYXJSZXF1ZXN0GiwucGxhbm5lci52MS5SZW1vdmVGcm9tR29vZ2xlQ2FsZW5kYXJSZXNwb25zZRJgChFBbm5vdW5jZVRvRGlzY29yZBIkLnBsYW5uZXIudjEuQW5ub3VuY2VUb0Rpc2NvcmRSZXF1ZXN0GiUucGxhbm5lci52MS5Bbm5vdW5jZVRvRGlzY29yZFJlc3BvbnNlEloKD0dldERpc2NvcmRFdmVudBIiLnBsYW5uZXIudjEuR2V0RGlzY29yZEV2ZW50UmVxdWVzdBojLnBsYW5uZXIudjEuR2V0RGlzY29yZEV2ZW50UmVzcG9uc2USVAoNR2V0U2VyaWVzUG9sbBIgLnBsYW5uZXIudjEuR2V0U2VyaWVzUG9sbFJlcXVlc3QaIS5wbGFubmVyLnYxLkdldFNlcmllc1BvbGxSZXNwb25zZRJLCgpQb2xsU2VyaWVzEh0ucGxhbm5lci52MS5Qb2xsU2VyaWVzUmVxdWVzdBoeLnBsYW5uZXIudjEuUG9sbFNlcmllc1Jlc3BvbnNlQq8BCg5jb20ucGxhbm5lci52MUISU2Vzc2lvblNlcmllc1Byb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_timestamp, file_planner_v1_session]);
 
 /**
  * @generated from message planner.v1.SessionSeries
@@ -84,6 +84,11 @@ export type SessionSeries = Message<"planner.v1.SessionSeries"> & {
    * @generated from field: optional string discord_event_id = 13;
    */
   discordEventId?: string | undefined;
+
+  /**
+   * @generated from field: optional string google_calendar_event_id = 14;
+   */
+  googleCalendarEventId?: string | undefined;
 };
 
 /**
@@ -349,6 +354,11 @@ export type RemoveSessionSeriesRequest = Message<"planner.v1.RemoveSessionSeries
    * @generated from field: string campaign_id = 2;
    */
   campaignId: string;
+
+  /**
+   * @generated from field: string user_id = 3;
+   */
+  userId: string;
 };
 
 /**
@@ -452,6 +462,94 @@ export const RemoveSeriesExceptionResponseSchema: GenMessage<RemoveSeriesExcepti
   messageDesc(file_planner_v1_session_series, 15);
 
 /**
+ * @generated from message planner.v1.AddToGoogleCalendarRequest
+ */
+export type AddToGoogleCalendarRequest = Message<"planner.v1.AddToGoogleCalendarRequest"> & {
+  /**
+   * @generated from field: string series_id = 1;
+   */
+  seriesId: string;
+
+  /**
+   * @generated from field: string campaign_id = 2;
+   */
+  campaignId: string;
+
+  /**
+   * @generated from field: string user_id = 3;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message planner.v1.AddToGoogleCalendarRequest.
+ * Use `create(AddToGoogleCalendarRequestSchema)` to create a new message.
+ */
+export const AddToGoogleCalendarRequestSchema: GenMessage<AddToGoogleCalendarRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 16);
+
+/**
+ * @generated from message planner.v1.AddToGoogleCalendarResponse
+ */
+export type AddToGoogleCalendarResponse = Message<"planner.v1.AddToGoogleCalendarResponse"> & {
+  /**
+   * @generated from field: planner.v1.SessionSeries series = 1;
+   */
+  series?: SessionSeries | undefined;
+};
+
+/**
+ * Describes the message planner.v1.AddToGoogleCalendarResponse.
+ * Use `create(AddToGoogleCalendarResponseSchema)` to create a new message.
+ */
+export const AddToGoogleCalendarResponseSchema: GenMessage<AddToGoogleCalendarResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 17);
+
+/**
+ * @generated from message planner.v1.RemoveFromGoogleCalendarRequest
+ */
+export type RemoveFromGoogleCalendarRequest = Message<"planner.v1.RemoveFromGoogleCalendarRequest"> & {
+  /**
+   * @generated from field: string series_id = 1;
+   */
+  seriesId: string;
+
+  /**
+   * @generated from field: string campaign_id = 2;
+   */
+  campaignId: string;
+
+  /**
+   * @generated from field: string user_id = 3;
+   */
+  userId: string;
+};
+
+/**
+ * Describes the message planner.v1.RemoveFromGoogleCalendarRequest.
+ * Use `create(RemoveFromGoogleCalendarRequestSchema)` to create a new message.
+ */
+export const RemoveFromGoogleCalendarRequestSchema: GenMessage<RemoveFromGoogleCalendarRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 18);
+
+/**
+ * @generated from message planner.v1.RemoveFromGoogleCalendarResponse
+ */
+export type RemoveFromGoogleCalendarResponse = Message<"planner.v1.RemoveFromGoogleCalendarResponse"> & {
+  /**
+   * @generated from field: planner.v1.SessionSeries series = 1;
+   */
+  series?: SessionSeries | undefined;
+};
+
+/**
+ * Describes the message planner.v1.RemoveFromGoogleCalendarResponse.
+ * Use `create(RemoveFromGoogleCalendarResponseSchema)` to create a new message.
+ */
+export const RemoveFromGoogleCalendarResponseSchema: GenMessage<RemoveFromGoogleCalendarResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_session_series, 19);
+
+/**
  * @generated from message planner.v1.AnnounceToDiscordRequest
  */
 export type AnnounceToDiscordRequest = Message<"planner.v1.AnnounceToDiscordRequest"> & {
@@ -471,7 +569,7 @@ export type AnnounceToDiscordRequest = Message<"planner.v1.AnnounceToDiscordRequ
  * Use `create(AnnounceToDiscordRequestSchema)` to create a new message.
  */
 export const AnnounceToDiscordRequestSchema: GenMessage<AnnounceToDiscordRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 16);
+  messageDesc(file_planner_v1_session_series, 20);
 
 /**
  * @generated from message planner.v1.AnnounceToDiscordResponse
@@ -488,7 +586,7 @@ export type AnnounceToDiscordResponse = Message<"planner.v1.AnnounceToDiscordRes
  * Use `create(AnnounceToDiscordResponseSchema)` to create a new message.
  */
 export const AnnounceToDiscordResponseSchema: GenMessage<AnnounceToDiscordResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 17);
+  messageDesc(file_planner_v1_session_series, 21);
 
 /**
  * @generated from message planner.v1.GetDiscordEventRequest
@@ -515,7 +613,7 @@ export type GetDiscordEventRequest = Message<"planner.v1.GetDiscordEventRequest"
  * Use `create(GetDiscordEventRequestSchema)` to create a new message.
  */
 export const GetDiscordEventRequestSchema: GenMessage<GetDiscordEventRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 18);
+  messageDesc(file_planner_v1_session_series, 22);
 
 /**
  * @generated from message planner.v1.DiscordEventInfo
@@ -557,7 +655,7 @@ export type DiscordEventInfo = Message<"planner.v1.DiscordEventInfo"> & {
  * Use `create(DiscordEventInfoSchema)` to create a new message.
  */
 export const DiscordEventInfoSchema: GenMessage<DiscordEventInfo> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 19);
+  messageDesc(file_planner_v1_session_series, 23);
 
 /**
  * @generated from message planner.v1.GetDiscordEventResponse
@@ -574,7 +672,7 @@ export type GetDiscordEventResponse = Message<"planner.v1.GetDiscordEventRespons
  * Use `create(GetDiscordEventResponseSchema)` to create a new message.
  */
 export const GetDiscordEventResponseSchema: GenMessage<GetDiscordEventResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 20);
+  messageDesc(file_planner_v1_session_series, 24);
 
 /**
  * @generated from message planner.v1.GetSeriesPollRequest
@@ -596,7 +694,7 @@ export type GetSeriesPollRequest = Message<"planner.v1.GetSeriesPollRequest"> & 
  * Use `create(GetSeriesPollRequestSchema)` to create a new message.
  */
 export const GetSeriesPollRequestSchema: GenMessage<GetSeriesPollRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 21);
+  messageDesc(file_planner_v1_session_series, 25);
 
 /**
  * @generated from message planner.v1.GetSeriesPollResponse
@@ -613,7 +711,7 @@ export type GetSeriesPollResponse = Message<"planner.v1.GetSeriesPollResponse"> 
  * Use `create(GetSeriesPollResponseSchema)` to create a new message.
  */
 export const GetSeriesPollResponseSchema: GenMessage<GetSeriesPollResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 22);
+  messageDesc(file_planner_v1_session_series, 26);
 
 /**
  * @generated from message planner.v1.PollSeriesRequest
@@ -640,7 +738,7 @@ export type PollSeriesRequest = Message<"planner.v1.PollSeriesRequest"> & {
  * Use `create(PollSeriesRequestSchema)` to create a new message.
  */
 export const PollSeriesRequestSchema: GenMessage<PollSeriesRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 23);
+  messageDesc(file_planner_v1_session_series, 27);
 
 /**
  * @generated from message planner.v1.PollSeriesResponse
@@ -653,7 +751,7 @@ export type PollSeriesResponse = Message<"planner.v1.PollSeriesResponse"> & {
  * Use `create(PollSeriesResponseSchema)` to create a new message.
  */
 export const PollSeriesResponseSchema: GenMessage<PollSeriesResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_session_series, 24);
+  messageDesc(file_planner_v1_session_series, 28);
 
 /**
  * @generated from service planner.v1.SessionSeriesService
@@ -714,6 +812,22 @@ export const SessionSeriesService: GenService<{
     methodKind: "unary";
     input: typeof RemoveSeriesExceptionRequestSchema;
     output: typeof RemoveSeriesExceptionResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.SessionSeriesService.AddToGoogleCalendar
+   */
+  addToGoogleCalendar: {
+    methodKind: "unary";
+    input: typeof AddToGoogleCalendarRequestSchema;
+    output: typeof AddToGoogleCalendarResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.SessionSeriesService.RemoveFromGoogleCalendar
+   */
+  removeFromGoogleCalendar: {
+    methodKind: "unary";
+    input: typeof RemoveFromGoogleCalendarRequestSchema;
+    output: typeof RemoveFromGoogleCalendarResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.SessionSeriesService.AnnounceToDiscord
