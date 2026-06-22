@@ -42,6 +42,28 @@ export function useSessionsData() {
 		},
 	});
 
+	const createSessionForSeriesMutation = useMutation({
+		mutationFn: (input: {
+			seriesId: string;
+			startsAt: Date;
+			title: string;
+			durationMinutes: number;
+		}) => {
+			if (!campaign) throw new Error("campaign required");
+			return client.session.createSession({
+				campaignId: campaign.campaign.id,
+				...input,
+			});
+		},
+		onError: () => toast.error("Failed to create session"),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: queryKeys.sessionSeries.list(campaignId),
+			});
+			toast.success("Session created");
+		},
+	});
+
 	const createSeriesMutation = useMutation({
 		mutationFn: (input: CreateSeriesInput) => {
 			if (!campaign) throw new Error("campaign required");
@@ -172,6 +194,7 @@ export function useSessionsData() {
 	});
 
 	return {
+		createSessionForSeries: createSessionForSeriesMutation.mutate,
 		addToGoogleCalendar: addToGoogleCalendarMutation.mutate,
 		removeFromGoogleCalendar: removeFromGoogleCalendarMutation.mutate,
 		announceToDiscord: announceToDiscordMutation.mutate,

@@ -146,32 +146,6 @@ func (db *DB) AddSeriesException(seriesID, campaignID string, excludedDate time.
 	return nil
 }
 
-// ListActiveSeriesNeedingSession returns series that are still active but have no
-// Discord event assigned — the cron uses this to create events for unscheduled series.
-func (db *DB) ListActiveSeriesNeedingSession() ([]*model.SessionSeries, error) {
-	rows, err := db.conn.Query(`
-		SELECT ` + sessionSeriesColumns + ` FROM session_series
-		WHERE (series_end_date IS NULL OR series_end_date > NOW())
-		AND discord_event_id IS NULL`)
-	if err != nil {
-		return nil, fmt.Errorf("list active series needing session: %w", err)
-	}
-	defer func() {
-		if err := rows.Close(); err != nil {
-			slog.Error("failed to close rows", "error", err)
-		}
-	}()
-
-	var series []*model.SessionSeries
-	for rows.Next() {
-		s, err := scanSessionSeries(rows)
-		if err != nil {
-			return nil, fmt.Errorf("scan session series: %w", err)
-		}
-		series = append(series, s)
-	}
-	return series, rows.Err()
-}
 
 func (db *DB) ListExceptionsForSeries(seriesIDs []string) (map[string][]time.Time, error) {
 	result := make(map[string][]time.Time)

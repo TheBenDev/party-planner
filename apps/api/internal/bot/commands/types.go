@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"sync"
+
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/db"
 	"github.com/BBruington/party-planner/api/internal/service"
@@ -15,6 +17,22 @@ type BotDeps struct {
 	NpcSvc         *service.NpcService
 	IntegrationSvc *service.CampaignIntegrationService
 	DB             *db.DB
+	mu             sync.RWMutex
+	botUserID      string
+}
+
+// SetBotUserID stores the bot's user ID. Called once from the Ready handler.
+func (d *BotDeps) SetBotUserID(id string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.botUserID = id
+}
+
+// GetBotUserID returns the bot's user ID.
+func (d *BotDeps) GetBotUserID() string {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.botUserID
 }
 
 type Option struct {

@@ -39,6 +39,7 @@ export function SessionsPage() {
 		oneOffSessionsQuery,
 		seriesQuery,
 		deleteSession,
+		createSessionForSeries,
 		createSeries,
 		updateSeries,
 		removeSeries,
@@ -148,6 +149,14 @@ export function SessionsPage() {
 							onAddToGoogleCalendar={addToGoogleCalendar}
 							onRemoveFromGoogleCalendar={removeFromGoogleCalendar}
 							onAnnounceToDiscord={() => announceToDiscord(s.series.id)}
+							onCreateSession={(date) =>
+								createSessionForSeries({
+									seriesId: s.series.id,
+									startsAt: date,
+									title: s.series.title,
+									durationMinutes: s.series.durationMinutes,
+								})
+							}
 							onCancelOccurrence={(session) => {
 								if (session.startsAt) {
 									excludeFromSeries({

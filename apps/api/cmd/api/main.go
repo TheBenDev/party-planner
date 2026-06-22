@@ -178,7 +178,7 @@ func buildServices(database *db.DB, discord *service.DiscordService, cfg *config
 		Quest:               &service.QuestService{DB: database, Log: logger.Logger},
 		Location:            &service.LocationService{DB: database, Log: logger.Logger},
 		User:                &service.UserService{DB: database, Log: logger.Logger},
-		Scheduler:           &service.SeriesScheduler{DB: database, Session: sessionSvc, Series: sessionSeriesSvc, Log: logger.Logger},
+		Scheduler:           &service.SeriesScheduler{Series: sessionSeriesSvc, Log: logger.Logger},
 	}, nil
 }
 
@@ -238,12 +238,6 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 func startCronJobs(svcs *appServices) *cron.Cron {
 	c := cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 
-	if _, err := c.AddFunc("@hourly", func() {
-		svcs.Scheduler.CheckAndScheduleSessions(context.Background())
-	}); err != nil {
-		logger.Error("failed to register series scheduler cron job", "error", err)
-		os.Exit(1)
-	}
 	if _, err := c.AddFunc("@daily", func() {
 		svcs.Scheduler.NotifyNextSession(context.Background())
 	}); err != nil {

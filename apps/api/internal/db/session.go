@@ -32,6 +32,19 @@ func (db *DB) CreateSession(session *model.CreateSessionRequest) (*model.Session
 	return scanSession(row)
 }
 
+func (db *DB) UpsertSessionForSeries(session *model.CreateSessionRequest) (*model.Session, error) {
+	row := db.conn.QueryRow(`
+		INSERT INTO session (campaign_id, title, description, scheduled_at, series_id, duration_minutes)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		ON CONFLICT (series_id, scheduled_at) WHERE series_id IS NOT NULL AND scheduled_at IS NOT NULL
+		DO UPDATE SET title = EXCLUDED.title, updated_at = NOW()
+		RETURNING `+sessionColumns,
+		session.CampaignID, session.Title, session.Description, session.ScheduledAt,
+		session.SeriesID, session.DurationMinutes,
+	)
+	return scanSession(row)
+}
+
 func (db *DB) GetSession(id, campaignId string) (*model.Session, error) {
 	row := db.conn.QueryRow(`SELECT `+sessionColumns+` FROM session WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignId)
 	return scanSession(row)

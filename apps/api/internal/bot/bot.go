@@ -1,10 +1,12 @@
 package bot
 
 import (
+	"database/sql"
 	"log/slog"
 	"time"
 
 	"github.com/BBruington/party-planner/api/internal/bot/commands"
+	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -42,15 +44,20 @@ func Start(token string, deps *commands.BotDeps) (*discordgo.Session, error) {
 		return nil, err
 	}
 
-	dg.Identify.Intents = discordgo.IntentsGuilds
+	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildScheduledEvents
 
 	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		slog.Info("Bot logged in", "bot", r.User.Username, "startedAt", time.Now())
+		deps.SetBotUserID(r.User.ID)
 		registerCommands(s, r.User.ID)
 	})
 
 	dg.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		handleInteraction(s, i, deps)
+	})
+
+	dg.AddHandler(func(s *discordgo.Session, e *discordgo.GuildScheduledEventUpdate) {
+		handleScheduledEventActive(e, deps)
 	})
 
 	if err := dg.Open(); err != nil {
@@ -178,4 +185,38 @@ func handleApplicationCommand(s *discordgo.Session, i *discordgo.InteractionCrea
 	}
 
 	slog.Error("No command handler found", "command", cmdName)
+}
+
+func handleScheduledEventActive(e *discordgo.GuildScheduledEventUpdate, deps *commands.BotDeps) {
+	if e.GuildScheduledEvent == nil {
+		return
+	}
+	if e.Status != discordgo.GuildScheduledEventStatusActive {
+		return
+	}
+	if botID := deps.GetBotUserID(); botID == "" || e.CreatorID != botID {
+		return
+	}
+
+	series, err := deps.DB.GetSessionSeriesByDiscordEventID(e.ID)
+	if err != nil {
+		slog.Warn("No series found for Discord event, skipping session creation", "operation", "beny-bot.event-active", "eventID", e.ID)
+		return
+	}
+
+	scheduledAt := e.ScheduledStartTime.UTC()
+
+	_, err = deps.DB.UpsertSessionForSeries(&model.CreateSessionRequest{
+		CampaignID:      series.CampaignID,
+		Title:           e.Name,
+		SeriesID:        sql.NullString{String: series.ID, Valid: true},
+		ScheduledAt:     scheduledAt,
+		DurationMinutes: series.DurationMinutes,
+	})
+	if err != nil {
+		slog.Error("Failed to upsert session from Discord event", "operation", "beny-bot.event-active", "eventID", e.ID, "error", err)
+		return
+	}
+
+	slog.Info("Session upserted from Discord event", "operation", "beny-bot.event-active", "eventID", e.ID, "seriesID", series.ID)
 }
