@@ -20,29 +20,37 @@ import (
 	"github.com/BBruington/party-planner/api/internal/bot/commands"
 	"github.com/BBruington/party-planner/api/internal/config"
 	"github.com/BBruington/party-planner/api/internal/db"
+	campaignDomain "github.com/BBruington/party-planner/api/internal/domain/campaign"
+	campaignIntegrationDomain "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
+	discordDomain "github.com/BBruington/party-planner/api/internal/adapter/discord"
+	googleDomain "github.com/BBruington/party-planner/api/internal/adapter/google_calendar"
+	locationDomain "github.com/BBruington/party-planner/api/internal/domain/location"
+	memberDomain "github.com/BBruington/party-planner/api/internal/domain/member"
+	npcDomain "github.com/BBruington/party-planner/api/internal/domain/npc"
+	questDomain "github.com/BBruington/party-planner/api/internal/domain/quest"
+	sessionDomain "github.com/BBruington/party-planner/api/internal/domain/session"
+	seriesDomain "github.com/BBruington/party-planner/api/internal/domain/session_series"
+	userDomain "github.com/BBruington/party-planner/api/internal/domain/user"
+	userIntegrationDomain "github.com/BBruington/party-planner/api/internal/domain/user_integration"
 	"github.com/BBruington/party-planner/api/internal/logger"
 	"github.com/BBruington/party-planner/api/internal/middleware"
-	"github.com/BBruington/party-planner/api/internal/rpc"
 	"github.com/BBruington/party-planner/api/internal/server"
-	"github.com/BBruington/party-planner/api/internal/service"
 	"github.com/BBruington/party-planner/api/internal/webhook"
 	discordgo "github.com/bwmarrin/discordgo"
 	cron "github.com/robfig/cron/v3"
 )
 
 type appServices struct {
-	Discord             *service.DiscordService
-	Session             *service.SessionService
-	SessionSeries       *service.SessionSeriesService
-	Campaign            *service.CampaignService
-	CampaignIntegration *service.CampaignIntegrationService
-	GoogleCalendar      *service.GoogleCalendarService
-	Member              *service.MemberService
-	Npc                 *service.NpcService
-	Quest               *service.QuestService
-	Location            *service.LocationService
-	User                *service.UserService
-	Scheduler           *service.SeriesScheduler
+	Session             *sessionDomain.Service
+	SessionSeries       *seriesDomain.Service
+	Campaign            *campaignDomain.Service
+	CampaignIntegration *campaignIntegrationDomain.Service
+	Member              *memberDomain.Service
+	Npc                 *npcDomain.Service
+	Quest               *questDomain.Service
+	Location            *locationDomain.Service
+	User                *userDomain.Service
+	UserIntegration     *userIntegrationDomain.Service
 }
 
 func main() {
@@ -83,7 +91,7 @@ func main() {
 	go server.Start(srv)
 
 	webhook.SetClerkKey(cfg.ClerkSecretKey)
-	clerkHandler := &webhook.ClerkWebhookHandler{User: svcs.User, Secret: cfg.ClerkWebhookSecret}
+	clerkHandler := &webhook.ClerkWebhookHandler{User: &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger}, Secret: cfg.ClerkWebhookSecret}
 	webhookMux := http.NewServeMux()
 	webhookMux.Handle("POST /webhooks/clerk", clerkHandler)
 	webhookMux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
@@ -120,12 +128,12 @@ func main() {
 	}
 }
 
-func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *service.DiscordService) {
+func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *discordDomain.Service) {
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
 	botDeps := &commands.BotDeps{
 		Client:         apiClient,
-		NpcSvc:         &service.NpcService{DB: database, Log: logger.Logger},
-		IntegrationSvc: &service.CampaignIntegrationService{DB: database, Log: logger.Logger},
+		NpcSvc:         &npcDomain.Service{DB: npcDomain.NewDB(database.Raw()), Log: logger.Logger},
+		IntegrationSvc: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger},
 		DB:             database,
 	}
 	session, err := bot.Start(cfg.DiscordToken, botDeps)
@@ -134,11 +142,10 @@ func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *ser
 		os.Exit(1)
 	}
 
-	discordSvc := &service.DiscordService{
+	discordSvc := &discordDomain.Service{
 		Session: session,
 		Log:     logger.Logger,
-		DB:      database,
-		Config: service.DiscordConfig{
+		Config: discordDomain.Config{
 			ClientID:     cfg.DiscordClientID,
 			ClientSecret: cfg.DiscordClientSecret,
 			RedirectURI:  cfg.DiscordRedirectURI,
@@ -147,83 +154,83 @@ func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *ser
 	return session, discordSvc
 }
 
-func buildServices(database *db.DB, discord *service.DiscordService, cfg *config.Config) (*appServices, error) {
+func buildServices(database *db.DB, discord *discordDomain.Service, cfg *config.Config) (*appServices, error) {
 	integrationKey, err := base64.StdEncoding.DecodeString(cfg.IntegrationEncryptionKey)
 	if err != nil || len(integrationKey) != 32 {
 		slog.Error("INTEGRATION_ENCRYPTION_KEY is missing or invalid — Google Calendar token encryption will fail at runtime")
 		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
 
 	}
-	googleSvc := &service.GoogleCalendarService{
-		DB:            database,
-		EncryptionKey: integrationKey,
-		Log:           logger.Logger,
-		Config: service.GoogleCalendarConfig{
+	googleSvc := googleDomain.Service{
+		Log: logger.Logger,
+		Config: googleDomain.Config{
 			ClientID:     cfg.GoogleClientID,
 			ClientSecret: cfg.GoogleClientSecret,
 			RedirectURI:  cfg.WebURL + "/settings/google-calendar/callback",
 		},
 	}
-	sessionSvc := &service.SessionService{DB: database}
-	sessionSeriesSvc := &service.SessionSeriesService{DB: database, Log: logger.Logger, Discord: discord, Google: googleSvc}
+	userIntegrationSvc := &userIntegrationDomain.Service{
+		DB:            userIntegrationDomain.NewDB(database.Raw()),
+		Google:        &googleSvc,
+		EncryptionKey: integrationKey,
+		Log:           logger.Logger,
+	}
+	sessionSvc := &sessionDomain.Service{DB: sessionDomain.NewDB(database.Raw()), Log: logger.Logger}
+	sessionSeriesSvc := &seriesDomain.Service{DB: seriesDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: *discord, UserIntegration: userIntegrationSvc}
 	return &appServices{
-		Discord:             discord,
 		Session:             sessionSvc,
 		SessionSeries:       sessionSeriesSvc,
-		Campaign:            &service.CampaignService{DB: database, Log: logger.Logger},
-		CampaignIntegration: &service.CampaignIntegrationService{DB: database, Log: logger.Logger, Discord: discord},
-		GoogleCalendar:      googleSvc,
-		Member:              &service.MemberService{DB: database, Log: logger.Logger},
-		Npc:                 &service.NpcService{DB: database, Log: logger.Logger},
-		Quest:               &service.QuestService{DB: database, Log: logger.Logger},
-		Location:            &service.LocationService{DB: database, Log: logger.Logger},
-		User:                &service.UserService{DB: database, Log: logger.Logger},
-		Scheduler:           &service.SeriesScheduler{Series: sessionSeriesSvc, Log: logger.Logger},
+		Campaign:            &campaignDomain.Service{DB: campaignDomain.NewDB(database.Raw()), Log: logger.Logger},
+		CampaignIntegration: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: *discord},
+		Member:              &memberDomain.Service{DB: memberDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Npc:                 &npcDomain.Service{DB: npcDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Location:            &locationDomain.Service{DB: locationDomain.NewDB(database.Raw()), Log: logger.Logger},
+		User:                &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger},
+		UserIntegration:     userIntegrationSvc,
 	}, nil
 }
 
 func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connect.Option) {
-	healthPath, healthHandler := plannerv1connect.NewHealthServiceHandler(&rpc.HealthServer{}, interceptors)
-	mux.Handle(healthPath, healthHandler)
 
 	sessionPath, sessionHandler := plannerv1connect.NewSessionServiceHandler(
-		&rpc.SessionServer{Session: svcs.Session, Log: logger.Logger}, interceptors)
+		&sessionDomain.Server{Session: svcs.Session, Log: logger.Logger}, interceptors)
 	mux.Handle(sessionPath, sessionHandler)
 
 	sessionSeriesPath, sessionSeriesHandler := plannerv1connect.NewSessionSeriesServiceHandler(
-		&rpc.SessionSeriesServer{SessionSeries: svcs.SessionSeries, Log: logger.Logger}, interceptors)
+		&seriesDomain.Server{SessionSeries: svcs.SessionSeries, Log: logger.Logger}, interceptors)
 	mux.Handle(sessionSeriesPath, sessionSeriesHandler)
 
 	campaignPath, campaignHandler := plannerv1connect.NewCampaignServiceHandler(
-		&rpc.CampaignServer{Campaign: svcs.Campaign, Log: logger.Logger}, interceptors)
+		&campaignDomain.Server{Campaign: svcs.Campaign, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignPath, campaignHandler)
 
 	campaignIntegrationPath, campaignIntegrationHandler := plannerv1connect.NewCampaignIntegrationServiceHandler(
-		&rpc.CampaignIntegrationServer{CampaignIntegration: svcs.CampaignIntegration, Log: logger.Logger}, interceptors)
+		&campaignIntegrationDomain.Server{CampaignIntegration: svcs.CampaignIntegration, Log: logger.Logger}, interceptors)
 	mux.Handle(campaignIntegrationPath, campaignIntegrationHandler)
 
 	userIntegrationPath, userIntegrationHandler := plannerv1connect.NewUserIntegrationServiceHandler(
-		&rpc.UserIntegrationServer{GoogleCalendar: svcs.GoogleCalendar, Log: logger.Logger}, interceptors)
+		&userIntegrationDomain.Server{Service: svcs.UserIntegration, Log: logger.Logger}, interceptors)
 	mux.Handle(userIntegrationPath, userIntegrationHandler)
 
 	memberPath, memberHandler := plannerv1connect.NewMemberServiceHandler(
-		&rpc.MemberServer{Member: svcs.Member, Log: logger.Logger}, interceptors)
+		&memberDomain.Server{Member: svcs.Member, Log: logger.Logger}, interceptors)
 	mux.Handle(memberPath, memberHandler)
 
 	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(
-		&rpc.NpcServer{Npc: svcs.Npc, Log: logger.Logger}, interceptors)
+		&npcDomain.Server{Npc: svcs.Npc, Log: logger.Logger}, interceptors)
 	mux.Handle(npcPath, npcHandler)
 
 	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(
-		&rpc.QuestServer{Quest: svcs.Quest, Log: logger.Logger}, interceptors)
+		&questDomain.Server{Quest: svcs.Quest, Log: logger.Logger}, interceptors)
 	mux.Handle(questPath, questHandler)
 
 	locationPath, locationHandler := plannerv1connect.NewLocationServiceHandler(
-		&rpc.LocationServer{Location: svcs.Location, Log: logger.Logger}, interceptors)
+		&locationDomain.Server{Location: svcs.Location, Log: logger.Logger}, interceptors)
 	mux.Handle(locationPath, locationHandler)
 
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(
-		&rpc.UserServer{User: svcs.User, Log: logger.Logger}, interceptors)
+		&userDomain.Server{User: svcs.User, Log: logger.Logger}, interceptors)
 	mux.Handle(userPath, userHandler)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
@@ -239,7 +246,7 @@ func startCronJobs(svcs *appServices) *cron.Cron {
 	c := cron.New(cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger)))
 
 	if _, err := c.AddFunc("@daily", func() {
-		svcs.Scheduler.NotifyNextSession(context.Background())
+		svcs.SessionSeries.NotifyUpcomingOccurrences(context.Background())
 	}); err != nil {
 		logger.Error("failed to register notify next session cron job", "error", err)
 		os.Exit(1)

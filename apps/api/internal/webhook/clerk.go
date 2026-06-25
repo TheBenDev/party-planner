@@ -3,6 +3,7 @@ package webhook
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"io"
 	"log/slog"
 	"net/http"
@@ -10,12 +11,12 @@ import (
 	"github.com/clerk/clerk-sdk-go/v2"
 	svix "github.com/svix/svix-webhooks/go"
 
+	domain_user "github.com/BBruington/party-planner/api/internal/domain/user"
 	model "github.com/BBruington/party-planner/api/internal/models"
-	"github.com/BBruington/party-planner/api/internal/service"
 )
 
 type ClerkWebhookHandler struct {
-	User   *service.UserService
+	User   *domain_user.Service
 	Secret string
 }
 
@@ -101,7 +102,7 @@ func (h *ClerkWebhookHandler) handleUserCreated(w http.ResponseWriter, r *http.R
 		LastName:   nullStringPtr(u.LastName),
 	}
 	if _, err := h.User.Create(req); err != nil {
-		if service.IsUniqueViolation(err) {
+		if errors.Is(err, domain_user.ErrAlreadyExists) || errors.Is(err, domain_user.ErrExternalIDTaken) || errors.Is(err, domain_user.ErrEmailTaken) {
 			w.WriteHeader(http.StatusNoContent)
 			return
 		}

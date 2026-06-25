@@ -157,9 +157,9 @@ export function useSessionsData() {
 		},
 	});
 
-	const announceToDiscordMutation = useMutation({
+	const createDiscordEventMutation = useMutation({
 		mutationFn: (seriesId: string) =>
-			client.sessionSeries.announceToDiscord({ seriesId }),
+			client.sessionSeries.createDiscordEvent({ seriesId }),
 		onError: () => toast.error("Failed to announce to Discord"),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
@@ -194,18 +194,18 @@ export function useSessionsData() {
 	});
 
 	return {
-		createSessionForSeries: createSessionForSeriesMutation.mutate,
 		addToGoogleCalendar: addToGoogleCalendarMutation.mutate,
-		removeFromGoogleCalendar: removeFromGoogleCalendarMutation.mutate,
-		announceToDiscord: announceToDiscordMutation.mutate,
+		createDiscordEvent: createDiscordEventMutation.mutate,
 		createSeries: createSeriesMutation.mutate,
+		createSessionForSeries: createSessionForSeriesMutation.mutate,
 		deleteSession: deleteSessionMutation.mutate,
 		endSeries: endSeriesMutation.mutate,
 		excludeFromSeries: excludeFromSeriesMutation.mutate,
-		isAnnouncingToDiscord: announceToDiscordMutation.isPending,
+		isCreatingDiscordEvent: createDiscordEventMutation.isPending,
 		isCreatingSeries: createSeriesMutation.isPending,
 		isUpdatingSeries: updateSeriesMutation.isPending,
 		oneOffSessionsQuery,
+		removeFromGoogleCalendar: removeFromGoogleCalendarMutation.mutate,
 		removeSeries: removeSeriesMutation.mutate,
 		removeSeriesException: removeSeriesExceptionMutation.mutate,
 		seriesQuery,

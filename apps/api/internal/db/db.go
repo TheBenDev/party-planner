@@ -39,6 +39,8 @@ func (db *DB) Close() error {
 	return db.raw.Close()
 }
 
+func (db *DB) Raw() *sql.DB { return db.raw }
+
 func (db *DB) QueryRow(query string, args ...any) *sql.Row {
 	return db.conn.QueryRow(query, args...)
 }

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { AddToGoogleCalendarRequest, AddToGoogleCalendarResponse, AnnounceToDiscordRequest, AnnounceToDiscordResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetDiscordEventRequest, GetDiscordEventResponse, GetSeriesPollRequest, GetSeriesPollResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, PollSeriesRequest, PollSeriesResponse, RemoveFromGoogleCalendarRequest, RemoveFromGoogleCalendarResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
+import { AddToGoogleCalendarRequest, AddToGoogleCalendarResponse, CreateDiscordEventRequest, CreateDiscordEventResponse, CreateSessionSeriesRequest, CreateSessionSeriesResponse, ExcludeSessionFromSeriesRequest, ExcludeSessionFromSeriesResponse, GetDiscordEventRequest, GetDiscordEventResponse, GetSeriesPollRequest, GetSeriesPollResponse, GetSessionSeriesRequest, GetSessionSeriesResponse, ListSessionSeriesByCampaignRequest, ListSessionSeriesByCampaignResponse, PollSeriesRequest, PollSeriesResponse, RemoveFromGoogleCalendarRequest, RemoveFromGoogleCalendarResponse, RemoveSeriesExceptionRequest, RemoveSeriesExceptionResponse, RemoveSessionSeriesRequest, RemoveSessionSeriesResponse, UpdateSessionSeriesRequest, UpdateSessionSeriesResponse } from "./session_series_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -94,12 +94,12 @@ export const SessionSeriesService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc planner.v1.SessionSeriesService.AnnounceToDiscord
+     * @generated from rpc planner.v1.SessionSeriesService.CreateDiscordEvent
      */
-    announceToDiscord: {
-      name: "AnnounceToDiscord",
-      I: AnnounceToDiscordRequest,
-      O: AnnounceToDiscordResponse,
+    createDiscordEvent: {
+      name: "CreateDiscordEvent",
+      I: CreateDiscordEventRequest,
+      O: CreateDiscordEventResponse,
       kind: MethodKind.Unary,
     },
     /**

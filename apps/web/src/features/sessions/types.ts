@@ -66,8 +66,13 @@ export const SessionSeriesSchema = BaseEntitySchema.extend({
 	campaignId: z.uuid(),
 	description: z.string().optional(),
 	discordEventId: z.string().optional(),
+	durationMinutes: z
+		.number()
+		.int()
+		.min(15, "Must be more than 15 minutes.")
+		.max(480, "Must be less than 8 hours.")
+		.default(180),
 	googleCalendarEventId: z.string().optional(),
-	durationMinutes: z.number().int().min(15).default(180),
 	rrule: z.string().nullable(),
 	seriesEndDate: z.coerce.date().optional(),
 	seriesStartDate: z.coerce.date(),
@@ -151,10 +156,10 @@ export const RemoveFromGoogleCalendarResponseSchema = z.object({
 	series: SessionSeriesSchema,
 });
 
-export const AnnounceToDiscordRequestSchema = z.object({
+export const CreateDiscordEventRequestSchema = z.object({
 	seriesId: z.uuid(),
 });
-export const AnnounceToDiscordResponseSchema = z.object({
+export const CreateDiscordEventResponseSchema = z.object({
 	series: SessionSeriesSchema,
 });
 

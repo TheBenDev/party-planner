@@ -70,7 +70,7 @@ export function SeriesGroup({
 	series,
 	sessions,
 	exceptions,
-	isAnnouncingToDiscord,
+	isCreatingDiscordEvent,
 	isDm,
 	onAddToGoogleCalendar,
 	onRemoveFromGoogleCalendar,
@@ -82,7 +82,7 @@ export function SeriesGroup({
 	onEndSeries,
 	onRemoveSeries,
 	onRemoveException,
-	onAnnounceToDiscord,
+	onCreateDiscordEvent,
 	onCreateSession,
 	onRecapSession,
 }: {
@@ -90,7 +90,7 @@ export function SeriesGroup({
 	sessions: Session[];
 	exceptions: Date[];
 	isDm: boolean;
-	isAnnouncingToDiscord: boolean;
+	isCreatingDiscordEvent: boolean;
 	onAddToGoogleCalendar: (seriesId: string) => void;
 	onRemoveFromGoogleCalendar: (seriesId: string) => void;
 	onViewSession: (id: string) => void;
@@ -101,7 +101,7 @@ export function SeriesGroup({
 	onEndSeries: () => void;
 	onRemoveSeries: () => void;
 	onRemoveException: (date: Date) => void;
-	onAnnounceToDiscord: () => void;
+	onCreateDiscordEvent: () => void;
 	onCreateSession: (date: Date) => void;
 	onRecapSession: (id: string) => void;
 }) {
@@ -135,8 +135,8 @@ export function SeriesGroup({
 	const announceButton = (
 		<Button
 			className="h-8 text-sm"
-			disabled={isAnnouncingToDiscord}
-			onClick={onAnnounceToDiscord}
+			disabled={isCreatingDiscordEvent}
+			onClick={onCreateDiscordEvent}
 			size="sm"
 			variant="outline"
 		>

@@ -4,8 +4,9 @@ import (
 	"sync"
 
 	"github.com/BBruington/party-planner/api/internal/api"
+	domain_ci "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
+	domain_npc "github.com/BBruington/party-planner/api/internal/domain/npc"
 	"github.com/BBruington/party-planner/api/internal/db"
-	"github.com/BBruington/party-planner/api/internal/service"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -14,8 +15,8 @@ import (
 // Commands that must go through the web app (user_availabilities, user_integrations) use Client.
 type BotDeps struct {
 	Client         *api.Client
-	NpcSvc         *service.NpcService
-	IntegrationSvc *service.CampaignIntegrationService
+	NpcSvc         *domain_npc.Service
+	IntegrationSvc *domain_ci.Service
 	DB             *db.DB
 	mu             sync.RWMutex
 	botUserID      string

@@ -47,9 +47,9 @@ export function SessionsPage() {
 		addToGoogleCalendar,
 		removeFromGoogleCalendar,
 		endSeries,
-		announceToDiscord,
+		createDiscordEvent,
 		excludeFromSeries,
-		isAnnouncingToDiscord,
+		isCreatingDiscordEvent,
 		isCreatingSeries,
 		isUpdatingSeries,
 	} = useSessionsData();
@@ -143,12 +143,12 @@ export function SessionsPage() {
 					filteredSeries.map((s) => (
 						<SeriesGroup
 							exceptions={s.exceptions}
-							isAnnouncingToDiscord={isAnnouncingToDiscord}
+							isCreatingDiscordEvent={isCreatingDiscordEvent}
 							isDm={isDm}
 							key={s.series.id}
 							onAddToGoogleCalendar={addToGoogleCalendar}
 							onRemoveFromGoogleCalendar={removeFromGoogleCalendar}
-							onAnnounceToDiscord={() => announceToDiscord(s.series.id)}
+							onCreateDiscordEvent={() => createDiscordEvent(s.series.id)}
 							onCreateSession={(date) =>
 								createSessionForSeries({
 									seriesId: s.series.id,
