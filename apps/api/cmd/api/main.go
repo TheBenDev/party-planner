@@ -15,6 +15,8 @@ import (
 	"connectrpc.com/connect"
 	"connectrpc.com/validate"
 	"github.com/BBruington/party-planner/api/gen/planner/v1/plannerv1connect"
+	discordDomain "github.com/BBruington/party-planner/api/internal/adapter/discord"
+	googleDomain "github.com/BBruington/party-planner/api/internal/adapter/google_calendar"
 	"github.com/BBruington/party-planner/api/internal/api"
 	"github.com/BBruington/party-planner/api/internal/bot"
 	"github.com/BBruington/party-planner/api/internal/bot/commands"
@@ -22,8 +24,6 @@ import (
 	"github.com/BBruington/party-planner/api/internal/db"
 	campaignDomain "github.com/BBruington/party-planner/api/internal/domain/campaign"
 	campaignIntegrationDomain "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
-	discordDomain "github.com/BBruington/party-planner/api/internal/adapter/discord"
-	googleDomain "github.com/BBruington/party-planner/api/internal/adapter/google_calendar"
 	locationDomain "github.com/BBruington/party-planner/api/internal/domain/location"
 	memberDomain "github.com/BBruington/party-planner/api/internal/domain/member"
 	npcDomain "github.com/BBruington/party-planner/api/internal/domain/npc"
@@ -86,7 +86,7 @@ func main() {
 	mux := http.NewServeMux()
 	registerHandlers(mux, svcs, interceptors)
 
-	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, middleware.WithInternalAPIKey(cfg.InternalAPIKey, logger.Logger, mux))
+	handler := middleware.WithCORS(cfg.CORSAllowedOrigins, mux)
 	srv := server.New(cfg.APIPort, handler)
 	go server.Start(srv)
 
