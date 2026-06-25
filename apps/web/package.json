@@ -71,6 +71,7 @@
     "format": "biome check --linter-enabled=false --write .",
     "lint": "biome lint --write .",
     "preview": "vite preview",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",

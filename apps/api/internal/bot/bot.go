@@ -37,15 +37,8 @@ func init() {
 	}
 }
 
-// Start initialises the Discord session, registers commands, and sets up event handlers.
-func Start(token string, deps *commands.BotDeps) (*discordgo.Session, error) {
-	dg, err := discordgo.New("Bot " + token)
-	if err != nil {
-		return nil, err
-	}
-
-	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildScheduledEvents
-
+// RegisterHandlers attaches all bot event handlers to an existing Discord session.
+func RegisterHandlers(dg *discordgo.Session, deps *commands.BotDeps) {
 	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		slog.Info("Bot logged in", "bot", r.User.Username, "startedAt", time.Now())
 		deps.SetBotUserID(r.User.ID)
@@ -59,6 +52,17 @@ func Start(token string, deps *commands.BotDeps) (*discordgo.Session, error) {
 	dg.AddHandler(func(s *discordgo.Session, e *discordgo.GuildScheduledEventUpdate) {
 		handleScheduledEventActive(e, deps)
 	})
+}
+
+// Start initialises the Discord session, registers commands, and sets up event handlers.
+func Start(token string, deps *commands.BotDeps) (*discordgo.Session, error) {
+	dg, err := discordgo.New("Bot " + token)
+	if err != nil {
+		return nil, err
+	}
+
+	dg.Identify.Intents = discordgo.IntentsGuilds | discordgo.IntentsGuildScheduledEvents
+	RegisterHandlers(dg, deps)
 
 	if err := dg.Open(); err != nil {
 		return nil, err

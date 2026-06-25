@@ -60,9 +60,9 @@ const (
 	// SessionSeriesServiceRemoveFromGoogleCalendarProcedure is the fully-qualified name of the
 	// SessionSeriesService's RemoveFromGoogleCalendar RPC.
 	SessionSeriesServiceRemoveFromGoogleCalendarProcedure = "/planner.v1.SessionSeriesService/RemoveFromGoogleCalendar"
-	// SessionSeriesServiceAnnounceToDiscordProcedure is the fully-qualified name of the
-	// SessionSeriesService's AnnounceToDiscord RPC.
-	SessionSeriesServiceAnnounceToDiscordProcedure = "/planner.v1.SessionSeriesService/AnnounceToDiscord"
+	// SessionSeriesServiceCreateDiscordEventProcedure is the fully-qualified name of the
+	// SessionSeriesService's CreateDiscordEvent RPC.
+	SessionSeriesServiceCreateDiscordEventProcedure = "/planner.v1.SessionSeriesService/CreateDiscordEvent"
 	// SessionSeriesServiceGetDiscordEventProcedure is the fully-qualified name of the
 	// SessionSeriesService's GetDiscordEvent RPC.
 	SessionSeriesServiceGetDiscordEventProcedure = "/planner.v1.SessionSeriesService/GetDiscordEvent"
@@ -85,7 +85,7 @@ type SessionSeriesServiceClient interface {
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
 	AddToGoogleCalendar(context.Context, *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error)
 	RemoveFromGoogleCalendar(context.Context, *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error)
-	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
+	CreateDiscordEvent(context.Context, *connect.Request[v1.CreateDiscordEventRequest]) (*connect.Response[v1.CreateDiscordEventResponse], error)
 	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
 	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
 	PollSeries(context.Context, *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error)
@@ -156,10 +156,10 @@ func NewSessionSeriesServiceClient(httpClient connect.HTTPClient, baseURL string
 			connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveFromGoogleCalendar")),
 			connect.WithClientOptions(opts...),
 		),
-		announceToDiscord: connect.NewClient[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse](
+		createDiscordEvent: connect.NewClient[v1.CreateDiscordEventRequest, v1.CreateDiscordEventResponse](
 			httpClient,
-			baseURL+SessionSeriesServiceAnnounceToDiscordProcedure,
-			connect.WithSchema(sessionSeriesServiceMethods.ByName("AnnounceToDiscord")),
+			baseURL+SessionSeriesServiceCreateDiscordEventProcedure,
+			connect.WithSchema(sessionSeriesServiceMethods.ByName("CreateDiscordEvent")),
 			connect.WithClientOptions(opts...),
 		),
 		getDiscordEvent: connect.NewClient[v1.GetDiscordEventRequest, v1.GetDiscordEventResponse](
@@ -194,7 +194,7 @@ type sessionSeriesServiceClient struct {
 	removeSeriesException       *connect.Client[v1.RemoveSeriesExceptionRequest, v1.RemoveSeriesExceptionResponse]
 	addToGoogleCalendar         *connect.Client[v1.AddToGoogleCalendarRequest, v1.AddToGoogleCalendarResponse]
 	removeFromGoogleCalendar    *connect.Client[v1.RemoveFromGoogleCalendarRequest, v1.RemoveFromGoogleCalendarResponse]
-	announceToDiscord           *connect.Client[v1.AnnounceToDiscordRequest, v1.AnnounceToDiscordResponse]
+	createDiscordEvent          *connect.Client[v1.CreateDiscordEventRequest, v1.CreateDiscordEventResponse]
 	getDiscordEvent             *connect.Client[v1.GetDiscordEventRequest, v1.GetDiscordEventResponse]
 	getSeriesPoll               *connect.Client[v1.GetSeriesPollRequest, v1.GetSeriesPollResponse]
 	pollSeries                  *connect.Client[v1.PollSeriesRequest, v1.PollSeriesResponse]
@@ -245,9 +245,9 @@ func (c *sessionSeriesServiceClient) RemoveFromGoogleCalendar(ctx context.Contex
 	return c.removeFromGoogleCalendar.CallUnary(ctx, req)
 }
 
-// AnnounceToDiscord calls planner.v1.SessionSeriesService.AnnounceToDiscord.
-func (c *sessionSeriesServiceClient) AnnounceToDiscord(ctx context.Context, req *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
-	return c.announceToDiscord.CallUnary(ctx, req)
+// CreateDiscordEvent calls planner.v1.SessionSeriesService.CreateDiscordEvent.
+func (c *sessionSeriesServiceClient) CreateDiscordEvent(ctx context.Context, req *connect.Request[v1.CreateDiscordEventRequest]) (*connect.Response[v1.CreateDiscordEventResponse], error) {
+	return c.createDiscordEvent.CallUnary(ctx, req)
 }
 
 // GetDiscordEvent calls planner.v1.SessionSeriesService.GetDiscordEvent.
@@ -276,7 +276,7 @@ type SessionSeriesServiceHandler interface {
 	RemoveSeriesException(context.Context, *connect.Request[v1.RemoveSeriesExceptionRequest]) (*connect.Response[v1.RemoveSeriesExceptionResponse], error)
 	AddToGoogleCalendar(context.Context, *connect.Request[v1.AddToGoogleCalendarRequest]) (*connect.Response[v1.AddToGoogleCalendarResponse], error)
 	RemoveFromGoogleCalendar(context.Context, *connect.Request[v1.RemoveFromGoogleCalendarRequest]) (*connect.Response[v1.RemoveFromGoogleCalendarResponse], error)
-	AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error)
+	CreateDiscordEvent(context.Context, *connect.Request[v1.CreateDiscordEventRequest]) (*connect.Response[v1.CreateDiscordEventResponse], error)
 	GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error)
 	GetSeriesPoll(context.Context, *connect.Request[v1.GetSeriesPollRequest]) (*connect.Response[v1.GetSeriesPollResponse], error)
 	PollSeries(context.Context, *connect.Request[v1.PollSeriesRequest]) (*connect.Response[v1.PollSeriesResponse], error)
@@ -343,10 +343,10 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 		connect.WithSchema(sessionSeriesServiceMethods.ByName("RemoveFromGoogleCalendar")),
 		connect.WithHandlerOptions(opts...),
 	)
-	sessionSeriesServiceAnnounceToDiscordHandler := connect.NewUnaryHandler(
-		SessionSeriesServiceAnnounceToDiscordProcedure,
-		svc.AnnounceToDiscord,
-		connect.WithSchema(sessionSeriesServiceMethods.ByName("AnnounceToDiscord")),
+	sessionSeriesServiceCreateDiscordEventHandler := connect.NewUnaryHandler(
+		SessionSeriesServiceCreateDiscordEventProcedure,
+		svc.CreateDiscordEvent,
+		connect.WithSchema(sessionSeriesServiceMethods.ByName("CreateDiscordEvent")),
 		connect.WithHandlerOptions(opts...),
 	)
 	sessionSeriesServiceGetDiscordEventHandler := connect.NewUnaryHandler(
@@ -387,8 +387,8 @@ func NewSessionSeriesServiceHandler(svc SessionSeriesServiceHandler, opts ...con
 			sessionSeriesServiceAddToGoogleCalendarHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceRemoveFromGoogleCalendarProcedure:
 			sessionSeriesServiceRemoveFromGoogleCalendarHandler.ServeHTTP(w, r)
-		case SessionSeriesServiceAnnounceToDiscordProcedure:
-			sessionSeriesServiceAnnounceToDiscordHandler.ServeHTTP(w, r)
+		case SessionSeriesServiceCreateDiscordEventProcedure:
+			sessionSeriesServiceCreateDiscordEventHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceGetDiscordEventProcedure:
 			sessionSeriesServiceGetDiscordEventHandler.ServeHTTP(w, r)
 		case SessionSeriesServiceGetSeriesPollProcedure:
@@ -440,8 +440,8 @@ func (UnimplementedSessionSeriesServiceHandler) RemoveFromGoogleCalendar(context
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.RemoveFromGoogleCalendar is not implemented"))
 }
 
-func (UnimplementedSessionSeriesServiceHandler) AnnounceToDiscord(context.Context, *connect.Request[v1.AnnounceToDiscordRequest]) (*connect.Response[v1.AnnounceToDiscordResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.AnnounceToDiscord is not implemented"))
+func (UnimplementedSessionSeriesServiceHandler) CreateDiscordEvent(context.Context, *connect.Request[v1.CreateDiscordEventRequest]) (*connect.Response[v1.CreateDiscordEventResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.SessionSeriesService.CreateDiscordEvent is not implemented"))
 }
 
 func (UnimplementedSessionSeriesServiceHandler) GetDiscordEvent(context.Context, *connect.Request[v1.GetDiscordEventRequest]) (*connect.Response[v1.GetDiscordEventResponse], error) {

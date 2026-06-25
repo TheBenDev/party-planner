@@ -127,12 +127,12 @@ message RemoveFromGoogleCalendarResponse {
   SessionSeries series = 1;
 }
 
-message AnnounceToDiscordRequest {
+message CreateDiscordEventRequest {
   string series_id = 1;
   string campaign_id = 2;
 }
 
-message AnnounceToDiscordResponse {
+message CreateDiscordEventResponse {
   SessionSeries series = 1;
 }
 
@@ -186,7 +186,7 @@ service SessionSeriesService {
   rpc RemoveSeriesException(RemoveSeriesExceptionRequest) returns (RemoveSeriesExceptionResponse);
   rpc AddToGoogleCalendar(AddToGoogleCalendarRequest) returns (AddToGoogleCalendarResponse);
   rpc RemoveFromGoogleCalendar(RemoveFromGoogleCalendarRequest) returns (RemoveFromGoogleCalendarResponse);
-  rpc AnnounceToDiscord(AnnounceToDiscordRequest) returns (AnnounceToDiscordResponse);
+  rpc CreateDiscordEvent(CreateDiscordEventRequest) returns (CreateDiscordEventResponse);
   rpc GetDiscordEvent(GetDiscordEventRequest) returns (GetDiscordEventResponse);
   rpc GetSeriesPoll(GetSeriesPollRequest) returns (GetSeriesPollResponse);
   rpc PollSeries(PollSeriesRequest) returns (PollSeriesResponse);

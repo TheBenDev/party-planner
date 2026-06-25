@@ -1206,7 +1206,7 @@ func (x *RemoveFromGoogleCalendarResponse) GetSeries() *SessionSeries {
 	return nil
 }
 
-type AnnounceToDiscordRequest struct {
+type CreateDiscordEventRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SeriesId      string                 `protobuf:"bytes,1,opt,name=series_id,json=seriesId,proto3" json:"series_id,omitempty"`
 	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -1214,20 +1214,20 @@ type AnnounceToDiscordRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnnounceToDiscordRequest) Reset() {
-	*x = AnnounceToDiscordRequest{}
+func (x *CreateDiscordEventRequest) Reset() {
+	*x = CreateDiscordEventRequest{}
 	mi := &file_planner_v1_session_series_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AnnounceToDiscordRequest) String() string {
+func (x *CreateDiscordEventRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AnnounceToDiscordRequest) ProtoMessage() {}
+func (*CreateDiscordEventRequest) ProtoMessage() {}
 
-func (x *AnnounceToDiscordRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateDiscordEventRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_series_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1239,46 +1239,46 @@ func (x *AnnounceToDiscordRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AnnounceToDiscordRequest.ProtoReflect.Descriptor instead.
-func (*AnnounceToDiscordRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateDiscordEventRequest.ProtoReflect.Descriptor instead.
+func (*CreateDiscordEventRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *AnnounceToDiscordRequest) GetSeriesId() string {
+func (x *CreateDiscordEventRequest) GetSeriesId() string {
 	if x != nil {
 		return x.SeriesId
 	}
 	return ""
 }
 
-func (x *AnnounceToDiscordRequest) GetCampaignId() string {
+func (x *CreateDiscordEventRequest) GetCampaignId() string {
 	if x != nil {
 		return x.CampaignId
 	}
 	return ""
 }
 
-type AnnounceToDiscordResponse struct {
+type CreateDiscordEventResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Series        *SessionSeries         `protobuf:"bytes,1,opt,name=series,proto3" json:"series,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AnnounceToDiscordResponse) Reset() {
-	*x = AnnounceToDiscordResponse{}
+func (x *CreateDiscordEventResponse) Reset() {
+	*x = CreateDiscordEventResponse{}
 	mi := &file_planner_v1_session_series_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AnnounceToDiscordResponse) String() string {
+func (x *CreateDiscordEventResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AnnounceToDiscordResponse) ProtoMessage() {}
+func (*CreateDiscordEventResponse) ProtoMessage() {}
 
-func (x *AnnounceToDiscordResponse) ProtoReflect() protoreflect.Message {
+func (x *CreateDiscordEventResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_session_series_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1290,12 +1290,12 @@ func (x *AnnounceToDiscordResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AnnounceToDiscordResponse.ProtoReflect.Descriptor instead.
-func (*AnnounceToDiscordResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateDiscordEventResponse.ProtoReflect.Descriptor instead.
+func (*CreateDiscordEventResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_session_series_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *AnnounceToDiscordResponse) GetSeries() *SessionSeries {
+func (x *CreateDiscordEventResponse) GetSeries() *SessionSeries {
 	if x != nil {
 		return x.Series
 	}
@@ -1797,12 +1797,12 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"campaignId\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\tR\x06userId\"U\n" +
 	" RemoveFromGoogleCalendarResponse\x121\n" +
-	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"X\n" +
-	"\x18AnnounceToDiscordRequest\x12\x1b\n" +
+	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"Y\n" +
+	"\x19CreateDiscordEventRequest\x12\x1b\n" +
 	"\tseries_id\x18\x01 \x01(\tR\bseriesId\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
-	"campaignId\"N\n" +
-	"\x19AnnounceToDiscordResponse\x121\n" +
+	"campaignId\"O\n" +
+	"\x1aCreateDiscordEventResponse\x121\n" +
 	"\x06series\x18\x01 \x01(\v2\x19.planner.v1.SessionSeriesR\x06series\"\x80\x01\n" +
 	"\x16GetDiscordEventRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
@@ -1831,7 +1831,7 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\x124\n" +
 	"\aoptions\x18\x03 \x03(\v2\x1a.google.protobuf.TimestampR\aoptions\"\x14\n" +
-	"\x12PollSeriesResponse2\xd2\n" +
+	"\x12PollSeriesResponse2\xd5\n" +
 	"\n" +
 	"\x14SessionSeriesService\x12f\n" +
 	"\x13CreateSessionSeries\x12&.planner.v1.CreateSessionSeriesRequest\x1a'.planner.v1.CreateSessionSeriesResponse\x12]\n" +
@@ -1842,8 +1842,8 @@ const file_planner_v1_session_series_proto_rawDesc = "" +
 	"\x18ExcludeSessionFromSeries\x12+.planner.v1.ExcludeSessionFromSeriesRequest\x1a,.planner.v1.ExcludeSessionFromSeriesResponse\x12l\n" +
 	"\x15RemoveSeriesException\x12(.planner.v1.RemoveSeriesExceptionRequest\x1a).planner.v1.RemoveSeriesExceptionResponse\x12f\n" +
 	"\x13AddToGoogleCalendar\x12&.planner.v1.AddToGoogleCalendarRequest\x1a'.planner.v1.AddToGoogleCalendarResponse\x12u\n" +
-	"\x18RemoveFromGoogleCalendar\x12+.planner.v1.RemoveFromGoogleCalendarRequest\x1a,.planner.v1.RemoveFromGoogleCalendarResponse\x12`\n" +
-	"\x11AnnounceToDiscord\x12$.planner.v1.AnnounceToDiscordRequest\x1a%.planner.v1.AnnounceToDiscordResponse\x12Z\n" +
+	"\x18RemoveFromGoogleCalendar\x12+.planner.v1.RemoveFromGoogleCalendarRequest\x1a,.planner.v1.RemoveFromGoogleCalendarResponse\x12c\n" +
+	"\x12CreateDiscordEvent\x12%.planner.v1.CreateDiscordEventRequest\x1a&.planner.v1.CreateDiscordEventResponse\x12Z\n" +
 	"\x0fGetDiscordEvent\x12\".planner.v1.GetDiscordEventRequest\x1a#.planner.v1.GetDiscordEventResponse\x12T\n" +
 	"\rGetSeriesPoll\x12 .planner.v1.GetSeriesPollRequest\x1a!.planner.v1.GetSeriesPollResponse\x12K\n" +
 	"\n" +
@@ -1886,8 +1886,8 @@ var file_planner_v1_session_series_proto_goTypes = []any{
 	(*AddToGoogleCalendarResponse)(nil),         // 17: planner.v1.AddToGoogleCalendarResponse
 	(*RemoveFromGoogleCalendarRequest)(nil),     // 18: planner.v1.RemoveFromGoogleCalendarRequest
 	(*RemoveFromGoogleCalendarResponse)(nil),    // 19: planner.v1.RemoveFromGoogleCalendarResponse
-	(*AnnounceToDiscordRequest)(nil),            // 20: planner.v1.AnnounceToDiscordRequest
-	(*AnnounceToDiscordResponse)(nil),           // 21: planner.v1.AnnounceToDiscordResponse
+	(*CreateDiscordEventRequest)(nil),           // 20: planner.v1.CreateDiscordEventRequest
+	(*CreateDiscordEventResponse)(nil),          // 21: planner.v1.CreateDiscordEventResponse
 	(*GetDiscordEventRequest)(nil),              // 22: planner.v1.GetDiscordEventRequest
 	(*DiscordEventInfo)(nil),                    // 23: planner.v1.DiscordEventInfo
 	(*GetDiscordEventResponse)(nil),             // 24: planner.v1.GetDiscordEventResponse
@@ -1918,7 +1918,7 @@ var file_planner_v1_session_series_proto_depIdxs = []int32{
 	29, // 15: planner.v1.RemoveSeriesExceptionRequest.excluded_date:type_name -> google.protobuf.Timestamp
 	0,  // 16: planner.v1.AddToGoogleCalendarResponse.series:type_name -> planner.v1.SessionSeries
 	0,  // 17: planner.v1.RemoveFromGoogleCalendarResponse.series:type_name -> planner.v1.SessionSeries
-	0,  // 18: planner.v1.AnnounceToDiscordResponse.series:type_name -> planner.v1.SessionSeries
+	0,  // 18: planner.v1.CreateDiscordEventResponse.series:type_name -> planner.v1.SessionSeries
 	29, // 19: planner.v1.DiscordEventInfo.start_time:type_name -> google.protobuf.Timestamp
 	29, // 20: planner.v1.DiscordEventInfo.end_time:type_name -> google.protobuf.Timestamp
 	23, // 21: planner.v1.GetDiscordEventResponse.event:type_name -> planner.v1.DiscordEventInfo
@@ -1933,7 +1933,7 @@ var file_planner_v1_session_series_proto_depIdxs = []int32{
 	14, // 30: planner.v1.SessionSeriesService.RemoveSeriesException:input_type -> planner.v1.RemoveSeriesExceptionRequest
 	16, // 31: planner.v1.SessionSeriesService.AddToGoogleCalendar:input_type -> planner.v1.AddToGoogleCalendarRequest
 	18, // 32: planner.v1.SessionSeriesService.RemoveFromGoogleCalendar:input_type -> planner.v1.RemoveFromGoogleCalendarRequest
-	20, // 33: planner.v1.SessionSeriesService.AnnounceToDiscord:input_type -> planner.v1.AnnounceToDiscordRequest
+	20, // 33: planner.v1.SessionSeriesService.CreateDiscordEvent:input_type -> planner.v1.CreateDiscordEventRequest
 	22, // 34: planner.v1.SessionSeriesService.GetDiscordEvent:input_type -> planner.v1.GetDiscordEventRequest
 	25, // 35: planner.v1.SessionSeriesService.GetSeriesPoll:input_type -> planner.v1.GetSeriesPollRequest
 	27, // 36: planner.v1.SessionSeriesService.PollSeries:input_type -> planner.v1.PollSeriesRequest
@@ -1946,7 +1946,7 @@ var file_planner_v1_session_series_proto_depIdxs = []int32{
 	15, // 43: planner.v1.SessionSeriesService.RemoveSeriesException:output_type -> planner.v1.RemoveSeriesExceptionResponse
 	17, // 44: planner.v1.SessionSeriesService.AddToGoogleCalendar:output_type -> planner.v1.AddToGoogleCalendarResponse
 	19, // 45: planner.v1.SessionSeriesService.RemoveFromGoogleCalendar:output_type -> planner.v1.RemoveFromGoogleCalendarResponse
-	21, // 46: planner.v1.SessionSeriesService.AnnounceToDiscord:output_type -> planner.v1.AnnounceToDiscordResponse
+	21, // 46: planner.v1.SessionSeriesService.CreateDiscordEvent:output_type -> planner.v1.CreateDiscordEventResponse
 	24, // 47: planner.v1.SessionSeriesService.GetDiscordEvent:output_type -> planner.v1.GetDiscordEventResponse
 	26, // 48: planner.v1.SessionSeriesService.GetSeriesPoll:output_type -> planner.v1.GetSeriesPollResponse
 	28, // 49: planner.v1.SessionSeriesService.PollSeries:output_type -> planner.v1.PollSeriesResponse
