@@ -1,6 +1,5 @@
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
-import { env } from "@/shared/lib/env";
 import { CampaignIntegrationService } from "@/gen/proto/planner/v1/campaign_integration_pb";
 import { CampaignService } from "@/gen/proto/planner/v1/campaign_pb";
 import { LocationService } from "@/gen/proto/planner/v1/locations_pb";
@@ -11,6 +10,7 @@ import { SessionService } from "@/gen/proto/planner/v1/session_pb";
 import { SessionSeriesService } from "@/gen/proto/planner/v1/session_series_pb";
 import { UserIntegrationService } from "@/gen/proto/planner/v1/user_integration_pb";
 import { UserService } from "@/gen/proto/planner/v1/user_pb";
+import { env } from "@/shared/lib/env";
 
 const API_BASE_URL = env.VITE_API_URL || "http://localhost:8000";
 
@@ -19,7 +19,6 @@ export function createApiTransport(accessToken?: string) {
 		baseUrl: API_BASE_URL,
 		interceptors: [
 			(next) => async (req) => {
-				req.header.set("X-Internal-Api-Key", env.INTERNAL_API_KEY);
 				// attach access token if present
 				if (accessToken) {
 					req.header.set("Authorization", `Bearer ${accessToken}`);

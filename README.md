@@ -202,7 +202,6 @@ make dev
 | `DATABASE_URL` | Postgres connection string |
 | `DISCORD_TOKEN` | Discord bot token |
 | `ENVIRONMENT` | `development` or `production` |
-| `INTERNAL_API_KEY` | API key for web → api requests |
 | `PORT` | Port for the ConnectRPC HTTP server (default `8000`) |
 
 ---

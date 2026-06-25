@@ -21,7 +21,6 @@ type Config struct {
 	DiscordRedirectURI       string   `validate:"required"`
 	DiscordToken             string   `validate:"required"`
 	Environment              string
-	InternalAPIKey           string `validate:"required"`
 	ClerkSecretKey           string `validate:"required"`
 	ClerkWebhookSecret       string `validate:"required"`
 	APIPort                  string
@@ -59,7 +58,6 @@ func Load() (*Config, error) {
 		DiscordRedirectURI:       os.Getenv("DISCORD_REDIRECT_URI"),
 		DiscordToken:             os.Getenv("DISCORD_TOKEN"),
 		Environment:              os.Getenv("ENVIRONMENT"),
-		InternalAPIKey:           os.Getenv("INTERNAL_API_KEY"),
 		ClerkSecretKey:           os.Getenv("CLERK_SECRET_KEY"),
 		ClerkWebhookSecret:       os.Getenv("CLERK_WEBHOOK_SECRET"),
 		APIPort:                  os.Getenv("API_PORT"),
