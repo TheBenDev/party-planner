@@ -6,32 +6,32 @@ import (
 	"os"
 	"strings"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	APIKey                   string
-	AppURL                   string
-	WebURL                   string
-	CORSAllowedOrigins       []string
-	DatabaseUrl              string
-	DiscordClientID          string
-	DiscordClientSecret      string
-	DiscordRedirectURI       string
-	DiscordToken             string
+	APIKey                   string   `validate:"required"`
+	AppURL                   string   `validate:"required"`
+	WebURL                   string   `validate:"required"`
+	CORSAllowedOrigins       []string `validate:"required,min=1"`
+	DatabaseUrl              string   `validate:"required"`
+	DiscordClientID          string   `validate:"required"`
+	DiscordClientSecret      string   `validate:"required"`
+	DiscordRedirectURI       string   `validate:"required"`
+	DiscordToken             string   `validate:"required"`
 	Environment              string
-	InternalAPIKey           string
-	ClerkSecretKey           string
-	ClerkWebhookSecret       string
+	InternalAPIKey           string `validate:"required"`
+	ClerkSecretKey           string `validate:"required"`
+	ClerkWebhookSecret       string `validate:"required"`
 	APIPort                  string
 	WebhookPort              string
-	GoogleClientID           string
-	GoogleClientSecret       string
-	IntegrationEncryptionKey string
+	GoogleClientID           string `validate:"required"`
+	GoogleClientSecret       string `validate:"required"`
+	IntegrationEncryptionKey string `validate:"required"`
 }
 
 func Load() (*Config, error) {
-
 	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		slog.Info("Env file not loaded.")
@@ -69,56 +69,18 @@ func Load() (*Config, error) {
 		IntegrationEncryptionKey: os.Getenv("INTEGRATION_ENCRYPTION_KEY"),
 	}
 
-	if cfg.APIKey == "" {
-		return nil, fmt.Errorf("API_KEY is required")
+	validate := validator.New()
+	err := validate.Struct(cfg)
+
+	if err != nil {
+		return nil, fmt.Errorf("config validation error. missing %w", err)
 	}
-	if cfg.AppURL == "" {
-		return nil, fmt.Errorf("APP_URL is required")
-	}
-	if cfg.DiscordClientID == "" {
-		return nil, fmt.Errorf("DISCORD_CLIENT_ID is required")
-	}
-	if cfg.DiscordClientSecret == "" {
-		return nil, fmt.Errorf("DISCORD_CLIENT_SECRET is required")
-	}
-	if cfg.DiscordRedirectURI == "" {
-		return nil, fmt.Errorf("DISCORD_REDIRECT_URI is required")
-	}
-	if cfg.DiscordToken == "" {
-		return nil, fmt.Errorf("DISCORD_TOKEN is required")
-	}
-	if cfg.ClerkSecretKey == "" {
-		return nil, fmt.Errorf("CLERK_SECRET_KEY is required")
-	}
-	if cfg.ClerkWebhookSecret == "" {
-		return nil, fmt.Errorf("CLERK_WEBHOOK_SECRET is required")
-	}
-	if cfg.DatabaseUrl == "" {
-		return nil, fmt.Errorf("DATABASE_URL is required")
-	}
+
 	if cfg.APIPort == "" {
 		cfg.APIPort = "8000"
 	}
 	if cfg.WebhookPort == "" {
-		cfg.WebhookPort = os.Getenv("PORT")
-	}
-	if cfg.WebhookPort == "" {
 		cfg.WebhookPort = "8001"
-	}
-	if cfg.WebURL == "" {
-		return nil, fmt.Errorf("WEB_URL is required")
-	}
-	if cfg.GoogleClientID == "" {
-		return nil, fmt.Errorf("GOOGLE_CLIENT_ID is required")
-	}
-	if cfg.GoogleClientSecret == "" {
-		return nil, fmt.Errorf("GOOGLE_CLIENT_SECRET is required")
-	}
-	if cfg.GoogleClientSecret == "" {
-		return nil, fmt.Errorf("GOOGLE_CLIENT_SECRET is required")
-	}
-	if cfg.IntegrationEncryptionKey == "" {
-		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is required")
 	}
 
 	return cfg, nil
