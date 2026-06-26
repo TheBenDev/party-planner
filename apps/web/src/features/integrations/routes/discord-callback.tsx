@@ -1,11 +1,10 @@
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import { IntegrationSource } from "@planner/enums/integration";
 import { UserRole } from "@planner/enums/user";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useCampaignIntegrationData } from "../hooks/useCampaignIntegrationData";
 import { useAuth } from "@/shared/hooks/auth";
-import { client } from "@/shared/lib/client";
 
 function decodeState(
 	state: string,
@@ -24,25 +23,7 @@ export function DiscordCallbackPage() {
 	const { code, state } = useSearch({
 		from: "/_authenticated/campaign/integrations/discord/callback",
 	});
-	const {
-		mutate: createIntegration,
-		isPending,
-		isError,
-	} = useMutation({
-		mutationFn: async (campaignId: string) => {
-			return await client.campaignIntegration.createCampaignIntegration({
-				campaignId,
-				code,
-				source: IntegrationSource.DISCORD,
-			});
-		},
-		onError: () => {
-			navigate({ to: "/campaign/integrations/discord" });
-		},
-		onSuccess: () => {
-			navigate({ to: "/campaign/integrations/discord" });
-		},
-	});
+	const { createCampaignIntegration } = useCampaignIntegrationData();
 
 	useEffect(() => {
 		if (!(code && state)) {
@@ -68,7 +49,13 @@ export function DiscordCallbackPage() {
 			return;
 		}
 
-		createIntegration(decoded.campaignId);
+		createCampaignIntegration.mutate(
+			{ campaignId: decoded.campaignId, code, source: IntegrationSource.DISCORD },
+			{
+				onError: () => navigate({ to: "/campaign/integrations/discord" }),
+				onSuccess: () => navigate({ to: "/campaign/integrations/discord" }),
+			},
+		);
 	}, [
 		clerkIsLoaded,
 		campaignIsLoading,
@@ -76,10 +63,10 @@ export function DiscordCallbackPage() {
 		code,
 		state,
 		navigate,
-		createIntegration,
+		createCampaignIntegration.mutate,
 	]);
 
-	if (isError) {
+	if (createCampaignIntegration.isError) {
 		return (
 			<div className="mx-auto max-w-2xl py-8">
 				<div className="flex flex-col items-center gap-3 text-center">
@@ -94,7 +81,7 @@ export function DiscordCallbackPage() {
 		);
 	}
 
-	if (isPending) {
+	if (createCampaignIntegration.isPending) {
 		return (
 			<div className="mx-auto max-w-2xl py-8">
 				<div className="flex flex-col items-center gap-3 text-center">

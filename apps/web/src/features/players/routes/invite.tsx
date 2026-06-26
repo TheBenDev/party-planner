@@ -1,5 +1,5 @@
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Navigate } from "@tanstack/react-router";
 import { CheckCircle, X } from "lucide-react";
 import { useState } from "react";
@@ -18,6 +18,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Separator } from "@/shared/components/ui/separator";
+import { useMemberData } from "../hooks/useMemberData";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
@@ -49,7 +50,7 @@ function timeAgo(date: Date): string {
 }
 
 export function InvitePlayerPage() {
-	const queryClient = useQueryClient();
+	const { revokeInvitation, createInvitation } = useMemberData();
 	const { role: authRole, campaignIsLoading } = useAuth();
 
 	const [email, setEmail] = useState("");
@@ -60,47 +61,6 @@ export function InvitePlayerPage() {
 		queryFn: async () => await client.member.listInvitations(),
 		queryKey: queryKeys.invitations.list(),
 	});
-
-	const { mutate: revokeInvitation } = useMutation({
-		mutationFn: async (id: string) =>
-			await client.member.revokeInvitation({ id }),
-		mutationKey: ["invitation"],
-		onError: () => {
-			toast.error(
-				"Something went wrong trying to revoke invitation. Please try again.",
-			);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.invitations.list() });
-		},
-	});
-	const { mutate: sendInvitation, isPending: sendInvitationIsPending } =
-		useMutation({
-			mutationFn: async () =>
-				await client.member.createInvitation({
-					inviteeEmail: email.trim(),
-					role: selectedRole,
-				}),
-			mutationKey: ["invitation"],
-			onError: (err) => {
-				// TODO: improve error handling for toasts
-				if (err.message === "[already_exists] campaign user already exists") {
-					toast.error("This player is already in the campaign.");
-					return;
-				}
-				toast.error(
-					"Something went wrong trying to send invitation. Please try again.",
-				);
-			},
-			onSuccess: () => {
-				queryClient.invalidateQueries({
-					queryKey: queryKeys.invitations.list(),
-				});
-				setSuccessEmail(email.trim());
-				setEmail("");
-				setSelectedRole(UserRole.PLAYER);
-			},
-		});
 
 	if (campaignIsLoading) return <div>loading...</div>;
 	if (authRole !== UserRole.DUNGEON_MASTER) {
@@ -116,11 +76,37 @@ export function InvitePlayerPage() {
 	}
 
 	function handleSend() {
-		sendInvitation();
+		createInvitation.mutate(
+			{ inviteeEmail: email.trim(), role: selectedRole },
+			{
+				onError: (err) => {
+					if (err.message === "[already_exists] campaign user already exists") {
+						toast.error("This player is already in the campaign.");
+						return;
+					}
+					toast.error(
+						"Something went wrong trying to send invitation. Please try again.",
+					);
+				},
+				onSuccess: () => {
+					setSuccessEmail(email.trim());
+					setEmail("");
+					setSelectedRole(UserRole.PLAYER);
+				},
+			},
+		);
 	}
 
 	function handleRevoke(id: string) {
-		revokeInvitation(id);
+		revokeInvitation.mutate(
+			{ id },
+			{
+				onError: () =>
+					toast.error(
+						"Something went wrong trying to revoke invitation. Please try again.",
+					),
+			},
+		);
 	}
 
 	return (
@@ -223,7 +209,7 @@ export function InvitePlayerPage() {
 							Cancel
 						</Button>
 						<Button
-							disabled={!isValid || sendInvitationIsPending}
+							disabled={!isValid || createInvitation.isPending}
 							onClick={handleSend}
 							type="button"
 						>

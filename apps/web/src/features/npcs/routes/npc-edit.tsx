@@ -4,10 +4,11 @@ import {
 	RelationToPartyEnum,
 } from "@planner/enums/character";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useNpc } from "@/features/npcs/hooks/useNpc";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -20,9 +21,8 @@ import {
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useNpc } from "@/features/npcs/hooks/useNpc";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import type { client } from "@/shared/lib/client";
+import { useNpcData } from "../hooks/useNpcData";
 
 export const npcEditSchema = z.object({
 	age: z.string().optional(),
@@ -44,7 +44,9 @@ export const npcEditSchema = z.object({
 export type NpcEditForm = z.infer<typeof npcEditSchema>;
 
 export function NpcEditPage() {
-	const { npcId } = useParams({ from: "/_authenticated/campaign/npcs/$npcId/edit" });
+	const { npcId } = useParams({
+		from: "/_authenticated/campaign/npcs/$npcId/edit",
+	});
 	const { role, campaignIsLoading } = useAuth();
 
 	const { data: npc, isPending, isError } = useNpc(npcId);
@@ -65,7 +67,7 @@ type Npc = NonNullable<
 >;
 
 function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
-	const queryClient = useQueryClient();
+	const { updateNpc } = useNpcData();
 	const navigate = useNavigate();
 
 	const form = useForm<NpcEditForm>({
@@ -93,30 +95,21 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 		name: "aliases",
 	});
 
-	const updateMutation = useMutation({
-		mutationFn: (values: NpcEditForm) =>
-			client.npc.updateNpc({
-				id: npcId,
-				...values,
-				aliases: values.aliases.map((a) => a.value),
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.npcs.detail(npcId) });
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.npcs.list(npc.campaignId),
-			});
-
-			navigate({
-				params: { npcId },
-				to: "/campaign/npcs/$npcId",
-			});
-		},
-	});
-
 	return (
 		<form
 			className="max-w-3xl mx-auto px-4 py-8 space-y-6"
-			onSubmit={form.handleSubmit((data) => updateMutation.mutate(data))}
+			onSubmit={form.handleSubmit((data) =>
+				updateNpc.mutate(
+					{ id: npcId, ...data, aliases: data.aliases.map((a) => a.value) },
+					{
+						onError: () => toast.error("Failed to update NPC"),
+						onSuccess: () => {
+							navigate({ params: { npcId }, to: "/campaign/npcs/$npcId" });
+							toast.success("NPC updated");
+						},
+					},
+				),
+			)}
 		>
 			<div>
 				<h1 className="text-2xl font-semibold">Edit NPC</h1>
@@ -238,7 +231,7 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 				>
 					Cancel
 				</Button>
-				<Button disabled={updateMutation.isPending} type="submit">
+				<Button disabled={updateNpc.isPending} type="submit">
 					Save Changes
 				</Button>
 			</div>

@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { useSession } from "@/features/sessions/hooks/useSession";
+import { useSessionData } from "@/features/sessions/hooks/useSessionData";
 import {
 	type SessionEditForm,
 	SessionEditSchema,
@@ -13,8 +14,7 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import type { client } from "@/shared/lib/client";
 
 export function SessionEditPage() {
 	const { sessionId } = useParams({
@@ -52,7 +52,7 @@ function SessionEditFormInner({
 	session: Session;
 	sessionId: string;
 }) {
-	const queryClient = useQueryClient();
+	const { updateSession } = useSessionData();
 	const navigate = useNavigate();
 	const isPast = new Date(session.startsAt) < new Date();
 
@@ -65,38 +65,28 @@ function SessionEditFormInner({
 		resolver: zodResolver(SessionEditSchema),
 	});
 
-	const updateMutation = useMutation({
-		mutationFn: (values: SessionEditForm) =>
-			client.session.updateSession({
-				description: values.description,
-				id: sessionId,
-				recap: values.recap,
-				title: values.title,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.sessions.detail(sessionId),
-			});
-			if (session.seriesId) {
-				queryClient.invalidateQueries({
-					queryKey: queryKeys.sessionSeries.list(session.campaignId),
-				});
-			} else {
-				queryClient.invalidateQueries({
-					queryKey: queryKeys.sessions.list(session.campaignId),
-				});
-			}
-			navigate({
-				params: { sessionId },
-				to: "/campaign/sessions/$sessionId",
-			});
-		},
-	});
-
 	return (
 		<form
 			className="max-w-3xl mx-auto px-4 py-8 space-y-6"
-			onSubmit={form.handleSubmit((data) => updateMutation.mutate(data))}
+			onSubmit={form.handleSubmit((data) =>
+				updateSession.mutate(
+					{
+						description: data.description,
+						id: sessionId,
+						recap: data.recap,
+						title: data.title,
+					},
+					{
+						onError: () => toast.error("Failed to update session."),
+
+						onSuccess: () =>
+							navigate({
+								params: { sessionId },
+								to: "/campaign/sessions/$sessionId",
+							}),
+					},
+				),
+			)}
 		>
 			<div>
 				<h1 className="text-2xl font-semibold">Edit Session</h1>
@@ -140,7 +130,7 @@ function SessionEditFormInner({
 				>
 					Cancel
 				</Button>
-				<Button disabled={updateMutation.isPending} type="submit">
+				<Button disabled={updateSession.isPending} type="submit">
 					Save Changes
 				</Button>
 			</div>

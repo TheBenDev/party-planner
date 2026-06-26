@@ -185,3 +185,7 @@ export type SyncSessionToCalendarRequest = z.infer<
 export type SyncSessionToCalendarResponse = z.infer<
 	typeof SyncSessionToCalendarResponseSchema
 >;
+
+export type CreateCampaignIntegrationRequest = z.infer<
+	typeof CreateCampaignIntegrationRequestSchema
+>;

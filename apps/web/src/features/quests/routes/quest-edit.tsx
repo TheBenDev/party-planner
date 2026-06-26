@@ -1,10 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Status } from "@planner/enums/quest";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
+import { useQuest } from "@/features/quests/hooks/useQuest";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
@@ -17,9 +18,8 @@ import {
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useQuest } from "@/features/quests/hooks/useQuest";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import type { client } from "@/shared/lib/client";
+import { useQuestData } from "../hooks/useQuestData";
 
 export const questEditSchema = z.object({
 	description: z.string().optional(),
@@ -30,14 +30,18 @@ export const questEditSchema = z.object({
 export type QuestEditForm = z.infer<typeof questEditSchema>;
 
 export function QuestEditPage() {
-	const { questId } = useParams({ from: "/_authenticated/campaign/quests/$questId/edit" });
+	const { questId } = useParams({
+		from: "/_authenticated/campaign/quests/$questId/edit",
+	});
 	const { role, campaignIsLoading } = useAuth();
 
 	const { data, isPending, isError } = useQuest(questId);
 
 	if (campaignIsLoading) return <div>Loading...</div>;
 	if (role !== UserRole.DUNGEON_MASTER) {
-		return <Navigate params={{ questId }} replace to="/campaign/quests/$questId" />;
+		return (
+			<Navigate params={{ questId }} replace to="/campaign/quests/$questId" />
+		);
 	}
 
 	if (isPending) return <div>Loading...</div>;
@@ -57,7 +61,7 @@ function QuestEditFormInner({
 	quest: Quest;
 	questId: string;
 }) {
-	const queryClient = useQueryClient();
+	const { updateQuest } = useQuestData();
 	const navigate = useNavigate();
 
 	const form = useForm<QuestEditForm>({
@@ -69,28 +73,22 @@ function QuestEditFormInner({
 		resolver: zodResolver(questEditSchema),
 	});
 
-	const updateMutation = useMutation({
-		mutationFn: (values: QuestEditForm) =>
-			client.quest.updateQuest({
-				id: questId,
-				...values,
-			}),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.quests.detail(questId) });
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.quests.list(quest.campaignId),
-			});
-			navigate({
-				params: { questId },
-				to: "/campaign/quests/$questId",
-			});
-		},
-	});
-
 	return (
 		<form
 			className="max-w-3xl mx-auto px-4 py-8 space-y-6"
-			onSubmit={form.handleSubmit((data) => updateMutation.mutate(data))}
+			onSubmit={form.handleSubmit((data) =>
+				updateQuest.mutate(
+					{ id: questId, ...data },
+					{
+						onError: () => toast.error("Failed to update quest"),
+						onSuccess: () =>
+							navigate({
+								params: { questId },
+								to: "/campaign/quests/$questId",
+							}),
+					},
+				),
+			)}
 		>
 			<div>
 				<h1 className="text-2xl font-semibold">Edit Quest</h1>
@@ -142,7 +140,7 @@ function QuestEditFormInner({
 				>
 					Cancel
 				</Button>
-				<Button disabled={updateMutation.isPending} type="submit">
+				<Button disabled={updateQuest.isPending} type="submit">
 					Save Changes
 				</Button>
 			</div>

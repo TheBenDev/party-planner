@@ -1,5 +1,5 @@
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { MapPin, MoreHorizontal, Plus, Search } from "lucide-react";
 import { useState } from "react";
@@ -17,6 +17,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import { useLocationData } from "../hooks/useLocationData";
 
 const LOCATION_COLORS = [
 	"bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
@@ -153,8 +154,8 @@ export function LocationsPage() {
 	const { campaign, role } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const [search, setSearch] = useState("");
+	const { createLocation, deleteLocation } = useLocationData();
 
 	const { data: locations = { locations: [] }, isLoading } = useQuery({
 		enabled: Boolean(campaign),
@@ -165,32 +166,6 @@ export function LocationsPage() {
 			});
 		},
 		queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
-	});
-
-	const { mutate: deleteLocation } = useMutation({
-		mutationFn: (id: string) => client.location.removeLocation({ id }),
-		onError: () => toast.error("Failed to delete location"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
-			});
-		},
-	});
-
-	const { mutate: createLocation, isPending: creatingLocation } = useMutation({
-		mutationFn: () => {
-			if (!campaign) throw new Error("campaign required");
-			return client.location.createLocation({
-				campaignId: campaign.campaign.id,
-				name: "New Location",
-			});
-		},
-		onError: () => toast.error("Failed to create location"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.locations.list(campaign?.campaign.id ?? ""),
-			});
-		},
 	});
 
 	if (!campaign) {
@@ -227,8 +202,8 @@ export function LocationsPage() {
 				{isDm && (
 					<Button
 						className="shrink-0"
-						disabled={creatingLocation}
-						onClick={() => createLocation()}
+						disabled={createLocation.isPending}
+						onClick={() => createLocation.mutate({ campaignId: campaign.campaign.id, name: "New Location" }, { onError: () => toast.error("Failed to create location") })}
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New Location
@@ -274,8 +249,8 @@ export function LocationsPage() {
 										</p>
 										<Button
 											className="mt-4"
-											disabled={creatingLocation}
-											onClick={() => createLocation()}
+											disabled={createLocation.isPending}
+											onClick={() => createLocation.mutate({ campaignId: campaign.campaign.id, name: "New Location" }, { onError: () => toast.error("Failed to create location") })}
 											size="sm"
 											variant="outline"
 										>
@@ -296,7 +271,7 @@ export function LocationsPage() {
 							isDm={isDm}
 							key={loc.id}
 							location={loc}
-							onDelete={() => deleteLocation(loc.id)}
+							onDelete={() => deleteLocation.mutate({ id: loc.id }, { onError: () => toast.error("Failed to delete location") })}
 							onEdit={() =>
 								navigate({
 									params: { locationId: loc.id },

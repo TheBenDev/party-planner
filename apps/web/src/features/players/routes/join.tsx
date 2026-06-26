@@ -1,5 +1,5 @@
 import type { GetCampaignInvitationByTokenResponse } from "@/features/players/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { Calendar, Loader2, User, Users } from "lucide-react";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import {
 } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { useMemberData } from "../hooks/useMemberData";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 
@@ -157,7 +158,7 @@ function InvitationDetails({
 export function JoinCampaignPage() {
 	const { token } = useSearch({ from: "/_authenticated/join" });
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
+	const { acceptCampaignInvitation, declineCampaignInvitation } = useMemberData();
 	const [status, setStatus] = useState<InvitationStatus>("idle");
 	const [errorMsg, setErrorMsg] = useState("");
 
@@ -171,38 +172,6 @@ export function JoinCampaignPage() {
 		queryKey: queryKeys.invitations.detail(token),
 	});
 
-	const { mutateAsync: acceptInvitation } = useMutation({
-		mutationFn: async () =>
-			await client.member.acceptCampaignInvitation({ token }),
-		mutationKey: ["invitation", token],
-		onError: () => {
-			setStatus("error");
-
-			toast.error(
-				"Something went wrong accepting the invitation. Please try again.",
-			);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.auth.campaign() });
-			navigate({ to: "/dashboard" });
-		},
-	});
-
-	const { mutateAsync: declineInvitation } = useMutation({
-		mutationFn: async () =>
-			await client.member.declineCampaignInvitation({ token }),
-		mutationKey: ["invitation", token],
-		onError: () => {
-			toast.error(
-				"Something went wrong declining the invitation. Please try again.",
-			);
-			setStatus("error");
-		},
-		onSuccess: () => {
-			navigate({ to: "/dashboard" });
-		},
-	});
-
 	const isActioning = status === "accepting" || status === "declining";
 
 	async function handleAccept() {
@@ -213,23 +182,29 @@ export function JoinCampaignPage() {
 		}
 		setStatus("accepting");
 		try {
-			await acceptInvitation();
+			await acceptCampaignInvitation.mutateAsync({ token });
+			navigate({ to: "/dashboard" });
 		} catch {
 			setErrorMsg("Something went wrong. Please try again.");
 			setStatus("error");
+			toast.error(
+				"Something went wrong accepting the invitation. Please try again.",
+			);
 		}
 	}
 
 	async function handleDecline() {
-		if (!token) {
-			return;
-		}
+		if (!token) return;
 		setStatus("declining");
 		try {
-			await declineInvitation();
+			await declineCampaignInvitation.mutateAsync({ token });
+			navigate({ to: "/dashboard" });
 		} catch {
 			setErrorMsg("Something went wrong. Please try again.");
 			setStatus("error");
+			toast.error(
+				"Something went wrong declining the invitation. Please try again.",
+			);
 		}
 	}
 

@@ -38,6 +38,7 @@ export type CampaignInvitation = z.infer<typeof CampaignInvitationSchema>;
 export const AcceptCampaignInvitationRequestSchema = z.object({
 	token: z.string().trim().min(1),
 });
+export type AcceptCampaignInvitationRequest = z.infer<typeof AcceptCampaignInvitationRequestSchema>;
 
 export const AcceptCampaignInvitationResponseSchema = z.object({
 	invitation: CampaignInvitationSchema,
@@ -48,6 +49,7 @@ export const CreateCampaignInvitationRequestSchema = z.object({
 	inviteeEmail: z.email(),
 	role: z.enum(UserRole),
 });
+export type CreateCampaignInvitationRequest = z.infer<typeof CreateCampaignInvitationRequestSchema>;
 
 export const CreateCampaignInvitationResponseSchema = z.object({
 	invitation: CampaignInvitationSchema,
@@ -56,6 +58,7 @@ export const CreateCampaignInvitationResponseSchema = z.object({
 export const DeclineCampaignInvitationRequestSchema = z.object({
 	token: z.string(),
 });
+export type DeclineCampaignInvitationRequest = z.infer<typeof DeclineCampaignInvitationRequestSchema>;
 
 export const DeclineCampaignInvitationResponseSchema = CampaignInvitationSchema;
 
@@ -80,6 +83,7 @@ export const ListCampaignInvitationsByCampaignResponseSchema = z.object({
 export const RevokeCampaignInvitationRequestSchema = z.object({
 	id: z.uuid(),
 });
+export type RevokeCampaignInvitationRequest = z.infer<typeof RevokeCampaignInvitationRequestSchema>;
 
 export const RevokeCampaignInvitationResponseSchema = z.object({
 	invitation: CampaignInvitationSchema,
@@ -92,7 +96,6 @@ export const CreateMemberRequestSchema = z.object({
 	role: z.enum(UserRole),
 	userId: z.uuid(),
 });
-
 export const CreateMemberResponseSchema = z.object({
 	member: CampaignUserSchema,
 });
@@ -118,5 +121,8 @@ export const RemoveMemberRequestSchema = z.object({
 	campaignId: z.uuid(),
 	userId: z.uuid(),
 });
+export type RemoveMemberRequest = z.infer<typeof RemoveMemberRequestSchema>;
 
 export const RemoveMemberResponseSchema = z.object({});
+
+export type CreateMemberRequest = z.infer<typeof CreateMemberRequestSchema>;

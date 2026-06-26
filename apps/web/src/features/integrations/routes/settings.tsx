@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useUserIntegrationData } from "../hooks/useUserIntegrationData";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Card,
@@ -33,7 +34,7 @@ function buildGoogleOAuthUrl(): string {
 }
 
 export function UserSettingsPage() {
-	const queryClient = useQueryClient();
+	const { disconnectGoogleCalendar } = useUserIntegrationData();
 	const { user: userAuth } = useAuth();
 	const userId = userAuth?.user?.id;
 	const [isConnecting, setIsConnecting] = useState(false);
@@ -45,21 +46,6 @@ export function UserSettingsPage() {
 			userId ?? "",
 			"GOOGLE_CALENDAR",
 		),
-	});
-
-	const { mutate: disconnect, isPending: isDisconnecting } = useMutation({
-		mutationFn: () => client.userIntegration.disconnectGoogleCalendar({}),
-		onError: () => {
-			toast.error("something went wrong disconnecting your google calendar");
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.userIntegrations.bySource(
-					userId ?? "",
-					"GOOGLE_CALENDAR",
-				),
-			});
-		},
 	});
 
 	const handleConnect = () => {
@@ -79,11 +65,11 @@ export function UserSettingsPage() {
 					✓ Your Google Calendar is connected
 				</p>
 				<Button
-					disabled={isDisconnecting}
-					onClick={() => disconnect()}
+					disabled={disconnectGoogleCalendar.isPending}
+					onClick={() => disconnectGoogleCalendar.mutate(undefined, { onError: () => toast.error("Something went wrong disconnecting your Google Calendar") })}
 					variant="destructive"
 				>
-					{isDisconnecting ? "Disconnecting…" : "Disconnect"}
+					{disconnectGoogleCalendar.isPending ? "Disconnecting…" : "Disconnect"}
 				</Button>
 			</div>
 		);
