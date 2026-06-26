@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/BBruington/party-planner/api/internal/pg"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
 
 // Domain errors.
