@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/lib/pq"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/lib/pq"
 )
 
 type querier interface {
@@ -73,6 +73,10 @@ func (db *DB) GetCampaign(id string) (*model.Campaign, error) {
 }
 
 func (db *DB) UpdateCampaign(req *model.UpdateCampaignRequest) (*model.Campaign, error) {
+	tags := req.Tags
+	if tags == nil {
+		tags = []string{}
+	}
 	row := db.conn.QueryRow(`
 		UPDATE campaigns SET
 			title       = COALESCE($1, title),
@@ -81,7 +85,7 @@ func (db *DB) UpdateCampaign(req *model.UpdateCampaignRequest) (*model.Campaign,
 			updated_at  = NOW()
 		WHERE id = $4 AND deleted_at IS NULL
 		RETURNING `+campaignColumns,
-		req.Title, req.Description, pq.Array(req.Tags), req.ID,
+		req.Title, req.Description, pq.StringArray(tags), req.ID,
 	)
 	return scanCampaign(row)
 }
