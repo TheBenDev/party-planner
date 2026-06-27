@@ -1,9 +1,13 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { UserPlus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import z from "zod";
+import { useCampaignData } from "@/features/campaigns/hooks/useCampaignData";
 import type { CampaignUserWithUser } from "@/features/players/types";
 import {
 	AlertDialog,
@@ -33,28 +37,39 @@ import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import { useMemberData } from "../hooks/useMemberData";
 
 const TRAILING_COMMA_RE = /,$/;
 
+const UpdateCampaignFormSchema = z.object({
+	description: z.string().optional(),
+	title: z.string().min(1, "Title is required"),
+});
+
+type UpdateCampaignFormValues = z.infer<typeof UpdateCampaignFormSchema>;
+
 export function SettingsPage() {
 	const { campaign, user, role } = useAuth();
+	const { deleteCampaign, updateCampaign } = useCampaignData();
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
-
 	const isDm = role === UserRole.DUNGEON_MASTER;
 
-	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
-	const [tags, setTags] = useState<string[]>([]);
+	const [tags, setTags] = useState<string[]>(campaign?.campaign.tags ?? []);
 	const [tagInput, setTagInput] = useState("");
+	const tagsChanged = tags.join(",") !== campaign?.campaign.tags.join(",");
 
-	useEffect(() => {
-		if (campaign) {
-			setTitle(campaign.campaign.title);
-			setDescription(campaign.campaign.description ?? "");
-			setTags(campaign.campaign.tags);
-		}
-	}, [campaign]);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isDirty },
+	} = useForm<UpdateCampaignFormValues>({
+		resolver: zodResolver(UpdateCampaignFormSchema),
+		values: {
+			description: campaign?.campaign.description ?? "",
+			title: campaign?.campaign.title ?? "",
+		},
+	});
 
 	const {
 		data: membersData,
@@ -71,56 +86,7 @@ export function SettingsPage() {
 		queryKey: queryKeys.members.list(campaign?.campaign.id ?? ""),
 	});
 
-	const { mutate: updateCampaign, isPending: updatingCampaign } = useMutation({
-		mutationFn: () => {
-			if (!campaign) throw new Error("campaign required");
-			return client.campaign.updateCampaign({
-				description: description || undefined,
-				id: campaign.campaign.id,
-				tags,
-				title,
-			});
-		},
-		onError: () => toast.error("Failed to update campaign"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.campaign(),
-			});
-			toast.success("Campaign updated");
-		},
-	});
-
-	const { mutate: removeMember, isPending: removingMember } = useMutation({
-		mutationFn: (userId: string) => {
-			if (!campaign) throw new Error("campaign required");
-			return client.member.removeMember({
-				campaignId: campaign.campaign.id,
-				userId,
-			});
-		},
-		onError: () => toast.error("Failed to remove member"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.members.list(campaign?.campaign.id ?? ""),
-			});
-			toast.success("Member removed");
-		},
-	});
-
-	const { mutate: deleteCampaign, isPending: deletingCampaign } = useMutation({
-		mutationFn: () => {
-			if (!campaign) throw new Error("campaign required");
-			return client.campaign.deleteCampaign({ id: campaign.campaign.id });
-		},
-		onError: () => toast.error("Failed to delete campaign"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.campaign(),
-			});
-			toast.success("Campaign deleted");
-			navigate({ to: "/" });
-		},
-	});
+	const { removeMember } = useMemberData();
 
 	if (!campaign) {
 		return (
@@ -133,6 +99,22 @@ export function SettingsPage() {
 				</Button>
 			</div>
 		);
+	}
+
+	async function onSubmit(data: UpdateCampaignFormValues) {
+		if (!campaign) return;
+		try {
+			await updateCampaign.mutateAsync({
+				description: data.description,
+				id: campaign.campaign.id,
+				tags,
+				title: data.title,
+			});
+			reset({ description: data.description, title: data.title });
+			toast.success("Campaign updated");
+		} catch {
+			toast.error("Failed to update campaign");
+		}
 	}
 
 	function handleTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -176,11 +158,15 @@ export function SettingsPage() {
 								Title
 							</Label>
 							<Input
+								{...register("title")}
 								id="campaign-title"
-								onChange={(e) => setTitle(e.target.value)}
 								placeholder="Campaign title"
-								value={title}
 							/>
+							{errors.title && (
+								<p className="mt-1 text-sm text-destructive">
+									{errors.title.message}
+								</p>
+							)}
 						</div>
 
 						<div className="space-y-1.5">
@@ -191,12 +177,11 @@ export function SettingsPage() {
 								Description
 							</Label>
 							<Textarea
+								{...register("description")}
 								className="resize-none"
 								id="campaign-description"
-								onChange={(e) => setDescription(e.target.value)}
 								placeholder="What is this campaign about?"
 								rows={3}
-								value={description}
 							/>
 						</div>
 
@@ -241,8 +226,8 @@ export function SettingsPage() {
 
 						<div className="flex justify-end pt-1">
 							<Button
-								disabled={!title.trim() || updatingCampaign}
-								onClick={() => updateCampaign()}
+								disabled={updateCampaign.isPending || !(tagsChanged || isDirty)}
+								onClick={handleSubmit(onSubmit)}
 							>
 								Save changes
 							</Button>
@@ -296,10 +281,18 @@ export function SettingsPage() {
 							<MemberRow
 								currentUserId={user?.user.id}
 								isDm={isDm}
-								isRemoving={removingMember}
+								isRemoving={removeMember.isPending}
 								key={member.userId}
 								member={member}
-								onKick={() => removeMember(member.userId)}
+								onKick={() =>
+									removeMember.mutate(
+										{ campaignId: campaign.campaign.id, userId: member.userId },
+										{
+											onError: () => toast.error("Failed to remove member"),
+											onSuccess: () => toast.success("Member removed"),
+										},
+									)
+								}
 							/>
 						))}
 				</CardContent>
@@ -347,8 +340,17 @@ export function SettingsPage() {
 										<AlertDialogCancel>Cancel</AlertDialogCancel>
 										<AlertDialogAction
 											className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-											disabled={deletingCampaign}
-											onClick={() => deleteCampaign()}
+											disabled={deleteCampaign.isPending}
+											onClick={() =>
+												deleteCampaign.mutate(campaign.campaign.id, {
+													onError: () =>
+														toast.error("Failed to delete campaign"),
+													onSuccess: () => {
+														toast.success("Campaign deleted");
+														navigate({ to: "/" });
+													},
+												})
+											}
 										>
 											Delete campaign
 										</AlertDialogAction>

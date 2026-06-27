@@ -59,6 +59,7 @@ export const UpdateSessionResponseSchema = z.object({
 export type Session = z.infer<typeof SessionsSchema>;
 export type Poll = z.infer<typeof PollSchema>;
 export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
+export type UpdateSessionRequest = z.infer<typeof UpdateSessionRequestSchema>;
 
 // ─── Session Series ───────────────────────────────────────────────────────────
 

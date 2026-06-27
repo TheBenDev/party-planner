@@ -1,7 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { client } from "@/shared/lib/client";
+import { useUserIntegrationData } from "../hooks/useUserIntegrationData";
 
 function decodeState(
 	state: string,
@@ -18,22 +17,7 @@ export function GoogleCalendarCallbackPage() {
 	const { code, state } = useSearch({
 		from: "/_authenticated/settings/google-calendar/callback",
 	});
-	const {
-		mutate: connectCalendar,
-		isPending,
-		isError,
-	} = useMutation({
-		mutationFn: (googleCode: string) =>
-			client.userIntegration.connectGoogleCalendar({
-				code: googleCode,
-			}),
-		onError: () => {
-			navigate({ to: "/settings" });
-		},
-		onSuccess: () => {
-			navigate({ to: "/settings" });
-		},
-	});
+	const { connectGoogleCalendar } = useUserIntegrationData();
 
 	useEffect(() => {
 		if (!(code && state)) {
@@ -50,10 +34,16 @@ export function GoogleCalendarCallbackPage() {
 			return;
 		}
 
-		connectCalendar(code);
-	}, [code, state, navigate, connectCalendar]);
+		connectGoogleCalendar.mutate(
+			{ code },
+			{
+				onError: () => navigate({ to: "/settings" }),
+				onSuccess: () => navigate({ to: "/settings" }),
+			},
+		);
+	}, [code, state, navigate, connectGoogleCalendar.mutate]);
 
-	if (isError) {
+	if (connectGoogleCalendar.isError) {
 		return (
 			<div className="mx-auto max-w-2xl py-8">
 				<div className="flex flex-col items-center gap-3 text-center">
@@ -68,7 +58,7 @@ export function GoogleCalendarCallbackPage() {
 		);
 	}
 
-	if (isPending) {
+	if (connectGoogleCalendar.isPending) {
 		return (
 			<div className="mx-auto max-w-2xl py-8">
 				<div className="flex flex-col items-center gap-3 text-center">

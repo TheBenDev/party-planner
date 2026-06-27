@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,8 +7,7 @@ import z from "zod";
 import type { CreateCampaignRequest } from "@/features/campaigns/types";
 import { Button } from "@/shared/components/ui/button";
 import { useAuth } from "@/shared/hooks/auth";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import { useCampaignData } from "../hooks/useCampaignData";
 
 export type CreateCampaignFormType = {
 	title: string;
@@ -22,28 +20,12 @@ const CreateCampaignSchema = z.object({
 });
 
 export function CreateCampaignForm() {
+	const { createCampaign } = useCampaignData();
+	const { userIsLoading } = useAuth();
+
 	const [tags, setTags] = useState<string[]>([]);
 	const [tagInput, setTagInput] = useState("");
 	const navigate = useNavigate();
-	const { userIsLoading } = useAuth();
-	const queryClient = useQueryClient();
-
-	const { mutate: createCampaign } = useMutation({
-		mutationFn: async (c: CreateCampaignRequest) =>
-			await client.campaign.createCampaign(c),
-		mutationKey: ["campaign"],
-		onError: (error) => {
-			toast.error("something went wrong creating campaign.", {
-				description: error.message,
-			});
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.auth.campaign(),
-			});
-			navigate({ to: "/dashboard" });
-		},
-	});
 
 	const {
 		register,
@@ -73,13 +55,17 @@ export function CreateCampaignForm() {
 		setTags(tags.filter((tag) => tag !== tagToRemove));
 	};
 
-	const onSubmit = (data: CreateCampaignFormType) => {
+	const onSubmit = async (data: CreateCampaignFormType) => {
 		const formData: CreateCampaignRequest = {
 			...data,
 			tags,
 		};
-
-		createCampaign(formData);
+		try {
+			await createCampaign.mutateAsync(formData);
+			navigate({ to: "/dashboard" });
+		} catch {
+			toast.error("Failed to create campaign");
+		}
 	};
 
 	return (
@@ -177,10 +163,10 @@ export function CreateCampaignForm() {
 
 							{tags.length > 0 && (
 								<div className="flex flex-wrap gap-2">
-									{tags.map((tag, index) => (
+									{tags.map((tag) => (
 										<span
 											className="inline-flex items-center gap-2 px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm border border-border"
-											key={index}
+											key={tag}
 										>
 											{tag}
 											<button
@@ -198,6 +184,7 @@ export function CreateCampaignForm() {
 
 						<button
 							className="w-full py-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg shadow-lg transition transform hover:scale-[1.02] active:scale-[0.98]"
+							disabled={createCampaign.isPending}
 							onClick={handleSubmit(onSubmit)}
 							type="button"
 						>

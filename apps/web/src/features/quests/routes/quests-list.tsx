@@ -1,6 +1,6 @@
 import { Status } from "@planner/enums/quest";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { MoreHorizontal, Plus, ScrollText, Search } from "lucide-react";
 import { useState } from "react";
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
+import { useQuestData } from "../hooks/useQuestData";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 
@@ -186,7 +187,7 @@ export function QuestsPage() {
 	const { campaign, role } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
+	const { createQuest, deleteQuest } = useQuestData();
 	const [search, setSearch] = useState("");
 
 	const { data: quests = { quests: [] }, isLoading } = useQuery({
@@ -198,33 +199,6 @@ export function QuestsPage() {
 			});
 		},
 		queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
-	});
-
-	const { mutate: deleteQuest } = useMutation({
-		mutationFn: (id: string) => client.quest.removeQuest({ id }),
-		onError: () => toast.error("Failed to delete quest"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
-			});
-		},
-	});
-
-	const { mutate: createQuest, isPending: creatingQuest } = useMutation({
-		mutationFn: () => {
-			if (!campaign) throw new Error("campaign required");
-			return client.quest.createQuest({
-				campaignId: campaign.campaign.id,
-				status: Status.ACTIVE,
-				title: "New Quest",
-			});
-		},
-		onError: () => toast.error("Failed to create quest"),
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.quests.list(campaign?.campaign.id ?? ""),
-			});
-		},
 	});
 
 	if (!campaign) {
@@ -261,8 +235,8 @@ export function QuestsPage() {
 				{isDm && (
 					<Button
 						className="shrink-0"
-						disabled={creatingQuest}
-						onClick={() => createQuest()}
+						disabled={createQuest.isPending}
+						onClick={() => createQuest.mutate({ campaignId: campaign.campaign.id, status: Status.ACTIVE, title: "New Quest" }, { onError: () => toast.error("Failed to create Quest") })}
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New Quest
@@ -308,8 +282,8 @@ export function QuestsPage() {
 										</p>
 										<Button
 											className="mt-4"
-											disabled={creatingQuest}
-											onClick={() => createQuest()}
+											disabled={createQuest.isPending}
+											onClick={() => createQuest.mutate({ campaignId: campaign.campaign.id, status: Status.ACTIVE, title: "New Quest" }, { onError: () => toast.error("Failed to create Quest") })}
 											size="sm"
 											variant="outline"
 										>
@@ -329,7 +303,7 @@ export function QuestsPage() {
 						<QuestRow
 							isDm={isDm}
 							key={quest.id}
-							onDelete={() => deleteQuest(quest.id)}
+							onDelete={() => deleteQuest.mutate({ id: quest.id }, { onError: () => toast.error("Failed to delete Quest") })}
 							onEdit={() =>
 								navigate({
 									params: { questId: quest.id },

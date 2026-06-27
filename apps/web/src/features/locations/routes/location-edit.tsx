@@ -1,18 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useLocation } from "@/features/locations/hooks/useLocation";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
-import { useLocation } from "@/features/locations/hooks/useLocation";
-import { client } from "@/shared/lib/client";
-import { queryKeys } from "@/shared/lib/query-keys";
+import type { client } from "@/shared/lib/client";
+import { useLocationData } from "../hooks/useLocationData";
 
 export const locationEditSchema = z.object({
 	description: z.string().optional(),
@@ -24,7 +23,9 @@ export const locationEditSchema = z.object({
 export type LocationEditForm = z.infer<typeof locationEditSchema>;
 
 export function LocationEditPage() {
-	const { locationId } = useParams({ from: "/_authenticated/campaign/locations/$locationId/edit" });
+	const { locationId } = useParams({
+		from: "/_authenticated/campaign/locations/$locationId/edit",
+	});
 	const { role, campaignIsLoading } = useAuth();
 
 	const { data: locationData, isError, isLoading } = useLocation(locationId);
@@ -59,7 +60,7 @@ function LocationEditFormInner({
 	location: Location;
 	locationId: string;
 }) {
-	const queryClient = useQueryClient();
+	const { updateLocation } = useLocationData();
 	const navigate = useNavigate();
 
 	const form = useForm<LocationEditForm>({
@@ -72,33 +73,22 @@ function LocationEditFormInner({
 		resolver: zodResolver(locationEditSchema),
 	});
 
-	const updateMutation = useMutation({
-		mutationFn: (values: LocationEditForm) =>
-			client.location.updateLocation({
-				id: locationId,
-				...values,
-			}),
-		onError: () => toast.error("failed to update location"),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.locations.detail(locationId),
-			});
-
-			queryClient.invalidateQueries({
-				queryKey: queryKeys.locations.list(location.campaignId ?? ""),
-			});
-
-			navigate({
-				params: { locationId },
-				to: "/campaign/locations/$locationId",
-			});
-		},
-	});
-
 	return (
 		<form
 			className="mx-auto max-w-3xl space-y-6 px-4 py-8"
-			onSubmit={form.handleSubmit((data) => updateMutation.mutate(data))}
+			onSubmit={form.handleSubmit((data) =>
+				updateLocation.mutate(
+					{ id: locationId, ...data },
+					{
+						onError: () => toast.error("failed to update location"),
+						onSuccess: () =>
+							navigate({
+								params: { locationId },
+								to: "/campaign/locations/$locationId",
+							}),
+					},
+				),
+			)}
 		>
 			<div>
 				<h1 className="text-2xl font-semibold">Edit Location</h1>
@@ -145,7 +135,7 @@ function LocationEditFormInner({
 					Cancel
 				</Button>
 
-				<Button disabled={updateMutation.isPending} type="submit">
+				<Button disabled={updateLocation.isPending} type="submit">
 					Save Changes
 				</Button>
 			</div>

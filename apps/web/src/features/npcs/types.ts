@@ -59,6 +59,7 @@ export const CreateNpcRequestSchema = z.object({
 });
 
 export type CreateNpcRequest = z.infer<typeof CreateNpcRequestSchema>;
+export type CreateNpcInput = z.input<typeof CreateNpcRequestSchema>;
 
 export const CreateNpcResponseSchema = z.object({
 	npc: NonPlayerCharacterSchema,
@@ -133,3 +134,5 @@ export const RemoveNpcRequestSchema = z.object({
 export type RemoveNpcRequest = z.infer<typeof RemoveNpcRequestSchema>;
 
 export const RemoveNpcResponseSchema = z.object({});
+
+export type UpdateNpcRequest = z.infer<typeof UpdateNpcRequestSchema>;

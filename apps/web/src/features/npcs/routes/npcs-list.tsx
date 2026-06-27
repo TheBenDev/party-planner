@@ -1,5 +1,5 @@
 import { UserRole } from "@planner/enums/user";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { EyeOff, MoreHorizontal, Plus, Search, User2 } from "lucide-react";
 import { useState } from "react";
@@ -17,6 +17,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import { useNpcData } from "../hooks/useNpcData";
 
 const RELATION_STYLES: Record<string, { label: string; className: string }> = {
 	ALLY: {
@@ -254,7 +255,7 @@ export function NPCSPage() {
 	const { campaign, role } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
+	const { createNpc, deleteNpc } = useNpcData();
 	const [search, setSearch] = useState("");
 
 	const { data: npcs = { npcs: [] }, isLoading } = useQuery({
@@ -266,36 +267,6 @@ export function NPCSPage() {
 			});
 		},
 		queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
-	});
-
-	const { mutate: deleteNpc } = useMutation({
-		mutationFn: async (c: string) => await client.npc.removeNpc({ id: c }),
-		onError: () => {
-			toast.error("Failed to delete Npc");
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
-			});
-		},
-	});
-
-	const { mutate: createNpc, isPending: creatingNpc } = useMutation({
-		mutationFn: async () => {
-			if (!campaign) throw new Error("campaign required");
-			await client.npc.createNpc({
-				campaignId: campaign.campaign.id,
-				name: "New Npc",
-			});
-		},
-		onError: () => {
-			toast.error("Failed to create Npc");
-		},
-		onSuccess: async () => {
-			await queryClient.invalidateQueries({
-				queryKey: queryKeys.npcs.list(campaign?.campaign.id ?? ""),
-			});
-		},
 	});
 
 	if (!campaign) {
@@ -337,8 +308,13 @@ export function NPCSPage() {
 				{isDm && (
 					<Button
 						className="shrink-0"
-						disabled={creatingNpc}
-						onClick={() => createNpc()}
+						disabled={createNpc.isPending}
+						onClick={() =>
+							createNpc.mutate(
+								{ campaignId: campaign.campaign.id, name: "New Npc" },
+								{ onError: () => toast.error("Failed to create Npc") },
+							)
+						}
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New NPC
@@ -389,8 +365,15 @@ export function NPCSPage() {
 										</p>
 										<Button
 											className="mt-4"
-											disabled={creatingNpc}
-											onClick={() => createNpc()}
+											disabled={createNpc.isPending}
+											onClick={() =>
+												createNpc.mutate(
+													{ campaignId: campaign.campaign.id, name: "New Npc" },
+													{
+														onError: () => toast.error("Failed to create Npc"),
+													},
+												)
+											}
 											size="sm"
 											variant="outline"
 										>
@@ -411,9 +394,12 @@ export function NPCSPage() {
 							isDm={isDm}
 							key={npc.id}
 							npc={npc}
-							onDelete={() => {
-								deleteNpc(npc.id);
-							}}
+							onDelete={() =>
+								deleteNpc.mutate(
+									{ id: npc.id },
+									{ onError: () => toast.error("Failed to delete Npc") },
+								)
+							}
 							onEdit={() =>
 								navigate({
 									params: { npcId: npc.id },

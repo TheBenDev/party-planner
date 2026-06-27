@@ -73,3 +73,9 @@ export const RemoveLocationRequestSchema = z.object({
 });
 
 export const RemoveLocationResponseSchema = z.object({});
+
+// ─── Type Exports ─────────────────────────────────────────────────────────
+
+export type CreateLocationRequest = z.infer<typeof CreateLocationRequestSchema>;
+export type UpdateLocationRequest = z.infer<typeof UpdateLocationRequestSchema>;
+export type RemoveLocationRequest = z.infer<typeof RemoveLocationRequestSchema>;
