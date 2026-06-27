@@ -29,13 +29,13 @@ type DiscordToken struct {
 
 // Store interface defines database operations
 type Store interface {
-	CreateCampaignIntegration(req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error)
-	GetCampaignIntegration(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
-	GetCampaignIntegrationByExternalID(externalID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
-	ListCampaignIntegrationsByCampaign(campaignID string) ([]*model.CampaignIntegration, error)
-	RemoveCampaignIntegration(campaignID string, source model.IntegrationSource) error
-	ListDiscordIntegrationsWithReminders() ([]*model.CampaignIntegration, error)
-	UpdateCampaignIntegration(req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error)
+	CreateCampaignIntegration(ctx context.Context, req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error)
+	GetCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
+	GetCampaignIntegrationByExternalID(ctx context.Context, externalID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
+	ListCampaignIntegrationsByCampaign(ctx context.Context, campaignID string) ([]*model.CampaignIntegration, error)
+	RemoveCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) error
+	ListDiscordIntegrationsWithReminders(ctx context.Context) ([]*model.CampaignIntegration, error)
+	UpdateCampaignIntegration(ctx context.Context, req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error)
 }
 
 // Service handles campaign integration business logic
@@ -46,8 +46,8 @@ type Service struct {
 }
 
 // GetByCampaign retrieves an integration by campaign and source
-func (s *Service) GetByCampaign(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
-	integration, err := s.DB.GetCampaignIntegration(campaignID, source)
+func (s *Service) GetByCampaign(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+	integration, err := s.DB.GetCampaignIntegration(ctx, campaignID, source)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -58,8 +58,8 @@ func (s *Service) GetByCampaign(campaignID string, source model.IntegrationSourc
 }
 
 // Create creates a new campaign integration
-func (s *Service) Create(req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
-	created, err := s.DB.CreateCampaignIntegration(req)
+func (s *Service) Create(ctx context.Context, req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+	created, err := s.DB.CreateCampaignIntegration(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -98,7 +98,7 @@ func (s *Service) CreateDiscord(ctx context.Context, req *model.CreateDiscordCam
 		return nil, fmt.Errorf("failed to build settings: %w", err)
 	}
 
-	return s.Create(&model.CreateCampaignIntegrationRequest{
+	return s.Create(ctx, &model.CreateCampaignIntegrationRequest{
 		CampaignID: req.CampaignID,
 		ExternalID: tokenRes.GuildID,
 		Source:     model.IntegrationSourceDiscord,
@@ -108,8 +108,8 @@ func (s *Service) CreateDiscord(ctx context.Context, req *model.CreateDiscordCam
 }
 
 // ListByCampaign lists all integrations for a campaign
-func (s *Service) ListByCampaign(campaignID string) ([]*model.CampaignIntegration, error) {
-	integrations, err := s.DB.ListCampaignIntegrationsByCampaign(campaignID)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.CampaignIntegration, error) {
+	integrations, err := s.DB.ListCampaignIntegrationsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign integrations: %w", err)
 	}
@@ -123,7 +123,7 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateCampaignIntegrati
 		if req.Discord == nil {
 			return nil, fmt.Errorf("discord params required")
 		}
-		existing, err := s.DB.GetCampaignIntegration(req.CampaignID, model.IntegrationSourceDiscord)
+		existing, err := s.DB.GetCampaignIntegration(ctx, req.CampaignID, model.IntegrationSourceDiscord)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, ErrNotFound
@@ -184,7 +184,7 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateCampaignIntegrati
 			req.Discord.SessionReminderChannel = existingSettings.SessionReminderChannel
 		}
 
-		updated, err := s.DB.UpdateCampaignIntegration(req)
+		updated, err := s.DB.UpdateCampaignIntegration(ctx, req)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return nil, ErrNotFound
@@ -198,8 +198,8 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateCampaignIntegrati
 }
 
 // Remove removes a campaign integration
-func (s *Service) Remove(campaignID string, source model.IntegrationSource) error {
-	err := s.DB.RemoveCampaignIntegration(campaignID, source)
+func (s *Service) Remove(ctx context.Context, campaignID string, source model.IntegrationSource) error {
+	err := s.DB.RemoveCampaignIntegration(ctx, campaignID, source)
 	if err != nil {
 		return fmt.Errorf("remove campaign integration: %w", err)
 	}

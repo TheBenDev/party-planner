@@ -45,7 +45,7 @@ func (s *Server) CreateNpc(ctx context.Context, req *connect.Request[v1.CreateNp
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	npc, err := s.Npc.Create(&model.CreateNpcRequest{
+	npc, err := s.Npc.Create(ctx, &model.CreateNpcRequest{
 		CampaignID:            req.Msg.CampaignId,
 		Name:                  req.Msg.Name,
 		Status:                status,
@@ -83,7 +83,7 @@ func (s *Server) GetNpc(ctx context.Context, req *connect.Request[v1.GetNpcReque
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	npc, err := s.Npc.GetByID(req.Msg.Id, req.Msg.CampaignId)
+	npc, err := s.Npc.GetByID(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get npc")
 	}
@@ -98,7 +98,7 @@ func (s *Server) ListNpcsByCampaign(ctx context.Context, req *connect.Request[v1
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	npcs, err := s.Npc.ListByCampaign(req.Msg.CampaignId)
+	npcs, err := s.Npc.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list npcs")
 	}
@@ -145,7 +145,7 @@ func (s *Server) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNp
 		relation = &r
 	}
 
-	npc, err := s.Npc.Update(&model.UpdateNpcRequest{
+	npc, err := s.Npc.Update(ctx, &model.UpdateNpcRequest{
 		ID:                    req.Msg.Id,
 		CampaignID:            req.Msg.CampaignId,
 		Name:                  req.Msg.Name,
@@ -184,7 +184,7 @@ func (s *Server) RemoveNpc(ctx context.Context, req *connect.Request[v1.RemoveNp
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	if err := s.Npc.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
+	if err := s.Npc.Remove(ctx, req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove npc")
 	}
 

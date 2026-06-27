@@ -19,14 +19,14 @@ var (
 )
 
 type Store interface {
-	CreateSession(req *model.CreateSessionRequest) (*model.Session, error)
-	UpsertSessionForSeries(req *model.CreateSessionRequest) (*model.Session, error)
-	GetSession(id, campaignID string) (*model.Session, error)
-	ListOneOffSessionsByCampaign(campaignID string) ([]*model.Session, error)
-	ListSeriesSessionsByCampaign(campaignID string) ([]*model.Session, error)
-	GetNextSessionByCampaign(campaignID string) (*model.Session, error)
-	RemoveSession(id, campaignID string) error
-	UpdateSession(req *model.UpdateSessionRequest) (*model.Session, error)
+	CreateSession(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error)
+	UpsertSessionForSeries(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error)
+	GetSession(ctx context.Context, id, campaignID string) (*model.Session, error)
+	ListOneOffSessionsByCampaign(ctx context.Context, campaignID string) ([]*model.Session, error)
+	ListSeriesSessionsByCampaign(ctx context.Context, campaignID string) ([]*model.Session, error)
+	GetNextSessionByCampaign(ctx context.Context, campaignID string) (*model.Session, error)
+	RemoveSession(ctx context.Context, id, campaignID string) error
+	UpdateSession(ctx context.Context, req *model.UpdateSessionRequest) (*model.Session, error)
 }
 
 type Service struct {
@@ -35,7 +35,7 @@ type Service struct {
 }
 
 func (s *Service) Create(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error) {
-	session, err := s.DB.CreateSession(req)
+	session, err := s.DB.CreateSession(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -46,7 +46,7 @@ func (s *Service) Create(ctx context.Context, req *model.CreateSessionRequest) (
 }
 
 func (s *Service) UpsertForSeries(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error) {
-	session, err := s.DB.UpsertSessionForSeries(req)
+	session, err := s.DB.UpsertSessionForSeries(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -56,8 +56,8 @@ func (s *Service) UpsertForSeries(ctx context.Context, req *model.CreateSessionR
 	return session, nil
 }
 
-func (s *Service) GetByID(id, campaignID string) (*model.Session, error) {
-	session, err := s.DB.GetSession(id, campaignID)
+func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Session, error) {
+	session, err := s.DB.GetSession(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -67,24 +67,24 @@ func (s *Service) GetByID(id, campaignID string) (*model.Session, error) {
 	return session, nil
 }
 
-func (s *Service) ListOneOffSessions(campaignID string) ([]*model.Session, error) {
-	sessions, err := s.DB.ListOneOffSessionsByCampaign(campaignID)
+func (s *Service) ListOneOffSessions(ctx context.Context, campaignID string) ([]*model.Session, error) {
+	sessions, err := s.DB.ListOneOffSessionsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list one-off sessions: %w", err)
 	}
 	return sessions, nil
 }
 
-func (s *Service) ListSeriesSessions(campaignID string) ([]*model.Session, error) {
-	sessions, err := s.DB.ListSeriesSessionsByCampaign(campaignID)
+func (s *Service) ListSeriesSessions(ctx context.Context, campaignID string) ([]*model.Session, error) {
+	sessions, err := s.DB.ListSeriesSessionsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list series sessions: %w", err)
 	}
 	return sessions, nil
 }
 
-func (s *Service) GetNextSession(campaignID string) (*model.Session, error) {
-	session, err := s.DB.GetNextSessionByCampaign(campaignID)
+func (s *Service) GetNextSession(ctx context.Context, campaignID string) (*model.Session, error) {
+	session, err := s.DB.GetNextSessionByCampaign(ctx, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -94,15 +94,15 @@ func (s *Service) GetNextSession(campaignID string) (*model.Session, error) {
 	return session, nil
 }
 
-func (s *Service) Remove(id, campaignID string) error {
-	if err := s.DB.RemoveSession(id, campaignID); err != nil {
+func (s *Service) Remove(ctx context.Context, id, campaignID string) error {
+	if err := s.DB.RemoveSession(ctx, id, campaignID); err != nil {
 		return fmt.Errorf("remove session: %w", err)
 	}
 	return nil
 }
 
 func (s *Service) Update(ctx context.Context, req *model.UpdateSessionRequest) (*model.Session, error) {
-	session, err := s.DB.UpdateSession(req)
+	session, err := s.DB.UpdateSession(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped

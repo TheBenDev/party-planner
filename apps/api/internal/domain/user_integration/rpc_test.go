@@ -18,17 +18,19 @@ type mockStore struct {
 	err         error
 }
 
-func (m *mockStore) GetUserIntegration(_ string, _ model.IntegrationSource) (*model.UserIntegration, error) {
+func (m *mockStore) GetUserIntegration(_ context.Context, _ string, _ model.IntegrationSource) (*model.UserIntegration, error) {
 	return m.integration, m.err
 }
-func (m *mockStore) UpsertUserIntegration(_ *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error) {
+func (m *mockStore) UpsertUserIntegration(_ context.Context, _ *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error) {
 	return m.integration, m.err
 }
-func (m *mockStore) DeleteUserIntegration(_ string, _ model.IntegrationSource) error { return m.err }
-func (m *mockStore) ListUserIntegrationsByCampaign(_ string, _ model.IntegrationSource) ([]*model.CampaignMemberIntegration, error) {
+func (m *mockStore) DeleteUserIntegration(_ context.Context, _ string, _ model.IntegrationSource) error {
+	return m.err
+}
+func (m *mockStore) ListUserIntegrationsByCampaign(_ context.Context, _ string, _ model.IntegrationSource) ([]*model.CampaignMemberIntegration, error) {
 	return m.members, m.err
 }
-func (m *mockStore) GetCampaignIntegration(_ string, _ model.IntegrationSource) (*model.CampaignIntegration, error) {
+func (m *mockStore) GetCampaignIntegration(_ context.Context, _ string, _ model.IntegrationSource) (*model.CampaignIntegration, error) {
 	return nil, m.err
 }
 

@@ -16,26 +16,26 @@ type mockStore struct {
 	err  error
 }
 
-func (m *mockStore) CreateSession(_ *model.CreateSessionRequest) (*model.Session, error) {
+func (m *mockStore) CreateSession(_ context.Context, _ *model.CreateSessionRequest) (*model.Session, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) UpsertSessionForSeries(_ *model.CreateSessionRequest) (*model.Session, error) {
+func (m *mockStore) UpsertSessionForSeries(_ context.Context, _ *model.CreateSessionRequest) (*model.Session, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) GetSession(_, _ string) (*model.Session, error) {
+func (m *mockStore) GetSession(_ context.Context, _, _ string) (*model.Session, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) ListOneOffSessionsByCampaign(_ string) ([]*model.Session, error) {
+func (m *mockStore) ListOneOffSessionsByCampaign(_ context.Context, _ string) ([]*model.Session, error) {
 	return m.sess, m.err
 }
-func (m *mockStore) ListSeriesSessionsByCampaign(_ string) ([]*model.Session, error) {
+func (m *mockStore) ListSeriesSessionsByCampaign(_ context.Context, _ string) ([]*model.Session, error) {
 	return m.sess, m.err
 }
-func (m *mockStore) GetNextSessionByCampaign(_ string) (*model.Session, error) {
+func (m *mockStore) GetNextSessionByCampaign(_ context.Context, _ string) (*model.Session, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) RemoveSession(_, _ string) error { return m.err }
-func (m *mockStore) UpdateSession(_ *model.UpdateSessionRequest) (*model.Session, error) {
+func (m *mockStore) RemoveSession(_ context.Context, _, _ string) error { return m.err }
+func (m *mockStore) UpdateSession(_ context.Context, _ *model.UpdateSessionRequest) (*model.Session, error) {
 	return m.one(), m.err
 }
 

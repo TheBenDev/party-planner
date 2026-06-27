@@ -1,23 +1,19 @@
 package quest
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for quest queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -46,8 +42,8 @@ func scanQuest(row interface{ Scan(...any) error }) (*model.Quest, error) {
 	return &q, nil
 }
 
-func (db *DB) CreateQuest(req *model.CreateQuestRequest) (*model.Quest, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateQuest(ctx context.Context, req *model.CreateQuestRequest) (*model.Quest, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO quest (campaign_id, title, status, description, quest_giver_id, reward)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING `+questColumns,
@@ -56,16 +52,16 @@ func (db *DB) CreateQuest(req *model.CreateQuestRequest) (*model.Quest, error) {
 	return scanQuest(row)
 }
 
-func (db *DB) GetQuest(id, campaignID string) (*model.Quest, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetQuest(ctx context.Context, id, campaignID string) (*model.Quest, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+questColumns+` FROM quest WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL LIMIT 1`,
 		id, campaignID,
 	)
 	return scanQuest(row)
 }
 
-func (db *DB) ListQuestsByCampaign(campaignID string) ([]*model.Quest, error) {
-	rows, err := db.conn.Query(`SELECT `+questColumns+` FROM quest WHERE campaign_id = $1 AND deleted_at IS NULL`, campaignID)
+func (db *DB) ListQuestsByCampaign(ctx context.Context, campaignID string) ([]*model.Quest, error) {
+	rows, err := db.conn.QueryContext(ctx, `SELECT `+questColumns+` FROM quest WHERE campaign_id = $1 AND deleted_at IS NULL`, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list quests: %w", err)
 	}
@@ -86,8 +82,8 @@ func (db *DB) ListQuestsByCampaign(campaignID string) ([]*model.Quest, error) {
 	return quests, rows.Err()
 }
 
-func (db *DB) UpdateQuest(req *model.UpdateQuestRequest) (*model.Quest, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateQuest(ctx context.Context, req *model.UpdateQuestRequest) (*model.Quest, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE quest SET
 			title       = COALESCE($1, title),
 			status      = COALESCE($2, status),
@@ -100,8 +96,8 @@ func (db *DB) UpdateQuest(req *model.UpdateQuestRequest) (*model.Quest, error) {
 	return scanQuest(row)
 }
 
-func (db *DB) RemoveQuest(id, campaignID string) error {
-	_, err := db.conn.Exec(
+func (db *DB) RemoveQuest(ctx context.Context, id, campaignID string) error {
+	_, err := db.conn.ExecContext(ctx,
 		`UPDATE quest SET deleted_at = NOW(), updated_at = NOW() WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL`,
 		id, campaignID,
 	)

@@ -16,36 +16,36 @@ import (
 type mockServiceStore struct {
 	sess *model.Session
 
-	createSessionErr        error
-	upsertSessionErr        error
-	getSessionErr           error
-	getNextSessionErr       error
-	updateSessionErr        error
-	removeSessionErr        error
+	createSessionErr  error
+	upsertSessionErr  error
+	getSessionErr     error
+	getNextSessionErr error
+	updateSessionErr  error
+	removeSessionErr  error
 }
 
-func (m *mockServiceStore) CreateSession(_ *model.CreateSessionRequest) (*model.Session, error) {
+func (m *mockServiceStore) CreateSession(_ context.Context, _ *model.CreateSessionRequest) (*model.Session, error) {
 	return m.sess, m.createSessionErr
 }
-func (m *mockServiceStore) UpsertSessionForSeries(_ *model.CreateSessionRequest) (*model.Session, error) {
+func (m *mockServiceStore) UpsertSessionForSeries(_ context.Context, _ *model.CreateSessionRequest) (*model.Session, error) {
 	return m.sess, m.upsertSessionErr
 }
-func (m *mockServiceStore) GetSession(_, _ string) (*model.Session, error) {
+func (m *mockServiceStore) GetSession(_ context.Context, _, _ string) (*model.Session, error) {
 	return m.sess, m.getSessionErr
 }
-func (m *mockServiceStore) ListOneOffSessionsByCampaign(_ string) ([]*model.Session, error) {
+func (m *mockServiceStore) ListOneOffSessionsByCampaign(_ context.Context, _ string) ([]*model.Session, error) {
 	return nil, nil
 }
-func (m *mockServiceStore) ListSeriesSessionsByCampaign(_ string) ([]*model.Session, error) {
+func (m *mockServiceStore) ListSeriesSessionsByCampaign(_ context.Context, _ string) ([]*model.Session, error) {
 	return nil, nil
 }
-func (m *mockServiceStore) GetNextSessionByCampaign(_ string) (*model.Session, error) {
+func (m *mockServiceStore) GetNextSessionByCampaign(_ context.Context, _ string) (*model.Session, error) {
 	return m.sess, m.getNextSessionErr
 }
-func (m *mockServiceStore) RemoveSession(_, _ string) error {
+func (m *mockServiceStore) RemoveSession(_ context.Context, _, _ string) error {
 	return m.removeSessionErr
 }
-func (m *mockServiceStore) UpdateSession(_ *model.UpdateSessionRequest) (*model.Session, error) {
+func (m *mockServiceStore) UpdateSession(_ context.Context, _ *model.UpdateSessionRequest) (*model.Session, error) {
 	return m.sess, m.updateSessionErr
 }
 
@@ -118,7 +118,7 @@ func TestSessionServiceUpsertForSeries_UniqueViolation(t *testing.T) {
 
 func TestSessionServiceGetByID_HappyPath(t *testing.T) {
 	want := testSession()
-	got, err := newService(&mockServiceStore{sess: want}).GetByID(want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{sess: want}).GetByID(context.Background(), want.ID, want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -128,7 +128,7 @@ func TestSessionServiceGetByID_HappyPath(t *testing.T) {
 }
 
 func TestSessionServiceGetByID_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getSessionErr: sql.ErrNoRows}).GetByID("session-1", "campaign-1")
+	_, err := newService(&mockServiceStore{getSessionErr: sql.ErrNoRows}).GetByID(context.Background(), "session-1", "campaign-1")
 	assertError(t, err, session.ErrNotFound)
 }
 
@@ -136,7 +136,7 @@ func TestSessionServiceGetByID_NotFound(t *testing.T) {
 
 func TestSessionServiceGetNextSession_HappyPath(t *testing.T) {
 	want := testSession()
-	got, err := newService(&mockServiceStore{sess: want}).GetNextSession(want.CampaignID)
+	got, err := newService(&mockServiceStore{sess: want}).GetNextSession(context.Background(), want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -146,7 +146,7 @@ func TestSessionServiceGetNextSession_HappyPath(t *testing.T) {
 }
 
 func TestSessionServiceGetNextSession_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getNextSessionErr: sql.ErrNoRows}).GetNextSession("campaign-1")
+	_, err := newService(&mockServiceStore{getNextSessionErr: sql.ErrNoRows}).GetNextSession(context.Background(), "campaign-1")
 	assertError(t, err, session.ErrNotFound)
 }
 

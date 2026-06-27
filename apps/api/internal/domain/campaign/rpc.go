@@ -28,7 +28,7 @@ func (s *Server) CreateCampaign(ctx context.Context, req *connect.Request[v1.Cre
 	if req.Msg.Title == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign title required"))
 	}
-	campaign, err := s.Campaign.Create(&model.CreateCampaignRequest{
+	campaign, err := s.Campaign.Create(ctx, &model.CreateCampaignRequest{
 		UserID:      req.Msg.UserId,
 		Title:       req.Msg.Title,
 		Description: nullString(req.Msg.Description),
@@ -44,7 +44,7 @@ func (s *Server) GetCampaign(ctx context.Context, req *connect.Request[v1.GetCam
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	campaign, err := s.Campaign.GetByID(req.Msg.Id)
+	campaign, err := s.Campaign.GetByID(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get campaign")
 	}
@@ -58,7 +58,7 @@ func (s *Server) UpdateCampaign(ctx context.Context, req *connect.Request[v1.Upd
 	if req.Msg.UserId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
-	campaign, err := s.Campaign.Update(req.Msg.UserId, &model.UpdateCampaignRequest{
+	campaign, err := s.Campaign.Update(ctx, req.Msg.UserId, &model.UpdateCampaignRequest{
 		ID:          req.Msg.Id,
 		Title:       req.Msg.Title,
 		Description: nullString(req.Msg.Description),
@@ -77,7 +77,7 @@ func (s *Server) DeleteCampaign(ctx context.Context, req *connect.Request[v1.Del
 	if req.Msg.UserId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
-	campaign, err := s.Campaign.Delete(req.Msg.UserId, req.Msg.Id)
+	campaign, err := s.Campaign.Delete(ctx, req.Msg.UserId, req.Msg.Id)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to delete campaign")
 	}

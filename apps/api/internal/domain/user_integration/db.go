@@ -1,23 +1,19 @@
 package user_integration
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for user_integration queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -43,8 +39,8 @@ func scanUserIntegration(row interface{ Scan(...any) error }) (*model.UserIntegr
 	return &ui, nil
 }
 
-func (db *DB) UpsertUserIntegration(req *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpsertUserIntegration(ctx context.Context, req *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO user_integrations (user_id, source, metadata)
 		VALUES ($1, $2, $3)
 		ON CONFLICT (user_id, source) DO UPDATE
@@ -55,8 +51,8 @@ func (db *DB) UpsertUserIntegration(req *model.UpsertUserIntegrationRequest) (*m
 	return scanUserIntegration(row)
 }
 
-func (db *DB) DeleteUserIntegration(userID string, source model.IntegrationSource) error {
-	_, err := db.conn.Exec(`
+func (db *DB) DeleteUserIntegration(ctx context.Context, userID string, source model.IntegrationSource) error {
+	_, err := db.conn.ExecContext(ctx, `
 		DELETE FROM user_integrations WHERE user_id = $1 AND source = $2`,
 		userID, source,
 	)
@@ -66,8 +62,8 @@ func (db *DB) DeleteUserIntegration(userID string, source model.IntegrationSourc
 	return nil
 }
 
-func (db *DB) GetUserIntegration(userID string, source model.IntegrationSource) (*model.UserIntegration, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) GetUserIntegration(ctx context.Context, userID string, source model.IntegrationSource) (*model.UserIntegration, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+userIntegrationColumns+` FROM user_integrations
 		WHERE user_id = $1 AND source = $2 LIMIT 1`,
 		userID, source,
@@ -75,8 +71,8 @@ func (db *DB) GetUserIntegration(userID string, source model.IntegrationSource) 
 	return scanUserIntegration(row)
 }
 
-func (db *DB) ListUserIntegrationsByCampaign(campaignID string, source model.IntegrationSource) ([]*model.CampaignMemberIntegration, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListUserIntegrationsByCampaign(ctx context.Context, campaignID string, source model.IntegrationSource) ([]*model.CampaignMemberIntegration, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT ui.user_id, ui.metadata
 		FROM user_integrations ui
 		INNER JOIN campaign_users cu ON cu.user_id = ui.user_id AND cu.campaign_id = $1
@@ -123,8 +119,8 @@ func scanCampaignIntegration(row interface{ Scan(...any) error }) (*model.Campai
 	return &ci, nil
 }
 
-func (db *DB) GetCampaignIntegration(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) GetCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+campaignIntegrationColumns+` FROM campaign_integrations
 		WHERE campaign_id = $1 AND source = $2
 		LIMIT 1`, campaignID, source)

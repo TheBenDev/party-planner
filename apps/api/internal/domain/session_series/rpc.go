@@ -23,12 +23,12 @@ const (
 // SessionSeriesServicer defines the operations the RPC layer depends on.
 type SessionSeriesServicer interface {
 	Create(ctx context.Context, req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error)
-	Get(id string, campaignID string) (*model.SessionSeries, error)
-	ListByCampaign(campaignID string) ([]*model.SessionSeriesWithDetails, error)
-	Update(req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error)
+	Get(ctx context.Context, id string, campaignID string) (*model.SessionSeries, error)
+	ListByCampaign(ctx context.Context, campaignID string) ([]*model.SessionSeriesWithDetails, error)
+	Update(ctx context.Context, req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error)
 	Remove(ctx context.Context, id string, campaignID string, userID string) error
 	ExcludeFromSeries(ctx context.Context, seriesID string, campaignID string, excludedDate time.Time) error
-	RemoveException(seriesID string, campaignID string, excludedDate time.Time) error
+	RemoveException(ctx context.Context, seriesID string, campaignID string, excludedDate time.Time) error
 	AddToGoogleCalendar(ctx context.Context, seriesID string, campaignID string, userID string) (*model.SessionSeries, error)
 	RemoveFromGoogleCalendar(ctx context.Context, seriesID string, campaignID string, userID string) (*model.SessionSeries, error)
 	CreateDiscordEvent(ctx context.Context, seriesID string, campaignID string) (*model.SessionSeries, error)
@@ -104,7 +104,7 @@ func (s *Server) GetSessionSeries(ctx context.Context, req *connect.Request[v1.G
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	series, err := s.SessionSeries.Get(req.Msg.Id, req.Msg.CampaignId)
+	series, err := s.SessionSeries.Get(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get session series")
 	}
@@ -115,7 +115,7 @@ func (s *Server) ListSessionSeriesByCampaign(ctx context.Context, req *connect.R
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	seriesList, err := s.SessionSeries.ListByCampaign(req.Msg.CampaignId)
+	seriesList, err := s.SessionSeries.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list session series")
 	}
@@ -151,7 +151,7 @@ func (s *Server) UpdateSessionSeries(ctx context.Context, req *connect.Request[v
 			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid series end date"))
 		}
 	}
-	series, err := s.SessionSeries.Update(&model.UpdateSessionSeriesRequest{
+	series, err := s.SessionSeries.Update(ctx, &model.UpdateSessionSeriesRequest{
 		ID:            req.Msg.Id,
 		CampaignID:    req.Msg.CampaignId,
 		Title:         req.Msg.Title,
@@ -215,7 +215,7 @@ func (s *Server) RemoveSeriesException(ctx context.Context, req *connect.Request
 	if err := req.Msg.ExcludedDate.CheckValid(); err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid excluded date"))
 	}
-	if err := s.SessionSeries.RemoveException(req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
+	if err := s.SessionSeries.RemoveException(ctx, req.Msg.SeriesId, req.Msg.CampaignId, req.Msg.ExcludedDate.AsTime()); err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove series exception")
 	}
 	return connect.NewResponse(&v1.RemoveSeriesExceptionResponse{}), nil

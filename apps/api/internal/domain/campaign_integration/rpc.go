@@ -17,11 +17,11 @@ import (
 
 // Servicer interface defines service operations for RPC
 type Servicer interface {
-	GetByCampaign(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
+	GetByCampaign(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
 	CreateDiscord(ctx context.Context, req *model.CreateDiscordCampaignIntegrationRequest) (*model.CampaignIntegration, error)
-	ListByCampaign(campaignID string) ([]*model.CampaignIntegration, error)
+	ListByCampaign(ctx context.Context, campaignID string) ([]*model.CampaignIntegration, error)
 	Update(ctx context.Context, req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error)
-	Remove(campaignID string, source model.IntegrationSource) error
+	Remove(ctx context.Context, campaignID string, source model.IntegrationSource) error
 }
 
 // Server implements the CampaignIntegrationService ConnectRPC handler
@@ -42,7 +42,7 @@ func (s *Server) GetCampaignIntegration(ctx context.Context, req *connect.Reques
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid campaign integration"))
 	}
-	campaignIntegration, err := s.CampaignIntegration.GetByCampaign(req.Msg.CampaignId, source)
+	campaignIntegration, err := s.CampaignIntegration.GetByCampaign(ctx, req.Msg.CampaignId, source)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get campaign integration")
 	}
@@ -85,7 +85,7 @@ func (s *Server) ListCampaignIntegrationsByCampaign(ctx context.Context, req *co
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	integrations, err := s.CampaignIntegration.ListByCampaign(req.Msg.CampaignId)
+	integrations, err := s.CampaignIntegration.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list campaign integrations")
 	}
@@ -159,7 +159,7 @@ func (s *Server) RemoveCampaignIntegration(ctx context.Context, req *connect.Req
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invalid campaign integration"))
 	}
-	if err := s.CampaignIntegration.Remove(req.Msg.CampaignId, source); err != nil {
+	if err := s.CampaignIntegration.Remove(ctx, req.Msg.CampaignId, source); err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove campaign integration")
 	}
 	return connect.NewResponse(&v1.RemoveCampaignIntegrationResponse{}), nil

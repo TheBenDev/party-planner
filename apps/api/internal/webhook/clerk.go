@@ -1,6 +1,7 @@
 package webhook
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -73,9 +74,9 @@ func (h *ClerkWebhookHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 	case "user.created":
 		h.handleUserCreated(w, r, event.Data)
 	case "user.updated":
-		h.handleUserUpdated(w, event.Data)
+		h.handleUserUpdated(r.Context(), w, event.Data)
 	case "user.deleted":
-		h.handleUserDeleted(w, event.Data)
+		h.handleUserDeleted(r.Context(), w, event.Data)
 	default:
 		slog.Info("clerk webhook: unhandled event type", "type", event.Type)
 		w.WriteHeader(http.StatusNoContent)
@@ -101,7 +102,7 @@ func (h *ClerkWebhookHandler) handleUserCreated(w http.ResponseWriter, r *http.R
 		FirstName:  nullStringPtr(u.FirstName),
 		LastName:   nullStringPtr(u.LastName),
 	}
-	if _, err := h.User.Create(req); err != nil {
+	if _, err := h.User.Create(r.Context(), req); err != nil {
 		if errors.Is(err, domain_user.ErrAlreadyExists) || errors.Is(err, domain_user.ErrExternalIDTaken) || errors.Is(err, domain_user.ErrEmailTaken) {
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -113,7 +114,7 @@ func (h *ClerkWebhookHandler) handleUserCreated(w http.ResponseWriter, r *http.R
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *ClerkWebhookHandler) handleUserUpdated(w http.ResponseWriter, data json.RawMessage) {
+func (h *ClerkWebhookHandler) handleUserUpdated(ctx context.Context, w http.ResponseWriter, data json.RawMessage) {
 	var u clerkUserData
 	if err := json.Unmarshal(data, &u); err != nil {
 		slog.Error("clerk webhook: failed to parse user.updated data", "error", err)
@@ -126,7 +127,7 @@ func (h *ClerkWebhookHandler) handleUserUpdated(w http.ResponseWriter, data json
 		FirstName:  nullStringPtr(u.FirstName),
 		LastName:   nullStringPtr(u.LastName),
 	}
-	if _, err := h.User.Update(req); err != nil {
+	if _, err := h.User.Update(ctx, req); err != nil {
 		slog.Error("clerk webhook: failed to update user", "error", err, "external_id", u.ID)
 		http.Error(w, "failed to update user", http.StatusInternalServerError)
 		return
@@ -134,7 +135,7 @@ func (h *ClerkWebhookHandler) handleUserUpdated(w http.ResponseWriter, data json
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *ClerkWebhookHandler) handleUserDeleted(w http.ResponseWriter, data json.RawMessage) {
+func (h *ClerkWebhookHandler) handleUserDeleted(ctx context.Context, w http.ResponseWriter, data json.RawMessage) {
 	var u struct {
 		ID string `json:"id"`
 	}
@@ -143,7 +144,11 @@ func (h *ClerkWebhookHandler) handleUserDeleted(w http.ResponseWriter, data json
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
 	}
-	if _, err := h.User.Delete(u.ID); err != nil {
+	if _, err := h.User.Delete(ctx, u.ID); err != nil {
+		if errors.Is(err, domain_user.ErrNotFound) {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		slog.Error("clerk webhook: failed to delete user", "error", err, "external_id", u.ID)
 		http.Error(w, "failed to delete user", http.StatusInternalServerError)
 		return

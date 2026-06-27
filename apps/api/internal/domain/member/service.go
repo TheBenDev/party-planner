@@ -1,6 +1,7 @@
 package member
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -25,21 +26,21 @@ var (
 )
 
 type Store interface {
-	CreateCampaignUser(req *model.CreateMemberRequest) (*model.Member, error)
-	GetCampaignUser(campaignID, userID string) (*model.Member, error)
-	ListCampaignUsersByCampaign(campaignID string) ([]*model.MemberWithUser, error)
-	ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, error)
-	RemoveCampaignUser(campaignID, userID string) error
-	UpdateCampaignUserRole(campaignID, userID string, role model.MemberRole) (*model.Member, error)
-	CreateCampaignInvitation(req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error)
-	GetCampaignInvitationByEmail(campaignID, inviteeEmail string, status model.InvitationStatus) (*model.CampaignInvitation, error)
-	GetCampaignInvitationByToken(token string) (*model.GetCampaignInvitationResponse, error)
-	ListCampaignInvitations(campaignID string) ([]*model.CampaignInvitation, error)
-	AcceptCampaignInvitation(token string, role model.MemberRole) (*model.CampaignInvitation, error)
-	DeclineCampaignInvitation(token string) (*model.CampaignInvitation, error)
-	RevokeCampaignInvitation(invitationID, campaignID string) (*model.CampaignInvitation, error)
-	GetUserByEmail(email string) (*model.User, error)
-	RunInTx(fn func(Store) error) error
+	CreateCampaignUser(ctx context.Context, req *model.CreateMemberRequest) (*model.Member, error)
+	GetCampaignUser(ctx context.Context, campaignID, userID string) (*model.Member, error)
+	ListCampaignUsersByCampaign(ctx context.Context, campaignID string) ([]*model.MemberWithUser, error)
+	ListCampaignUsersByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error)
+	RemoveCampaignUser(ctx context.Context, campaignID, userID string) error
+	UpdateCampaignUserRole(ctx context.Context, campaignID, userID string, role model.MemberRole) (*model.Member, error)
+	CreateCampaignInvitation(ctx context.Context, req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error)
+	GetCampaignInvitationByEmail(ctx context.Context, campaignID, inviteeEmail string, status model.InvitationStatus) (*model.CampaignInvitation, error)
+	GetCampaignInvitationByToken(ctx context.Context, token string) (*model.GetCampaignInvitationResponse, error)
+	ListCampaignInvitations(ctx context.Context, campaignID string) ([]*model.CampaignInvitation, error)
+	AcceptCampaignInvitation(ctx context.Context, token string, role model.MemberRole) (*model.CampaignInvitation, error)
+	DeclineCampaignInvitation(ctx context.Context, token string) (*model.CampaignInvitation, error)
+	RevokeCampaignInvitation(ctx context.Context, invitationID, campaignID string) (*model.CampaignInvitation, error)
+	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
+	RunInTx(ctx context.Context, fn func(context.Context, Store) error) error
 }
 
 type Service struct {
@@ -47,8 +48,8 @@ type Service struct {
 	Log *slog.Logger
 }
 
-func (s *Service) Create(req *model.CreateMemberRequest) (*model.Member, error) {
-	member, err := s.DB.CreateCampaignUser(req)
+func (s *Service) Create(ctx context.Context, req *model.CreateMemberRequest) (*model.Member, error) {
+	member, err := s.DB.CreateCampaignUser(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -58,8 +59,8 @@ func (s *Service) Create(req *model.CreateMemberRequest) (*model.Member, error) 
 	return member, nil
 }
 
-func (s *Service) Get(campaignID, userID string) (*model.Member, error) {
-	member, err := s.DB.GetCampaignUser(campaignID, userID)
+func (s *Service) Get(ctx context.Context, campaignID, userID string) (*model.Member, error) {
+	member, err := s.DB.GetCampaignUser(ctx, campaignID, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrCampaignUserNotFound
@@ -69,24 +70,24 @@ func (s *Service) Get(campaignID, userID string) (*model.Member, error) {
 	return member, nil
 }
 
-func (s *Service) ListByCampaign(campaignID string) ([]*model.MemberWithUser, error) {
-	members, err := s.DB.ListCampaignUsersByCampaign(campaignID)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.MemberWithUser, error) {
+	members, err := s.DB.ListCampaignUsersByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign users by campaign: %w", err)
 	}
 	return members, nil
 }
 
-func (s *Service) ListByUser(userID string) ([]*model.MemberWithUser, error) {
-	members, err := s.DB.ListCampaignUsersByUser(userID)
+func (s *Service) ListByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error) {
+	members, err := s.DB.ListCampaignUsersByUser(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign users by user: %w", err)
 	}
 	return members, nil
 }
 
-func (s *Service) Remove(campaignID, userID string) error {
-	err := s.DB.RemoveCampaignUser(campaignID, userID)
+func (s *Service) Remove(ctx context.Context, campaignID, userID string) error {
+	err := s.DB.RemoveCampaignUser(ctx, campaignID, userID)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return mapped
@@ -96,8 +97,8 @@ func (s *Service) Remove(campaignID, userID string) error {
 	return nil
 }
 
-func (s *Service) UpdateRole(campaignID, userID string, role model.MemberRole) (*model.Member, error) {
-	member, err := s.DB.UpdateCampaignUserRole(campaignID, userID, role)
+func (s *Service) UpdateRole(ctx context.Context, campaignID, userID string, role model.MemberRole) (*model.Member, error) {
+	member, err := s.DB.UpdateCampaignUserRole(ctx, campaignID, userID, role)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrCampaignUserNotFound
@@ -110,14 +111,14 @@ func (s *Service) UpdateRole(campaignID, userID string, role model.MemberRole) (
 	return member, nil
 }
 
-func (s *Service) AcceptInvitation(token string) (*model.InvitationResponse, error) {
+func (s *Service) AcceptInvitation(ctx context.Context, token string) (*model.InvitationResponse, error) {
 	var inv *model.CampaignInvitation
 	var member *model.Member
 
-	err := s.DB.RunInTx(func(tx Store) error {
+	err := s.DB.RunInTx(ctx, func(ctx context.Context, tx Store) error {
 		var err error
 
-		i, err := tx.GetCampaignInvitationByToken(token)
+		i, err := tx.GetCampaignInvitationByToken(ctx, token)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return ErrCampaignInvitationNotFound
@@ -128,7 +129,7 @@ func (s *Service) AcceptInvitation(token string) (*model.InvitationResponse, err
 			return fmt.Errorf("get invitation: %w", err)
 		}
 
-		user, err := tx.GetUserByEmail(i.Invitation.InviteeEmail)
+		user, err := tx.GetUserByEmail(ctx, i.Invitation.InviteeEmail)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return ErrUserNotFound
@@ -139,7 +140,7 @@ func (s *Service) AcceptInvitation(token string) (*model.InvitationResponse, err
 			return fmt.Errorf("get user: %w", err)
 		}
 
-		inv, err = tx.AcceptCampaignInvitation(token, i.Invitation.Role)
+		inv, err = tx.AcceptCampaignInvitation(ctx, token, i.Invitation.Role)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return ErrCampaignInvitationNotFound
@@ -150,7 +151,7 @@ func (s *Service) AcceptInvitation(token string) (*model.InvitationResponse, err
 			return fmt.Errorf("accept invitation: %w", err)
 		}
 
-		member, err = tx.CreateCampaignUser(&model.CreateMemberRequest{
+		member, err = tx.CreateCampaignUser(ctx, &model.CreateMemberRequest{
 			CampaignID: inv.CampaignID,
 			UserID:     user.ID,
 			Role:       inv.Role,
@@ -175,8 +176,8 @@ func (s *Service) AcceptInvitation(token string) (*model.InvitationResponse, err
 	}, nil
 }
 
-func (s *Service) DeclineInvitation(token string) (*model.InvitationResponse, error) {
-	inv, err := s.DB.DeclineCampaignInvitation(token)
+func (s *Service) DeclineInvitation(ctx context.Context, token string) (*model.InvitationResponse, error) {
+	inv, err := s.DB.DeclineCampaignInvitation(ctx, token)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &model.InvitationResponse{}, nil
@@ -192,13 +193,13 @@ func (s *Service) DeclineInvitation(token string) (*model.InvitationResponse, er
 	}, nil
 }
 
-func (s *Service) CreateInvitation(req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
-	user, err := s.DB.GetUserByEmail(req.InviteeEmail)
+func (s *Service) CreateInvitation(ctx context.Context, req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
+	user, err := s.DB.GetUserByEmail(ctx, req.InviteeEmail)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		s.Log.Warn("could not check existing membership", "email", req.InviteeEmail, "error", err)
 	}
 	if user != nil {
-		member, _ := s.DB.GetCampaignUser(req.CampaignID, user.ID)
+		member, _ := s.DB.GetCampaignUser(ctx, req.CampaignID, user.ID)
 		if member != nil {
 			return nil, ErrCampaignUserAlreadyExists
 		}
@@ -206,7 +207,7 @@ func (s *Service) CreateInvitation(req *model.CreateCampaignInvitationRequest) (
 	if req.ExpiresAt.IsZero() {
 		req.ExpiresAt = time.Now().Add(7 * 24 * time.Hour)
 	}
-	inv, err := s.DB.CreateCampaignInvitation(req)
+	inv, err := s.DB.CreateCampaignInvitation(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -216,8 +217,8 @@ func (s *Service) CreateInvitation(req *model.CreateCampaignInvitationRequest) (
 	return inv, nil
 }
 
-func (s *Service) GetInvitation(token string) (*model.GetCampaignInvitationResponse, error) {
-	res, err := s.DB.GetCampaignInvitationByToken(token)
+func (s *Service) GetInvitation(ctx context.Context, token string) (*model.GetCampaignInvitationResponse, error) {
+	res, err := s.DB.GetCampaignInvitationByToken(ctx, token)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrCampaignInvitationNotFound
@@ -227,16 +228,16 @@ func (s *Service) GetInvitation(token string) (*model.GetCampaignInvitationRespo
 	return res, nil
 }
 
-func (s *Service) ListInvitations(campaignID string) ([]*model.CampaignInvitation, error) {
-	invitations, err := s.DB.ListCampaignInvitations(campaignID)
+func (s *Service) ListInvitations(ctx context.Context, campaignID string) ([]*model.CampaignInvitation, error) {
+	invitations, err := s.DB.ListCampaignInvitations(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign invitations: %w", err)
 	}
 	return invitations, nil
 }
 
-func (s *Service) RevokeInvitation(invitationID, campaignID string) (*model.CampaignInvitation, error) {
-	inv, err := s.DB.RevokeCampaignInvitation(invitationID, campaignID)
+func (s *Service) RevokeInvitation(ctx context.Context, invitationID, campaignID string) (*model.CampaignInvitation, error) {
+	inv, err := s.DB.RevokeCampaignInvitation(ctx, invitationID, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrCampaignInvitationNotFound

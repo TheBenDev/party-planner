@@ -16,17 +16,21 @@ type mockServicer struct {
 	err error
 }
 
-func (m *mockServicer) Create(_ *model.CreateLocationRequest) (*model.Location, error) {
+func (m *mockServicer) Create(_ context.Context, _ *model.CreateLocationRequest) (*model.Location, error) {
 	return m.one(), m.err
 }
-func (m *mockServicer) GetByID(_, _ string) (*model.Location, error) { return m.one(), m.err }
-func (m *mockServicer) ListByCampaign(_ string) ([]*model.Location, error) {
+func (m *mockServicer) GetByID(_ context.Context, _, _ string) (*model.Location, error) {
+	return m.one(), m.err
+}
+func (m *mockServicer) ListByCampaign(_ context.Context, _ string) ([]*model.Location, error) {
 	return m.loc, m.err
 }
-func (m *mockServicer) Update(_ *model.UpdateLocationRequest) (*model.Location, error) {
+func (m *mockServicer) Update(_ context.Context, _ *model.UpdateLocationRequest) (*model.Location, error) {
 	return m.one(), m.err
 }
-func (m *mockServicer) Delete(_, _ string) (*model.Location, error) { return m.one(), m.err }
+func (m *mockServicer) Delete(_ context.Context, _, _ string) (*model.Location, error) {
+	return m.one(), m.err
+}
 
 func (m *mockServicer) one() *model.Location {
 	if len(m.loc) == 0 {

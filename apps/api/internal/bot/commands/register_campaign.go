@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
@@ -76,7 +77,7 @@ func registerCampaignModalOnSubmit(s *discordgo.Session, i *discordgo.Interactio
 		return replyEphemeral(s, i, "Failed to register campaign to discord server. Please try again later.")
 	}
 
-	_, err = deps.IntegrationSvc.Create(&model.CreateCampaignIntegrationRequest{
+	_, err = deps.CampaignIntegrationSvc.Create(context.Background(), &model.CreateCampaignIntegrationRequest{
 		CampaignID: campaignID,
 		ExternalID: i.GuildID,
 		Source:     model.IntegrationSourceDiscord,

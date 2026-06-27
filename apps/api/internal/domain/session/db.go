@@ -1,22 +1,18 @@
 package session
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for session queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -41,8 +37,8 @@ func scanSession(row interface{ Scan(...any) error }) (*model.Session, error) {
 	return &s, nil
 }
 
-func (db *DB) CreateSession(req *model.CreateSessionRequest) (*model.Session, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateSession(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO session (campaign_id, title, description, scheduled_at, series_id, duration_minutes)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING `+sessionColumns,
@@ -52,8 +48,8 @@ func (db *DB) CreateSession(req *model.CreateSessionRequest) (*model.Session, er
 	return scanSession(row)
 }
 
-func (db *DB) UpsertSessionForSeries(req *model.CreateSessionRequest) (*model.Session, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpsertSessionForSeries(ctx context.Context, req *model.CreateSessionRequest) (*model.Session, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO session (campaign_id, title, description, scheduled_at, series_id, duration_minutes)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (series_id, scheduled_at) WHERE series_id IS NOT NULL AND scheduled_at IS NOT NULL
@@ -65,13 +61,13 @@ func (db *DB) UpsertSessionForSeries(req *model.CreateSessionRequest) (*model.Se
 	return scanSession(row)
 }
 
-func (db *DB) GetSession(id, campaignID string) (*model.Session, error) {
-	row := db.conn.QueryRow(`SELECT `+sessionColumns+` FROM session WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignID)
+func (db *DB) GetSession(ctx context.Context, id, campaignID string) (*model.Session, error) {
+	row := db.conn.QueryRowContext(ctx, `SELECT `+sessionColumns+` FROM session WHERE id = $1 AND campaign_id = $2 LIMIT 1`, id, campaignID)
 	return scanSession(row)
 }
 
-func (db *DB) ListOneOffSessionsByCampaign(campaignID string) ([]*model.Session, error) {
-	rows, err := db.conn.Query(`SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NULL`, campaignID)
+func (db *DB) ListOneOffSessionsByCampaign(ctx context.Context, campaignID string) ([]*model.Session, error) {
+	rows, err := db.conn.QueryContext(ctx, `SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NULL`, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list one-off sessions: %w", err)
 	}
@@ -92,8 +88,8 @@ func (db *DB) ListOneOffSessionsByCampaign(campaignID string) ([]*model.Session,
 	return sessions, rows.Err()
 }
 
-func (db *DB) ListSeriesSessionsByCampaign(campaignID string) ([]*model.Session, error) {
-	rows, err := db.conn.Query(`SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NOT NULL`, campaignID)
+func (db *DB) ListSeriesSessionsByCampaign(ctx context.Context, campaignID string) ([]*model.Session, error) {
+	rows, err := db.conn.QueryContext(ctx, `SELECT `+sessionColumns+` FROM session WHERE campaign_id = $1 AND series_id IS NOT NULL`, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list series sessions: %w", err)
 	}
@@ -114,24 +110,24 @@ func (db *DB) ListSeriesSessionsByCampaign(campaignID string) ([]*model.Session,
 	return sessions, rows.Err()
 }
 
-func (db *DB) GetNextSessionByCampaign(campaignID string) (*model.Session, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) GetNextSessionByCampaign(ctx context.Context, campaignID string) (*model.Session, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+sessionColumns+` FROM session
 		WHERE campaign_id = $1 AND scheduled_at > NOW()
 		ORDER BY scheduled_at ASC LIMIT 1`, campaignID)
 	return scanSession(row)
 }
 
-func (db *DB) RemoveSession(id, campaignID string) error {
-	_, err := db.conn.Exec(`DELETE FROM session WHERE id = $1 AND campaign_id = $2`, id, campaignID)
+func (db *DB) RemoveSession(ctx context.Context, id, campaignID string) error {
+	_, err := db.conn.ExecContext(ctx, `DELETE FROM session WHERE id = $1 AND campaign_id = $2`, id, campaignID)
 	if err != nil {
 		return fmt.Errorf("remove session: %w", err)
 	}
 	return nil
 }
 
-func (db *DB) UpdateSession(req *model.UpdateSessionRequest) (*model.Session, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateSession(ctx context.Context, req *model.UpdateSessionRequest) (*model.Session, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE session SET title = COALESCE($1, title), description = COALESCE($2, description),
 		recap = COALESCE($3, recap), updated_at = NOW()
 		WHERE id = $4 AND campaign_id = $5

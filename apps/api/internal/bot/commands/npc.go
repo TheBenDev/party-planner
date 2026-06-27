@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log/slog"
@@ -66,7 +67,7 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, d
 		return replyEphemeral(s, i, "Input required to update bio.")
 	}
 
-	integration, err := deps.DB.GetCampaignIntegrationByExternalID(i.GuildID, model.IntegrationSourceDiscord)
+	integration, err := deps.CampaignIntegrationSvc.DB.GetCampaignIntegrationByExternalID(context.Background(), i.GuildID, model.IntegrationSourceDiscord)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return replyEphemeral(s, i, "This Discord server is not linked to a campaign.")
@@ -75,7 +76,7 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, d
 		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
 	}
 
-	npc, err := deps.DB.GetNpcByNameAndCampaign(name, integration.CampaignID)
+	npc, err := deps.NpcSvc.DB.GetNpcByNameAndCampaign(context.Background(), name, integration.CampaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return replyEphemeral(s, i, "I could not find that npc.")
@@ -84,7 +85,7 @@ func npcSetModalOnSubmit(s *discordgo.Session, i *discordgo.InteractionCreate, d
 		return replyEphemeral(s, i, "Something went wrong. Please try again later.")
 	}
 
-	_, err = deps.NpcSvc.Update(&model.UpdateNpcRequest{
+	_, err = deps.NpcSvc.Update(context.Background(), &model.UpdateNpcRequest{
 		ID:          npc.ID,
 		Personality: sql.NullString{String: bio, Valid: true},
 	})
@@ -111,7 +112,7 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *B
 		}
 	}
 
-	integration, err := deps.DB.GetCampaignIntegrationByExternalID(i.GuildID, model.IntegrationSourceDiscord)
+	integration, err := deps.CampaignIntegrationSvc.DB.GetCampaignIntegrationByExternalID(context.Background(), i.GuildID, model.IntegrationSourceDiscord)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return replyEphemeral(s, i, "This Discord server is not linked to a campaign.")
@@ -121,7 +122,7 @@ func npcViewAction(s *discordgo.Session, i *discordgo.InteractionCreate, deps *B
 	}
 
 	slog.Info("Searching for npc", "operation", "beny-bot.npc-view", "name", npcName, "campaignID", integration.CampaignID)
-	npc, err := deps.DB.GetNpcByNameAndCampaign(npcName, integration.CampaignID)
+	npc, err := deps.NpcSvc.DB.GetNpcByNameAndCampaign(context.Background(), npcName, integration.CampaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return replyEphemeral(s, i, "I could not find that npc.")

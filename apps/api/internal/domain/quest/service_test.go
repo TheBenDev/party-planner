@@ -1,6 +1,7 @@
 package quest_test
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log/slog"
@@ -21,19 +22,19 @@ type mockServiceStore struct {
 	removeQuestErr error
 }
 
-func (m *mockServiceStore) CreateQuest(_ *model.CreateQuestRequest) (*model.Quest, error) {
+func (m *mockServiceStore) CreateQuest(_ context.Context, _ *model.CreateQuestRequest) (*model.Quest, error) {
 	return m.quest, m.createQuestErr
 }
-func (m *mockServiceStore) GetQuest(_, _ string) (*model.Quest, error) {
+func (m *mockServiceStore) GetQuest(_ context.Context, _, _ string) (*model.Quest, error) {
 	return m.quest, m.getQuestErr
 }
-func (m *mockServiceStore) ListQuestsByCampaign(_ string) ([]*model.Quest, error) {
+func (m *mockServiceStore) ListQuestsByCampaign(_ context.Context, _ string) ([]*model.Quest, error) {
 	return nil, nil
 }
-func (m *mockServiceStore) UpdateQuest(_ *model.UpdateQuestRequest) (*model.Quest, error) {
+func (m *mockServiceStore) UpdateQuest(_ context.Context, _ *model.UpdateQuestRequest) (*model.Quest, error) {
 	return m.quest, m.updateQuestErr
 }
-func (m *mockServiceStore) RemoveQuest(_, _ string) error {
+func (m *mockServiceStore) RemoveQuest(_ context.Context, _, _ string) error {
 	return m.removeQuestErr
 }
 
@@ -65,7 +66,7 @@ func assertError(t *testing.T, err error, want error) {
 
 func TestQuestServiceCreate_HappyPath(t *testing.T) {
 	want := testQuest()
-	got, err := newService(&mockServiceStore{quest: want}).Create(&model.CreateQuestRequest{CampaignID: want.CampaignID, Title: want.Title})
+	got, err := newService(&mockServiceStore{quest: want}).Create(context.Background(), &model.CreateQuestRequest{CampaignID: want.CampaignID, Title: want.Title})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -75,17 +76,17 @@ func TestQuestServiceCreate_HappyPath(t *testing.T) {
 }
 
 func TestQuestServiceCreate_UniqueViolation(t *testing.T) {
-	_, err := newService(&mockServiceStore{createQuestErr: pgUniqueViolation()}).Create(&model.CreateQuestRequest{})
+	_, err := newService(&mockServiceStore{createQuestErr: pgUniqueViolation()}).Create(context.Background(), &model.CreateQuestRequest{})
 	assertError(t, err, quest.ErrAlreadyExists)
 }
 
 func TestQuestServiceCreate_FK_InvalidCampaign(t *testing.T) {
-	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_campaign_id")}).Create(&model.CreateQuestRequest{})
+	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_campaign_id")}).Create(context.Background(), &model.CreateQuestRequest{})
 	assertError(t, err, quest.ErrInvalidCampaign)
 }
 
 func TestQuestServiceCreate_FK_InvalidQuestGiver(t *testing.T) {
-	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_quest_giver_id")}).Create(&model.CreateQuestRequest{})
+	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_quest_giver_id")}).Create(context.Background(), &model.CreateQuestRequest{})
 	assertError(t, err, quest.ErrInvalidQuestGiver)
 }
 
@@ -93,7 +94,7 @@ func TestQuestServiceCreate_FK_InvalidQuestGiver(t *testing.T) {
 
 func TestQuestServiceGetByID_HappyPath(t *testing.T) {
 	want := testQuest()
-	got, err := newService(&mockServiceStore{quest: want}).GetByID(want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{quest: want}).GetByID(context.Background(), want.ID, want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -103,7 +104,7 @@ func TestQuestServiceGetByID_HappyPath(t *testing.T) {
 }
 
 func TestQuestServiceGetByID_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).GetByID("quest-1", "campaign-1")
+	_, err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).GetByID(context.Background(), "quest-1", "campaign-1")
 	assertError(t, err, quest.ErrNotFound)
 }
 
@@ -111,7 +112,7 @@ func TestQuestServiceGetByID_NotFound(t *testing.T) {
 
 func TestQuestServiceUpdate_HappyPath(t *testing.T) {
 	want := testQuest()
-	got, err := newService(&mockServiceStore{quest: want}).Update(&model.UpdateQuestRequest{ID: want.ID, CampaignID: want.CampaignID})
+	got, err := newService(&mockServiceStore{quest: want}).Update(context.Background(), &model.UpdateQuestRequest{ID: want.ID, CampaignID: want.CampaignID})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -121,7 +122,7 @@ func TestQuestServiceUpdate_HappyPath(t *testing.T) {
 }
 
 func TestQuestServiceUpdate_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).Update(&model.UpdateQuestRequest{ID: "quest-1", CampaignID: "campaign-1"})
+	_, err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).Update(context.Background(), &model.UpdateQuestRequest{ID: "quest-1", CampaignID: "campaign-1"})
 	assertError(t, err, quest.ErrNotFound)
 }
 
@@ -129,12 +130,12 @@ func TestQuestServiceUpdate_NotFound(t *testing.T) {
 
 func TestQuestServiceRemove_HappyPath(t *testing.T) {
 	want := testQuest()
-	if err := newService(&mockServiceStore{quest: want}).Remove(want.ID, want.CampaignID); err != nil {
+	if err := newService(&mockServiceStore{quest: want}).Remove(context.Background(), want.ID, want.CampaignID); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
 
 func TestQuestServiceRemove_NotFound(t *testing.T) {
-	err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).Remove("quest-1", "campaign-1")
+	err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).Remove(context.Background(), "quest-1", "campaign-1")
 	assertError(t, err, quest.ErrNotFound)
 }

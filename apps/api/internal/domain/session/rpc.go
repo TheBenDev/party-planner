@@ -68,7 +68,7 @@ func (s *Server) GetSession(ctx context.Context, req *connect.Request[v1.GetSess
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	session, err := s.Session.GetByID(req.Msg.Id, req.Msg.CampaignId)
+	session, err := s.Session.GetByID(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get session")
 	}
@@ -86,7 +86,7 @@ func (s *Server) RemoveSession(ctx context.Context, req *connect.Request[v1.Remo
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	if err := s.Session.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
+	if err := s.Session.Remove(ctx, req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove session")
 	}
 

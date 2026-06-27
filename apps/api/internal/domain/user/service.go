@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -19,15 +20,15 @@ var (
 )
 
 type Store interface {
-	CreateUser(req *model.CreateUserRequest) (*model.User, error)
-	DeleteUser(externalID string) (*model.User, error)
-	GetUserByClerkID(externalID string) (*model.User, error)
-	GetUserByEmail(email string) (*model.User, error)
-	GetUserByID(userID string) (*model.User, error)
-	UpdateUserByClerkID(req *model.UpdateUserRequest) (*model.User, error)
-	GetCampaign(id string) (*model.Campaign, error)
-	GetCampaignUser(campaignID, userID string) (*model.Member, error)
-	ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, error)
+	CreateUser(ctx context.Context, req *model.CreateUserRequest) (*model.User, error)
+	DeleteUser(ctx context.Context, externalID string) (*model.User, error)
+	GetUserByClerkID(ctx context.Context, externalID string) (*model.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
+	GetUserByID(ctx context.Context, userID string) (*model.User, error)
+	UpdateUserByClerkID(ctx context.Context, req *model.UpdateUserRequest) (*model.User, error)
+	GetCampaign(ctx context.Context, id string) (*model.Campaign, error)
+	GetCampaignUser(ctx context.Context, campaignID, userID string) (*model.Member, error)
+	ListCampaignUsersByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error)
 }
 
 type Service struct {
@@ -35,8 +36,8 @@ type Service struct {
 	Log *slog.Logger
 }
 
-func (s *Service) Create(req *model.CreateUserRequest) (*model.User, error) {
-	created, err := s.DB.CreateUser(req)
+func (s *Service) Create(ctx context.Context, req *model.CreateUserRequest) (*model.User, error) {
+	created, err := s.DB.CreateUser(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -46,8 +47,8 @@ func (s *Service) Create(req *model.CreateUserRequest) (*model.User, error) {
 	return created, nil
 }
 
-func (s *Service) Delete(externalID string) (*model.User, error) {
-	user, err := s.DB.DeleteUser(externalID)
+func (s *Service) Delete(ctx context.Context, externalID string) (*model.User, error) {
+	user, err := s.DB.DeleteUser(ctx, externalID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -57,8 +58,8 @@ func (s *Service) Delete(externalID string) (*model.User, error) {
 	return user, nil
 }
 
-func (s *Service) GetByClerkID(externalID string) (*model.User, error) {
-	user, err := s.DB.GetUserByClerkID(externalID)
+func (s *Service) GetByClerkID(ctx context.Context, externalID string) (*model.User, error) {
+	user, err := s.DB.GetUserByClerkID(ctx, externalID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -68,8 +69,8 @@ func (s *Service) GetByClerkID(externalID string) (*model.User, error) {
 	return user, nil
 }
 
-func (s *Service) GetByEmail(email string) (*model.User, error) {
-	user, err := s.DB.GetUserByEmail(email)
+func (s *Service) GetByEmail(ctx context.Context, email string) (*model.User, error) {
+	user, err := s.DB.GetUserByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -79,14 +80,14 @@ func (s *Service) GetByEmail(email string) (*model.User, error) {
 	return user, nil
 }
 
-func (s *Service) GetAuth(externalID string, campaignID *string) (*model.GetAuthResponse, error) {
-	user, err := s.GetByClerkID(externalID)
+func (s *Service) GetAuth(ctx context.Context, externalID string, campaignID *string) (*model.GetAuthResponse, error) {
+	user, err := s.GetByClerkID(ctx, externalID)
 	if err != nil {
 		return nil, err
 	}
 
 	if campaignID != nil {
-		campaign, err := s.DB.GetCampaign(*campaignID)
+		campaign, err := s.DB.GetCampaign(ctx, *campaignID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return &model.GetAuthResponse{
@@ -98,7 +99,7 @@ func (s *Service) GetAuth(externalID string, campaignID *string) (*model.GetAuth
 			return nil, fmt.Errorf("get campaign: %w", err)
 		}
 
-		member, err := s.DB.GetCampaignUser(*campaignID, user.ID)
+		member, err := s.DB.GetCampaignUser(ctx, *campaignID, user.ID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return &model.GetAuthResponse{
@@ -117,7 +118,7 @@ func (s *Service) GetAuth(externalID string, campaignID *string) (*model.GetAuth
 		}, nil
 	}
 
-	members, err := s.DB.ListCampaignUsersByUser(user.ID)
+	members, err := s.DB.ListCampaignUsersByUser(ctx, user.ID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign users: %w", err)
 	}
@@ -130,7 +131,7 @@ func (s *Service) GetAuth(externalID string, campaignID *string) (*model.GetAuth
 		}, nil
 	}
 
-	campaign, err := s.DB.GetCampaign(members[0].CampaignID)
+	campaign, err := s.DB.GetCampaign(ctx, members[0].CampaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &model.GetAuthResponse{
@@ -149,8 +150,8 @@ func (s *Service) GetAuth(externalID string, campaignID *string) (*model.GetAuth
 	}, nil
 }
 
-func (s *Service) Update(req *model.UpdateUserRequest) (*model.User, error) {
-	updated, err := s.DB.UpdateUserByClerkID(req)
+func (s *Service) Update(ctx context.Context, req *model.UpdateUserRequest) (*model.User, error) {
+	updated, err := s.DB.UpdateUserByClerkID(ctx, req)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound

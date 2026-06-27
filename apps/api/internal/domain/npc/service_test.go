@@ -1,6 +1,7 @@
 package npc_test
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log/slog"
@@ -21,22 +22,22 @@ type mockServiceStore struct {
 	removeNpcErr error
 }
 
-func (m *mockServiceStore) CreateNpc(_ *model.CreateNpcRequest) (*model.Npc, error) {
+func (m *mockServiceStore) CreateNpc(_ context.Context, _ *model.CreateNpcRequest) (*model.Npc, error) {
 	return m.npc, m.createNpcErr
 }
-func (m *mockServiceStore) GetNpc(_, _ string) (*model.Npc, error) {
+func (m *mockServiceStore) GetNpc(_ context.Context, _, _ string) (*model.Npc, error) {
 	return m.npc, m.getNpcErr
 }
-func (m *mockServiceStore) ListNpcsByCampaign(_ string) ([]*model.Npc, error) {
+func (m *mockServiceStore) ListNpcsByCampaign(_ context.Context, _ string) ([]*model.Npc, error) {
 	return nil, nil
 }
-func (m *mockServiceStore) GetNpcByNameAndCampaign(_, _ string) (*model.Npc, error) {
+func (m *mockServiceStore) GetNpcByNameAndCampaign(_ context.Context, _, _ string) (*model.Npc, error) {
 	return m.npc, m.getNpcErr
 }
-func (m *mockServiceStore) UpdateNpc(_ *model.UpdateNpcRequest) (*model.Npc, error) {
+func (m *mockServiceStore) UpdateNpc(_ context.Context, _ *model.UpdateNpcRequest) (*model.Npc, error) {
 	return m.npc, m.updateNpcErr
 }
-func (m *mockServiceStore) RemoveNpc(_, _ string) error {
+func (m *mockServiceStore) RemoveNpc(_ context.Context, _, _ string) error {
 	return m.removeNpcErr
 }
 
@@ -68,7 +69,7 @@ func assertError(t *testing.T, err error, want error) {
 
 func TestNpcServiceCreate_HappyPath(t *testing.T) {
 	want := testNpc()
-	got, err := newService(&mockServiceStore{npc: want}).Create(&model.CreateNpcRequest{CampaignID: want.CampaignID, Name: want.Name})
+	got, err := newService(&mockServiceStore{npc: want}).Create(context.Background(), &model.CreateNpcRequest{CampaignID: want.CampaignID, Name: want.Name})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -78,27 +79,27 @@ func TestNpcServiceCreate_HappyPath(t *testing.T) {
 }
 
 func TestNpcServiceCreate_UniqueViolation(t *testing.T) {
-	_, err := newService(&mockServiceStore{createNpcErr: pgUniqueViolation()}).Create(&model.CreateNpcRequest{})
+	_, err := newService(&mockServiceStore{createNpcErr: pgUniqueViolation()}).Create(context.Background(), &model.CreateNpcRequest{})
 	assertError(t, err, npc.ErrAlreadyExists)
 }
 
 func TestNpcServiceCreate_FK_InvalidCampaign(t *testing.T) {
-	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_campaign_id")}).Create(&model.CreateNpcRequest{})
+	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_campaign_id")}).Create(context.Background(), &model.CreateNpcRequest{})
 	assertError(t, err, npc.ErrInvalidCampaign)
 }
 
 func TestNpcServiceCreate_FK_InvalidOriginLocation(t *testing.T) {
-	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_origin_location_id")}).Create(&model.CreateNpcRequest{})
+	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_origin_location_id")}).Create(context.Background(), &model.CreateNpcRequest{})
 	assertError(t, err, npc.ErrInvalidOriginLocation)
 }
 
 func TestNpcServiceCreate_FK_InvalidCurrentLocation(t *testing.T) {
-	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_current_location_id")}).Create(&model.CreateNpcRequest{})
+	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_current_location_id")}).Create(context.Background(), &model.CreateNpcRequest{})
 	assertError(t, err, npc.ErrInvalidCurrentLocation)
 }
 
 func TestNpcServiceCreate_FK_InvalidSessionEncountered(t *testing.T) {
-	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_session_encountered_id")}).Create(&model.CreateNpcRequest{})
+	_, err := newService(&mockServiceStore{createNpcErr: pgFKViolation("fk_npc_session_encountered_id")}).Create(context.Background(), &model.CreateNpcRequest{})
 	assertError(t, err, npc.ErrInvalidSessionEncountered)
 }
 
@@ -106,7 +107,7 @@ func TestNpcServiceCreate_FK_InvalidSessionEncountered(t *testing.T) {
 
 func TestNpcServiceGetByID_HappyPath(t *testing.T) {
 	want := testNpc()
-	got, err := newService(&mockServiceStore{npc: want}).GetByID(want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{npc: want}).GetByID(context.Background(), want.ID, want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -116,7 +117,7 @@ func TestNpcServiceGetByID_HappyPath(t *testing.T) {
 }
 
 func TestNpcServiceGetByID_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).GetByID("npc-1", "campaign-1")
+	_, err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).GetByID(context.Background(), "npc-1", "campaign-1")
 	assertError(t, err, npc.ErrNotFound)
 }
 
@@ -124,7 +125,7 @@ func TestNpcServiceGetByID_NotFound(t *testing.T) {
 
 func TestNpcServiceUpdate_HappyPath(t *testing.T) {
 	want := testNpc()
-	got, err := newService(&mockServiceStore{npc: want}).Update(&model.UpdateNpcRequest{ID: want.ID, CampaignID: want.CampaignID})
+	got, err := newService(&mockServiceStore{npc: want}).Update(context.Background(), &model.UpdateNpcRequest{ID: want.ID, CampaignID: want.CampaignID})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -134,7 +135,7 @@ func TestNpcServiceUpdate_HappyPath(t *testing.T) {
 }
 
 func TestNpcServiceUpdate_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).Update(&model.UpdateNpcRequest{ID: "npc-1", CampaignID: "campaign-1"})
+	_, err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).Update(context.Background(), &model.UpdateNpcRequest{ID: "npc-1", CampaignID: "campaign-1"})
 	assertError(t, err, npc.ErrNotFound)
 }
 
@@ -142,12 +143,12 @@ func TestNpcServiceUpdate_NotFound(t *testing.T) {
 
 func TestNpcServiceRemove_HappyPath(t *testing.T) {
 	want := testNpc()
-	if err := newService(&mockServiceStore{npc: want}).Remove(want.ID, want.CampaignID); err != nil {
+	if err := newService(&mockServiceStore{npc: want}).Remove(context.Background(), want.ID, want.CampaignID); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
 
 func TestNpcServiceRemove_NotFound(t *testing.T) {
-	err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).Remove("npc-1", "campaign-1")
+	err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).Remove(context.Background(), "npc-1", "campaign-1")
 	assertError(t, err, npc.ErrNotFound)
 }

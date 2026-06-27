@@ -1,6 +1,7 @@
 package location
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -18,11 +19,11 @@ var (
 )
 
 type Store interface {
-	CreateLocation(req *model.CreateLocationRequest) (*model.Location, error)
-	GetLocation(id, campaignID string) (*model.Location, error)
-	ListLocationsByCampaign(campaignId string) ([]*model.Location, error)
-	UpdateLocation(req *model.UpdateLocationRequest) (*model.Location, error)
-	DeleteLocation(id, campaignID string) (*model.Location, error)
+	CreateLocation(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error)
+	GetLocation(ctx context.Context, id, campaignID string) (*model.Location, error)
+	ListLocationsByCampaign(ctx context.Context, campaignID string) ([]*model.Location, error)
+	UpdateLocation(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error)
+	DeleteLocation(ctx context.Context, id, campaignID string) (*model.Location, error)
 }
 
 type Service struct {
@@ -30,8 +31,8 @@ type Service struct {
 	Log *slog.Logger
 }
 
-func (s *Service) Create(req *model.CreateLocationRequest) (*model.Location, error) {
-	location, err := s.DB.CreateLocation(req)
+func (s *Service) Create(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error) {
+	location, err := s.DB.CreateLocation(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -41,8 +42,8 @@ func (s *Service) Create(req *model.CreateLocationRequest) (*model.Location, err
 	return location, nil
 }
 
-func (s *Service) GetByID(id, campaignID string) (*model.Location, error) {
-	location, err := s.DB.GetLocation(id, campaignID)
+func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Location, error) {
+	location, err := s.DB.GetLocation(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrLocationNotFound
@@ -52,19 +53,19 @@ func (s *Service) GetByID(id, campaignID string) (*model.Location, error) {
 	return location, nil
 }
 
-func (s *Service) ListByCampaign(campaignId string) ([]*model.Location, error) {
-	locations, err := s.DB.ListLocationsByCampaign(campaignId)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.Location, error) {
+	locations, err := s.DB.ListLocationsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list locations by campaign error: %w", err)
 	}
 	return locations, nil
 }
 
-func (s *Service) Update(req *model.UpdateLocationRequest) (*model.Location, error) {
-	if _, err := s.GetByID(req.ID, req.CampaignID); err != nil {
+func (s *Service) Update(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error) {
+	if _, err := s.GetByID(ctx, req.ID, req.CampaignID); err != nil {
 		return nil, err
 	}
-	location, err := s.DB.UpdateLocation(req)
+	location, err := s.DB.UpdateLocation(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -74,11 +75,11 @@ func (s *Service) Update(req *model.UpdateLocationRequest) (*model.Location, err
 	return location, nil
 }
 
-func (s *Service) Delete(id, campaignID string) (*model.Location, error) {
-	if _, err := s.GetByID(id, campaignID); err != nil {
+func (s *Service) Delete(ctx context.Context, id, campaignID string) (*model.Location, error) {
+	if _, err := s.GetByID(ctx, id, campaignID); err != nil {
 		return nil, err
 	}
-	location, err := s.DB.DeleteLocation(id, campaignID)
+	location, err := s.DB.DeleteLocation(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrLocationNotFound

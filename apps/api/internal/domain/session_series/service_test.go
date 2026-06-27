@@ -28,58 +28,62 @@ type mockSeriesStore struct {
 	getCampaignIntegrationErr error
 }
 
-func (m *mockSeriesStore) CreateSessionSeries(_ *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
+func (m *mockSeriesStore) CreateSessionSeries(_ context.Context, _ *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
 	return m.series, m.createSeriesErr
 }
-func (m *mockSeriesStore) GetSessionSeries(_, _ string) (*model.SessionSeries, error) {
+func (m *mockSeriesStore) GetSessionSeries(_ context.Context, _, _ string) (*model.SessionSeries, error) {
 	return m.series, m.getSeriesErr
 }
-func (m *mockSeriesStore) GetSessionSeriesForUpdate(_, _ string) (*model.SessionSeries, error) {
+func (m *mockSeriesStore) GetSessionSeriesForUpdate(_ context.Context, _, _ string) (*model.SessionSeries, error) {
 	return m.series, m.getSeriesErr
 }
-func (m *mockSeriesStore) GetSessionSeriesByDiscordEventID(_ string) (*model.SessionSeries, error) {
+func (m *mockSeriesStore) GetSessionSeriesByDiscordEventID(_ context.Context, _ string) (*model.SessionSeries, error) {
 	return m.series, nil
 }
-func (m *mockSeriesStore) ListSessionSeriesByCampaign(_ string) ([]*model.SessionSeries, error) {
+func (m *mockSeriesStore) ListSessionSeriesByCampaign(_ context.Context, _ string) ([]*model.SessionSeries, error) {
 	return nil, nil
 }
-func (m *mockSeriesStore) UpdateSessionSeries(_ *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
+func (m *mockSeriesStore) UpdateSessionSeries(_ context.Context, _ *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
 	return m.series, m.updateSeriesErr
 }
-func (m *mockSeriesStore) RemoveSessionSeries(_, _ string) error {
+func (m *mockSeriesStore) RemoveSessionSeries(_ context.Context, _, _ string) error {
 	return m.removeSeriesErr
 }
-func (m *mockSeriesStore) SetSeriesDiscordEventID(_, _, _ string) error  { return nil }
-func (m *mockSeriesStore) SetSeriesGoogleCalendarEventID(_, _, _ string) error { return nil }
-func (m *mockSeriesStore) ClearSeriesGoogleCalendarEventID(_, _ string) error  { return nil }
-func (m *mockSeriesStore) SetSeriesPollID(_, _, _ string) error                { return nil }
-func (m *mockSeriesStore) AddSeriesException(_ string, _ string, _ time.Time) error {
+func (m *mockSeriesStore) SetSeriesDiscordEventID(_ context.Context, _, _, _ string) error  { return nil }
+func (m *mockSeriesStore) SetSeriesGoogleCalendarEventID(_ context.Context, _, _, _ string) error { return nil }
+func (m *mockSeriesStore) ClearSeriesGoogleCalendarEventID(_ context.Context, _, _ string) error  { return nil }
+func (m *mockSeriesStore) SetSeriesPollID(_ context.Context, _, _, _ string) error                { return nil }
+func (m *mockSeriesStore) AddSeriesException(_ context.Context, _ string, _ string, _ time.Time) error {
 	return m.addSeriesExceptionErr
 }
-func (m *mockSeriesStore) ListExceptionsForSeries(_ []string) (map[string][]time.Time, error) {
+func (m *mockSeriesStore) ListExceptionsForSeries(_ context.Context, _ []string) (map[string][]time.Time, error) {
 	return map[string][]time.Time{}, nil
 }
-func (m *mockSeriesStore) RemoveSeriesException(_ string, _ string, _ time.Time) error {
+func (m *mockSeriesStore) RemoveSeriesException(_ context.Context, _ string, _ string, _ time.Time) error {
 	return m.removeSeriesExceptionErr
 }
-func (m *mockSeriesStore) ListActiveSeries() ([]*model.SessionSeries, error) { return nil, nil }
-func (m *mockSeriesStore) UpsertSessionForSeries(_ *model.CreateSessionRequest) (*model.Session, error) {
+func (m *mockSeriesStore) ListActiveSeries(_ context.Context) ([]*model.SessionSeries, error) {
 	return nil, nil
 }
-func (m *mockSeriesStore) ListSeriesSessionsByCampaign(_ string) ([]*model.Session, error) {
+func (m *mockSeriesStore) UpsertSessionForSeries(_ context.Context, _ *model.CreateSessionRequest) (*model.Session, error) {
 	return nil, nil
 }
-func (m *mockSeriesStore) GetCampaignIntegration(_, _ string) (*model.CampaignIntegration, error) {
+func (m *mockSeriesStore) ListSeriesSessionsByCampaign(_ context.Context, _ string) ([]*model.Session, error) {
+	return nil, nil
+}
+func (m *mockSeriesStore) GetCampaignIntegration(_ context.Context, _, _ string) (*model.CampaignIntegration, error) {
 	return m.integration, m.getCampaignIntegrationErr
 }
-func (m *mockSeriesStore) RunInTx(fn func(session_series.Store) error) error { return fn(m) }
+func (m *mockSeriesStore) RunInTx(ctx context.Context, fn func(context.Context, session_series.Store) error) error {
+	return fn(ctx, m)
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 func newService(store session_series.Store) *session_series.Service {
 	return &session_series.Service{
-		DB:  store,
-		Log: slog.Default(),
+		DB:      store,
+		Log:     slog.Default(),
 		Discord: discord_domain.Service{},
 	}
 }
@@ -122,7 +126,7 @@ func TestSeriesServiceCreate_UniqueViolation(t *testing.T) {
 
 func TestSeriesServiceGet_HappyPath(t *testing.T) {
 	want := testSeries()
-	got, err := newService(&mockSeriesStore{series: want}).Get(want.ID, want.CampaignID)
+	got, err := newService(&mockSeriesStore{series: want}).Get(context.Background(), want.ID, want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -132,7 +136,7 @@ func TestSeriesServiceGet_HappyPath(t *testing.T) {
 }
 
 func TestSeriesServiceGet_NotFound(t *testing.T) {
-	_, err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).Get("series-1", "campaign-1")
+	_, err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).Get(context.Background(), "series-1", "campaign-1")
 	assertError(t, err, session_series.ErrSessionSeriesNotFound)
 }
 
@@ -140,7 +144,7 @@ func TestSeriesServiceGet_NotFound(t *testing.T) {
 
 func TestSeriesServiceUpdate_HappyPath(t *testing.T) {
 	want := testSeries()
-	got, err := newService(&mockSeriesStore{series: want}).Update(&model.UpdateSessionSeriesRequest{ID: want.ID, CampaignID: want.CampaignID})
+	got, err := newService(&mockSeriesStore{series: want}).Update(context.Background(), &model.UpdateSessionSeriesRequest{ID: want.ID, CampaignID: want.CampaignID})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -150,7 +154,7 @@ func TestSeriesServiceUpdate_HappyPath(t *testing.T) {
 }
 
 func TestSeriesServiceUpdate_NotFound(t *testing.T) {
-	_, err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).Update(&model.UpdateSessionSeriesRequest{ID: "series-1", CampaignID: "campaign-1"})
+	_, err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).Update(context.Background(), &model.UpdateSessionSeriesRequest{ID: "series-1", CampaignID: "campaign-1"})
 	assertError(t, err, session_series.ErrSessionSeriesNotFound)
 }
 
@@ -194,13 +198,13 @@ func TestSeriesServiceExcludeFromSeries_HappyPath(t *testing.T) {
 
 func TestSeriesServiceRemoveException_HappyPath(t *testing.T) {
 	want := testSeries()
-	err := newService(&mockSeriesStore{series: want}).RemoveException(want.ID, want.CampaignID, time.Now())
+	err := newService(&mockSeriesStore{series: want}).RemoveException(context.Background(), want.ID, want.CampaignID, time.Now())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
 
 func TestSeriesServiceRemoveException_SeriesNotFound(t *testing.T) {
-	err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).RemoveException("series-1", "campaign-1", time.Now())
+	err := newService(&mockSeriesStore{getSeriesErr: sql.ErrNoRows}).RemoveException(context.Background(), "series-1", "campaign-1", time.Now())
 	assertError(t, err, session_series.ErrSessionSeriesNotFound)
 }

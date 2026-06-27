@@ -16,11 +16,11 @@ import (
 
 // LocationServicer defines the interface that the service must implement.
 type LocationServicer interface {
-	Create(req *model.CreateLocationRequest) (*model.Location, error)
-	GetByID(id, campaignID string) (*model.Location, error)
-	ListByCampaign(campaignId string) ([]*model.Location, error)
-	Update(req *model.UpdateLocationRequest) (*model.Location, error)
-	Delete(id, campaignID string) (*model.Location, error)
+	Create(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error)
+	GetByID(ctx context.Context, id, campaignID string) (*model.Location, error)
+	ListByCampaign(ctx context.Context, campaignId string) ([]*model.Location, error)
+	Update(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error)
+	Delete(ctx context.Context, id, campaignID string) (*model.Location, error)
 }
 
 // Server implements the LocationService ConnectRPC handler.
@@ -35,7 +35,7 @@ func (s *Server) ListLocationsByCampaign(ctx context.Context, req *connect.Reque
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	locations, err := s.Location.ListByCampaign(req.Msg.CampaignId)
+	locations, err := s.Location.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list locations")
 	}
@@ -58,7 +58,7 @@ func (s *Server) CreateLocation(ctx context.Context, req *connect.Request[v1.Cre
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("name required"))
 	}
 
-	location, err := s.Location.Create(&model.CreateLocationRequest{
+	location, err := s.Location.Create(ctx, &model.CreateLocationRequest{
 		CampaignID:  req.Msg.CampaignId,
 		Name:        req.Msg.Name,
 		Description: sqlNullString(req.Msg.Description),
@@ -82,7 +82,7 @@ func (s *Server) GetLocation(ctx context.Context, req *connect.Request[v1.GetLoc
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	location, err := s.Location.GetByID(req.Msg.Id, req.Msg.CampaignId)
+	location, err := s.Location.GetByID(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get location")
 	}
@@ -100,7 +100,7 @@ func (s *Server) UpdateLocation(ctx context.Context, req *connect.Request[v1.Upd
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	location, err := s.Location.Update(&model.UpdateLocationRequest{
+	location, err := s.Location.Update(ctx, &model.UpdateLocationRequest{
 		ID:          req.Msg.Id,
 		CampaignID:  req.Msg.CampaignId,
 		Name:        req.Msg.Name,
@@ -125,7 +125,7 @@ func (s *Server) RemoveLocation(ctx context.Context, req *connect.Request[v1.Rem
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	_, err := s.Location.Delete(req.Msg.Id, req.Msg.CampaignId)
+	_, err := s.Location.Delete(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove location")
 	}

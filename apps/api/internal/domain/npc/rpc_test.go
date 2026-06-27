@@ -16,20 +16,22 @@ type mockStore struct {
 	err  error
 }
 
-func (m *mockStore) CreateNpc(_ *model.CreateNpcRequest) (*model.Npc, error) {
+func (m *mockStore) CreateNpc(_ context.Context, _ *model.CreateNpcRequest) (*model.Npc, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) GetNpc(_, _ string) (*model.Npc, error) { return m.one(), m.err }
-func (m *mockStore) ListNpcsByCampaign(_ string) ([]*model.Npc, error) {
+func (m *mockStore) GetNpc(_ context.Context, _, _ string) (*model.Npc, error) {
+	return m.one(), m.err
+}
+func (m *mockStore) ListNpcsByCampaign(_ context.Context, _ string) ([]*model.Npc, error) {
 	return m.npcs, m.err
 }
-func (m *mockStore) GetNpcByNameAndCampaign(_, _ string) (*model.Npc, error) {
+func (m *mockStore) GetNpcByNameAndCampaign(_ context.Context, _, _ string) (*model.Npc, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) UpdateNpc(_ *model.UpdateNpcRequest) (*model.Npc, error) {
+func (m *mockStore) UpdateNpc(_ context.Context, _ *model.UpdateNpcRequest) (*model.Npc, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) RemoveNpc(_, _ string) error { return m.err }
+func (m *mockStore) RemoveNpc(_ context.Context, _, _ string) error { return m.err }
 
 func (m *mockStore) one() *model.Npc {
 	if len(m.npcs) == 0 {
