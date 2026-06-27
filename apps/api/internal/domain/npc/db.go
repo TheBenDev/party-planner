@@ -1,23 +1,19 @@
 package npc
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 	"github.com/lib/pq"
 )
 
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
-
 // DB wraps a [sql.DB] connection for NPC queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -49,8 +45,8 @@ func scanNpc(row interface{ Scan(...any) error }) (*model.Npc, error) {
 	return &n, nil
 }
 
-func (db *DB) CreateNpc(npc *model.CreateNpcRequest) (*model.Npc, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateNpc(ctx context.Context, npc *model.CreateNpcRequest) (*model.Npc, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO non_player_character (
 			campaign_id, name, status, relation_to_party_status, is_known_to_party,
 			age, appearance, avatar, backstory, dm_notes, foundry_actor_id, known_name,
@@ -67,16 +63,16 @@ func (db *DB) CreateNpc(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	return scanNpc(row)
 }
 
-func (db *DB) GetNpc(id, campaignID string) (*model.Npc, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetNpc(ctx context.Context, id, campaignID string) (*model.Npc, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+npcColumns+` FROM non_player_character WHERE id = $1 AND campaign_id = $2 LIMIT 1`,
 		id, campaignID,
 	)
 	return scanNpc(row)
 }
 
-func (db *DB) ListNpcsByCampaign(campaignID string) ([]*model.Npc, error) {
-	rows, err := db.conn.Query(
+func (db *DB) ListNpcsByCampaign(ctx context.Context, campaignID string) ([]*model.Npc, error) {
+	rows, err := db.conn.QueryContext(ctx,
 		`SELECT `+npcColumns+` FROM non_player_character WHERE campaign_id = $1`,
 		campaignID,
 	)
@@ -103,17 +99,17 @@ func (db *DB) ListNpcsByCampaign(campaignID string) ([]*model.Npc, error) {
 	return npcs, nil
 }
 
-func (db *DB) GetNpcByNameAndCampaign(name, campaignID string) (*model.Npc, error) {
+func (db *DB) GetNpcByNameAndCampaign(ctx context.Context, name, campaignID string) (*model.Npc, error) {
 	pattern := "%" + escapeLikePattern(name) + "%"
-	row := db.conn.QueryRow(`
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+npcColumns+` FROM non_player_character
 		WHERE campaign_id = $1 AND name ILIKE $2 ESCAPE '\'
 		LIMIT 1`, campaignID, pattern)
 	return scanNpc(row)
 }
 
-func (db *DB) UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateNpc(ctx context.Context, npc *model.UpdateNpcRequest) (*model.Npc, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE non_player_character SET
 			name                  = COALESCE($1, name),
 			status                = COALESCE($2, status),
@@ -146,8 +142,8 @@ func (db *DB) UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error) {
 	return scanNpc(row)
 }
 
-func (db *DB) RemoveNpc(id, campaignID string) error {
-	_, err := db.conn.Exec(
+func (db *DB) RemoveNpc(ctx context.Context, id, campaignID string) error {
+	_, err := db.conn.ExecContext(ctx,
 		`DELETE FROM non_player_character WHERE id = $1 AND campaign_id = $2`,
 		id, campaignID,
 	)

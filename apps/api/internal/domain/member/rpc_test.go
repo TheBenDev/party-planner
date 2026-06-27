@@ -20,48 +20,52 @@ type mockStore struct {
 	err         error
 }
 
-func (m *mockStore) CreateCampaignUser(_ *model.CreateMemberRequest) (*model.Member, error) {
+func (m *mockStore) CreateCampaignUser(_ context.Context, _ *model.CreateMemberRequest) (*model.Member, error) {
 	return m.oneMember(), m.err
 }
-func (m *mockStore) GetCampaignUser(_, _ string) (*model.Member, error) {
+func (m *mockStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {
 	return m.oneMember(), m.err
 }
-func (m *mockStore) ListCampaignUsersByCampaign(_ string) ([]*model.MemberWithUser, error) {
+func (m *mockStore) ListCampaignUsersByCampaign(_ context.Context, _ string) ([]*model.MemberWithUser, error) {
 	return m.membersUser, m.err
 }
-func (m *mockStore) ListCampaignUsersByUser(_ string) ([]*model.MemberWithUser, error) {
+func (m *mockStore) ListCampaignUsersByUser(_ context.Context, _ string) ([]*model.MemberWithUser, error) {
 	return m.membersUser, m.err
 }
-func (m *mockStore) RemoveCampaignUser(_, _ string) error { return m.err }
-func (m *mockStore) UpdateCampaignUserRole(_, _ string, _ model.MemberRole) (*model.Member, error) {
+func (m *mockStore) RemoveCampaignUser(_ context.Context, _, _ string) error { return m.err }
+func (m *mockStore) UpdateCampaignUserRole(_ context.Context, _, _ string, _ model.MemberRole) (*model.Member, error) {
 	return m.oneMember(), m.err
 }
-func (m *mockStore) CreateCampaignInvitation(_ *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
+func (m *mockStore) CreateCampaignInvitation(_ context.Context, _ *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
 	return m.invitation, m.err
 }
-func (m *mockStore) GetCampaignInvitationByEmail(_, _ string, _ model.InvitationStatus) (*model.CampaignInvitation, error) {
+func (m *mockStore) GetCampaignInvitationByEmail(_ context.Context, _, _ string, _ model.InvitationStatus) (*model.CampaignInvitation, error) {
 	return m.invitation, m.err
 }
-func (m *mockStore) GetCampaignInvitationByToken(_ string) (*model.GetCampaignInvitationResponse, error) {
+func (m *mockStore) GetCampaignInvitationByToken(_ context.Context, _ string) (*model.GetCampaignInvitationResponse, error) {
 	if m.invitation == nil {
 		return nil, m.err
 	}
 	return &model.GetCampaignInvitationResponse{Invitation: m.invitation}, m.err
 }
-func (m *mockStore) ListCampaignInvitations(_ string) ([]*model.CampaignInvitation, error) {
+func (m *mockStore) ListCampaignInvitations(_ context.Context, _ string) ([]*model.CampaignInvitation, error) {
 	return m.invitations, m.err
 }
-func (m *mockStore) AcceptCampaignInvitation(_ string, _ model.MemberRole) (*model.CampaignInvitation, error) {
+func (m *mockStore) AcceptCampaignInvitation(_ context.Context, _ string, _ model.MemberRole) (*model.CampaignInvitation, error) {
 	return m.invitation, m.err
 }
-func (m *mockStore) DeclineCampaignInvitation(_ string) (*model.CampaignInvitation, error) {
+func (m *mockStore) DeclineCampaignInvitation(_ context.Context, _ string) (*model.CampaignInvitation, error) {
 	return m.invitation, m.err
 }
-func (m *mockStore) RevokeCampaignInvitation(_, _ string) (*model.CampaignInvitation, error) {
+func (m *mockStore) RevokeCampaignInvitation(_ context.Context, _, _ string) (*model.CampaignInvitation, error) {
 	return m.invitation, m.err
 }
-func (m *mockStore) GetUserByEmail(_ string) (*model.User, error) { return m.user, m.err }
-func (m *mockStore) RunInTx(fn func(member.Store) error) error    { return fn(m) }
+func (m *mockStore) GetUserByEmail(_ context.Context, _ string) (*model.User, error) {
+	return m.user, m.err
+}
+func (m *mockStore) RunInTx(ctx context.Context, fn func(context.Context, member.Store) error) error {
+	return fn(ctx, m)
+}
 
 func (m *mockStore) oneMember() *model.Member {
 	if len(m.members) == 0 {

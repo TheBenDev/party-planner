@@ -4,9 +4,10 @@ import (
 	"sync"
 
 	"github.com/BBruington/party-planner/api/internal/api"
-	domain_ci "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
+	domain_campaignIntegration "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
 	domain_npc "github.com/BBruington/party-planner/api/internal/domain/npc"
-	"github.com/BBruington/party-planner/api/internal/db"
+	domain_session "github.com/BBruington/party-planner/api/internal/domain/session"
+	domain_series "github.com/BBruington/party-planner/api/internal/domain/session_series"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -14,12 +15,13 @@ import (
 // Commands that can call the Go API directly use NpcSvc, IntegrationSvc, or DB.
 // Commands that must go through the web app (user_availabilities, user_integrations) use Client.
 type BotDeps struct {
-	Client         *api.Client
-	NpcSvc         *domain_npc.Service
-	IntegrationSvc *domain_ci.Service
-	DB             *db.DB
-	mu             sync.RWMutex
-	botUserID      string
+	Client                 *api.Client
+	NpcSvc                 *domain_npc.Service
+	CampaignIntegrationSvc *domain_campaignIntegration.Service
+	SessionSvc             *domain_session.Service
+	SeriesSvc              *domain_series.Service
+	mu                     sync.RWMutex
+	botUserID              string
 }
 
 // SetBotUserID stores the bot's user ID. Called once from the Ready handler.

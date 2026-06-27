@@ -1,23 +1,19 @@
 package member
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 	"strings"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for member queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -27,13 +23,13 @@ func NewDB(conn *sql.DB) *DB {
 }
 
 // RunInTx executes fn inside a database transaction, rolling back on error.
-func (db *DB) RunInTx(fn func(Store) error) error {
-	tx, err := db.raw.Begin()
+func (db *DB) RunInTx(ctx context.Context, fn func(context.Context, Store) error) error {
+	tx, err := db.raw.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}
 	txDB := &DB{conn: tx, raw: db.raw}
-	if err := fn(txDB); err != nil {
+	if err := fn(ctx, txDB); err != nil {
 		_ = tx.Rollback()
 		return err
 	}
@@ -65,8 +61,8 @@ func scanMemberWithUser(row interface{ Scan(...any) error }) (*model.MemberWithU
 	return &m, nil
 }
 
-func (db *DB) CreateCampaignUser(req *model.CreateMemberRequest) (*model.Member, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateCampaignUser(ctx context.Context, req *model.CreateMemberRequest) (*model.Member, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO campaign_users (campaign_id, user_id, role)
 		VALUES ($1, $2, $3)
 		RETURNING `+memberColumns,
@@ -75,16 +71,16 @@ func (db *DB) CreateCampaignUser(req *model.CreateMemberRequest) (*model.Member,
 	return scanMember(row)
 }
 
-func (db *DB) GetCampaignUser(campaignID, userID string) (*model.Member, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetCampaignUser(ctx context.Context, campaignID, userID string) (*model.Member, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+memberColumns+` FROM campaign_users WHERE campaign_id = $1 AND user_id = $2 LIMIT 1`,
 		campaignID, userID,
 	)
 	return scanMember(row)
 }
 
-func (db *DB) ListCampaignUsersByCampaign(campaignID string) ([]*model.MemberWithUser, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListCampaignUsersByCampaign(ctx context.Context, campaignID string) ([]*model.MemberWithUser, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT cu.campaign_id, cu.user_id, cu.role, cu.created_at, cu.updated_at,
 		       u.email, u.first_name, u.last_name
 		FROM campaign_users cu
@@ -113,8 +109,8 @@ func (db *DB) ListCampaignUsersByCampaign(campaignID string) ([]*model.MemberWit
 	return members, nil
 }
 
-func (db *DB) ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListCampaignUsersByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT cu.campaign_id, cu.user_id, cu.role, cu.created_at, cu.updated_at,
 		       u.email, u.first_name, u.last_name
 		FROM campaign_users cu
@@ -143,16 +139,16 @@ func (db *DB) ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, e
 	return members, nil
 }
 
-func (db *DB) RemoveCampaignUser(campaignID, userID string) error {
-	_, err := db.conn.Exec(`DELETE FROM campaign_users WHERE campaign_id = $1 AND user_id = $2`, campaignID, userID)
+func (db *DB) RemoveCampaignUser(ctx context.Context, campaignID, userID string) error {
+	_, err := db.conn.ExecContext(ctx, `DELETE FROM campaign_users WHERE campaign_id = $1 AND user_id = $2`, campaignID, userID)
 	if err != nil {
 		return fmt.Errorf("remove campaign user: %w", err)
 	}
 	return nil
 }
 
-func (db *DB) UpdateCampaignUserRole(campaignID, userID string, role model.MemberRole) (*model.Member, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateCampaignUserRole(ctx context.Context, campaignID, userID string, role model.MemberRole) (*model.Member, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE campaign_users SET role = $1, updated_at = NOW()
 		WHERE campaign_id = $2 AND user_id = $3
 		RETURNING `+memberColumns,
@@ -208,8 +204,8 @@ func scanCampaignInvitationByToken(row interface{ Scan(...any) error }) (*model.
 	return &res, nil
 }
 
-func (db *DB) CreateCampaignInvitation(req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateCampaignInvitation(ctx context.Context, req *model.CreateCampaignInvitationRequest) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO campaign_invitations (campaign_id, inviter_id, invitee_email, role, status, expires_at, token)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING `+invitationColumns,
@@ -219,16 +215,16 @@ func (db *DB) CreateCampaignInvitation(req *model.CreateCampaignInvitationReques
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) GetCampaignInvitationByEmail(campaignID, inviteeEmail string, status model.InvitationStatus) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetCampaignInvitationByEmail(ctx context.Context, campaignID, inviteeEmail string, status model.InvitationStatus) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+invitationColumns+` FROM campaign_invitations WHERE campaign_id = $1 AND invitee_email = $2 AND status = $3 LIMIT 1`,
 		campaignID, inviteeEmail, status,
 	)
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) GetCampaignInvitationByToken(token string) (*model.GetCampaignInvitationResponse, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) GetCampaignInvitationByToken(ctx context.Context, token string) (*model.GetCampaignInvitationResponse, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+invitationByTokenColumns+`
 		FROM campaign_invitations ci
 		JOIN users u ON u.id = ci.inviter_id
@@ -240,8 +236,8 @@ func (db *DB) GetCampaignInvitationByToken(token string) (*model.GetCampaignInvi
 	return scanCampaignInvitationByToken(row)
 }
 
-func (db *DB) ListCampaignInvitations(campaignID string) ([]*model.CampaignInvitation, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListCampaignInvitations(ctx context.Context, campaignID string) ([]*model.CampaignInvitation, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT `+invitationColumns+` FROM campaign_invitations
 		WHERE campaign_id = $1 AND status = $2`, campaignID, model.InvitationStatusPending)
 	if err != nil {
@@ -264,8 +260,8 @@ func (db *DB) ListCampaignInvitations(campaignID string) ([]*model.CampaignInvit
 	return invitations, rows.Err()
 }
 
-func (db *DB) AcceptCampaignInvitation(token string, role model.MemberRole) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) AcceptCampaignInvitation(ctx context.Context, token string, role model.MemberRole) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE campaign_invitations
 		SET status = $1, accepted_at = NOW(), role = $2, updated_at = NOW()
 		WHERE token = $3 AND status = $4 AND expires_at > NOW()
@@ -275,8 +271,8 @@ func (db *DB) AcceptCampaignInvitation(token string, role model.MemberRole) (*mo
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) DeclineCampaignInvitation(token string) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) DeclineCampaignInvitation(ctx context.Context, token string) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE campaign_invitations
 		SET status = $1, updated_at = NOW()
 		WHERE token = $2 AND status = $3 AND expires_at > NOW()
@@ -286,8 +282,8 @@ func (db *DB) DeclineCampaignInvitation(token string) (*model.CampaignInvitation
 	return scanCampaignInvitation(row)
 }
 
-func (db *DB) RevokeCampaignInvitation(invitationID, campaignID string) (*model.CampaignInvitation, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) RevokeCampaignInvitation(ctx context.Context, invitationID, campaignID string) (*model.CampaignInvitation, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE campaign_invitations
 		SET status = $1, updated_at = NOW()
 		WHERE campaign_invitation_id = $2 AND status = $3 AND campaign_id = $4
@@ -310,7 +306,7 @@ func scanUser(row interface{ Scan(...any) error }) (*model.User, error) {
 	return &u, nil
 }
 
-func (db *DB) GetUserByEmail(email string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE email = $1 AND deleted_at IS NULL LIMIT 1`, email)
+func (db *DB) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `SELECT `+userColumns+` FROM users WHERE email = $1 AND deleted_at IS NULL LIMIT 1`, email)
 	return scanUser(row)
 }

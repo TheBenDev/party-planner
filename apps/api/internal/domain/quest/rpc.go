@@ -47,7 +47,7 @@ func (s *Server) CreateQuest(ctx context.Context, req *connect.Request[v1.Create
 		}
 	}
 
-	quest, err := s.Quest.Create(&model.CreateQuestRequest{
+	quest, err := s.Quest.Create(ctx, &model.CreateQuestRequest{
 		CampaignID:   req.Msg.CampaignId,
 		Title:        req.Msg.Title,
 		Status:       status,
@@ -73,7 +73,7 @@ func (s *Server) GetQuest(ctx context.Context, req *connect.Request[v1.GetQuestR
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	quest, err := s.Quest.GetByID(req.Msg.Id, req.Msg.CampaignId)
+	quest, err := s.Quest.GetByID(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get quest")
 	}
@@ -88,7 +88,7 @@ func (s *Server) ListQuestsByCampaign(ctx context.Context, req *connect.Request[
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	quests, err := s.Quest.ListByCampaign(req.Msg.CampaignId)
+	quests, err := s.Quest.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list quests")
 	}
@@ -123,7 +123,7 @@ func (s *Server) UpdateQuest(ctx context.Context, req *connect.Request[v1.Update
 		status = &s
 	}
 
-	quest, err := s.Quest.Update(&model.UpdateQuestRequest{
+	quest, err := s.Quest.Update(ctx, &model.UpdateQuestRequest{
 		ID:          req.Msg.Id,
 		CampaignID:  req.Msg.CampaignId,
 		Title:       req.Msg.Title,
@@ -147,7 +147,7 @@ func (s *Server) RemoveQuest(ctx context.Context, req *connect.Request[v1.Remove
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	if err := s.Quest.Remove(req.Msg.Id, req.Msg.CampaignId); err != nil {
+	if err := s.Quest.Remove(ctx, req.Msg.Id, req.Msg.CampaignId); err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove quest")
 	}
 

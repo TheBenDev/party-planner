@@ -1,23 +1,19 @@
 package campaign_integration
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for campaign integration queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -51,11 +47,11 @@ func isValidIntegrationSource(s model.IntegrationSource) bool {
 	}
 }
 
-func (db *DB) CreateCampaignIntegration(req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+func (db *DB) CreateCampaignIntegration(ctx context.Context, req *model.CreateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(req.Source) {
 		return nil, fmt.Errorf("invalid campaign integration source: %q", req.Source)
 	}
-	row := db.conn.QueryRow(`
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO campaign_integrations (campaign_id, external_id, source, metadata, settings)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING `+campaignIntegrationColumns,
@@ -64,30 +60,30 @@ func (db *DB) CreateCampaignIntegration(req *model.CreateCampaignIntegrationRequ
 	return scanCampaignIntegration(row)
 }
 
-func (db *DB) GetCampaignIntegration(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+func (db *DB) GetCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(source) {
 		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
 	}
-	row := db.conn.QueryRow(`
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+campaignIntegrationColumns+` FROM campaign_integrations
 		WHERE campaign_id = $1 AND source = $2
 		LIMIT 1`, campaignID, source)
 	return scanCampaignIntegration(row)
 }
 
-func (db *DB) GetCampaignIntegrationByExternalID(externalID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
+func (db *DB) GetCampaignIntegrationByExternalID(ctx context.Context, externalID string, source model.IntegrationSource) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(source) {
 		return nil, fmt.Errorf("invalid campaign integration source: %q", source)
 	}
-	row := db.conn.QueryRow(`
+	row := db.conn.QueryRowContext(ctx, `
 		SELECT `+campaignIntegrationColumns+` FROM campaign_integrations
 		WHERE external_id = $1 AND source = $2
 		LIMIT 1`, externalID, source)
 	return scanCampaignIntegration(row)
 }
 
-func (db *DB) ListCampaignIntegrationsByCampaign(campaignID string) ([]*model.CampaignIntegration, error) {
-	rows, err := db.conn.Query(`SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1`, campaignID)
+func (db *DB) ListCampaignIntegrationsByCampaign(ctx context.Context, campaignID string) ([]*model.CampaignIntegration, error) {
+	rows, err := db.conn.QueryContext(ctx, `SELECT `+campaignIntegrationColumns+` FROM campaign_integrations WHERE campaign_id = $1`, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign integrations: %w", err)
 	}
@@ -108,11 +104,11 @@ func (db *DB) ListCampaignIntegrationsByCampaign(campaignID string) ([]*model.Ca
 	return integrations, rows.Err()
 }
 
-func (db *DB) RemoveCampaignIntegration(campaignID string, source model.IntegrationSource) error {
+func (db *DB) RemoveCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) error {
 	if !isValidIntegrationSource(source) {
 		return fmt.Errorf("invalid campaign integration source: %q", source)
 	}
-	_, err := db.conn.Exec(`
+	_, err := db.conn.ExecContext(ctx, `
 		DELETE FROM campaign_integrations
 		WHERE campaign_id = $1 AND source = $2`, campaignID, source)
 	if err != nil {
@@ -121,8 +117,8 @@ func (db *DB) RemoveCampaignIntegration(campaignID string, source model.Integrat
 	return nil
 }
 
-func (db *DB) ListDiscordIntegrationsWithReminders() ([]*model.CampaignIntegration, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListDiscordIntegrationsWithReminders(ctx context.Context) ([]*model.CampaignIntegration, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT ` + campaignIntegrationColumns + ` FROM campaign_integrations
 		WHERE source = 'DISCORD'
 		  AND (settings->>'enableSessionReminders')::boolean = true`)
@@ -146,7 +142,7 @@ func (db *DB) ListDiscordIntegrationsWithReminders() ([]*model.CampaignIntegrati
 	return integrations, rows.Err()
 }
 
-func (db *DB) UpdateCampaignIntegration(req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
+func (db *DB) UpdateCampaignIntegration(ctx context.Context, req *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
 	if !isValidIntegrationSource(req.Source) {
 		return nil, fmt.Errorf("invalid campaign integration source: %q", req.Source)
 	}
@@ -178,7 +174,7 @@ func (db *DB) UpdateCampaignIntegration(req *model.UpdateCampaignIntegrationRequ
 			}
 			sessionReminderChannelJSON = string(b)
 		}
-		row := db.conn.QueryRow(`
+		row := db.conn.QueryRowContext(ctx, `
 			UPDATE campaign_integrations
 			SET metadata = jsonb_build_object(
 			        'serverName', metadata->>'serverName',

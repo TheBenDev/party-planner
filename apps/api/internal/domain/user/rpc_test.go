@@ -18,21 +18,31 @@ type mockStore struct {
 	err     error
 }
 
-func (m *mockStore) CreateUser(_ *model.CreateUserRequest) (*model.User, error) {
+func (m *mockStore) CreateUser(_ context.Context, _ *model.CreateUserRequest) (*model.User, error) {
 	return m.oneUser(), m.err
 }
-func (m *mockStore) DeleteUser(_ string) (*model.User, error)        { return m.oneUser(), m.err }
-func (m *mockStore) GetUserByClerkID(_ string) (*model.User, error)  { return m.oneUser(), m.err }
-func (m *mockStore) GetUserByEmail(_ string) (*model.User, error)    { return m.oneUser(), m.err }
-func (m *mockStore) GetUserByID(_ string) (*model.User, error)       { return m.oneUser(), m.err }
-func (m *mockStore) UpdateUserByClerkID(_ *model.UpdateUserRequest) (*model.User, error) {
+func (m *mockStore) DeleteUser(_ context.Context, _ string) (*model.User, error) {
 	return m.oneUser(), m.err
 }
-func (m *mockStore) GetCampaign(_ string) (*model.Campaign, error) { return nil, m.err }
-func (m *mockStore) GetCampaignUser(_, _ string) (*model.Member, error) {
+func (m *mockStore) GetUserByClerkID(_ context.Context, _ string) (*model.User, error) {
+	return m.oneUser(), m.err
+}
+func (m *mockStore) GetUserByEmail(_ context.Context, _ string) (*model.User, error) {
+	return m.oneUser(), m.err
+}
+func (m *mockStore) GetUserByID(_ context.Context, _ string) (*model.User, error) {
+	return m.oneUser(), m.err
+}
+func (m *mockStore) UpdateUserByClerkID(_ context.Context, _ *model.UpdateUserRequest) (*model.User, error) {
+	return m.oneUser(), m.err
+}
+func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
+	return nil, m.err
+}
+func (m *mockStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {
 	return m.member, m.err
 }
-func (m *mockStore) ListCampaignUsersByUser(_ string) ([]*model.MemberWithUser, error) {
+func (m *mockStore) ListCampaignUsersByUser(_ context.Context, _ string) ([]*model.MemberWithUser, error) {
 	return m.members, m.err
 }
 

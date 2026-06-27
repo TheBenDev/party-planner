@@ -29,7 +29,7 @@ func (s *Server) CreateUser(ctx context.Context, req *connect.Request[v1.CreateU
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user email required"))
 	}
 
-	user, err := s.User.Create(&model.CreateUserRequest{
+	user, err := s.User.Create(ctx, &model.CreateUserRequest{
 		ExternalId: req.Msg.ExternalId,
 		Email:      req.Msg.Email,
 		Avatar:     sqlNullString(req.Msg.Avatar),
@@ -47,7 +47,7 @@ func (s *Server) DeleteUser(ctx context.Context, req *connect.Request[v1.DeleteU
 	if req.Msg.ExternalId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
 	}
-	_, err := s.User.Delete(req.Msg.ExternalId)
+	_, err := s.User.Delete(ctx, req.Msg.ExternalId)
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
 			return connect.NewResponse(&v1.DeleteUserResponse{}), nil
@@ -62,7 +62,7 @@ func (s *Server) GetUser(ctx context.Context, req *connect.Request[v1.GetUserReq
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
 	}
 
-	user, err := s.User.GetByClerkID(req.Msg.ExternalId)
+	user, err := s.User.GetByClerkID(ctx, req.Msg.ExternalId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get user")
 	}
@@ -74,7 +74,7 @@ func (s *Server) GetAuth(ctx context.Context, req *connect.Request[v1.GetAuthReq
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
 	}
 
-	auth, err := s.User.GetAuth(req.Msg.ClerkId, req.Msg.CampaignId)
+	auth, err := s.User.GetAuth(ctx, req.Msg.ClerkId, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get auth")
 	}
@@ -96,7 +96,7 @@ func (s *Server) GetUserByEmail(ctx context.Context, req *connect.Request[v1.Get
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user email required"))
 	}
 
-	user, err := s.User.GetByEmail(req.Msg.Email)
+	user, err := s.User.GetByEmail(ctx, req.Msg.Email)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get user by email")
 	}
@@ -109,7 +109,7 @@ func (s *Server) UpdateUser(ctx context.Context, req *connect.Request[v1.UpdateU
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user clerk id required"))
 	}
 
-	user, err := s.User.Update(&model.UpdateUserRequest{
+	user, err := s.User.Update(ctx, &model.UpdateUserRequest{
 		ExternalId: req.Msg.ExternalId,
 		Avatar:     sqlNullString(req.Msg.Avatar),
 		FirstName:  sqlNullString(req.Msg.FirstName),

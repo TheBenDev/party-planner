@@ -1,6 +1,7 @@
 package npc
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -21,12 +22,12 @@ var (
 )
 
 type Store interface {
-	CreateNpc(npc *model.CreateNpcRequest) (*model.Npc, error)
-	GetNpc(id, campaignID string) (*model.Npc, error)
-	ListNpcsByCampaign(campaignID string) ([]*model.Npc, error)
-	GetNpcByNameAndCampaign(name, campaignID string) (*model.Npc, error)
-	UpdateNpc(npc *model.UpdateNpcRequest) (*model.Npc, error)
-	RemoveNpc(id, campaignID string) error
+	CreateNpc(ctx context.Context, npc *model.CreateNpcRequest) (*model.Npc, error)
+	GetNpc(ctx context.Context, id, campaignID string) (*model.Npc, error)
+	ListNpcsByCampaign(ctx context.Context, campaignID string) ([]*model.Npc, error)
+	GetNpcByNameAndCampaign(ctx context.Context, name, campaignID string) (*model.Npc, error)
+	UpdateNpc(ctx context.Context, npc *model.UpdateNpcRequest) (*model.Npc, error)
+	RemoveNpc(ctx context.Context, id, campaignID string) error
 }
 
 type Service struct {
@@ -34,8 +35,8 @@ type Service struct {
 	Log *slog.Logger
 }
 
-func (s *Service) Create(npc *model.CreateNpcRequest) (*model.Npc, error) {
-	created, err := s.DB.CreateNpc(npc)
+func (s *Service) Create(ctx context.Context, npc *model.CreateNpcRequest) (*model.Npc, error) {
+	created, err := s.DB.CreateNpc(ctx, npc)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -45,8 +46,8 @@ func (s *Service) Create(npc *model.CreateNpcRequest) (*model.Npc, error) {
 	return created, nil
 }
 
-func (s *Service) GetByID(id, campaignID string) (*model.Npc, error) {
-	npc, err := s.DB.GetNpc(id, campaignID)
+func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Npc, error) {
+	npc, err := s.DB.GetNpc(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -56,16 +57,16 @@ func (s *Service) GetByID(id, campaignID string) (*model.Npc, error) {
 	return npc, nil
 }
 
-func (s *Service) ListByCampaign(campaignID string) ([]*model.Npc, error) {
-	npcs, err := s.DB.ListNpcsByCampaign(campaignID)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.Npc, error) {
+	npcs, err := s.DB.ListNpcsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list npcs by campaign: %w", err)
 	}
 	return npcs, nil
 }
 
-func (s *Service) GetByNameAndCampaign(name, campaignID string) (*model.Npc, error) {
-	npc, err := s.DB.GetNpcByNameAndCampaign(name, campaignID)
+func (s *Service) GetByNameAndCampaign(ctx context.Context, name, campaignID string) (*model.Npc, error) {
+	npc, err := s.DB.GetNpcByNameAndCampaign(ctx, name, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -75,13 +76,13 @@ func (s *Service) GetByNameAndCampaign(name, campaignID string) (*model.Npc, err
 	return npc, nil
 }
 
-func (s *Service) Update(npc *model.UpdateNpcRequest) (*model.Npc, error) {
-	_, err := s.GetByID(npc.ID, npc.CampaignID)
+func (s *Service) Update(ctx context.Context, npc *model.UpdateNpcRequest) (*model.Npc, error) {
+	_, err := s.GetByID(ctx, npc.ID, npc.CampaignID)
 	if err != nil {
 		return nil, err
 	}
 
-	updated, err := s.DB.UpdateNpc(npc)
+	updated, err := s.DB.UpdateNpc(ctx, npc)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -91,13 +92,13 @@ func (s *Service) Update(npc *model.UpdateNpcRequest) (*model.Npc, error) {
 	return updated, nil
 }
 
-func (s *Service) Remove(id, campaignID string) error {
-	_, err := s.GetByID(id, campaignID)
+func (s *Service) Remove(ctx context.Context, id, campaignID string) error {
+	_, err := s.GetByID(ctx, id, campaignID)
 	if err != nil {
 		return err
 	}
 
-	if err := s.DB.RemoveNpc(id, campaignID); err != nil {
+	if err := s.DB.RemoveNpc(ctx, id, campaignID); err != nil {
 		return fmt.Errorf("remove npc: %w", err)
 	}
 	return nil

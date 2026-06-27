@@ -1,6 +1,7 @@
 package quest
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -19,11 +20,11 @@ var (
 )
 
 type Store interface {
-	CreateQuest(req *model.CreateQuestRequest) (*model.Quest, error)
-	GetQuest(id, campaignID string) (*model.Quest, error)
-	ListQuestsByCampaign(campaignID string) ([]*model.Quest, error)
-	UpdateQuest(req *model.UpdateQuestRequest) (*model.Quest, error)
-	RemoveQuest(id, campaignID string) error
+	CreateQuest(ctx context.Context, req *model.CreateQuestRequest) (*model.Quest, error)
+	GetQuest(ctx context.Context, id, campaignID string) (*model.Quest, error)
+	ListQuestsByCampaign(ctx context.Context, campaignID string) ([]*model.Quest, error)
+	UpdateQuest(ctx context.Context, req *model.UpdateQuestRequest) (*model.Quest, error)
+	RemoveQuest(ctx context.Context, id, campaignID string) error
 }
 
 type Service struct {
@@ -31,8 +32,8 @@ type Service struct {
 	Log *slog.Logger
 }
 
-func (s *Service) Create(req *model.CreateQuestRequest) (*model.Quest, error) {
-	quest, err := s.DB.CreateQuest(req)
+func (s *Service) Create(ctx context.Context, req *model.CreateQuestRequest) (*model.Quest, error) {
+	quest, err := s.DB.CreateQuest(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -42,8 +43,8 @@ func (s *Service) Create(req *model.CreateQuestRequest) (*model.Quest, error) {
 	return quest, nil
 }
 
-func (s *Service) GetByID(id, campaignID string) (*model.Quest, error) {
-	quest, err := s.DB.GetQuest(id, campaignID)
+func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Quest, error) {
+	quest, err := s.DB.GetQuest(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
@@ -53,20 +54,20 @@ func (s *Service) GetByID(id, campaignID string) (*model.Quest, error) {
 	return quest, nil
 }
 
-func (s *Service) ListByCampaign(campaignID string) ([]*model.Quest, error) {
-	quests, err := s.DB.ListQuestsByCampaign(campaignID)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.Quest, error) {
+	quests, err := s.DB.ListQuestsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list quests by campaign: %w", err)
 	}
 	return quests, nil
 }
 
-func (s *Service) Update(req *model.UpdateQuestRequest) (*model.Quest, error) {
-	_, err := s.GetByID(req.ID, req.CampaignID)
+func (s *Service) Update(ctx context.Context, req *model.UpdateQuestRequest) (*model.Quest, error) {
+	_, err := s.GetByID(ctx, req.ID, req.CampaignID)
 	if err != nil {
 		return nil, err
 	}
-	quest, err := s.DB.UpdateQuest(req)
+	quest, err := s.DB.UpdateQuest(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -76,12 +77,12 @@ func (s *Service) Update(req *model.UpdateQuestRequest) (*model.Quest, error) {
 	return quest, nil
 }
 
-func (s *Service) Remove(id, campaignID string) error {
-	_, err := s.GetByID(id, campaignID)
+func (s *Service) Remove(ctx context.Context, id, campaignID string) error {
+	_, err := s.GetByID(ctx, id, campaignID)
 	if err != nil {
 		return err
 	}
-	if err := s.DB.RemoveQuest(id, campaignID); err != nil {
+	if err := s.DB.RemoveQuest(ctx, id, campaignID); err != nil {
 		return fmt.Errorf("remove quest: %w", err)
 	}
 	return nil

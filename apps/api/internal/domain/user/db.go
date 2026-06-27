@@ -1,22 +1,18 @@
 package user
 
 import (
+	"context"
 	"database/sql"
-	"fmt"
+	"log/slog"
 
-	"github.com/lib/pq"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
+	"github.com/lib/pq"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for user queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -41,8 +37,8 @@ func scanUser(row interface{ Scan(...any) error }) (*model.User, error) {
 	return &u, nil
 }
 
-func (db *DB) CreateUser(req *model.CreateUserRequest) (*model.User, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateUser(ctx context.Context, req *model.CreateUserRequest) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO users (external_id, email, avatar, first_name, last_name)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING `+userColumns,
@@ -51,31 +47,31 @@ func (db *DB) CreateUser(req *model.CreateUserRequest) (*model.User, error) {
 	return scanUser(row)
 }
 
-func (db *DB) DeleteUser(externalID string) (*model.User, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) DeleteUser(ctx context.Context, externalID string) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE users SET deleted_at = NOW(), updated_at = NOW()
 		WHERE external_id = $1 AND deleted_at IS NULL
 		RETURNING `+userColumns, externalID)
 	return scanUser(row)
 }
 
-func (db *DB) GetUserByClerkID(externalID string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE external_id = $1 AND deleted_at IS NULL LIMIT 1`, externalID)
+func (db *DB) GetUserByClerkID(ctx context.Context, externalID string) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `SELECT `+userColumns+` FROM users WHERE external_id = $1 AND deleted_at IS NULL LIMIT 1`, externalID)
 	return scanUser(row)
 }
 
-func (db *DB) GetUserByEmail(email string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE email = $1 AND deleted_at IS NULL LIMIT 1`, email)
+func (db *DB) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `SELECT `+userColumns+` FROM users WHERE email = $1 AND deleted_at IS NULL LIMIT 1`, email)
 	return scanUser(row)
 }
 
-func (db *DB) GetUserByID(userID string) (*model.User, error) {
-	row := db.conn.QueryRow(`SELECT `+userColumns+` FROM users WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, userID)
+func (db *DB) GetUserByID(ctx context.Context, userID string) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `SELECT `+userColumns+` FROM users WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, userID)
 	return scanUser(row)
 }
 
-func (db *DB) UpdateUserByClerkID(req *model.UpdateUserRequest) (*model.User, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateUserByClerkID(ctx context.Context, req *model.UpdateUserRequest) (*model.User, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE users SET avatar = $1, first_name = $2, last_name = $3, updated_at = NOW()
 		WHERE external_id = $4 AND deleted_at IS NULL
 		RETURNING `+userColumns,
@@ -100,8 +96,8 @@ func scanCampaign(row interface{ Scan(...any) error }) (*model.Campaign, error) 
 	return &c, nil
 }
 
-func (db *DB) GetCampaign(id string) (*model.Campaign, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetCampaign(ctx context.Context, id string) (*model.Campaign, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+campaignColumns+` FROM campaigns WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id,
 	)
 	return scanCampaign(row)
@@ -120,8 +116,8 @@ func scanMember(row interface{ Scan(...any) error }) (*model.Member, error) {
 	return &m, nil
 }
 
-func (db *DB) GetCampaignUser(campaignID, userID string) (*model.Member, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetCampaignUser(ctx context.Context, campaignID, userID string) (*model.Member, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+memberColumns+` FROM campaign_users WHERE campaign_id = $1 AND user_id = $2 LIMIT 1`,
 		campaignID, userID,
 	)
@@ -140,8 +136,8 @@ func scanMemberWithUser(row interface{ Scan(...any) error }) (*model.MemberWithU
 	return &m, nil
 }
 
-func (db *DB) ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, error) {
-	rows, err := db.conn.Query(`
+func (db *DB) ListCampaignUsersByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error) {
+	rows, err := db.conn.QueryContext(ctx, `
 		SELECT cu.campaign_id, cu.user_id, cu.role, cu.created_at, cu.updated_at,
 		       u.email, u.first_name, u.last_name
 		FROM campaign_users cu
@@ -152,7 +148,7 @@ func (db *DB) ListCampaignUsersByUser(userID string) ([]*model.MemberWithUser, e
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
-			fmt.Printf("failed to close rows: %v\n", err)
+			slog.Error("failed to close rows", "error", err)
 		}
 	}()
 

@@ -36,7 +36,7 @@ func (s *Server) CreateMember(ctx context.Context, req *connect.Request[v1.Creat
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	member, err := s.Member.Create(&model.CreateMemberRequest{
+	member, err := s.Member.Create(ctx, &model.CreateMemberRequest{
 		CampaignID: req.Msg.CampaignId,
 		UserID:     req.Msg.UserId,
 		Role:       role,
@@ -58,7 +58,7 @@ func (s *Server) GetMember(ctx context.Context, req *connect.Request[v1.GetMembe
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
 
-	member, err := s.Member.Get(req.Msg.CampaignId, req.Msg.UserId)
+	member, err := s.Member.Get(ctx, req.Msg.CampaignId, req.Msg.UserId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get campaign user")
 	}
@@ -72,7 +72,7 @@ func (s *Server) ListMembersByCampaign(ctx context.Context, req *connect.Request
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	members, err := s.Member.ListByCampaign(req.Msg.CampaignId)
+	members, err := s.Member.ListByCampaign(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list campaign users by campaign")
 	}
@@ -86,7 +86,7 @@ func (s *Server) ListMembersByUser(ctx context.Context, req *connect.Request[v1.
 	if req.Msg.UserId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
-	members, err := s.Member.ListByUser(req.Msg.UserId)
+	members, err := s.Member.ListByUser(ctx, req.Msg.UserId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list campaign users by user")
 	}
@@ -104,7 +104,7 @@ func (s *Server) RemoveMember(ctx context.Context, req *connect.Request[v1.Remov
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("user id required"))
 	}
 
-	err := s.Member.Remove(req.Msg.CampaignId, req.Msg.UserId)
+	err := s.Member.Remove(ctx, req.Msg.CampaignId, req.Msg.UserId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to remove campaign user")
 	}
@@ -116,7 +116,7 @@ func (s *Server) AcceptCampaignInvitation(ctx context.Context, req *connect.Requ
 	if req.Msg.Token == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitation token required"))
 	}
-	res, err := s.Member.AcceptInvitation(req.Msg.Token)
+	res, err := s.Member.AcceptInvitation(ctx, req.Msg.Token)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to accept campaign invitation")
 	}
@@ -130,7 +130,7 @@ func (s *Server) DeclineCampaignInvitation(ctx context.Context, req *connect.Req
 	if req.Msg.Token == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("invitation token required"))
 	}
-	inv, err := s.Member.DeclineInvitation(req.Msg.Token)
+	inv, err := s.Member.DeclineInvitation(ctx, req.Msg.Token)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to decline campaign invitation")
 	}
@@ -158,7 +158,7 @@ func (s *Server) CreateCampaignInvitation(ctx context.Context, req *connect.Requ
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	inv, err := s.Member.CreateInvitation(&model.CreateCampaignInvitationRequest{
+	inv, err := s.Member.CreateInvitation(ctx, &model.CreateCampaignInvitationRequest{
 		CampaignID:   req.Msg.CampaignId,
 		InviteeEmail: req.Msg.InviteeEmail,
 		InviterID:    req.Msg.InviterId,
@@ -179,7 +179,7 @@ func (s *Server) GetCampaignInvitationByToken(ctx context.Context, req *connect.
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("token required"))
 	}
 
-	res, err := s.Member.GetInvitation(req.Msg.Token)
+	res, err := s.Member.GetInvitation(ctx, req.Msg.Token)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get campaign invitation")
 	}
@@ -196,7 +196,7 @@ func (s *Server) ListCampaignInvitations(ctx context.Context, req *connect.Reque
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	invitations, err := s.Member.ListInvitations(req.Msg.CampaignId)
+	invitations, err := s.Member.ListInvitations(ctx, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to list campaign invitations")
 	}
@@ -214,7 +214,7 @@ func (s *Server) RevokeCampaignInvitation(ctx context.Context, req *connect.Requ
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
 
-	inv, err := s.Member.RevokeInvitation(req.Msg.Id, req.Msg.CampaignId)
+	inv, err := s.Member.RevokeInvitation(ctx, req.Msg.Id, req.Msg.CampaignId)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to revoke campaign invitation")
 	}

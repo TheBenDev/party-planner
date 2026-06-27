@@ -67,14 +67,17 @@ func main() {
 		os.Exit(1)
 	}
 
-	botSession, discordSvc := startBenyBot(cfg, database)
+	npcSvc := &npcDomain.Service{DB: npcDomain.NewDB(database.Raw()), Log: logger.Logger}
+	sessionSvc := &sessionDomain.Service{DB: sessionDomain.NewDB(database.Raw()), Log: logger.Logger}
+
+	botSession := startBenyBot(cfg, database, npcSvc, sessionSvc)
 	defer func() {
 		if err := botSession.Close(); err != nil {
 			slog.Error("Failed to close Discord session", "error", err)
 		}
 	}()
 
-	svcs, err := buildServices(database, discordSvc, cfg)
+	svcs, err := buildServices(database, cfg, botSession, npcSvc, sessionSvc)
 	if err != nil {
 		logger.Error("build services error", "error", err)
 		os.Exit(1)
@@ -128,38 +131,37 @@ func main() {
 	}
 }
 
-func startBenyBot(cfg *config.Config, database *db.DB) (*discordgo.Session, *discordDomain.Service) {
+func startBenyBot(cfg *config.Config, database *db.DB, npcSvc *npcDomain.Service, sessionSvc *sessionDomain.Service) *discordgo.Session {
 	apiClient := api.NewClient(cfg.AppURL, cfg.APIKey)
 	botDeps := &commands.BotDeps{
-		Client:         apiClient,
-		NpcSvc:         &npcDomain.Service{DB: npcDomain.NewDB(database.Raw()), Log: logger.Logger},
-		IntegrationSvc: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger},
-		DB:             database,
+		Client:                 apiClient,
+		NpcSvc:                 npcSvc,
+		CampaignIntegrationSvc: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger},
+		SessionSvc:             sessionSvc,
+		SeriesSvc:              &seriesDomain.Service{DB: seriesDomain.NewDB(database.Raw()), Log: logger.Logger},
 	}
 	session, err := bot.Start(cfg.DiscordToken, botDeps)
 	if err != nil {
 		slog.Error("Failed to start Discord bot", "error", err)
 		os.Exit(1)
 	}
+	return session
+}
 
-	discordSvc := &discordDomain.Service{
-		Session: session,
+func buildServices(database *db.DB, cfg *config.Config, botSession *discordgo.Session, npcSvc *npcDomain.Service, sessionSvc *sessionDomain.Service) (*appServices, error) {
+	integrationKey, err := base64.StdEncoding.DecodeString(cfg.IntegrationEncryptionKey)
+	if err != nil || len(integrationKey) != 32 {
+		slog.Error("INTEGRATION_ENCRYPTION_KEY is missing or invalid — Google Calendar token encryption will fail at runtime")
+		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
+	}
+	discordSvc := discordDomain.Service{
+		Session: botSession,
 		Log:     logger.Logger,
 		Config: discordDomain.Config{
 			ClientID:     cfg.DiscordClientID,
 			ClientSecret: cfg.DiscordClientSecret,
 			RedirectURI:  cfg.DiscordRedirectURI,
 		},
-	}
-	return session, discordSvc
-}
-
-func buildServices(database *db.DB, discord *discordDomain.Service, cfg *config.Config) (*appServices, error) {
-	integrationKey, err := base64.StdEncoding.DecodeString(cfg.IntegrationEncryptionKey)
-	if err != nil || len(integrationKey) != 32 {
-		slog.Error("INTEGRATION_ENCRYPTION_KEY is missing or invalid — Google Calendar token encryption will fail at runtime")
-		return nil, fmt.Errorf("INTEGRATION_ENCRYPTION_KEY is missing or invalid (must be 32-byte base64): %w", err)
-
 	}
 	googleSvc := googleDomain.Service{
 		Log: logger.Logger,
@@ -175,15 +177,14 @@ func buildServices(database *db.DB, discord *discordDomain.Service, cfg *config.
 		EncryptionKey: integrationKey,
 		Log:           logger.Logger,
 	}
-	sessionSvc := &sessionDomain.Service{DB: sessionDomain.NewDB(database.Raw()), Log: logger.Logger}
-	sessionSeriesSvc := &seriesDomain.Service{DB: seriesDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: *discord, UserIntegration: userIntegrationSvc}
+	sessionSeriesSvc := &seriesDomain.Service{DB: seriesDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: discordSvc, UserIntegration: userIntegrationSvc}
 	return &appServices{
 		Session:             sessionSvc,
 		SessionSeries:       sessionSeriesSvc,
 		Campaign:            &campaignDomain.Service{DB: campaignDomain.NewDB(database.Raw()), Log: logger.Logger},
-		CampaignIntegration: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: *discord},
+		CampaignIntegration: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: discordSvc},
 		Member:              &memberDomain.Service{DB: memberDomain.NewDB(database.Raw()), Log: logger.Logger},
-		Npc:                 &npcDomain.Service{DB: npcDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Npc:                 npcSvc,
 		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Location:            &locationDomain.Service{DB: locationDomain.NewDB(database.Raw()), Log: logger.Logger},
 		User:                &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger},

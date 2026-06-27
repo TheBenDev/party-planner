@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -20,7 +21,7 @@ var NextSessionCommand = Command{
 			return replyEphemeral(s, i, "This command needs to be used inside of a discord server to work.")
 		}
 
-		integration, err := deps.DB.GetCampaignIntegrationByExternalID(i.GuildID, model.IntegrationSourceDiscord)
+		integration, err := deps.CampaignIntegrationSvc.DB.GetCampaignIntegrationByExternalID(context.Background(), i.GuildID, model.IntegrationSourceDiscord)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return replyEphemeral(s, i, "This Discord server is not linked to a campaign. Use /registercampaign to set one up.")
@@ -29,7 +30,7 @@ var NextSessionCommand = Command{
 			return replyEphemeral(s, i, "Failed to check for the next session. Please try again later.")
 		}
 
-		session, err := deps.DB.GetNextSessionByCampaign(integration.CampaignID)
+		session, err := deps.SessionSvc.DB.GetNextSessionByCampaign(context.Background(), integration.CampaignID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return replyPublic(s, i, "I don't see any sessions coming up.")

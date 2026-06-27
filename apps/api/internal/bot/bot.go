@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"database/sql"
 	"log/slog"
 	"time"
@@ -202,7 +203,7 @@ func handleScheduledEventActive(e *discordgo.GuildScheduledEventUpdate, deps *co
 		return
 	}
 
-	series, err := deps.DB.GetSessionSeriesByDiscordEventID(e.ID)
+	series, err := deps.SeriesSvc.DB.GetSessionSeriesByDiscordEventID(context.Background(), e.ID)
 	if err != nil {
 		slog.Warn("No series found for Discord event, skipping session creation", "operation", "beny-bot.event-active", "eventID", e.ID)
 		return
@@ -210,7 +211,7 @@ func handleScheduledEventActive(e *discordgo.GuildScheduledEventUpdate, deps *co
 
 	scheduledAt := e.ScheduledStartTime.UTC()
 
-	_, err = deps.DB.UpsertSessionForSeries(&model.CreateSessionRequest{
+	_, err = deps.SeriesSvc.DB.UpsertSessionForSeries(context.Background(), &model.CreateSessionRequest{
 		CampaignID:      series.CampaignID,
 		Title:           e.Name,
 		SeriesID:        sql.NullString{String: series.ID, Valid: true},

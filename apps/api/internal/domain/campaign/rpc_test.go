@@ -17,29 +17,31 @@ type mockStore struct {
 	err    error
 }
 
-func (m *mockStore) RunInTx(fn func(campaign.Store) error) error { return fn(m) }
+func (m *mockStore) RunInTx(ctx context.Context, fn func(context.Context, campaign.Store) error) error {
+	return fn(ctx, m)
+}
 
-func (m *mockStore) CreateCampaign(_ *model.CreateCampaignRequest) (*model.Campaign, error) {
+func (m *mockStore) CreateCampaign(_ context.Context, _ *model.CreateCampaignRequest) (*model.Campaign, error) {
 	return m.camp, m.err
 }
 
-func (m *mockStore) GetCampaign(_ string) (*model.Campaign, error) {
+func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
 	return m.camp, m.err
 }
 
-func (m *mockStore) UpdateCampaign(_ *model.UpdateCampaignRequest) (*model.Campaign, error) {
+func (m *mockStore) UpdateCampaign(_ context.Context, _ *model.UpdateCampaignRequest) (*model.Campaign, error) {
 	return m.camp, m.err
 }
 
-func (m *mockStore) DeleteCampaign(_ string) (*model.Campaign, error) {
+func (m *mockStore) DeleteCampaign(_ context.Context, _ string) (*model.Campaign, error) {
 	return m.camp, m.err
 }
 
-func (m *mockStore) CreateCampaignUser(_ *model.CreateMemberRequest) (*model.Member, error) {
+func (m *mockStore) CreateCampaignUser(_ context.Context, _ *model.CreateMemberRequest) (*model.Member, error) {
 	return m.member, m.err
 }
 
-func (m *mockStore) GetCampaignUser(_, _ string) (*model.Member, error) {
+func (m *mockStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {
 	return m.member, m.err
 }
 

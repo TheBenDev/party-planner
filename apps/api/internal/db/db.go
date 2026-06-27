@@ -61,10 +61,3 @@ func (db *DB) RunInTx(fn func(*DB) error) error {
 	}
 	return tx.Commit()
 }
-
-func escapeLikePattern(s string) string {
-	s = strings.ReplaceAll(s, `\`, `\\`)
-	s = strings.ReplaceAll(s, `%`, `\%`)
-	s = strings.ReplaceAll(s, `_`, `\_`)
-	return s
-}

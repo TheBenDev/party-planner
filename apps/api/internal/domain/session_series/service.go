@@ -35,37 +35,37 @@ var (
 // Store interface defines all database operations needed for session_series domain.
 type Store interface {
 	// Session Series CRUD
-	CreateSessionSeries(req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error)
-	GetSessionSeries(id, campaignID string) (*model.SessionSeries, error)
-	GetSessionSeriesForUpdate(id, campaignID string) (*model.SessionSeries, error)
-	GetSessionSeriesByDiscordEventID(discordEventID string) (*model.SessionSeries, error)
-	ListSessionSeriesByCampaign(campaignID string) ([]*model.SessionSeries, error)
-	UpdateSessionSeries(req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error)
-	RemoveSessionSeries(id, campaignID string) error
+	CreateSessionSeries(ctx context.Context, req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error)
+	GetSessionSeries(ctx context.Context, id, campaignID string) (*model.SessionSeries, error)
+	GetSessionSeriesForUpdate(ctx context.Context, id, campaignID string) (*model.SessionSeries, error)
+	GetSessionSeriesByDiscordEventID(ctx context.Context, discordEventID string) (*model.SessionSeries, error)
+	ListSessionSeriesByCampaign(ctx context.Context, campaignID string) ([]*model.SessionSeries, error)
+	UpdateSessionSeries(ctx context.Context, req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error)
+	RemoveSessionSeries(ctx context.Context, id, campaignID string) error
 
 	// Session Series modifiers
-	SetSeriesDiscordEventID(id, campaignID, eventID string) error
-	SetSeriesGoogleCalendarEventID(id, campaignID, eventID string) error
-	ClearSeriesGoogleCalendarEventID(id, campaignID string) error
-	SetSeriesPollID(id, campaignID, pollID string) error
+	SetSeriesDiscordEventID(ctx context.Context, id, campaignID, eventID string) error
+	SetSeriesGoogleCalendarEventID(ctx context.Context, id, campaignID, eventID string) error
+	ClearSeriesGoogleCalendarEventID(ctx context.Context, id, campaignID string) error
+	SetSeriesPollID(ctx context.Context, id, campaignID, pollID string) error
 
 	// Exceptions
-	AddSeriesException(seriesID, campaignID string, excludedDate time.Time) error
-	ListExceptionsForSeries(seriesIDs []string) (map[string][]time.Time, error)
-	RemoveSeriesException(seriesID, campaignID string, excludedDate time.Time) error
+	AddSeriesException(ctx context.Context, seriesID, campaignID string, excludedDate time.Time) error
+	ListExceptionsForSeries(ctx context.Context, seriesIDs []string) (map[string][]time.Time, error)
+	RemoveSeriesException(ctx context.Context, seriesID, campaignID string, excludedDate time.Time) error
 
 	// Active series
-	ListActiveSeries() ([]*model.SessionSeries, error)
+	ListActiveSeries(ctx context.Context) ([]*model.SessionSeries, error)
 
 	// Session upsert (cross-entity)
-	UpsertSessionForSeries(session *model.CreateSessionRequest) (*model.Session, error)
-	ListSeriesSessionsByCampaign(campaignID string) ([]*model.Session, error)
+	UpsertSessionForSeries(ctx context.Context, session *model.CreateSessionRequest) (*model.Session, error)
+	ListSeriesSessionsByCampaign(ctx context.Context, campaignID string) ([]*model.Session, error)
 
 	// Campaign integrations (cross-entity)
-	GetCampaignIntegration(campaignID, source string) (*model.CampaignIntegration, error)
+	GetCampaignIntegration(ctx context.Context, campaignID, source string) (*model.CampaignIntegration, error)
 
 	// Transaction support
-	RunInTx(fn func(Store) error) error
+	RunInTx(ctx context.Context, fn func(context.Context, Store) error) error
 }
 
 type Service struct {
@@ -76,7 +76,7 @@ type Service struct {
 }
 
 func (s *Service) Create(ctx context.Context, req *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
-	created, err := s.DB.CreateSessionSeries(req)
+	created, err := s.DB.CreateSessionSeries(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -86,8 +86,8 @@ func (s *Service) Create(ctx context.Context, req *model.CreateSessionSeriesRequ
 	return created, nil
 }
 
-func (s *Service) Get(id, campaignID string) (*model.SessionSeries, error) {
-	series, err := s.DB.GetSessionSeries(id, campaignID)
+func (s *Service) Get(ctx context.Context, id, campaignID string) (*model.SessionSeries, error) {
+	series, err := s.DB.GetSessionSeries(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrSessionSeriesNotFound
@@ -97,8 +97,8 @@ func (s *Service) Get(id, campaignID string) (*model.SessionSeries, error) {
 	return series, nil
 }
 
-func (s *Service) ListByCampaign(campaignID string) ([]*model.SessionSeriesWithDetails, error) {
-	seriesList, err := s.DB.ListSessionSeriesByCampaign(campaignID)
+func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.SessionSeriesWithDetails, error) {
+	seriesList, err := s.DB.ListSessionSeriesByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list session series by campaign error: %w", err)
 	}
@@ -117,12 +117,12 @@ func (s *Service) ListByCampaign(campaignID string) ([]*model.SessionSeriesWithD
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		sessions, err = s.DB.ListSeriesSessionsByCampaign(campaignID)
+		sessions, err = s.DB.ListSeriesSessionsByCampaign(ctx, campaignID)
 		return err
 	})
 	g.Go(func() error {
 		var err error
-		exceptions, err = s.DB.ListExceptionsForSeries(seriesIDs)
+		exceptions, err = s.DB.ListExceptionsForSeries(ctx, seriesIDs)
 		return err
 	})
 	if err := g.Wait(); err != nil {
@@ -147,11 +147,11 @@ func (s *Service) ListByCampaign(campaignID string) ([]*model.SessionSeriesWithD
 	return result, nil
 }
 
-func (s *Service) Update(req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
-	if _, err := s.Get(req.ID, req.CampaignID); err != nil {
+func (s *Service) Update(ctx context.Context, req *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
+	if _, err := s.Get(ctx, req.ID, req.CampaignID); err != nil {
 		return nil, err
 	}
-	updated, err := s.DB.UpdateSessionSeries(req)
+	updated, err := s.DB.UpdateSessionSeries(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
@@ -162,15 +162,15 @@ func (s *Service) Update(req *model.UpdateSessionSeriesRequest) (*model.SessionS
 }
 
 func (s *Service) Remove(ctx context.Context, id, campaignID, userID string) error {
-	series, err := s.Get(id, campaignID)
+	series, err := s.Get(ctx, id, campaignID)
 	if err != nil {
 		return err
 	}
-	if err := s.DB.RemoveSessionSeries(id, campaignID); err != nil {
+	if err := s.DB.RemoveSessionSeries(ctx, id, campaignID); err != nil {
 		return fmt.Errorf("remove session series error: %w", err)
 	}
 	if series.DiscordEventID.Valid {
-		integration, err := s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+		integration, err := s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 		if err != nil {
 			s.Log.WarnContext(ctx, "failed to fetch discord integration when removing session series",
 				"series_id", id,
@@ -198,7 +198,10 @@ func (s *Service) Remove(ctx context.Context, id, campaignID, userID string) err
 }
 
 func (s *Service) ExcludeFromSeries(ctx context.Context, seriesID, campaignID string, excludedDate time.Time) error {
-	if err := s.DB.AddSeriesException(seriesID, campaignID, excludedDate); err != nil {
+	if err := s.DB.AddSeriesException(ctx, seriesID, campaignID, excludedDate); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrSessionSeriesNotFound
+		}
 		if pg.IsError(err, pg.UniqueViolation) {
 			return ErrSeriesExceptionAlreadyExists
 		}
@@ -211,12 +214,12 @@ func (s *Service) ExcludeFromSeries(ctx context.Context, seriesID, campaignID st
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		integration, err = s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+		integration, err = s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 		return err
 	})
 	g.Go(func() error {
 		var err error
-		series, err = s.DB.GetSessionSeries(seriesID, campaignID)
+		series, err = s.DB.GetSessionSeries(ctx, seriesID, campaignID)
 		return err
 	})
 	if err := g.Wait(); err != nil {
@@ -241,11 +244,11 @@ func (s *Service) ExcludeFromSeries(ctx context.Context, seriesID, campaignID st
 	return nil
 }
 
-func (s *Service) RemoveException(seriesID, campaignID string, excludedDate time.Time) error {
-	if _, err := s.Get(seriesID, campaignID); err != nil {
+func (s *Service) RemoveException(ctx context.Context, seriesID, campaignID string, excludedDate time.Time) error {
+	if _, err := s.Get(ctx, seriesID, campaignID); err != nil {
 		return err
 	}
-	if err := s.DB.RemoveSeriesException(seriesID, campaignID, excludedDate); err != nil {
+	if err := s.DB.RemoveSeriesException(ctx, seriesID, campaignID, excludedDate); err != nil {
 		return fmt.Errorf("remove series exception error: %w", err)
 	}
 	return nil
@@ -254,19 +257,19 @@ func (s *Service) RemoveException(seriesID, campaignID string, excludedDate time
 // GOOGLE CALENDAR ACTIONS
 
 func (s *Service) AddToGoogleCalendar(ctx context.Context, seriesID, campaignID, userID string) (*model.SessionSeries, error) {
-	if err := s.DB.RunInTx(func(txDB Store) error {
+	if err := s.DB.RunInTx(ctx, func(ctx context.Context, txDB Store) error {
 		var group errgroup.Group
 		var sessionSeries *model.SessionSeries
 		var exceptions map[string][]time.Time
 		group.Go(func() error {
 			var err error
-			sessionSeries, err = txDB.GetSessionSeriesForUpdate(seriesID, campaignID)
+			sessionSeries, err = txDB.GetSessionSeriesForUpdate(ctx, seriesID, campaignID)
 			return err
 		})
 
 		group.Go(func() error {
 			var err error
-			exceptions, err = txDB.ListExceptionsForSeries([]string{seriesID})
+			exceptions, err = txDB.ListExceptionsForSeries(ctx, []string{seriesID})
 			return err
 		})
 		if err := group.Wait(); err != nil {
@@ -282,7 +285,7 @@ func (s *Service) AddToGoogleCalendar(ctx context.Context, seriesID, campaignID,
 			return err
 		}
 
-		if err := txDB.SetSeriesGoogleCalendarEventID(seriesID, campaignID, eventID); err != nil {
+		if err := txDB.SetSeriesGoogleCalendarEventID(ctx, seriesID, campaignID, eventID); err != nil {
 			return err
 		}
 		return nil
@@ -290,11 +293,11 @@ func (s *Service) AddToGoogleCalendar(ctx context.Context, seriesID, campaignID,
 		return nil, err
 	}
 
-	return s.DB.GetSessionSeries(seriesID, campaignID)
+	return s.DB.GetSessionSeries(ctx, seriesID, campaignID)
 }
 
 func (s *Service) RemoveFromGoogleCalendar(ctx context.Context, seriesID, campaignID, userID string) (*model.SessionSeries, error) {
-	lockedSeries, err := s.DB.GetSessionSeriesForUpdate(seriesID, campaignID)
+	lockedSeries, err := s.DB.GetSessionSeriesForUpdate(ctx, seriesID, campaignID)
 	if err != nil {
 		return nil, err
 	}
@@ -307,11 +310,11 @@ func (s *Service) RemoveFromGoogleCalendar(ctx context.Context, seriesID, campai
 		return nil, err
 	}
 
-	if err := s.DB.ClearSeriesGoogleCalendarEventID(seriesID, campaignID); err != nil {
+	if err := s.DB.ClearSeriesGoogleCalendarEventID(ctx, seriesID, campaignID); err != nil {
 		return nil, err
 	}
 
-	return s.DB.GetSessionSeries(seriesID, campaignID)
+	return s.DB.GetSessionSeries(ctx, seriesID, campaignID)
 }
 
 // DISCORD ACTIONS
@@ -323,12 +326,12 @@ func (s *Service) GetDiscordEvent(ctx context.Context, campaignID, seriesID, dis
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		series, err = s.Get(seriesID, campaignID)
+		series, err = s.Get(ctx, seriesID, campaignID)
 		return err
 	})
 	g.Go(func() error {
 		var err error
-		integration, err = s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+		integration, err = s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrSeriesDiscordIntegrationNotFound
 		}
@@ -346,7 +349,7 @@ func (s *Service) GetDiscordEvent(ctx context.Context, campaignID, seriesID, dis
 }
 
 func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID string) (*model.SessionSeries, error) {
-	integration, err := s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+	integration, err := s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrSeriesDiscordIntegrationNotFound
@@ -357,9 +360,9 @@ func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID s
 	var newEventID string
 	var lockedSeries *model.SessionSeries
 
-	if err := s.DB.RunInTx(func(txDB Store) error {
+	if err := s.DB.RunInTx(ctx, func(ctx context.Context, txDB Store) error {
 		var txErr error
-		lockedSeries, txErr = txDB.GetSessionSeriesForUpdate(seriesID, campaignID)
+		lockedSeries, txErr = txDB.GetSessionSeriesForUpdate(ctx, seriesID, campaignID)
 		if txErr != nil {
 			return txErr
 		}
@@ -376,7 +379,7 @@ func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID s
 		if txErr != nil {
 			return fmt.Errorf("announce series: create discord event: %w", txErr)
 		}
-		if txErr = txDB.SetSeriesDiscordEventID(lockedSeries.ID, campaignID, newEventID); txErr != nil {
+		if txErr = txDB.SetSeriesDiscordEventID(ctx, lockedSeries.ID, campaignID, newEventID); txErr != nil {
 			return fmt.Errorf("announce series: persist discord event id: %w", txErr)
 		}
 		return nil
@@ -398,7 +401,7 @@ func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID s
 		}
 	}
 
-	return s.Get(seriesID, campaignID)
+	return s.Get(ctx, seriesID, campaignID)
 }
 
 func (s *Service) GetPoll(ctx context.Context, seriesID, campaignID string) (*model.Poll, error) {
@@ -408,12 +411,12 @@ func (s *Service) GetPoll(ctx context.Context, seriesID, campaignID string) (*mo
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		series, err = s.Get(seriesID, campaignID)
+		series, err = s.Get(ctx, seriesID, campaignID)
 		return err
 	})
 	g.Go(func() error {
 		var err error
-		integration, err = s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+		integration, err = s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrSeriesDiscordIntegrationNotFound
 		}
@@ -442,12 +445,12 @@ func (s *Service) CreateDiscordPoll(ctx context.Context, seriesID, campaignID st
 	var g errgroup.Group
 	g.Go(func() error {
 		var err error
-		series, err = s.Get(seriesID, campaignID)
+		series, err = s.Get(ctx, seriesID, campaignID)
 		return err
 	})
 	g.Go(func() error {
 		var err error
-		integration, err = s.DB.GetCampaignIntegration(campaignID, "DISCORD")
+		integration, err = s.DB.GetCampaignIntegration(ctx, campaignID, "DISCORD")
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrSeriesDiscordIntegrationNotFound
 		}
@@ -466,7 +469,7 @@ func (s *Service) CreateDiscordPoll(ctx context.Context, seriesID, campaignID st
 		return fmt.Errorf("poll series: %w", err)
 	}
 
-	if err := s.DB.SetSeriesPollID(series.ID, campaignID, pollID); err != nil {
+	if err := s.DB.SetSeriesPollID(ctx, series.ID, campaignID, pollID); err != nil {
 		return fmt.Errorf("poll series: persist poll id: %w", err)
 	}
 
@@ -474,7 +477,7 @@ func (s *Service) CreateDiscordPoll(ctx context.Context, seriesID, campaignID st
 }
 
 func (s *Service) NotifyUpcomingOccurrences(ctx context.Context) {
-	seriesList, err := s.DB.ListActiveSeries()
+	seriesList, err := s.DB.ListActiveSeries(ctx)
 	if err != nil {
 		s.Log.ErrorContext(ctx, "notify upcoming occurrences: failed to list active series", "error", err)
 		return
@@ -489,7 +492,7 @@ func (s *Service) NotifyUpcomingOccurrences(ctx context.Context) {
 		seriesIDs[i] = ss.ID
 	}
 
-	exceptions, err := s.DB.ListExceptionsForSeries(seriesIDs)
+	exceptions, err := s.DB.ListExceptionsForSeries(ctx, seriesIDs)
 	if err != nil {
 		s.Log.ErrorContext(ctx, "notify upcoming occurrences: failed to list exceptions", "error", err)
 		return
@@ -504,7 +507,7 @@ func (s *Service) NotifyUpcomingOccurrences(ctx context.Context) {
 			continue
 		}
 
-		integration, err := s.DB.GetCampaignIntegration(sessionSeries.CampaignID, "DISCORD")
+		integration, err := s.DB.GetCampaignIntegration(ctx, sessionSeries.CampaignID, "DISCORD")
 		if err != nil {
 			s.Log.WarnContext(ctx, "notify upcoming occurrences: no discord integration",
 				"series_id", sessionSeries.ID,

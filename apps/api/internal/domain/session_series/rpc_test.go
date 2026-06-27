@@ -21,18 +21,22 @@ type mockSeriesServicer struct {
 func (m *mockSeriesServicer) Create(_ context.Context, _ *model.CreateSessionSeriesRequest) (*model.SessionSeries, error) {
 	return m.series, m.err
 }
-func (m *mockSeriesServicer) Get(_, _ string) (*model.SessionSeries, error) { return m.series, m.err }
-func (m *mockSeriesServicer) ListByCampaign(_ string) ([]*model.SessionSeriesWithDetails, error) {
+func (m *mockSeriesServicer) Get(_ context.Context, _, _ string) (*model.SessionSeries, error) {
+	return m.series, m.err
+}
+func (m *mockSeriesServicer) ListByCampaign(_ context.Context, _ string) ([]*model.SessionSeriesWithDetails, error) {
 	return nil, m.err
 }
-func (m *mockSeriesServicer) Update(_ *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
+func (m *mockSeriesServicer) Update(_ context.Context, _ *model.UpdateSessionSeriesRequest) (*model.SessionSeries, error) {
 	return m.series, m.err
 }
 func (m *mockSeriesServicer) Remove(_ context.Context, _, _, _ string) error { return m.err }
 func (m *mockSeriesServicer) ExcludeFromSeries(_ context.Context, _, _ string, _ time.Time) error {
 	return m.err
 }
-func (m *mockSeriesServicer) RemoveException(_, _ string, _ time.Time) error { return m.err }
+func (m *mockSeriesServicer) RemoveException(_ context.Context, _, _ string, _ time.Time) error {
+	return m.err
+}
 func (m *mockSeriesServicer) AddToGoogleCalendar(_ context.Context, _, _, _ string) (*model.SessionSeries, error) {
 	return m.series, m.err
 }

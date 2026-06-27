@@ -1,6 +1,7 @@
 package campaign_test
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log/slog"
@@ -27,27 +28,29 @@ type mockServiceStore struct {
 	lastMemberReq     *model.CreateMemberRequest
 }
 
-func (m *mockServiceStore) CreateCampaign(_ *model.CreateCampaignRequest) (*model.Campaign, error) {
+func (m *mockServiceStore) CreateCampaign(_ context.Context, _ *model.CreateCampaignRequest) (*model.Campaign, error) {
 	return m.campaign, m.createCampaignErr
 }
-func (m *mockServiceStore) GetCampaign(_ string) (*model.Campaign, error) {
+func (m *mockServiceStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
 	return m.campaign, m.getCampaignErr
 }
-func (m *mockServiceStore) UpdateCampaign(_ *model.UpdateCampaignRequest) (*model.Campaign, error) {
+func (m *mockServiceStore) UpdateCampaign(_ context.Context, _ *model.UpdateCampaignRequest) (*model.Campaign, error) {
 	return m.campaign, m.updateCampaignErr
 }
-func (m *mockServiceStore) DeleteCampaign(_ string) (*model.Campaign, error) {
+func (m *mockServiceStore) DeleteCampaign(_ context.Context, _ string) (*model.Campaign, error) {
 	return m.campaign, m.deleteCampaignErr
 }
-func (m *mockServiceStore) CreateCampaignUser(req *model.CreateMemberRequest) (*model.Member, error) {
+func (m *mockServiceStore) CreateCampaignUser(_ context.Context, req *model.CreateMemberRequest) (*model.Member, error) {
 	m.createMemberCalls++
 	m.lastMemberReq = req
 	return m.member, m.createMemberErr
 }
-func (m *mockServiceStore) GetCampaignUser(_, _ string) (*model.Member, error) {
+func (m *mockServiceStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {
 	return m.member, m.getCampaignUserErr
 }
-func (m *mockServiceStore) RunInTx(fn func(campaign.Store) error) error { return fn(m) }
+func (m *mockServiceStore) RunInTx(ctx context.Context, fn func(context.Context, campaign.Store) error) error {
+	return fn(ctx, m)
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -80,7 +83,7 @@ func TestServiceCreate_HappyPath(t *testing.T) {
 	store := &mockServiceStore{campaign: want, member: testDMMember()}
 	svc := newService(store)
 
-	got, err := svc.Create(&model.CreateCampaignRequest{UserID: want.UserID, Title: want.Title})
+	got, err := svc.Create(context.Background(), &model.CreateCampaignRequest{UserID: want.UserID, Title: want.Title})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -100,7 +103,7 @@ func TestServiceCreate_HappyPath(t *testing.T) {
 
 func TestServiceCreate_UniqueViolation(t *testing.T) {
 	store := &mockServiceStore{createCampaignErr: pgUniqueViolation()}
-	_, err := newService(store).Create(&model.CreateCampaignRequest{})
+	_, err := newService(store).Create(context.Background(), &model.CreateCampaignRequest{})
 	assertError(t, err, campaign.ErrAlreadyExists)
 	if store.createMemberCalls != 0 {
 		t.Errorf("CreateCampaignUser called %d times after failed CreateCampaign, want 0", store.createMemberCalls)
@@ -109,7 +112,7 @@ func TestServiceCreate_UniqueViolation(t *testing.T) {
 
 func TestServiceCreate_FKViolation(t *testing.T) {
 	store := &mockServiceStore{createCampaignErr: pgFKViolation("fk_campaign_user_id")}
-	_, err := newService(store).Create(&model.CreateCampaignRequest{})
+	_, err := newService(store).Create(context.Background(), &model.CreateCampaignRequest{})
 	assertError(t, err, campaign.ErrInvalidUser)
 	if store.createMemberCalls != 0 {
 		t.Errorf("CreateCampaignUser called %d times after failed CreateCampaign, want 0", store.createMemberCalls)
@@ -120,7 +123,7 @@ func TestServiceCreate_FKViolation(t *testing.T) {
 
 func TestServiceGetByID_HappyPath(t *testing.T) {
 	want := testCampaign()
-	got, err := newService(&mockServiceStore{campaign: want}).GetByID(want.ID)
+	got, err := newService(&mockServiceStore{campaign: want}).GetByID(context.Background(), want.ID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -130,7 +133,7 @@ func TestServiceGetByID_HappyPath(t *testing.T) {
 }
 
 func TestServiceGetByID_NotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getCampaignErr: sql.ErrNoRows}).GetByID("campaign-1")
+	_, err := newService(&mockServiceStore{getCampaignErr: sql.ErrNoRows}).GetByID(context.Background(), "campaign-1")
 	assertError(t, err, campaign.ErrNotFound)
 }
 
@@ -139,7 +142,7 @@ func TestServiceGetByID_NotFound(t *testing.T) {
 func TestServiceUpdate_HappyPath(t *testing.T) {
 	want := testCampaign()
 	got, err := newService(&mockServiceStore{campaign: want, member: testDMMember()}).
-		Update(want.UserID, &model.UpdateCampaignRequest{ID: want.ID})
+		Update(context.Background(), want.UserID, &model.UpdateCampaignRequest{ID: want.ID})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -150,19 +153,19 @@ func TestServiceUpdate_HappyPath(t *testing.T) {
 
 func TestServiceUpdate_Auth_UserNotFound(t *testing.T) {
 	_, err := newService(&mockServiceStore{getCampaignUserErr: sql.ErrNoRows}).
-		Update("user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
+		Update(context.Background(), "user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
 	assertError(t, err, campaign.ErrNotAuthorized)
 }
 
 func TestServiceUpdate_Auth_NotDM(t *testing.T) {
 	_, err := newService(&mockServiceStore{member: &model.Member{Role: model.MemberRolePlayer}}).
-		Update("user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
+		Update(context.Background(), "user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
 	assertError(t, err, campaign.ErrNotAuthorized)
 }
 
 func TestServiceUpdate_NotFound(t *testing.T) {
 	_, err := newService(&mockServiceStore{member: testDMMember(), updateCampaignErr: sql.ErrNoRows}).
-		Update("user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
+		Update(context.Background(), "user-1", &model.UpdateCampaignRequest{ID: "campaign-1"})
 	assertError(t, err, campaign.ErrNotFound)
 }
 
@@ -171,7 +174,7 @@ func TestServiceUpdate_NotFound(t *testing.T) {
 func TestServiceDelete_HappyPath(t *testing.T) {
 	want := testCampaign()
 	got, err := newService(&mockServiceStore{campaign: want, member: testDMMember()}).
-		Delete(want.UserID, want.ID)
+		Delete(context.Background(), want.UserID, want.ID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -182,18 +185,18 @@ func TestServiceDelete_HappyPath(t *testing.T) {
 
 func TestServiceDelete_Auth_UserNotFound(t *testing.T) {
 	_, err := newService(&mockServiceStore{getCampaignUserErr: sql.ErrNoRows}).
-		Delete("user-1", "campaign-1")
+		Delete(context.Background(), "user-1", "campaign-1")
 	assertError(t, err, campaign.ErrNotAuthorized)
 }
 
 func TestServiceDelete_Auth_NotDM(t *testing.T) {
 	_, err := newService(&mockServiceStore{member: &model.Member{Role: model.MemberRolePlayer}}).
-		Delete("user-1", "campaign-1")
+		Delete(context.Background(), "user-1", "campaign-1")
 	assertError(t, err, campaign.ErrNotAuthorized)
 }
 
 func TestServiceDelete_NotFound(t *testing.T) {
 	_, err := newService(&mockServiceStore{member: testDMMember(), deleteCampaignErr: sql.ErrNoRows}).
-		Delete("user-1", "campaign-1")
+		Delete(context.Background(), "user-1", "campaign-1")
 	assertError(t, err, campaign.ErrNotFound)
 }

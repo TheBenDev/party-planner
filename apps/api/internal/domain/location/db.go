@@ -1,22 +1,18 @@
 package location
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
-
-type querier interface {
-	Exec(query string, args ...any) (sql.Result, error)
-	QueryRow(query string, args ...any) *sql.Row
-	Query(query string, args ...any) (*sql.Rows, error)
-}
 
 // DB wraps a [sql.DB] connection for location queries.
 type DB struct {
-	conn querier
+	conn pg.Querier
 	raw  *sql.DB
 }
 
@@ -41,8 +37,8 @@ func scanLocation(row interface{ Scan(...any) error }) (*model.Location, error) 
 	return &l, nil
 }
 
-func (db *DB) CreateLocation(req *model.CreateLocationRequest) (*model.Location, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) CreateLocation(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO location (campaign_id, name, description, notes, dm_notes)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING `+locationColumns,
@@ -51,16 +47,16 @@ func (db *DB) CreateLocation(req *model.CreateLocationRequest) (*model.Location,
 	return scanLocation(row)
 }
 
-func (db *DB) GetLocation(id, campaignID string) (*model.Location, error) {
-	row := db.conn.QueryRow(
+func (db *DB) GetLocation(ctx context.Context, id, campaignID string) (*model.Location, error) {
+	row := db.conn.QueryRowContext(ctx,
 		`SELECT `+locationColumns+` FROM location WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL LIMIT 1`,
 		id, campaignID,
 	)
 	return scanLocation(row)
 }
 
-func (db *DB) ListLocationsByCampaign(campaignId string) ([]*model.Location, error) {
-	rows, err := db.conn.Query(`SELECT `+locationColumns+` FROM location WHERE campaign_id = $1 AND deleted_at IS NULL`, campaignId)
+func (db *DB) ListLocationsByCampaign(ctx context.Context, campaignID string) ([]*model.Location, error) {
+	rows, err := db.conn.QueryContext(ctx, `SELECT `+locationColumns+` FROM location WHERE campaign_id = $1 AND deleted_at IS NULL`, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list locations: %w", err)
 	}
@@ -81,8 +77,8 @@ func (db *DB) ListLocationsByCampaign(campaignId string) ([]*model.Location, err
 	return locations, rows.Err()
 }
 
-func (db *DB) UpdateLocation(req *model.UpdateLocationRequest) (*model.Location, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) UpdateLocation(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE location SET
 			name        = COALESCE($1, name),
 			description = $2,
@@ -97,8 +93,8 @@ func (db *DB) UpdateLocation(req *model.UpdateLocationRequest) (*model.Location,
 	return scanLocation(row)
 }
 
-func (db *DB) DeleteLocation(id, campaignID string) (*model.Location, error) {
-	row := db.conn.QueryRow(`
+func (db *DB) DeleteLocation(ctx context.Context, id, campaignID string) (*model.Location, error) {
+	row := db.conn.QueryRowContext(ctx, `
 		UPDATE location SET deleted_at = NOW(), updated_at = NOW()
 		WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL
 		RETURNING `+locationColumns,

@@ -17,19 +17,21 @@ type mockServicer struct {
 	err          error
 }
 
-func (m *mockServicer) GetByCampaign(_ string, _ model.IntegrationSource) (*model.CampaignIntegration, error) {
+func (m *mockServicer) GetByCampaign(_ context.Context, _ string, _ model.IntegrationSource) (*model.CampaignIntegration, error) {
 	return m.integration, m.err
 }
 func (m *mockServicer) CreateDiscord(_ context.Context, _ *model.CreateDiscordCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
 	return m.integration, m.err
 }
-func (m *mockServicer) ListByCampaign(_ string) ([]*model.CampaignIntegration, error) {
+func (m *mockServicer) ListByCampaign(_ context.Context, _ string) ([]*model.CampaignIntegration, error) {
 	return m.integrations, m.err
 }
 func (m *mockServicer) Update(_ context.Context, _ *model.UpdateCampaignIntegrationRequest) (*model.CampaignIntegration, error) {
 	return m.integration, m.err
 }
-func (m *mockServicer) Remove(_ string, _ model.IntegrationSource) error { return m.err }
+func (m *mockServicer) Remove(_ context.Context, _ string, _ model.IntegrationSource) error {
+	return m.err
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

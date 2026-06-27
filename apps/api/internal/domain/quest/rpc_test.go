@@ -16,17 +16,19 @@ type mockStore struct {
 	err    error
 }
 
-func (m *mockStore) CreateQuest(_ *model.CreateQuestRequest) (*model.Quest, error) {
+func (m *mockStore) CreateQuest(_ context.Context, _ *model.CreateQuestRequest) (*model.Quest, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) GetQuest(_, _ string) (*model.Quest, error)  { return m.one(), m.err }
-func (m *mockStore) ListQuestsByCampaign(_ string) ([]*model.Quest, error) {
+func (m *mockStore) GetQuest(_ context.Context, _, _ string) (*model.Quest, error) {
+	return m.one(), m.err
+}
+func (m *mockStore) ListQuestsByCampaign(_ context.Context, _ string) ([]*model.Quest, error) {
 	return m.quests, m.err
 }
-func (m *mockStore) UpdateQuest(_ *model.UpdateQuestRequest) (*model.Quest, error) {
+func (m *mockStore) UpdateQuest(_ context.Context, _ *model.UpdateQuestRequest) (*model.Quest, error) {
 	return m.one(), m.err
 }
-func (m *mockStore) RemoveQuest(_, _ string) error { return m.err }
+func (m *mockStore) RemoveQuest(_ context.Context, _, _ string) error { return m.err }
 
 func (m *mockStore) one() *model.Quest {
 	if len(m.quests) == 0 {

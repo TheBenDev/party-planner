@@ -24,11 +24,11 @@ var (
 )
 
 type Store interface {
-	GetUserIntegration(userID string, source model.IntegrationSource) (*model.UserIntegration, error)
-	UpsertUserIntegration(req *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error)
-	DeleteUserIntegration(userID string, source model.IntegrationSource) error
-	ListUserIntegrationsByCampaign(campaignID string, source model.IntegrationSource) ([]*model.CampaignMemberIntegration, error)
-	GetCampaignIntegration(campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
+	GetUserIntegration(ctx context.Context, userID string, source model.IntegrationSource) (*model.UserIntegration, error)
+	UpsertUserIntegration(ctx context.Context, req *model.UpsertUserIntegrationRequest) (*model.UserIntegration, error)
+	DeleteUserIntegration(ctx context.Context, userID string, source model.IntegrationSource) error
+	ListUserIntegrationsByCampaign(ctx context.Context, campaignID string, source model.IntegrationSource) ([]*model.CampaignMemberIntegration, error)
+	GetCampaignIntegration(ctx context.Context, campaignID string, source model.IntegrationSource) (*model.CampaignIntegration, error)
 }
 
 // GoogleCalendarAdapter is the subset of the Google Calendar adapter used by this service.
@@ -63,7 +63,7 @@ func (s *Service) Connect(ctx context.Context, userID, code string) error {
 		return err
 	}
 
-	_, err = s.DB.UpsertUserIntegration(&model.UpsertUserIntegrationRequest{
+	_, err = s.DB.UpsertUserIntegration(ctx, &model.UpsertUserIntegrationRequest{
 		UserID:   userID,
 		Source:   model.IntegrationSourceGoogleCalendar,
 		Metadata: encrypted,
@@ -72,11 +72,11 @@ func (s *Service) Connect(ctx context.Context, userID, code string) error {
 }
 
 func (s *Service) Disconnect(ctx context.Context, userID string) error {
-	return s.DB.DeleteUserIntegration(userID, model.IntegrationSourceGoogleCalendar)
+	return s.DB.DeleteUserIntegration(ctx, userID, model.IntegrationSourceGoogleCalendar)
 }
 
 func (s *Service) GetStatus(ctx context.Context, userID string) (bool, error) {
-	result, err := s.DB.GetUserIntegration(userID, model.IntegrationSourceGoogleCalendar)
+	result, err := s.DB.GetUserIntegration(ctx, userID, model.IntegrationSourceGoogleCalendar)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return false, nil
@@ -87,7 +87,7 @@ func (s *Service) GetStatus(ctx context.Context, userID string) (bool, error) {
 }
 
 func (s *Service) CheckConflicts(ctx context.Context, campaignID string, startsAt time.Time, durationMinutes int32) ([]model.CalendarConflict, error) {
-	members, err := s.DB.ListUserIntegrationsByCampaign(campaignID, model.IntegrationSourceGoogleCalendar)
+	members, err := s.DB.ListUserIntegrationsByCampaign(ctx, campaignID, model.IntegrationSourceGoogleCalendar)
 	if err != nil {
 		return nil, fmt.Errorf("list campaign member integrations: %w", err)
 	}
@@ -111,7 +111,7 @@ func (s *Service) CheckConflicts(ctx context.Context, campaignID string, startsA
 		}
 
 		if wasRefreshed {
-			if upsertErr := s.upsertToken(member.UserID, token); upsertErr != nil {
+			if upsertErr := s.upsertToken(ctx, member.UserID, token); upsertErr != nil {
 				s.Log.WarnContext(ctx, "failed to persist refreshed token", "userId", member.UserID, "error", upsertErr)
 			}
 		}
@@ -167,7 +167,7 @@ func (s *Service) RemoveCalendarEvent(ctx context.Context, userID, calendarEvent
 
 // getAuthenticatedClient fetches the stored token, refreshes it if expired, and returns a ready-to-use HTTP client.
 func (s *Service) getAuthenticatedClient(ctx context.Context, userID string) (*http.Client, error) {
-	integration, err := s.DB.GetUserIntegration(userID, model.IntegrationSourceGoogleCalendar)
+	integration, err := s.DB.GetUserIntegration(ctx, userID, model.IntegrationSourceGoogleCalendar)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrUserIntegrationNotFound
@@ -186,7 +186,7 @@ func (s *Service) getAuthenticatedClient(ctx context.Context, userID string) (*h
 	}
 
 	if wasRefreshed {
-		if err := s.upsertToken(userID, token); err != nil {
+		if err := s.upsertToken(ctx, userID, token); err != nil {
 			return nil, fmt.Errorf("persist refreshed token: %w", err)
 		}
 	}
@@ -194,7 +194,7 @@ func (s *Service) getAuthenticatedClient(ctx context.Context, userID string) (*h
 	return s.Google.NewHTTPClient(ctx, token), nil
 }
 
-func (s *Service) upsertToken(userID string, token *oauth2.Token) error {
+func (s *Service) upsertToken(ctx context.Context, userID string, token *oauth2.Token) error {
 	encrypted, err := s.encryptMeta(model.GoogleCalendarTokenMetadata{
 		AccessToken:  token.AccessToken,
 		RefreshToken: token.RefreshToken,
@@ -203,7 +203,7 @@ func (s *Service) upsertToken(userID string, token *oauth2.Token) error {
 	if err != nil {
 		return err
 	}
-	_, err = s.DB.UpsertUserIntegration(&model.UpsertUserIntegrationRequest{
+	_, err = s.DB.UpsertUserIntegration(ctx, &model.UpsertUserIntegrationRequest{
 		UserID:   userID,
 		Source:   model.IntegrationSourceGoogleCalendar,
 		Metadata: encrypted,
