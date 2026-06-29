@@ -42,7 +42,13 @@ function formatDuration(minutes: number | undefined): string | null {
 	return `${hours}h ${mins}m`;
 }
 
-function NextSessionCard({ session, seriesTitle }: { session: Session; seriesTitle: string | undefined }) {
+function NextSessionCard({
+	session,
+	seriesTitle,
+}: {
+	session: Session;
+	seriesTitle: string | undefined;
+}) {
 	const startsAt = new Date(session.startsAt);
 	const duration = formatDuration(session.durationMinutes);
 
@@ -91,7 +97,10 @@ function NoUpcomingSession({ isDm }: { isDm: boolean }) {
 			{isDm && (
 				<p className="text-xs mt-1 opacity-70">
 					Head to{" "}
-					<Link className="underline hover:text-foreground transition-colors" to="/campaign/sessions">
+					<Link
+						className="underline hover:text-foreground transition-colors"
+						to="/campaign/sessions"
+					>
 						Sessions
 					</Link>{" "}
 					to schedule one.
@@ -114,7 +123,6 @@ function RecentSessionRow({ session }: { session: Session }) {
 					{formatDate(new Date(session.startsAt))}
 				</p>
 			</div>
-			<ChevronRight className="w-4 h-4 text-muted-foreground shrink-0 ml-3 group-hover:translate-x-0.5 transition-transform" />
 		</Link>
 	);
 }
@@ -138,11 +146,15 @@ export function CampaignHomePage() {
 
 	const upcoming = allSessions
 		.filter((s) => new Date(s.startsAt).getTime() > now)
-		.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
+		.sort(
+			(a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
+		);
 
 	const recent = allSessions
 		.filter((s) => new Date(s.startsAt).getTime() <= now)
-		.sort((a, b) => new Date(b.startsAt).getTime() - new Date(a.startsAt).getTime())
+		.sort(
+			(a, b) => new Date(b.startsAt).getTime() - new Date(a.startsAt).getTime(),
+		)
 		.slice(0, 4);
 
 	const nextSession = upcoming[0] ?? null;
@@ -168,7 +180,11 @@ export function CampaignHomePage() {
 				</h2>
 				{nextSession ? (
 					<NextSessionCard
-						seriesTitle={nextSession.seriesId ? seriesMap.get(nextSession.seriesId) : undefined}
+						seriesTitle={
+							nextSession.seriesId
+								? seriesMap.get(nextSession.seriesId)
+								: undefined
+						}
 						session={nextSession}
 					/>
 				) : (
