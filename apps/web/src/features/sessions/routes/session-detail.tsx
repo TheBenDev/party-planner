@@ -41,7 +41,6 @@ export function SessionDetailPage() {
 				</h1>
 				{role === UserRole.DUNGEON_MASTER && (
 					<Button
-						className="hover:cursor-pointer"
 						onClick={() =>
 							navigate({
 								params: { sessionId },

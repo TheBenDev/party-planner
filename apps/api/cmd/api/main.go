@@ -25,6 +25,7 @@ import (
 	campaignDomain "github.com/BBruington/party-planner/api/internal/domain/campaign"
 	campaignIntegrationDomain "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
 	locationDomain "github.com/BBruington/party-planner/api/internal/domain/location"
+	regionDomain "github.com/BBruington/party-planner/api/internal/domain/region"
 	memberDomain "github.com/BBruington/party-planner/api/internal/domain/member"
 	npcDomain "github.com/BBruington/party-planner/api/internal/domain/npc"
 	questDomain "github.com/BBruington/party-planner/api/internal/domain/quest"
@@ -49,6 +50,7 @@ type appServices struct {
 	Npc                 *npcDomain.Service
 	Quest               *questDomain.Service
 	Location            *locationDomain.Service
+	Region              *regionDomain.Service
 	User                *userDomain.Service
 	UserIntegration     *userIntegrationDomain.Service
 }
@@ -187,6 +189,7 @@ func buildServices(database *db.DB, cfg *config.Config, botSession *discordgo.Se
 		Npc:                 npcSvc,
 		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Location:            &locationDomain.Service{DB: locationDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Region:              &regionDomain.Service{DB: regionDomain.NewDB(database.Raw()), Log: logger.Logger},
 		User:                &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger},
 		UserIntegration:     userIntegrationSvc,
 	}, nil
@@ -229,6 +232,10 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 	locationPath, locationHandler := plannerv1connect.NewLocationServiceHandler(
 		&locationDomain.Server{Location: svcs.Location, Log: logger.Logger}, interceptors)
 	mux.Handle(locationPath, locationHandler)
+
+	regionPath, regionHandler := plannerv1connect.NewRegionServiceHandler(
+		&regionDomain.Server{Region: svcs.Region, Log: logger.Logger}, interceptors)
+	mux.Handle(regionPath, regionHandler)
 
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(
 		&userDomain.Server{User: svcs.User, Log: logger.Logger}, interceptors)

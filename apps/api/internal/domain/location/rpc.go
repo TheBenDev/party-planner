@@ -14,43 +14,23 @@ import (
 	model "github.com/BBruington/party-planner/api/internal/models"
 )
 
-// LocationServicer defines the interface that the service must implement.
 type LocationServicer interface {
 	Create(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error)
 	GetByID(ctx context.Context, id, campaignID string) (*model.Location, error)
-	ListByCampaign(ctx context.Context, campaignId string) ([]*model.Location, error)
 	Update(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error)
 	Delete(ctx context.Context, id, campaignID string) (*model.Location, error)
 }
 
-// Server implements the LocationService ConnectRPC handler.
 type Server struct {
 	plannerv1connect.UnimplementedLocationServiceHandler
 	Location LocationServicer
 	Log      *slog.Logger
 }
 
-func (s *Server) ListLocationsByCampaign(ctx context.Context, req *connect.Request[v1.ListLocationsByCampaignRequest]) (*connect.Response[v1.ListLocationsByCampaignResponse], error) {
-	if req.Msg.CampaignId == "" {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
-	}
-
-	locations, err := s.Location.ListByCampaign(ctx, req.Msg.CampaignId)
-	if err != nil {
-		return nil, mapError(ctx, s.Log, err, "failed to list locations")
-	}
-
-	protoLocations := make([]*v1.Location, len(locations))
-	for i, location := range locations {
-		protoLocations[i] = toProto(location)
-	}
-
-	return connect.NewResponse(&v1.ListLocationsByCampaignResponse{
-		Locations: protoLocations,
-	}), nil
-}
-
 func (s *Server) CreateLocation(ctx context.Context, req *connect.Request[v1.CreateLocationRequest]) (*connect.Response[v1.CreateLocationResponse], error) {
+	if req.Msg.RegionId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("region id required"))
+	}
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
@@ -59,11 +39,14 @@ func (s *Server) CreateLocation(ctx context.Context, req *connect.Request[v1.Cre
 	}
 
 	location, err := s.Location.Create(ctx, &model.CreateLocationRequest{
+		RegionID:    req.Msg.RegionId,
 		CampaignID:  req.Msg.CampaignId,
 		Name:        req.Msg.Name,
 		Description: sqlNullString(req.Msg.Description),
 		Notes:       sqlNullString(req.Msg.Notes),
 		DmNotes:     sqlNullString(req.Msg.DmNotes),
+		MapX:        float32PtrToNullFloat64(req.Msg.MapX),
+		MapY:        float32PtrToNullFloat64(req.Msg.MapY),
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to create location")
@@ -107,6 +90,8 @@ func (s *Server) UpdateLocation(ctx context.Context, req *connect.Request[v1.Upd
 		Description: sqlNullString(req.Msg.Description),
 		Notes:       sqlNullString(req.Msg.Notes),
 		DmNotes:     sqlNullString(req.Msg.DmNotes),
+		MapX:        float32PtrToNullFloat64(req.Msg.MapX),
+		MapY:        float32PtrToNullFloat64(req.Msg.MapY),
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to update location")
@@ -133,18 +118,16 @@ func (s *Server) RemoveLocation(ctx context.Context, req *connect.Request[v1.Rem
 	return connect.NewResponse(&v1.RemoveLocationResponse{}), nil
 }
 
-// ── Proto conversion ──────────────────────────────────────────────────────────
-
 func toProto(l *model.Location) *v1.Location {
 	if l == nil {
 		return nil
 	}
 	proto := &v1.Location{
-		Id:         l.ID,
-		CampaignId: l.CampaignID,
-		Name:       l.Name,
-		CreatedAt:  timestamppb.New(l.CreatedAt),
-		UpdatedAt:  timestamppb.New(l.UpdatedAt),
+		Id:        l.ID,
+		RegionId:  l.RegionID,
+		Name:      l.Name,
+		CreatedAt: timestamppb.New(l.CreatedAt),
+		UpdatedAt: timestamppb.New(l.UpdatedAt),
 	}
 	if l.Description.Valid {
 		proto.Description = &l.Description.String
@@ -158,10 +141,16 @@ func toProto(l *model.Location) *v1.Location {
 	if l.DeletedAt.Valid {
 		proto.DeletedAt = timestamppb.New(l.DeletedAt.Time)
 	}
+	if l.MapX.Valid {
+		v := float32(l.MapX.Float64)
+		proto.MapX = &v
+	}
+	if l.MapY.Valid {
+		v := float32(l.MapY.Float64)
+		proto.MapY = &v
+	}
 	return proto
 }
-
-// ── Error mapping ─────────────────────────────────────────────────────────────
 
 func mapError(ctx context.Context, log *slog.Logger, err error, fallback string) error {
 	switch err {
@@ -171,17 +160,24 @@ func mapError(ctx context.Context, log *slog.Logger, err error, fallback string)
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case ErrLocationInvalidCampaign:
 		return connect.NewError(connect.CodeInvalidArgument, err)
+	case ErrLocationInvalidRegion:
+		return connect.NewError(connect.CodeInvalidArgument, err)
 	default:
 		log.ErrorContext(ctx, fallback, "error", err)
 		return connect.NewError(connect.CodeInternal, errors.New(fallback))
 	}
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
 func sqlNullString(s *string) sql.NullString {
 	if s == nil {
 		return sql.NullString{}
 	}
 	return sql.NullString{String: *s, Valid: true}
+}
+
+func float32PtrToNullFloat64(f *float32) sql.NullFloat64 {
+	if f == nil {
+		return sql.NullFloat64{}
+	}
+	return sql.NullFloat64{Float64: float64(*f), Valid: true}
 }

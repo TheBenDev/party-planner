@@ -26,7 +26,7 @@ export default function Sidebar() {
 
 	const campaignOptions: LinkItems = [
 		{ icon: User, label: "npcs", url: "/campaign/npcs" },
-		{ icon: Location, label: "locations", url: "/campaign/locations" },
+		{ icon: Location, label: "locations", matchPrefix: true, url: "/campaign/regions" },
 		{ icon: Compass, label: "quests", url: "/campaign/quests" },
 		{ icon: Activity, label: "sessions", url: "/campaign/sessions" },
 	];
@@ -74,6 +74,7 @@ export default function Sidebar() {
 
 interface LinkItem {
 	label: string;
+	matchPrefix?: boolean;
 	url: string;
 	icon: React.ComponentType<{ className?: string }>;
 }
@@ -86,13 +87,15 @@ function LinkComponent({
 	item: LinkItem;
 	pathName: string;
 }) {
+	const isActive = item.matchPrefix
+		? pathName.startsWith(item.url)
+		: item.url === pathName;
 	return (
 		<Link
-			activeOptions={{ exact: true }}
+			activeOptions={{ exact: !item.matchPrefix }}
 			className={cn(
 				"flex items-center gap-3 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors",
-				item.url === pathName &&
-					"bg-accent text-foreground cursor-default font-medium",
+				isActive && "bg-accent text-foreground cursor-default font-medium",
 			)}
 			key={item.label}
 			onClick={(e) => {

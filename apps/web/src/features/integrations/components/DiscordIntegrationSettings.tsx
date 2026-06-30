@@ -253,7 +253,7 @@ export function DiscordIntegrationSettings({
 						className={`mt-4 flex justify-end ${formState.isDirty ? "" : "invisible"}`}
 					>
 						<Button
-							className="hover:cursor-pointer hover:opacity-80"
+							className="hover:opacity-80"
 							disabled={isUpdating}
 							size="sm"
 							type="submit"

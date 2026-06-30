@@ -203,6 +203,13 @@
       "when": 1782067358989,
       "tag": "0028_unique_session_series_scheduled_at",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1782823193623,
+      "tag": "0029_add_regions_rework_locations",
+      "breakpoints": true
     }
   ],
   "version": "7"

@@ -1,0 +1,82 @@
+syntax = "proto3";
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+import "planner/v1/location.proto";
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message Region {
+    string id = 1;
+    string campaign_id = 2;
+    string name = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+    optional google.protobuf.Timestamp deleted_at = 6;
+    optional string map_image_url = 7;
+}
+
+message RegionWithDetails {
+    Region region = 1;
+    repeated Location locations = 2;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message CreateRegionRequest {
+    string campaign_id = 1;
+    string name = 2;
+    optional string map_image_url = 3;
+}
+
+message GetRegionRequest {
+    string id = 1;
+    string campaign_id = 2;
+}
+
+message GetRegionResponse {
+    Region region = 1;
+}
+
+message CreateRegionResponse {
+    Region region = 1;
+}
+
+message ListRegionsByCampaignRequest {
+    string campaign_id = 1;
+}
+
+message ListRegionsByCampaignResponse {
+    repeated RegionWithDetails regions = 1;
+}
+
+message UpdateRegionRequest {
+    string id = 1;
+    string campaign_id = 2;
+    optional string name = 3;
+    optional string map_image_url = 4;
+}
+
+message UpdateRegionResponse {
+    Region region = 1;
+}
+
+message RemoveRegionRequest {
+    string id = 1;
+    string campaign_id = 2;
+}
+
+message RemoveRegionResponse {}
+
+
+service RegionService {
+    rpc CreateRegion(CreateRegionRequest) returns (CreateRegionResponse);
+    rpc UpdateRegion(UpdateRegionRequest) returns (UpdateRegionResponse);
+    rpc RemoveRegion(RemoveRegionRequest) returns (RemoveRegionResponse);
+    rpc GetRegion(GetRegionRequest) returns (GetRegionResponse);
+    rpc ListRegionsByCampaign(ListRegionsByCampaignRequest) returns (ListRegionsByCampaignResponse);
+}
