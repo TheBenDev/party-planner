@@ -58,7 +58,7 @@ function makeApi() {
 	return {
 		region: {
 			createRegion: mock(async () => ({ region: mockRegionProto })),
-			getRegion: mock(async () => ({ region: mockRegionProto })),
+			getRegion: mock(async () => ({ data: mockRegionWithDetailsProto })),
 			listRegionsByCampaign: mock(async () => ({
 				regions: [mockRegionWithDetailsProto],
 			})),
@@ -123,14 +123,16 @@ describe("getRegionHandler", () => {
 	const input = { id: "region-1" };
 
 	beforeEach(() => {
-		mockProtoToRegion.mockClear();
-		mockProtoToRegion.mockImplementation(() => mockRegion);
+		mockProtoToRegionWithDetails.mockClear();
+		mockProtoToRegionWithDetails.mockImplementation(
+			() => mockRegionWithDetails,
+		);
 	});
 
 	test("returns the region on success", async () => {
 		const context = makeContext();
 		const result = await getRegionHandler({ context, input } as never);
-		expect(result).toEqual({ region: mockRegion });
+		expect(result).toEqual({ data: mockRegionWithDetails });
 	});
 
 	test("calls getRegion with the input id and context campaignId", async () => {
@@ -145,9 +147,9 @@ describe("getRegionHandler", () => {
 	test("throws NOT_FOUND when api returns no region", async () => {
 		const context = makeContext();
 		context.api.region.getRegion = mock(async () => ({})) as never;
-		expect(
-			getRegionHandler({ context, input } as never),
-		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(getRegionHandler({ context, input } as never)).rejects.toMatchObject(
+			{ code: "NOT_FOUND" },
+		);
 	});
 });
 
@@ -158,7 +160,9 @@ describe("listRegionsByCampaignHandler", () => {
 
 	beforeEach(() => {
 		mockProtoToRegionWithDetails.mockClear();
-		mockProtoToRegionWithDetails.mockImplementation(() => mockRegionWithDetails);
+		mockProtoToRegionWithDetails.mockImplementation(
+			() => mockRegionWithDetails,
+		);
 	});
 
 	test("throws FORBIDDEN when campaignId does not match context", async () => {

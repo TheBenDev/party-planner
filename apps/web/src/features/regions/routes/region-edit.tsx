@@ -42,7 +42,7 @@ export function RegionEditPage() {
 
 	if (isLoading) return <div>Loading...</div>;
 	if (isError) return <div>Failed to load region.</div>;
-	const region = data?.region;
+	const region = data?.data.region;
 	if (!region) return <div>Region not found.</div>;
 
 	return <RegionEditFormInner region={region} regionId={regionId} />;

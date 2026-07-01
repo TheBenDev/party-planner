@@ -17,9 +17,9 @@ func NewDB(conn *sql.DB) *DB {
 	return &DB{conn: conn, raw: conn}
 }
 
-const locationSelectColumns = `l.id, l.region_id, l.name, l.description, l.notes, l.dm_notes, l.map_x, l.map_y, l.deleted_at, l.created_at, l.updated_at`
+const LocationSelectColumnsAliased = `l.id, l.region_id, l.name, l.description, l.notes, l.dm_notes, l.map_x, l.map_y, l.deleted_at, l.created_at, l.updated_at`
 
-func scanLocation(row interface{ Scan(...any) error }) (*model.Location, error) {
+func ScanLocation(row interface{ Scan(...any) error }) (*model.Location, error) {
 	var l model.Location
 	err := row.Scan(
 		&l.ID, &l.RegionID, &l.Name, &l.Description, &l.Notes, &l.DmNotes,
@@ -43,19 +43,19 @@ func (db *DB) CreateLocation(ctx context.Context, req *model.CreateLocationReque
 		RETURNING id, region_id, name, description, notes, dm_notes, map_x, map_y, deleted_at, created_at, updated_at`,
 		req.RegionID, req.CampaignID, req.Name, req.Description, req.Notes, req.DmNotes, req.MapX, req.MapY,
 	)
-	return scanLocation(row)
+	return ScanLocation(row)
 }
 
 func (db *DB) GetLocation(ctx context.Context, id, campaignID string) (*model.Location, error) {
 	row := db.conn.QueryRowContext(ctx, `
-		SELECT `+locationSelectColumns+`
+		SELECT `+LocationSelectColumnsAliased+`
 		FROM location l
 		JOIN regions r ON l.region_id = r.id
 		WHERE l.id = $1 AND r.campaign_id = $2 AND l.deleted_at IS NULL
 		LIMIT 1`,
 		id, campaignID,
 	)
-	return scanLocation(row)
+	return ScanLocation(row)
 }
 
 func (db *DB) UpdateLocation(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error) {
@@ -75,7 +75,7 @@ func (db *DB) UpdateLocation(ctx context.Context, req *model.UpdateLocationReque
 		req.Name, req.Description, req.Notes, req.DmNotes, req.MapX, req.MapY,
 		req.ID, req.CampaignID,
 	)
-	return scanLocation(row)
+	return ScanLocation(row)
 }
 
 func (db *DB) DeleteLocation(ctx context.Context, id, campaignID string) (*model.Location, error) {
@@ -87,5 +87,5 @@ func (db *DB) DeleteLocation(ctx context.Context, id, campaignID string) (*model
 		RETURNING id, region_id, name, description, notes, dm_notes, map_x, map_y, deleted_at, created_at, updated_at`,
 		id, campaignID,
 	)
-	return scanLocation(row)
+	return ScanLocation(row)
 }

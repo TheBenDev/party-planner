@@ -70,11 +70,11 @@ export const getRegionHandler: Parameters<typeof getRegionDef.handler>[0] =
 				id: input.id,
 			});
 
-			if (!res.region) {
+			if (!res.data) {
 				throw new ORPCError("NOT_FOUND", { message: "region not found" });
 			}
 
-			return { region: protoToRegion(res.region) };
+			return { data: protoToRegionWithDetails(res.data) };
 		} catch (err) {
 			handleError(
 				err,

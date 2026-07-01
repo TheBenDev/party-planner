@@ -19,7 +19,7 @@ var (
 
 type Store interface {
 	CreateRegion(ctx context.Context, req *model.CreateRegionRequest) (*model.Region, error)
-	GetRegion(ctx context.Context, id, campaignID string) (*model.Region, error)
+	GetRegion(ctx context.Context, id, campaignID string) (*model.RegionWithLocations, error)
 	ListRegionsByCampaign(ctx context.Context, campaignID string) ([]*model.RegionWithLocations, error)
 	UpdateRegion(ctx context.Context, req *model.UpdateRegionRequest) (*model.Region, error)
 	DeleteRegion(ctx context.Context, id, campaignID string) (*model.Region, error)
@@ -41,7 +41,7 @@ func (s *Service) Create(ctx context.Context, req *model.CreateRegionRequest) (*
 	return region, nil
 }
 
-func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Region, error) {
+func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.RegionWithLocations, error) {
 	region, err := s.DB.GetRegion(ctx, id, campaignID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

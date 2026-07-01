@@ -16,7 +16,7 @@ import (
 
 type RegionServicer interface {
 	Create(ctx context.Context, req *model.CreateRegionRequest) (*model.Region, error)
-	GetByID(ctx context.Context, id, campaignID string) (*model.Region, error)
+	GetByID(ctx context.Context, id, campaignID string) (*model.RegionWithLocations, error)
 	ListByCampaign(ctx context.Context, campaignID string) ([]*model.RegionWithLocations, error)
 	Update(ctx context.Context, req *model.UpdateRegionRequest) (*model.Region, error)
 	Delete(ctx context.Context, id, campaignID string) (*model.Region, error)
@@ -62,9 +62,13 @@ func (s *Server) GetRegion(ctx context.Context, req *connect.Request[v1.GetRegio
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get region")
 	}
+	protoLocations := make([]*v1.Location, len(region.Locations))
+	for i, location := range region.Locations {
+		protoLocations[i] = locationToProto(location)
+	}
 
 	return connect.NewResponse(&v1.GetRegionResponse{
-		Region: toProto(region),
+		Data: &v1.RegionWithDetails{Region: toProto(region.Region), Locations: protoLocations},
 	}), nil
 }
 
