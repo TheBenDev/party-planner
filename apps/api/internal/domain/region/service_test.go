@@ -14,8 +14,9 @@ import (
 )
 
 type mockServiceStore struct {
-	region  *model.Region
-	regions []*model.RegionWithLocations
+	region              *model.Region
+	regions             []*model.RegionWithLocations
+	regionWithLocations *model.RegionWithLocations
 
 	createRegionErr error
 	getRegionErr    error
@@ -27,8 +28,8 @@ type mockServiceStore struct {
 func (m *mockServiceStore) CreateRegion(_ context.Context, _ *model.CreateRegionRequest) (*model.Region, error) {
 	return m.region, m.createRegionErr
 }
-func (m *mockServiceStore) GetRegion(_ context.Context, _, _ string) (*model.Region, error) {
-	return m.region, m.getRegionErr
+func (m *mockServiceStore) GetRegion(_ context.Context, _, _ string) (*model.RegionWithLocations, error) {
+	return m.regionWithLocations, m.getRegionErr
 }
 func (m *mockServiceStore) ListRegionsByCampaign(_ context.Context, _ string) ([]*model.RegionWithLocations, error) {
 	return m.regions, m.listRegionsErr
@@ -91,12 +92,12 @@ func TestRegionServiceCreate_FKViolation(t *testing.T) {
 
 func TestRegionServiceGetByID_HappyPath(t *testing.T) {
 	want := testRegion()
-	got, err := newService(&mockServiceStore{region: want}).GetByID(context.Background(), want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{regionWithLocations: &model.RegionWithLocations{Region: want, Locations: []*model.Location{}}}).GetByID(context.Background(), want.ID, want.CampaignID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if got.ID != want.ID {
-		t.Errorf("got id %q, want %q", got.ID, want.ID)
+	if got.Region.ID != want.ID {
+		t.Errorf("got id %q, want %q", got.Region.ID, want.ID)
 	}
 }
 

@@ -13,16 +13,17 @@ import (
 )
 
 type mockServicer struct {
-	reg     []*model.Region
-	regions []*model.RegionWithLocations
-	err     error
+	reg                 []*model.Region
+	regions             []*model.RegionWithLocations
+	regionWithLocations *model.RegionWithLocations
+	err                 error
 }
 
 func (m *mockServicer) Create(_ context.Context, _ *model.CreateRegionRequest) (*model.Region, error) {
 	return m.one(), m.err
 }
-func (m *mockServicer) GetByID(_ context.Context, _, _ string) (*model.Region, error) {
-	return m.one(), m.err
+func (m *mockServicer) GetByID(_ context.Context, _, _ string) (*model.RegionWithLocations, error) {
+	return m.regionWithLocations, m.err
 }
 func (m *mockServicer) ListByCampaign(_ context.Context, _ string) ([]*model.RegionWithLocations, error) {
 	return m.regions, m.err
@@ -170,7 +171,7 @@ func TestCreateRegion_HappyPath(t *testing.T) {
 
 func TestGetRegion_HappyPath(t *testing.T) {
 	want := testRegion()
-	server := newServer(&mockServicer{reg: []*model.Region{want}})
+	server := newServer(&mockServicer{regionWithLocations: &model.RegionWithLocations{Region: want, Locations: []*model.Location{}}})
 
 	resp, err := server.GetRegion(context.Background(), connect.NewRequest(&v1.GetRegionRequest{
 		Id:         want.ID,
@@ -179,8 +180,8 @@ func TestGetRegion_HappyPath(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if resp.Msg.Region.Id != want.ID {
-		t.Errorf("got id %q, want %q", resp.Msg.Region.Id, want.ID)
+	if resp.Msg.Data.Region.Id != want.ID {
+		t.Errorf("got id %q, want %q", resp.Msg.Data.Region.Id, want.ID)
 	}
 }
 

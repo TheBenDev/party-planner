@@ -41,7 +41,7 @@ export const GetRegionRequestSchema = z.object({
 });
 
 export const GetRegionResponseSchema = z.object({
-	region: RegionSchema,
+	data: RegionWithDetailsSchema,
 });
 
 export const ListRegionsByCampaignRequestSchema = z.object({

@@ -280,7 +280,7 @@ func (x *GetRegionRequest) GetCampaignId() string {
 
 type GetRegionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Region        *Region                `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
+	Data          *RegionWithDetails     `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -315,9 +315,9 @@ func (*GetRegionResponse) Descriptor() ([]byte, []int) {
 	return file_planner_v1_region_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetRegionResponse) GetRegion() *Region {
+func (x *GetRegionResponse) GetData() *RegionWithDetails {
 	if x != nil {
-		return x.Region
+		return x.Data
 	}
 	return nil
 }
@@ -686,9 +686,9 @@ const file_planner_v1_region_proto_rawDesc = "" +
 	"\x10GetRegionRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
-	"campaignId\"?\n" +
-	"\x11GetRegionResponse\x12*\n" +
-	"\x06region\x18\x01 \x01(\v2\x12.planner.v1.RegionR\x06region\"B\n" +
+	"campaignId\"F\n" +
+	"\x11GetRegionResponse\x121\n" +
+	"\x04data\x18\x01 \x01(\v2\x1d.planner.v1.RegionWithDetailsR\x04data\"B\n" +
 	"\x14CreateRegionResponse\x12*\n" +
 	"\x06region\x18\x01 \x01(\v2\x12.planner.v1.RegionR\x06region\"?\n" +
 	"\x1cListRegionsByCampaignRequest\x12\x1f\n" +
@@ -756,7 +756,7 @@ var file_planner_v1_region_proto_depIdxs = []int32{
 	12, // 2: planner.v1.Region.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: planner.v1.RegionWithDetails.region:type_name -> planner.v1.Region
 	13, // 4: planner.v1.RegionWithDetails.locations:type_name -> planner.v1.Location
-	0,  // 5: planner.v1.GetRegionResponse.region:type_name -> planner.v1.Region
+	1,  // 5: planner.v1.GetRegionResponse.data:type_name -> planner.v1.RegionWithDetails
 	0,  // 6: planner.v1.CreateRegionResponse.region:type_name -> planner.v1.Region
 	1,  // 7: planner.v1.ListRegionsByCampaignResponse.regions:type_name -> planner.v1.RegionWithDetails
 	0,  // 8: planner.v1.UpdateRegionResponse.region:type_name -> planner.v1.Region

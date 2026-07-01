@@ -39,7 +39,7 @@ message GetRegionRequest {
 }
 
 message GetRegionResponse {
-    Region region = 1;
+    RegionWithDetails data = 1;
 }
 
 message CreateRegionResponse {

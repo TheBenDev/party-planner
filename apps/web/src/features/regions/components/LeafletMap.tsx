@@ -1,7 +1,13 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
-import { ImageOverlay, MapContainer, Marker, Tooltip, useMapEvents } from "react-leaflet";
+import {
+	ImageOverlay,
+	MapContainer,
+	Marker,
+	Tooltip,
+	useMapEvents,
+} from "react-leaflet";
 
 const fantasyIcon = L.divIcon({
 	className: "",
@@ -33,7 +39,11 @@ type Props = {
 	onMarkerMove?: (id: string, x: number, y: number) => void;
 };
 
-function MapClickHandler({ onMapClick }: { onMapClick: (x: number, y: number) => void }) {
+function MapClickHandler({
+	onMapClick,
+}: {
+	onMapClick: (x: number, y: number) => void;
+}) {
 	useMapEvents({
 		click: (e) => {
 			onMapClick(e.latlng.lng, e.latlng.lat);
@@ -66,7 +76,11 @@ export default function LeafletMap({
 		setDimensions(null);
 		const image = new Image();
 		image.onload = () => {
-			if (!canceled) setDimensions({ height: image.naturalHeight, width: image.naturalWidth });
+			if (!canceled)
+				setDimensions({
+					height: image.naturalHeight,
+					width: image.naturalWidth,
+				});
 		};
 		image.src = imageUrl;
 		return () => {
@@ -99,8 +113,13 @@ export default function LeafletMap({
 				maxBoundsViscosity={1}
 				minZoom={-5}
 				scrollWheelZoom={false}
-				style={{ cursor: isPlacingMarker ? "crosshair" : undefined, height: "400px", width: "100%" }}
+				style={{
+					cursor: isPlacingMarker ? "crosshair" : undefined,
+					height: "400px",
+					width: "100%",
+				}}
 				zoom={-1.3}
+				zoomControl={false}
 				zoomSnap={0}
 			>
 				<ImageOverlay bounds={bounds} url={imageUrl} />
@@ -125,7 +144,13 @@ export default function LeafletMap({
 						key={marker.id}
 						position={[marker.y, marker.x]}
 					>
-						<Tooltip className="fantasy-tooltip" direction="top" offset={[0, -36]}>{marker.name}</Tooltip>
+						<Tooltip
+							className="fantasy-tooltip"
+							direction="top"
+							offset={[0, -36]}
+						>
+							{marker.name}
+						</Tooltip>
 					</Marker>
 				))}
 			</MapContainer>

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/BBruington/party-planner/api/internal/domain/location"
 	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/BBruington/party-planner/api/internal/pg"
 )
@@ -20,6 +21,7 @@ func NewDB(conn *sql.DB) *DB {
 }
 
 const regionSelectColumns = `id, campaign_id, name, map_image_url, deleted_at, created_at, updated_at`
+const regionSelectColumnsAliased = `r.id, r.campaign_id, r.name, r.map_image_url, r.deleted_at, r.created_at, r.updated_at`
 
 func scanRegion(row interface{ Scan(...any) error }) (*model.Region, error) {
 	var r model.Region
@@ -28,6 +30,38 @@ func scanRegion(row interface{ Scan(...any) error }) (*model.Region, error) {
 		return nil, err
 	}
 	return &r, nil
+}
+
+func scanRegionWithLocationRow(rows *sql.Rows) (*model.Region, *model.Location, error) {
+	var r model.Region
+	var locID, locRegionID, locName sql.NullString
+	var locDescription, locNotes, locDmNotes sql.NullString
+	var locMapX, locMapY sql.NullFloat64
+	var locDeletedAt, locCreatedAt, locUpdatedAt sql.NullTime
+
+	if err := rows.Scan(
+		&r.ID, &r.CampaignID, &r.Name, &r.MapImageURL, &r.DeletedAt, &r.CreatedAt, &r.UpdatedAt,
+		&locID, &locRegionID, &locName, &locDescription, &locNotes, &locDmNotes,
+		&locMapX, &locMapY, &locDeletedAt, &locCreatedAt, &locUpdatedAt,
+	); err != nil {
+		return nil, nil, err
+	}
+	if !locID.Valid {
+		return &r, nil, nil
+	}
+	return &r, &model.Location{
+		ID:          locID.String,
+		RegionID:    locRegionID.String,
+		Name:        locName.String,
+		Description: locDescription,
+		Notes:       locNotes,
+		DmNotes:     locDmNotes,
+		MapX:        locMapX,
+		MapY:        locMapY,
+		DeletedAt:   locDeletedAt,
+		CreatedAt:   locCreatedAt.Time,
+		UpdatedAt:   locUpdatedAt.Time,
+	}, nil
 }
 
 func (db *DB) CreateRegion(ctx context.Context, req *model.CreateRegionRequest) (*model.Region, error) {
@@ -40,14 +74,44 @@ func (db *DB) CreateRegion(ctx context.Context, req *model.CreateRegionRequest) 
 	return scanRegion(row)
 }
 
-func (db *DB) GetRegion(ctx context.Context, id, campaignID string) (*model.Region, error) {
-	row := db.conn.QueryRowContext(ctx, `
-		SELECT `+regionSelectColumns+`
-		FROM regions
-		WHERE id = $1 AND campaign_id = $2 AND deleted_at IS NULL`,
+func (db *DB) GetRegion(ctx context.Context, id, campaignID string) (*model.RegionWithLocations, error) {
+	rows, err := db.conn.QueryContext(ctx, `
+		SELECT `+regionSelectColumnsAliased+`, `+location.LocationSelectColumnsAliased+`
+		FROM regions r
+		LEFT JOIN location l ON l.region_id = r.id AND l.deleted_at IS NULL
+		WHERE r.id = $1 AND r.campaign_id = $2 AND r.deleted_at IS NULL
+		ORDER BY l.created_at`,
 		id, campaignID,
 	)
-	return scanRegion(row)
+	if err != nil {
+		return nil, fmt.Errorf("get region: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var result *model.RegionWithLocations
+	for rows.Next() {
+		r, loc, err := scanRegionWithLocationRow(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan region with location: %w", err)
+		}
+		if result == nil {
+			result = &model.RegionWithLocations{Region: r, Locations: []*model.Location{}}
+		}
+		if loc != nil {
+			result.Locations = append(result.Locations, loc)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate rows: %w", err)
+	}
+	if result == nil {
+		return nil, sql.ErrNoRows
+	}
+	return result, nil
 }
 
 func (db *DB) ListRegionsByCampaign(ctx context.Context, campaignID string) ([]*model.RegionWithLocations, error) {
@@ -102,15 +166,12 @@ func (db *DB) ListRegionsByCampaign(ctx context.Context, campaignID string) ([]*
 	}()
 
 	for locationRows.Next() {
-		var l model.Location
-		if err := locationRows.Scan(
-			&l.ID, &l.RegionID, &l.Name, &l.Description, &l.Notes, &l.DmNotes,
-			&l.MapX, &l.MapY, &l.DeletedAt, &l.CreatedAt, &l.UpdatedAt,
-		); err != nil {
+		l, err := location.ScanLocation(locationRows)
+		if err != nil {
 			return nil, fmt.Errorf("scan location: %w", err)
 		}
 		if idx, ok := regionIndex[l.RegionID]; ok {
-			results[idx].Locations = append(results[idx].Locations, &l)
+			results[idx].Locations = append(results[idx].Locations, l)
 		}
 	}
 	return results, locationRows.Err()
