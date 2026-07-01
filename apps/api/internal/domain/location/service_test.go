@@ -28,9 +28,6 @@ func (m *mockServiceStore) CreateLocation(_ context.Context, _ *model.CreateLoca
 func (m *mockServiceStore) GetLocation(_ context.Context, _, _ string) (*model.Location, error) {
 	return m.location, m.getLocationErr
 }
-func (m *mockServiceStore) ListLocationsByCampaign(_ context.Context, _ string) ([]*model.Location, error) {
-	return nil, nil
-}
 func (m *mockServiceStore) UpdateLocation(_ context.Context, _ *model.UpdateLocationRequest) (*model.Location, error) {
 	return m.location, m.updateLocationErr
 }
@@ -66,7 +63,7 @@ func assertError(t *testing.T, err error, want error) {
 
 func TestLocationServiceCreate_HappyPath(t *testing.T) {
 	want := testLocation()
-	got, err := newService(&mockServiceStore{location: want}).Create(context.Background(), &model.CreateLocationRequest{CampaignID: want.CampaignID, Name: want.Name})
+	got, err := newService(&mockServiceStore{location: want}).Create(context.Background(), &model.CreateLocationRequest{RegionID: want.RegionID, CampaignID: "campaign-1", Name: want.Name})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -81,15 +78,20 @@ func TestLocationServiceCreate_UniqueViolation(t *testing.T) {
 }
 
 func TestLocationServiceCreate_FKViolation(t *testing.T) {
-	_, err := newService(&mockServiceStore{createLocationErr: pgFKViolation("fk_location_campaign_id")}).Create(context.Background(), &model.CreateLocationRequest{})
-	assertError(t, err, location.ErrLocationInvalidCampaign)
+	_, err := newService(&mockServiceStore{createLocationErr: pgFKViolation("fk_location_region_id")}).Create(context.Background(), &model.CreateLocationRequest{})
+	assertError(t, err, location.ErrLocationRegionNotFound)
+}
+
+func TestLocationServiceCreate_InvalidRegion(t *testing.T) {
+	_, err := newService(&mockServiceStore{createLocationErr: sql.ErrNoRows}).Create(context.Background(), &model.CreateLocationRequest{})
+	assertError(t, err, location.ErrLocationInvalidRegion)
 }
 
 // ── GetByID ───────────────────────────────────────────────────────────────────
 
 func TestLocationServiceGetByID_HappyPath(t *testing.T) {
 	want := testLocation()
-	got, err := newService(&mockServiceStore{location: want}).GetByID(context.Background(), want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{location: want}).GetByID(context.Background(), want.ID, "campaign-1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -107,7 +109,7 @@ func TestLocationServiceGetByID_NotFound(t *testing.T) {
 
 func TestLocationServiceUpdate_HappyPath(t *testing.T) {
 	want := testLocation()
-	got, err := newService(&mockServiceStore{location: want}).Update(context.Background(), &model.UpdateLocationRequest{ID: want.ID, CampaignID: want.CampaignID})
+	got, err := newService(&mockServiceStore{location: want}).Update(context.Background(), &model.UpdateLocationRequest{ID: want.ID, CampaignID: "campaign-1"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -125,7 +127,7 @@ func TestLocationServiceUpdate_NotFound(t *testing.T) {
 
 func TestLocationServiceDelete_HappyPath(t *testing.T) {
 	want := testLocation()
-	got, err := newService(&mockServiceStore{location: want}).Delete(context.Background(), want.ID, want.CampaignID)
+	got, err := newService(&mockServiceStore{location: want}).Delete(context.Background(), want.ID, "campaign-1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

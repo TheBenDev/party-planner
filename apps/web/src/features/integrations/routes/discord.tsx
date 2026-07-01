@@ -253,7 +253,7 @@ function ConnectedState({
 						<AlertDialog>
 							<AlertDialogTrigger asChild>
 								<Button
-									className="hover:cursor-pointer hover:opacity-80"
+									className="hover:opacity-80"
 									disabled={isRemoving}
 									size="sm"
 									variant="destructive"
@@ -273,11 +273,11 @@ function ConnectedState({
 									</AlertDialogDescription>
 								</AlertDialogHeader>
 								<AlertDialogFooter>
-									<AlertDialogCancel className="hover:cursor-pointer hover:opacity-80">
+									<AlertDialogCancel className="hover:opacity-80">
 										Cancel
 									</AlertDialogCancel>
 									<AlertDialogAction
-										className="hover:cursor-pointer hover:opacity-80"
+										className="hover:opacity-80"
 										onClick={onRemove}
 									>
 										Remove
@@ -353,7 +353,7 @@ function DisconnectedState({
 						))}
 					</ul>
 					<Button
-						className="gap-2 hover:cursor-pointer hover:opacity-80"
+						className="gap-2 hover:opacity-80"
 						onClick={onAddBot}
 					>
 						<BotIcon className="h-4 w-4" />

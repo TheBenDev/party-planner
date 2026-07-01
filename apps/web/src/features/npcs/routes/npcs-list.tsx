@@ -150,7 +150,7 @@ function NPCRow({
 
 	return (
 		<Button
-			className="group flex w-full items-center gap-3 px-4 py-3.5 border rounded-xl hover:bg-muted/40 transition-colors cursor-pointer justify-start h-auto"
+			className="group flex w-full items-center gap-3 px-4 py-3.5 border rounded-xl hover:bg-muted/40 transition-colors justify-start h-auto"
 			onClick={onView}
 			size={null}
 			variant="ghost"

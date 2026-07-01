@@ -8,6 +8,7 @@ export * from "./characters";
 export * from "./locations";
 export * from "./nonPlayerCharacters";
 export * from "./quests";
+export * from "./regions";
 export * from "./sessionExceptions";
 export * from "./sessionSeries";
 export * from "./sessions";

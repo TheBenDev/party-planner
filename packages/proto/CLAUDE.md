@@ -20,7 +20,7 @@ Both apps must be rebuilt after generation.
 |---|---|---|
 | CampaignService | `planner/v1/campaign.proto` | ✅ Registered in main.go |
 | CampaignIntegrationService | `planner/v1/campaign_integration.proto` | ✅ Registered |
-| LocationService | `planner/v1/locations.proto` | ✅ Registered |
+| LocationService | `planner/v1/location.proto` | ✅ Registered |
 | MemberService | `planner/v1/member.proto` | ✅ Registered |
 | NonPlayerCharacterService | `planner/v1/non_player_character.proto` | ✅ Registered |
 | QuestService | `planner/v1/quest.proto` | ✅ Registered |

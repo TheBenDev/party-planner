@@ -8,9 +8,9 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 import { campaignUsersTable } from "./campaignUsers";
-import { locationsTable } from "./locations";
 import { nonPlayerCharactersTable } from "./nonPlayerCharacters";
 import { questsTable } from "./quests";
+import { regionsTable } from "./regions";
 import { sessionsTable } from "./sessions";
 import { usersTable } from "./users";
 
@@ -42,13 +42,13 @@ export const campaignsTable = pgTable(
 export const campaignsRelations = relations(
 	campaignsTable,
 	({ one, many }) => ({
-		locations: many(locationsTable),
 		npcs: many(nonPlayerCharactersTable),
 		owner: one(usersTable, {
 			fields: [campaignsTable.userId],
 			references: [usersTable.id],
 		}),
 		quests: many(questsTable),
+		regions: many(regionsTable),
 		sessions: many(sessionsTable),
 		users: many(campaignUsersTable),
 	}),

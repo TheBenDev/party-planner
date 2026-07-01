@@ -11,17 +11,17 @@ import (
 	"github.com/BBruington/party-planner/api/internal/pg"
 )
 
-// Domain errors.
 var (
 	ErrLocationAlreadyExists   = errors.New("location already exists")
 	ErrLocationInvalidCampaign = errors.New("campaign does not exist")
+	ErrLocationRegionNotFound  = errors.New("location region not found")
+	ErrLocationInvalidRegion   = errors.New("region does not exist or does not belong to campaign")
 	ErrLocationNotFound        = errors.New("location not found")
 )
 
 type Store interface {
 	CreateLocation(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error)
 	GetLocation(ctx context.Context, id, campaignID string) (*model.Location, error)
-	ListLocationsByCampaign(ctx context.Context, campaignID string) ([]*model.Location, error)
 	UpdateLocation(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error)
 	DeleteLocation(ctx context.Context, id, campaignID string) (*model.Location, error)
 }
@@ -34,6 +34,9 @@ type Service struct {
 func (s *Service) Create(ctx context.Context, req *model.CreateLocationRequest) (*model.Location, error) {
 	location, err := s.DB.CreateLocation(ctx, req)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrLocationInvalidRegion
+		}
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
 		}
@@ -51,14 +54,6 @@ func (s *Service) GetByID(ctx context.Context, id, campaignID string) (*model.Lo
 		return nil, fmt.Errorf("get location: %w", err)
 	}
 	return location, nil
-}
-
-func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*model.Location, error) {
-	locations, err := s.DB.ListLocationsByCampaign(ctx, campaignID)
-	if err != nil {
-		return nil, fmt.Errorf("list locations by campaign error: %w", err)
-	}
-	return locations, nil
 }
 
 func (s *Service) Update(ctx context.Context, req *model.UpdateLocationRequest) (*model.Location, error) {
@@ -93,8 +88,8 @@ func mapPgError(err error) error {
 	if pg.IsError(err, pg.UniqueViolation) {
 		return ErrLocationAlreadyExists
 	}
-	if pg.IsError(err, pg.ForeignKeyViolation) && pg.Constraint(err) == "fk_location_campaign_id" {
-		return ErrLocationInvalidCampaign
+	if pg.IsError(err, pg.ForeignKeyViolation) && pg.Constraint(err) == "fk_location_region_id" {
+		return ErrLocationRegionNotFound
 	}
 	return err
 }

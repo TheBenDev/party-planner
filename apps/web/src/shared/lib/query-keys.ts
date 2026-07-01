@@ -16,6 +16,10 @@ export const queryKeys = {
 		detail: (locationId: string) => ["location", locationId] as const,
 		list: (campaignId: string) => ["locations", campaignId] as const,
 	},
+	regions: {
+		detail: (regionId: string) => ["region", regionId] as const,
+		list: (campaignId: string) => ["regions", campaignId] as const,
+	},
 	members: {
 		list: (campaignId: string) => ["members", campaignId] as const,
 	},
