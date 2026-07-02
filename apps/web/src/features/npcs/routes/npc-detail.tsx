@@ -1,16 +1,24 @@
 import {
 	CharacterStatusEnum,
+	HealthConditionEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
 import { UserRole } from "@planner/enums/user";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import {
+	characterStatusBadgeColor,
+	healthConditionBadgeColor,
+	relationToPartyBadgeColor,
+} from "@/features/npcs/constants";
+import { useNpc } from "@/features/npcs/hooks/useNpc";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useNpc } from "@/features/npcs/hooks/useNpc";
 
 export function NpcDetailPage() {
-	const { npcId } = useParams({ from: "/_authenticated/campaign/npcs/$npcId/" });
+	const { npcId } = useParams({
+		from: "/_authenticated/campaign/npcs/$npcId/",
+	});
 	const navigate = useNavigate();
 	const { role } = useAuth();
 
@@ -22,26 +30,6 @@ export function NpcDetailPage() {
 	const npc = data?.npc;
 	if (!npc)
 		return <div className="p-8 text-muted-foreground">NPC not found.</div>;
-
-	const statusColor: Record<string, string> = {
-		[CharacterStatusEnum.ALIVE]:
-			"bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-		[CharacterStatusEnum.DEAD]: "bg-red-500/15 text-red-400 border-red-500/30",
-		[CharacterStatusEnum.UNKNOWN]:
-			"bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
-	};
-
-	const relationColor: Record<string, string> = {
-		[RelationToPartyEnum.ALLY]:
-			"bg-blue-500/15 text-blue-400 border-blue-500/30",
-		[RelationToPartyEnum.ENEMY]: "bg-red-500/15 text-red-400 border-red-500/30",
-		[RelationToPartyEnum.SUSPICIOUS]:
-			"bg-red-500/15 text-orange-400 border-orange-500/30",
-		[RelationToPartyEnum.NEUTRAL]:
-			"bg-amber-500/15 text-amber-400 border-amber-500/30",
-		[RelationToPartyEnum.UNKNOWN]:
-			"bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
-	};
 
 	return (
 		<div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
@@ -83,12 +71,19 @@ export function NpcDetailPage() {
 			{/* Status badges + meta */}
 			<div className="flex flex-wrap items-center gap-3">
 				<span
-					className={`text-xs font-medium px-2.5 py-1 rounded-full border ${statusColor[npc.status] ?? statusColor[CharacterStatusEnum.UNKNOWN]}`}
+					className={`text-xs font-medium px-2.5 py-1 rounded-full border ${characterStatusBadgeColor[npc.status] ?? characterStatusBadgeColor[CharacterStatusEnum.UNKNOWN]}`}
 				>
 					{npc.status}
 				</span>
+				{npc.healthCondition !== HealthConditionEnum.DEAD && (
+					<span
+						className={`text-xs font-medium px-2.5 py-1 rounded-full border ${healthConditionBadgeColor[npc.healthCondition] ?? healthConditionBadgeColor[HealthConditionEnum.UNKNOWN]}`}
+					>
+						{npc.healthCondition}
+					</span>
+				)}
 				<span
-					className={`text-xs font-medium px-2.5 py-1 rounded-full border ${relationColor[npc.relationToPartyStatus] ?? relationColor[RelationToPartyEnum.UNKNOWN]}`}
+					className={`text-xs font-medium px-2.5 py-1 rounded-full border ${relationToPartyBadgeColor[npc.relationToPartyStatus] ?? relationToPartyBadgeColor[RelationToPartyEnum.UNKNOWN]}`}
 				>
 					{npc.relationToPartyStatus}
 				</span>
@@ -103,6 +98,13 @@ export function NpcDetailPage() {
 			<div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3">
 				<MetaField label="Race" placeholder="Unknown" value={npc.race} />
 				<MetaField label="Age" placeholder="Unknown" value={npc.age} />
+				<MetaField label="Class" placeholder="Unknown" value={npc.characterClass} />
+				<MetaField
+					label="Level"
+					placeholder="—"
+					value={npc.level != null ? String(npc.level) : null}
+				/>
+				<MetaField label="Role" placeholder="—" value={npc.role} />
 				<MetaField
 					label="Current Location"
 					placeholder="Whereabouts unknown"
@@ -122,6 +124,19 @@ export function NpcDetailPage() {
 					<MetaField label="Foundry Actor" value={npc.foundryActorId} />
 				)}
 			</div>
+
+			{npc.labels && npc.labels.length > 0 && (
+				<div className="flex flex-wrap gap-1.5">
+					{npc.labels.map((label) => (
+						<span
+							className="text-xs px-2.5 py-1 rounded-full border bg-muted/50 text-muted-foreground"
+							key={label}
+						>
+							{label}
+						</span>
+					))}
+				</div>
+			)}
 
 			<Separator />
 

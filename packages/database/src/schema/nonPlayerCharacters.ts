@@ -1,6 +1,7 @@
 // biome-ignore-all assist/source/useSortedKeys: organized keys differently
 import {
 	CharacterStatusEnum,
+	HealthConditionEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
 import { relations } from "drizzle-orm";
@@ -10,10 +11,12 @@ import {
 	index,
 	pgEnum,
 	pgTable,
+	smallint,
 	timestamp,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { enumToPgEnum } from "@/lib/enums";
 import { campaignsTable } from "./campaigns";
 import { locationsTable } from "./locations";
 import { questsTable } from "./quests";
@@ -21,11 +24,15 @@ import { sessionsTable } from "./sessions";
 
 export const characterStatusEnum = pgEnum(
 	"character_status_enum",
-	CharacterStatusEnum,
+	enumToPgEnum(CharacterStatusEnum),
 );
 export const relationToPartyEnum = pgEnum(
 	"relation_to_party_enum",
-	RelationToPartyEnum,
+	enumToPgEnum(RelationToPartyEnum),
+);
+export const healthConditionEnum = pgEnum(
+	"health_condition_enum",
+	enumToPgEnum(HealthConditionEnum),
 );
 
 export const nonPlayerCharactersTable = pgTable(
@@ -43,6 +50,12 @@ export const nonPlayerCharactersTable = pgTable(
 		appearance: varchar("appearance"),
 		avatar: varchar("avatar"),
 		backstory: varchar("backstory"),
+		characterClass: varchar("character_class"),
+		healthCondition: healthConditionEnum("health_condition")
+			.notNull()
+			.default(HealthConditionEnum.HEALTHY),
+		labels: varchar("labels").array().default([]),
+		level: smallint("level"),
 		name: varchar("name").notNull(),
 		race: varchar("race"),
 		playerNotes: varchar("player_notes"),
@@ -50,6 +63,7 @@ export const nonPlayerCharactersTable = pgTable(
 		relationToPartyStatus: relationToPartyEnum("relation_to_party_status")
 			.notNull()
 			.default(RelationToPartyEnum.UNKNOWN),
+		role: varchar("role"),
 		status: characterStatusEnum("status")
 			.notNull()
 			.default(CharacterStatusEnum.UNKNOWN),

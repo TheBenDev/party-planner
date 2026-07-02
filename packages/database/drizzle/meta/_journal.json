@@ -210,6 +210,13 @@
       "when": 1782823193623,
       "tag": "0029_add_regions_rework_locations",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1782955905375,
+      "tag": "0030_npc_roster_enhancements",
+      "breakpoints": true
     }
   ],
   "version": "7"

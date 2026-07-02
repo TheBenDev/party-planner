@@ -24,6 +24,15 @@ enum RelationToParty {
   RELATION_TO_PARTY_SUSPICIOUS = 5;
 }
 
+enum HealthCondition {
+  HEALTH_CONDITION_UNSPECIFIED = 0;
+  HEALTH_CONDITION_UNKNOWN = 1;
+  HEALTH_CONDITION_HEALTHY = 2;
+  HEALTH_CONDITION_SICK = 3;
+  HEALTH_CONDITION_INJURED = 4;
+  HEALTH_CONDITION_DEAD = 5;
+}
+
 // -----------------------------------------------------------------------------
 // Core Messages
 // -----------------------------------------------------------------------------
@@ -52,6 +61,11 @@ message Npc {
   optional google.protobuf.Timestamp last_foundry_sync_at = 21;
   google.protobuf.Timestamp created_at = 22;
   google.protobuf.Timestamp updated_at = 23;
+  HealthCondition health_condition = 24;
+  repeated string labels = 25;
+  optional int32 level = 26;
+  optional string role = 27;
+  optional string character_class = 28;
 }
 
 // -----------------------------------------------------------------------------
@@ -78,6 +92,11 @@ message CreateNpcRequest {
   optional string session_encountered_id = 17;
   repeated string aliases = 18;
   optional string foundry_actor_id = 19;
+  HealthCondition health_condition = 20;
+  repeated string labels = 21;
+  optional int32 level = 22;
+  optional string role = 23;
+  optional string character_class = 24;
 }
 
 message CreateNpcResponse {
@@ -122,6 +141,12 @@ message UpdateNpcRequest {
   optional string session_encountered_id = 18;
   repeated string aliases = 19;
   string campaign_id = 20;
+  optional HealthCondition health_condition = 21;
+  repeated string labels = 22;
+  optional int32 level = 23;
+  optional string role = 24;
+  optional string character_class = 25;
+  repeated string removed_fields = 26;
 }
 
 message UpdateNpcResponse {

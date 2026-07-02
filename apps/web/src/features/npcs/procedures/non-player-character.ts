@@ -15,6 +15,7 @@ import { handleError } from "@/server/errors";
 import { campaignProcedure, dmProcedure } from "@/server/middleware";
 import {
 	characterStatusToProto,
+	healthConditionToProto,
 	protoToNpc,
 	relationToPartyToProto,
 } from "./proto/non-player-character";
@@ -28,36 +29,36 @@ const createNpcDef = dmProcedure
 	.input(CreateNpcRequestSchema)
 	.output(CreateNpcResponseSchema);
 
-export const createNpcHandler: Parameters<
-	typeof createNpcDef.handler
->[0] = async ({ input, context }) => {
-	const api = context.api;
-	if (input.campaignId !== context.campaignId) {
-		throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
-	}
-	try {
-		const res = await api.npc.createNpc({
-			...input,
-			relationToPartyStatus: relationToPartyToProto(
-				input.relationToPartyStatus,
-			),
-			status: characterStatusToProto(input.status),
-		});
-		if (res.npc === undefined) {
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "failed to create npc",
-			});
+export const createNpcHandler: Parameters<typeof createNpcDef.handler>[0] =
+	async ({ input, context }) => {
+		const api = context.api;
+		if (input.campaignId !== context.campaignId) {
+			throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
 		}
-		return { npc: protoToNpc(res.npc) };
-	} catch (err) {
-		handleError(
-			err,
-			"failed to create npc",
-			{ campaignId: input.campaignId },
-			context.logger,
-		);
-	}
-};
+		try {
+			const res = await api.npc.createNpc({
+				...input,
+				healthCondition: healthConditionToProto(input.healthCondition),
+				relationToPartyStatus: relationToPartyToProto(
+					input.relationToPartyStatus,
+				),
+				status: characterStatusToProto(input.status),
+			});
+			if (res.npc === undefined) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to create npc",
+				});
+			}
+			return { npc: protoToNpc(res.npc) };
+		} catch (err) {
+			handleError(
+				err,
+				"failed to create npc",
+				{ campaignId: input.campaignId },
+				context.logger,
+			);
+		}
+	};
 
 const getNonPlayerCharacterDef = campaignProcedure
 	.route({
@@ -121,21 +122,20 @@ const removeNpcDef = dmProcedure
 	.input(RemoveNpcRequestSchema)
 	.output(RemoveNpcResponseSchema);
 
-export const removeNpcHandler: Parameters<
-	typeof removeNpcDef.handler
->[0] = async ({ input, context }) => {
-	const { id } = input;
-	const api = context.api;
-	try {
-		await api.npc.removeNpc({
-			campaignId: context.campaignId,
-			id,
-		});
-		return {};
-	} catch (err) {
-		handleError(err, "failed to remove npc", { npcId: id }, context.logger);
-	}
-};
+export const removeNpcHandler: Parameters<typeof removeNpcDef.handler>[0] =
+	async ({ input, context }) => {
+		const { id } = input;
+		const api = context.api;
+		try {
+			await api.npc.removeNpc({
+				campaignId: context.campaignId,
+				id,
+			});
+			return {};
+		} catch (err) {
+			handleError(err, "failed to remove npc", { npcId: id }, context.logger);
+		}
+	};
 
 const updateNpcDef = dmProcedure
 	.route({
@@ -146,55 +146,61 @@ const updateNpcDef = dmProcedure
 	.input(UpdateNpcRequestSchema)
 	.output(UpdateNpcResponseSchema);
 
-export const updateNpcHandler: Parameters<
-	typeof updateNpcDef.handler
->[0] = async ({ input, context }) => {
-	const api = context.api;
-
-	try {
-		const res = await api.npc.updateNpc({
-			age: input.age,
-			aliases: input.aliases,
-			appearance: input.appearance,
-			avatar: input.avatar,
-			backstory: input.backstory,
-			campaignId: context.campaignId,
-			currentLocationId: input.currentLocationId,
-			dmNotes: input.dmNotes,
-			foundryActorId: input.foundryActorId,
-			id: input.id,
-			isKnownToParty: input.isKnownToParty,
-			knownName: input.knownName,
-			name: input.name,
-			originLocationId: input.originLocationId,
-			personality: input.personality,
-			playerNotes: input.playerNotes,
-			race: input.race,
-			relationToPartyStatus: input.relationToPartyStatus
-				? relationToPartyToProto(input.relationToPartyStatus)
-				: undefined,
-			sessionEncounteredId: input.sessionEncounteredId,
-			status: input.status ? characterStatusToProto(input.status) : undefined,
-		});
-
-		if (!res.npc) {
-			throw new ORPCError("INTERNAL_SERVER_ERROR", {
-				message: "failed to update npc",
+export const updateNpcHandler: Parameters<typeof updateNpcDef.handler>[0] =
+	async ({ input, context }) => {
+		const api = context.api;
+		try {
+			const res = await api.npc.updateNpc({
+				age: input.age ?? undefined,
+				aliases: input.aliases,
+				appearance: input.appearance ?? undefined,
+				avatar: input.avatar ?? undefined,
+				backstory: input.backstory ?? undefined,
+				campaignId: context.campaignId,
+				characterClass: input.characterClass ?? undefined,
+				currentLocationId: input.currentLocationId ?? undefined,
+				dmNotes: input.dmNotes ?? undefined,
+				foundryActorId: input.foundryActorId ?? undefined,
+				healthCondition: input.healthCondition
+					? healthConditionToProto(input.healthCondition)
+					: undefined,
+				id: input.id,
+				isKnownToParty: input.isKnownToParty,
+				knownName: input.knownName ?? undefined,
+				labels: input.labels,
+				level: input.level ?? undefined,
+				name: input.name,
+				originLocationId: input.originLocationId ?? undefined,
+				personality: input.personality ?? undefined,
+				playerNotes: input.playerNotes ?? undefined,
+				race: input.race ?? undefined,
+				relationToPartyStatus: input.relationToPartyStatus
+					? relationToPartyToProto(input.relationToPartyStatus)
+					: undefined,
+				removedFields: input.removedFields,
+				role: input.role ?? undefined,
+				sessionEncounteredId: input.sessionEncounteredId ?? undefined,
+				status: input.status ? characterStatusToProto(input.status) : undefined,
 			});
-		}
 
-		return {
-			npc: protoToNpc(res.npc),
-		};
-	} catch (err) {
-		handleError(
-			err,
-			"failed to update npc",
-			{ npcId: input.id },
-			context.logger,
-		);
-	}
-};
+			if (!res.npc) {
+				throw new ORPCError("INTERNAL_SERVER_ERROR", {
+					message: "failed to update npc",
+				});
+			}
+
+			return {
+				npc: protoToNpc(res.npc),
+			};
+		} catch (err) {
+			handleError(
+				err,
+				"failed to update npc",
+				{ npcId: input.id },
+				context.logger,
+			);
+		}
+	};
 
 export const nonPlayerCharacterRouter = {
 	createNpc: createNpcDef.handler(createNpcHandler),
