@@ -1,9 +1,19 @@
+import {
+	CharacterStatusEnum,
+	HealthConditionEnum,
+	RelationToPartyEnum,
+} from "@planner/enums/character";
 import { UserRole } from "@planner/enums/user";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { EyeOff, MoreHorizontal, Plus, Search, User2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+	characterStatusBadgeColor,
+	healthConditionBadgeColor,
+	relationToPartyBadgeColor,
+} from "@/features/npcs/constants";
 import { Button } from "@/shared/components/ui/button";
 import {
 	DropdownMenu,
@@ -18,60 +28,6 @@ import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 import { useNpcData } from "../hooks/useNpcData";
-
-const RELATION_STYLES: Record<string, { label: string; className: string }> = {
-	ALLY: {
-		className:
-			"bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300",
-		label: "Ally",
-	},
-	FRIENDLY: {
-		className:
-			"bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300",
-		label: "Friendly",
-	},
-	HOSTILE: {
-		className: "bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300",
-		label: "Hostile",
-	},
-	NEUTRAL: {
-		className: "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300",
-		label: "Neutral",
-	},
-	UNFRIENDLY: {
-		className:
-			"bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300",
-		label: "Unfriendly",
-	},
-	UNKNOWN: {
-		className:
-			"bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-		label: "Unknown",
-	},
-};
-
-const STATUS_STYLES: Record<string, { label: string; className: string }> = {
-	ALIVE: {
-		className:
-			"bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300",
-		label: "Alive",
-	},
-	DEAD: {
-		className:
-			"bg-neutral-200 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400 line-through",
-		label: "Dead",
-	},
-	MISSING: {
-		className:
-			"bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300",
-		label: "Missing",
-	},
-	UNKNOWN: {
-		className:
-			"bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-		label: "Unknown",
-	},
-};
 
 const AVATAR_COLORS = [
 	"bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
@@ -120,6 +76,7 @@ type NPC = {
 	avatar?: string | null;
 	knownName?: string | null;
 	isKnownToParty?: boolean | null;
+	healthCondition: string;
 	status: string;
 	relationToPartyStatus: string;
 	aliases?: string[] | null;
@@ -143,10 +100,13 @@ function NPCRow({
 		: npc.name;
 	const initials = getInitials(displayName);
 	const avatarColor = getAvatarColor(npc.name);
-	const relation =
-		RELATION_STYLES[npc.relationToPartyStatus] ?? RELATION_STYLES.UNKNOWN;
-	const status = STATUS_STYLES[npc.status] ?? STATUS_STYLES.UNKNOWN;
-	const showStatus = npc.status !== "UNKNOWN" && npc.status !== "ALIVE";
+	const relationKey = npc.relationToPartyStatus as RelationToPartyEnum;
+	const statusKey = npc.status as CharacterStatusEnum;
+	const healthKey = npc.healthCondition as HealthConditionEnum;
+	const showStatus =
+		npc.status !== CharacterStatusEnum.UNKNOWN &&
+		npc.status !== CharacterStatusEnum.ALIVE;
+	const showHealth = npc.healthCondition !== HealthConditionEnum.HEALTHY;
 
 	return (
 		<Button
@@ -194,15 +154,22 @@ function NPCRow({
 
 			<div className="hidden sm:flex items-center gap-2 shrink-0">
 				<span
-					className={`text-xs px-2 py-0.5 rounded-full font-normal ${relation.className}`}
+					className={`text-xs px-2 py-0.5 rounded-full border font-normal ${relationToPartyBadgeColor[relationKey] ?? relationToPartyBadgeColor[RelationToPartyEnum.UNKNOWN]}`}
 				>
-					{relation.label}
+					{relationKey.charAt(0) + relationKey.slice(1).toLowerCase()}
 				</span>
+				{showHealth && (
+					<span
+						className={`text-xs px-2 py-0.5 rounded-full border font-normal ${healthConditionBadgeColor[healthKey] ?? healthConditionBadgeColor[HealthConditionEnum.UNKNOWN]}`}
+					>
+						{healthKey.charAt(0) + healthKey.slice(1).toLowerCase()}
+					</span>
+				)}
 				{showStatus && (
 					<span
-						className={`text-xs px-2 py-0.5 rounded-full font-normal ${status.className}`}
+						className={`text-xs px-2 py-0.5 rounded-full border font-normal ${characterStatusBadgeColor[statusKey] ?? characterStatusBadgeColor[CharacterStatusEnum.UNKNOWN]}`}
 					>
-						{status.label}
+						{statusKey.charAt(0) + statusKey.slice(1).toLowerCase()}
 					</span>
 				)}
 			</div>

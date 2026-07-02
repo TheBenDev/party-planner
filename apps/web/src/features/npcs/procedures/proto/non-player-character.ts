@@ -2,11 +2,13 @@ import { timestampDate } from "@bufbuild/protobuf/wkt";
 import { ORPCError } from "@orpc/client";
 import {
 	CharacterStatusEnum,
+	HealthConditionEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
 import { NonPlayerCharacterSchema } from "@/features/npcs/types";
 import {
 	CharacterStatus,
+	HealthCondition,
 	type Npc,
 	RelationToParty,
 } from "@/gen/proto/planner/v1/non_player_character_pb";
@@ -40,6 +42,44 @@ export function characterStatusToProto(
 			return CharacterStatus.UNKNOWN;
 		default:
 			throw new Error(`unknown character status: ${status}`);
+	}
+}
+
+export function protoToHealthCondition(
+	condition: HealthCondition,
+): HealthConditionEnum {
+	switch (condition) {
+		case HealthCondition.HEALTHY:
+			return HealthConditionEnum.HEALTHY;
+		case HealthCondition.INJURED:
+			return HealthConditionEnum.INJURED;
+		case HealthCondition.SICK:
+			return HealthConditionEnum.SICK;
+		case HealthCondition.UNKNOWN:
+			return HealthConditionEnum.UNKNOWN;
+		case HealthCondition.DEAD:
+			return HealthConditionEnum.DEAD;
+		default:
+			throw new Error(`unknown health condition: ${condition}`);
+	}
+}
+
+export function healthConditionToProto(
+	condition: HealthConditionEnum,
+): HealthCondition {
+	switch (condition) {
+		case HealthConditionEnum.HEALTHY:
+			return HealthCondition.HEALTHY;
+		case HealthConditionEnum.INJURED:
+			return HealthCondition.INJURED;
+		case HealthConditionEnum.SICK:
+			return HealthCondition.SICK;
+		case HealthConditionEnum.UNKNOWN:
+			return HealthCondition.UNKNOWN;
+		case HealthConditionEnum.DEAD:
+			return HealthCondition.DEAD;
+		default:
+			throw new Error(`unknown health condition: ${condition}`);
 	}
 }
 
@@ -100,22 +140,27 @@ export function protoToNpc(proto: Npc) {
 		avatar: proto.avatar ?? null,
 		backstory: proto.backstory ?? null,
 		campaignId: proto.campaignId,
+		characterClass: proto.characterClass ?? null,
 		createdAt: timestampDate(proto.createdAt),
 		currentLocationId: proto.currentLocationId ?? null,
 		dmNotes: proto.dmNotes ?? null,
 		foundryActorId: proto.foundryActorId ?? null,
+		healthCondition: protoToHealthCondition(proto.healthCondition),
 		id: proto.id,
 		isKnownToParty: proto.isKnownToParty,
 		knownName: proto.knownName ?? null,
+		labels: proto.labels,
 		lastFoundrySyncAt: proto.lastFoundrySyncAt
 			? timestampDate(proto.lastFoundrySyncAt)
 			: null,
+		level: proto.level ?? null,
 		name: proto.name,
 		originLocationId: proto.originLocationId ?? null,
 		personality: proto.personality ?? null,
 		playerNotes: proto.playerNotes ?? null,
 		race: proto.race ?? null,
 		relationToPartyStatus: protoToRelationToParty(proto.relationToPartyStatus),
+		role: proto.role ?? null,
 		sessionEncounteredId: proto.sessionEncounteredId ?? null,
 		status: protoToCharacterStatus(proto.status),
 		updatedAt: timestampDate(proto.updatedAt),

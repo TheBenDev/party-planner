@@ -135,6 +135,64 @@ func (RelationToParty) EnumDescriptor() ([]byte, []int) {
 	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{1}
 }
 
+type HealthCondition int32
+
+const (
+	HealthCondition_HEALTH_CONDITION_UNSPECIFIED HealthCondition = 0
+	HealthCondition_HEALTH_CONDITION_UNKNOWN     HealthCondition = 1
+	HealthCondition_HEALTH_CONDITION_HEALTHY     HealthCondition = 2
+	HealthCondition_HEALTH_CONDITION_SICK        HealthCondition = 3
+	HealthCondition_HEALTH_CONDITION_INJURED     HealthCondition = 4
+	HealthCondition_HEALTH_CONDITION_DEAD        HealthCondition = 5
+)
+
+// Enum value maps for HealthCondition.
+var (
+	HealthCondition_name = map[int32]string{
+		0: "HEALTH_CONDITION_UNSPECIFIED",
+		1: "HEALTH_CONDITION_UNKNOWN",
+		2: "HEALTH_CONDITION_HEALTHY",
+		3: "HEALTH_CONDITION_SICK",
+		4: "HEALTH_CONDITION_INJURED",
+		5: "HEALTH_CONDITION_DEAD",
+	}
+	HealthCondition_value = map[string]int32{
+		"HEALTH_CONDITION_UNSPECIFIED": 0,
+		"HEALTH_CONDITION_UNKNOWN":     1,
+		"HEALTH_CONDITION_HEALTHY":     2,
+		"HEALTH_CONDITION_SICK":        3,
+		"HEALTH_CONDITION_INJURED":     4,
+		"HEALTH_CONDITION_DEAD":        5,
+	}
+)
+
+func (x HealthCondition) Enum() *HealthCondition {
+	p := new(HealthCondition)
+	*p = x
+	return p
+}
+
+func (x HealthCondition) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (HealthCondition) Descriptor() protoreflect.EnumDescriptor {
+	return file_planner_v1_non_player_character_proto_enumTypes[2].Descriptor()
+}
+
+func (HealthCondition) Type() protoreflect.EnumType {
+	return &file_planner_v1_non_player_character_proto_enumTypes[2]
+}
+
+func (x HealthCondition) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use HealthCondition.Descriptor instead.
+func (HealthCondition) EnumDescriptor() ([]byte, []int) {
+	return file_planner_v1_non_player_character_proto_rawDescGZIP(), []int{2}
+}
+
 type Npc struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	Id                    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -160,6 +218,11 @@ type Npc struct {
 	LastFoundrySyncAt     *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=last_foundry_sync_at,json=lastFoundrySyncAt,proto3,oneof" json:"last_foundry_sync_at,omitempty"`
 	CreatedAt             *timestamppb.Timestamp `protobuf:"bytes,22,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt             *timestamppb.Timestamp `protobuf:"bytes,23,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	HealthCondition       HealthCondition        `protobuf:"varint,24,opt,name=health_condition,json=healthCondition,proto3,enum=planner.v1.HealthCondition" json:"health_condition,omitempty"`
+	Labels                []string               `protobuf:"bytes,25,rep,name=labels,proto3" json:"labels,omitempty"`
+	Level                 *int32                 `protobuf:"varint,26,opt,name=level,proto3,oneof" json:"level,omitempty"`
+	Role                  *string                `protobuf:"bytes,27,opt,name=role,proto3,oneof" json:"role,omitempty"`
+	CharacterClass        *string                `protobuf:"bytes,28,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -355,6 +418,41 @@ func (x *Npc) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Npc) GetHealthCondition() HealthCondition {
+	if x != nil {
+		return x.HealthCondition
+	}
+	return HealthCondition_HEALTH_CONDITION_UNSPECIFIED
+}
+
+func (x *Npc) GetLabels() []string {
+	if x != nil {
+		return x.Labels
+	}
+	return nil
+}
+
+func (x *Npc) GetLevel() int32 {
+	if x != nil && x.Level != nil {
+		return *x.Level
+	}
+	return 0
+}
+
+func (x *Npc) GetRole() string {
+	if x != nil && x.Role != nil {
+		return *x.Role
+	}
+	return ""
+}
+
+func (x *Npc) GetCharacterClass() string {
+	if x != nil && x.CharacterClass != nil {
+		return *x.CharacterClass
+	}
+	return ""
+}
+
 type CreateNpcRequest struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId            string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -376,6 +474,11 @@ type CreateNpcRequest struct {
 	SessionEncounteredId  *string                `protobuf:"bytes,17,opt,name=session_encountered_id,json=sessionEncounteredId,proto3,oneof" json:"session_encountered_id,omitempty"`
 	Aliases               []string               `protobuf:"bytes,18,rep,name=aliases,proto3" json:"aliases,omitempty"`
 	FoundryActorId        *string                `protobuf:"bytes,19,opt,name=foundry_actor_id,json=foundryActorId,proto3,oneof" json:"foundry_actor_id,omitempty"`
+	HealthCondition       HealthCondition        `protobuf:"varint,20,opt,name=health_condition,json=healthCondition,proto3,enum=planner.v1.HealthCondition" json:"health_condition,omitempty"`
+	Labels                []string               `protobuf:"bytes,21,rep,name=labels,proto3" json:"labels,omitempty"`
+	Level                 *int32                 `protobuf:"varint,22,opt,name=level,proto3,oneof" json:"level,omitempty"`
+	Role                  *string                `protobuf:"bytes,23,opt,name=role,proto3,oneof" json:"role,omitempty"`
+	CharacterClass        *string                `protobuf:"bytes,24,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -539,6 +642,41 @@ func (x *CreateNpcRequest) GetAliases() []string {
 func (x *CreateNpcRequest) GetFoundryActorId() string {
 	if x != nil && x.FoundryActorId != nil {
 		return *x.FoundryActorId
+	}
+	return ""
+}
+
+func (x *CreateNpcRequest) GetHealthCondition() HealthCondition {
+	if x != nil {
+		return x.HealthCondition
+	}
+	return HealthCondition_HEALTH_CONDITION_UNSPECIFIED
+}
+
+func (x *CreateNpcRequest) GetLabels() []string {
+	if x != nil {
+		return x.Labels
+	}
+	return nil
+}
+
+func (x *CreateNpcRequest) GetLevel() int32 {
+	if x != nil && x.Level != nil {
+		return *x.Level
+	}
+	return 0
+}
+
+func (x *CreateNpcRequest) GetRole() string {
+	if x != nil && x.Role != nil {
+		return *x.Role
+	}
+	return ""
+}
+
+func (x *CreateNpcRequest) GetCharacterClass() string {
+	if x != nil && x.CharacterClass != nil {
+		return *x.CharacterClass
 	}
 	return ""
 }
@@ -793,6 +931,12 @@ type UpdateNpcRequest struct {
 	SessionEncounteredId  *string                `protobuf:"bytes,18,opt,name=session_encountered_id,json=sessionEncounteredId,proto3,oneof" json:"session_encountered_id,omitempty"`
 	Aliases               []string               `protobuf:"bytes,19,rep,name=aliases,proto3" json:"aliases,omitempty"`
 	CampaignId            string                 `protobuf:"bytes,20,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	HealthCondition       *HealthCondition       `protobuf:"varint,21,opt,name=health_condition,json=healthCondition,proto3,enum=planner.v1.HealthCondition,oneof" json:"health_condition,omitempty"`
+	Labels                []string               `protobuf:"bytes,22,rep,name=labels,proto3" json:"labels,omitempty"`
+	Level                 *int32                 `protobuf:"varint,23,opt,name=level,proto3,oneof" json:"level,omitempty"`
+	Role                  *string                `protobuf:"bytes,24,opt,name=role,proto3,oneof" json:"role,omitempty"`
+	CharacterClass        *string                `protobuf:"bytes,25,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
+	RemovedFields         []string               `protobuf:"bytes,26,rep,name=removed_fields,json=removedFields,proto3" json:"removed_fields,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -967,6 +1111,48 @@ func (x *UpdateNpcRequest) GetCampaignId() string {
 	return ""
 }
 
+func (x *UpdateNpcRequest) GetHealthCondition() HealthCondition {
+	if x != nil && x.HealthCondition != nil {
+		return *x.HealthCondition
+	}
+	return HealthCondition_HEALTH_CONDITION_UNSPECIFIED
+}
+
+func (x *UpdateNpcRequest) GetLabels() []string {
+	if x != nil {
+		return x.Labels
+	}
+	return nil
+}
+
+func (x *UpdateNpcRequest) GetLevel() int32 {
+	if x != nil && x.Level != nil {
+		return *x.Level
+	}
+	return 0
+}
+
+func (x *UpdateNpcRequest) GetRole() string {
+	if x != nil && x.Role != nil {
+		return *x.Role
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetCharacterClass() string {
+	if x != nil && x.CharacterClass != nil {
+		return *x.CharacterClass
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetRemovedFields() []string {
+	if x != nil {
+		return x.RemovedFields
+	}
+	return nil
+}
+
 type UpdateNpcResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
@@ -1104,7 +1290,7 @@ var File_planner_v1_non_player_character_proto protoreflect.FileDescriptor
 const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\n" +
 	"%planner/v1/non_player_character.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xca\t\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb3\v\n" +
 	"\x03Npc\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1136,7 +1322,12 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x17 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x06\n" +
+	"updated_at\x18\x17 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12F\n" +
+	"\x10health_condition\x18\x18 \x01(\x0e2\x1b.planner.v1.HealthConditionR\x0fhealthCondition\x12\x16\n" +
+	"\x06labels\x18\x19 \x03(\tR\x06labels\x12\x19\n" +
+	"\x05level\x18\x1a \x01(\x05H\x0eR\x05level\x88\x01\x01\x12\x17\n" +
+	"\x04role\x18\x1b \x01(\tH\x0fR\x04role\x88\x01\x01\x12,\n" +
+	"\x0fcharacter_class\x18\x1c \x01(\tH\x10R\x0echaracterClass\x88\x01\x01B\x06\n" +
 	"\x04_ageB\r\n" +
 	"\v_appearanceB\t\n" +
 	"\a_avatarB\f\n" +
@@ -1151,7 +1342,10 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x14_current_location_idB\x15\n" +
 	"\x13_origin_location_idB\x19\n" +
 	"\x17_session_encountered_idB\x17\n" +
-	"\x15_last_foundry_sync_at\"\xe6\a\n" +
+	"\x15_last_foundry_sync_atB\b\n" +
+	"\x06_levelB\a\n" +
+	"\x05_roleB\x12\n" +
+	"\x10_character_class\"\xcf\t\n" +
 	"\x10CreateNpcRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x12\n" +
@@ -1177,7 +1371,12 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"R\x10originLocationId\x88\x01\x01\x129\n" +
 	"\x16session_encountered_id\x18\x11 \x01(\tH\vR\x14sessionEncounteredId\x88\x01\x01\x12\x18\n" +
 	"\aaliases\x18\x12 \x03(\tR\aaliases\x12-\n" +
-	"\x10foundry_actor_id\x18\x13 \x01(\tH\fR\x0efoundryActorId\x88\x01\x01B\x06\n" +
+	"\x10foundry_actor_id\x18\x13 \x01(\tH\fR\x0efoundryActorId\x88\x01\x01\x12F\n" +
+	"\x10health_condition\x18\x14 \x01(\x0e2\x1b.planner.v1.HealthConditionR\x0fhealthCondition\x12\x16\n" +
+	"\x06labels\x18\x15 \x03(\tR\x06labels\x12\x19\n" +
+	"\x05level\x18\x16 \x01(\x05H\rR\x05level\x88\x01\x01\x12\x17\n" +
+	"\x04role\x18\x17 \x01(\tH\x0eR\x04role\x88\x01\x01\x12,\n" +
+	"\x0fcharacter_class\x18\x18 \x01(\tH\x0fR\x0echaracterClass\x88\x01\x01B\x06\n" +
 	"\x04_ageB\r\n" +
 	"\v_appearanceB\t\n" +
 	"\a_avatarB\f\n" +
@@ -1191,7 +1390,10 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x14_current_location_idB\x15\n" +
 	"\x13_origin_location_idB\x19\n" +
 	"\x17_session_encountered_idB\x13\n" +
-	"\x11_foundry_actor_id\"6\n" +
+	"\x11_foundry_actor_idB\b\n" +
+	"\x06_levelB\a\n" +
+	"\x05_roleB\x12\n" +
+	"\x10_character_class\"6\n" +
 	"\x11CreateNpcResponse\x12!\n" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"@\n" +
 	"\rGetNpcRequest\x12\x0e\n" +
@@ -1204,7 +1406,8 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"A\n" +
 	"\x1aListNpcsByCampaignResponse\x12#\n" +
-	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xd1\b\n" +
+	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xfb\n" +
+	"\n" +
 	"\x10UpdateNpcRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x128\n" +
@@ -1231,7 +1434,13 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x16session_encountered_id\x18\x12 \x01(\tH\x10R\x14sessionEncounteredId\x88\x01\x01\x12\x18\n" +
 	"\aaliases\x18\x13 \x03(\tR\aaliases\x12\x1f\n" +
 	"\vcampaign_id\x18\x14 \x01(\tR\n" +
-	"campaignIdB\a\n" +
+	"campaignId\x12K\n" +
+	"\x10health_condition\x18\x15 \x01(\x0e2\x1b.planner.v1.HealthConditionH\x11R\x0fhealthCondition\x88\x01\x01\x12\x16\n" +
+	"\x06labels\x18\x16 \x03(\tR\x06labels\x12\x19\n" +
+	"\x05level\x18\x17 \x01(\x05H\x12R\x05level\x88\x01\x01\x12\x17\n" +
+	"\x04role\x18\x18 \x01(\tH\x13R\x04role\x88\x01\x01\x12,\n" +
+	"\x0fcharacter_class\x18\x19 \x01(\tH\x14R\x0echaracterClass\x88\x01\x01\x12%\n" +
+	"\x0eremoved_fields\x18\x1a \x03(\tR\rremovedFieldsB\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_statusB\x1b\n" +
 	"\x19_relation_to_party_statusB\x14\n" +
@@ -1249,7 +1458,11 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x05_raceB\x16\n" +
 	"\x14_current_location_idB\x15\n" +
 	"\x13_origin_location_idB\x19\n" +
-	"\x17_session_encountered_id\"6\n" +
+	"\x17_session_encountered_idB\x13\n" +
+	"\x11_health_conditionB\b\n" +
+	"\x06_levelB\a\n" +
+	"\x05_roleB\x12\n" +
+	"\x10_character_class\"6\n" +
 	"\x11UpdateNpcResponse\x12!\n" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"C\n" +
 	"\x10RemoveNpcRequest\x12\x0e\n" +
@@ -1269,7 +1482,14 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x16RELATION_TO_PARTY_ALLY\x10\x02\x12\x1b\n" +
 	"\x17RELATION_TO_PARTY_ENEMY\x10\x03\x12\x1d\n" +
 	"\x19RELATION_TO_PARTY_NEUTRAL\x10\x04\x12 \n" +
-	"\x1cRELATION_TO_PARTY_SUSPICIOUS\x10\x052\x9f\x03\n" +
+	"\x1cRELATION_TO_PARTY_SUSPICIOUS\x10\x05*\xc3\x01\n" +
+	"\x0fHealthCondition\x12 \n" +
+	"\x1cHEALTH_CONDITION_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18HEALTH_CONDITION_UNKNOWN\x10\x01\x12\x1c\n" +
+	"\x18HEALTH_CONDITION_HEALTHY\x10\x02\x12\x19\n" +
+	"\x15HEALTH_CONDITION_SICK\x10\x03\x12\x1c\n" +
+	"\x18HEALTH_CONDITION_INJURED\x10\x04\x12\x19\n" +
+	"\x15HEALTH_CONDITION_DEAD\x10\x052\x9f\x03\n" +
 	"\x19NonPlayerCharacterService\x12H\n" +
 	"\tCreateNpc\x12\x1c.planner.v1.CreateNpcRequest\x1a\x1d.planner.v1.CreateNpcResponse\x12?\n" +
 	"\x06GetNpc\x12\x19.planner.v1.GetNpcRequest\x1a\x1a.planner.v1.GetNpcResponse\x12c\n" +
@@ -1292,53 +1512,57 @@ func file_planner_v1_non_player_character_proto_rawDescGZIP() []byte {
 	return file_planner_v1_non_player_character_proto_rawDescData
 }
 
-var file_planner_v1_non_player_character_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_planner_v1_non_player_character_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_planner_v1_non_player_character_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_non_player_character_proto_goTypes = []any{
 	(CharacterStatus)(0),               // 0: planner.v1.CharacterStatus
 	(RelationToParty)(0),               // 1: planner.v1.RelationToParty
-	(*Npc)(nil),                        // 2: planner.v1.Npc
-	(*CreateNpcRequest)(nil),           // 3: planner.v1.CreateNpcRequest
-	(*CreateNpcResponse)(nil),          // 4: planner.v1.CreateNpcResponse
-	(*GetNpcRequest)(nil),              // 5: planner.v1.GetNpcRequest
-	(*GetNpcResponse)(nil),             // 6: planner.v1.GetNpcResponse
-	(*ListNpcsByCampaignRequest)(nil),  // 7: planner.v1.ListNpcsByCampaignRequest
-	(*ListNpcsByCampaignResponse)(nil), // 8: planner.v1.ListNpcsByCampaignResponse
-	(*UpdateNpcRequest)(nil),           // 9: planner.v1.UpdateNpcRequest
-	(*UpdateNpcResponse)(nil),          // 10: planner.v1.UpdateNpcResponse
-	(*RemoveNpcRequest)(nil),           // 11: planner.v1.RemoveNpcRequest
-	(*RemoveNpcResponse)(nil),          // 12: planner.v1.RemoveNpcResponse
-	(*timestamppb.Timestamp)(nil),      // 13: google.protobuf.Timestamp
+	(HealthCondition)(0),               // 2: planner.v1.HealthCondition
+	(*Npc)(nil),                        // 3: planner.v1.Npc
+	(*CreateNpcRequest)(nil),           // 4: planner.v1.CreateNpcRequest
+	(*CreateNpcResponse)(nil),          // 5: planner.v1.CreateNpcResponse
+	(*GetNpcRequest)(nil),              // 6: planner.v1.GetNpcRequest
+	(*GetNpcResponse)(nil),             // 7: planner.v1.GetNpcResponse
+	(*ListNpcsByCampaignRequest)(nil),  // 8: planner.v1.ListNpcsByCampaignRequest
+	(*ListNpcsByCampaignResponse)(nil), // 9: planner.v1.ListNpcsByCampaignResponse
+	(*UpdateNpcRequest)(nil),           // 10: planner.v1.UpdateNpcRequest
+	(*UpdateNpcResponse)(nil),          // 11: planner.v1.UpdateNpcResponse
+	(*RemoveNpcRequest)(nil),           // 12: planner.v1.RemoveNpcRequest
+	(*RemoveNpcResponse)(nil),          // 13: planner.v1.RemoveNpcResponse
+	(*timestamppb.Timestamp)(nil),      // 14: google.protobuf.Timestamp
 }
 var file_planner_v1_non_player_character_proto_depIdxs = []int32{
 	0,  // 0: planner.v1.Npc.status:type_name -> planner.v1.CharacterStatus
 	1,  // 1: planner.v1.Npc.relation_to_party_status:type_name -> planner.v1.RelationToParty
-	13, // 2: planner.v1.Npc.last_foundry_sync_at:type_name -> google.protobuf.Timestamp
-	13, // 3: planner.v1.Npc.created_at:type_name -> google.protobuf.Timestamp
-	13, // 4: planner.v1.Npc.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 5: planner.v1.CreateNpcRequest.status:type_name -> planner.v1.CharacterStatus
-	1,  // 6: planner.v1.CreateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
-	2,  // 7: planner.v1.CreateNpcResponse.npc:type_name -> planner.v1.Npc
-	2,  // 8: planner.v1.GetNpcResponse.npc:type_name -> planner.v1.Npc
-	2,  // 9: planner.v1.ListNpcsByCampaignResponse.npcs:type_name -> planner.v1.Npc
-	0,  // 10: planner.v1.UpdateNpcRequest.status:type_name -> planner.v1.CharacterStatus
-	1,  // 11: planner.v1.UpdateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
-	2,  // 12: planner.v1.UpdateNpcResponse.npc:type_name -> planner.v1.Npc
-	3,  // 13: planner.v1.NonPlayerCharacterService.CreateNpc:input_type -> planner.v1.CreateNpcRequest
-	5,  // 14: planner.v1.NonPlayerCharacterService.GetNpc:input_type -> planner.v1.GetNpcRequest
-	7,  // 15: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:input_type -> planner.v1.ListNpcsByCampaignRequest
-	9,  // 16: planner.v1.NonPlayerCharacterService.UpdateNpc:input_type -> planner.v1.UpdateNpcRequest
-	11, // 17: planner.v1.NonPlayerCharacterService.RemoveNpc:input_type -> planner.v1.RemoveNpcRequest
-	4,  // 18: planner.v1.NonPlayerCharacterService.CreateNpc:output_type -> planner.v1.CreateNpcResponse
-	6,  // 19: planner.v1.NonPlayerCharacterService.GetNpc:output_type -> planner.v1.GetNpcResponse
-	8,  // 20: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:output_type -> planner.v1.ListNpcsByCampaignResponse
-	10, // 21: planner.v1.NonPlayerCharacterService.UpdateNpc:output_type -> planner.v1.UpdateNpcResponse
-	12, // 22: planner.v1.NonPlayerCharacterService.RemoveNpc:output_type -> planner.v1.RemoveNpcResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	14, // 2: planner.v1.Npc.last_foundry_sync_at:type_name -> google.protobuf.Timestamp
+	14, // 3: planner.v1.Npc.created_at:type_name -> google.protobuf.Timestamp
+	14, // 4: planner.v1.Npc.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 5: planner.v1.Npc.health_condition:type_name -> planner.v1.HealthCondition
+	0,  // 6: planner.v1.CreateNpcRequest.status:type_name -> planner.v1.CharacterStatus
+	1,  // 7: planner.v1.CreateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
+	2,  // 8: planner.v1.CreateNpcRequest.health_condition:type_name -> planner.v1.HealthCondition
+	3,  // 9: planner.v1.CreateNpcResponse.npc:type_name -> planner.v1.Npc
+	3,  // 10: planner.v1.GetNpcResponse.npc:type_name -> planner.v1.Npc
+	3,  // 11: planner.v1.ListNpcsByCampaignResponse.npcs:type_name -> planner.v1.Npc
+	0,  // 12: planner.v1.UpdateNpcRequest.status:type_name -> planner.v1.CharacterStatus
+	1,  // 13: planner.v1.UpdateNpcRequest.relation_to_party_status:type_name -> planner.v1.RelationToParty
+	2,  // 14: planner.v1.UpdateNpcRequest.health_condition:type_name -> planner.v1.HealthCondition
+	3,  // 15: planner.v1.UpdateNpcResponse.npc:type_name -> planner.v1.Npc
+	4,  // 16: planner.v1.NonPlayerCharacterService.CreateNpc:input_type -> planner.v1.CreateNpcRequest
+	6,  // 17: planner.v1.NonPlayerCharacterService.GetNpc:input_type -> planner.v1.GetNpcRequest
+	8,  // 18: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:input_type -> planner.v1.ListNpcsByCampaignRequest
+	10, // 19: planner.v1.NonPlayerCharacterService.UpdateNpc:input_type -> planner.v1.UpdateNpcRequest
+	12, // 20: planner.v1.NonPlayerCharacterService.RemoveNpc:input_type -> planner.v1.RemoveNpcRequest
+	5,  // 21: planner.v1.NonPlayerCharacterService.CreateNpc:output_type -> planner.v1.CreateNpcResponse
+	7,  // 22: planner.v1.NonPlayerCharacterService.GetNpc:output_type -> planner.v1.GetNpcResponse
+	9,  // 23: planner.v1.NonPlayerCharacterService.ListNpcsByCampaign:output_type -> planner.v1.ListNpcsByCampaignResponse
+	11, // 24: planner.v1.NonPlayerCharacterService.UpdateNpc:output_type -> planner.v1.UpdateNpcResponse
+	13, // 25: planner.v1.NonPlayerCharacterService.RemoveNpc:output_type -> planner.v1.RemoveNpcResponse
+	21, // [21:26] is the sub-list for method output_type
+	16, // [16:21] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_non_player_character_proto_init() }
@@ -1354,7 +1578,7 @@ func file_planner_v1_non_player_character_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_non_player_character_proto_rawDesc), len(file_planner_v1_non_player_character_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,

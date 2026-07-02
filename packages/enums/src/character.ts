@@ -10,6 +10,14 @@ export enum CharacterStatusEnum {
 	UNKNOWN = "UNKNOWN",
 }
 
+export enum HealthConditionEnum {
+	HEALTHY = "HEALTHY",
+	INJURED = "INJURED",
+	SICK = "SICK",
+	UNKNOWN = "UNKNOWN",
+	DEAD = "DEAD",
+}
+
 export enum RelationToPartyEnum {
 	ALLY = "ALLY",
 	NEUTRAL = "NEUTRAL",

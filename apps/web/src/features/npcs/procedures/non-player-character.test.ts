@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import {
 	CharacterStatusEnum,
+	HealthConditionEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
 
@@ -9,6 +10,7 @@ import {
 const mockNpc = {
 	campaignId: "campaign-1",
 	createdAt: new Date("2024-01-01T00:00:00.000Z"),
+	healthCondition: HealthConditionEnum.HEALTHY,
 	id: "npc-1",
 	name: "Gandalf",
 	relationToPartyStatus: RelationToPartyEnum.ALLY,
@@ -22,6 +24,7 @@ const mockNpcProto = { id: "npc-1" };
 
 const mockProtoToNpc = mock(() => mockNpc);
 const mockCharacterStatusToProto = mock(() => 1);
+const mockHealthConditionToProto = mock(() => 1);
 const mockRelationToPartyToProto = mock(() => 1);
 
 const makeChain = () => {
@@ -42,6 +45,7 @@ mock.module("@/server/middleware", () => ({
 }));
 mock.module("./proto/non-player-character", () => ({
 	characterStatusToProto: mockCharacterStatusToProto,
+	healthConditionToProto: mockHealthConditionToProto,
 	protoToNpc: mockProtoToNpc,
 	relationToPartyToProto: mockRelationToPartyToProto,
 }));

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"math"
 
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -44,6 +45,10 @@ func (s *Server) CreateNpc(ctx context.Context, req *connect.Request[v1.CreateNp
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
+	characterLevel, err := sqlNullInt16(req.Msg.Level)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 
 	npc, err := s.Npc.Create(ctx, &model.CreateNpcRequest{
 		CampaignID:            req.Msg.CampaignId,
@@ -55,12 +60,17 @@ func (s *Server) CreateNpc(ctx context.Context, req *connect.Request[v1.CreateNp
 		Appearance:            sqlNullString(req.Msg.Appearance),
 		Avatar:                sqlNullString(req.Msg.Avatar),
 		Backstory:             sqlNullString(req.Msg.Backstory),
+		CharacterClass:        sqlNullString(req.Msg.CharacterClass),
 		DmNotes:               sqlNullString(req.Msg.DmNotes),
 		FoundryActorID:        sqlNullString(req.Msg.FoundryActorId),
+		HealthCondition:       protoToHealthCondition(req.Msg.HealthCondition),
 		KnownName:             sqlNullString(req.Msg.KnownName),
+		Labels:                req.Msg.Labels,
+		Level:                 characterLevel,
 		Personality:           sqlNullString(req.Msg.Personality),
 		PlayerNotes:           sqlNullString(req.Msg.PlayerNotes),
 		Race:                  sqlNullString(req.Msg.Race),
+		Role:                  sqlNullString(req.Msg.Role),
 		CurrentLocationID:     sqlNullString(req.Msg.CurrentLocationId),
 		OriginLocationID:      sqlNullString(req.Msg.OriginLocationId),
 		SessionEncounteredID:  sqlNullString(req.Msg.SessionEncounteredId),
@@ -145,6 +155,18 @@ func (s *Server) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNp
 		relation = &r
 	}
 
+	var healthCondition *model.HealthCondition
+	if req.Msg.HealthCondition != nil {
+		if *req.Msg.HealthCondition == v1.HealthCondition_HEALTH_CONDITION_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("health condition cannot be unspecified"))
+		}
+		h := protoToHealthCondition(*req.Msg.HealthCondition)
+		healthCondition = &h
+	}
+	characterLevel, err := sqlNullInt16(req.Msg.Level)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
 	npc, err := s.Npc.Update(ctx, &model.UpdateNpcRequest{
 		ID:                    req.Msg.Id,
 		CampaignID:            req.Msg.CampaignId,
@@ -156,16 +178,22 @@ func (s *Server) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNp
 		Appearance:            sqlNullString(req.Msg.Appearance),
 		Avatar:                sqlNullString(req.Msg.Avatar),
 		Backstory:             sqlNullString(req.Msg.Backstory),
+		CharacterClass:        sqlNullString(req.Msg.CharacterClass),
 		DmNotes:               sqlNullString(req.Msg.DmNotes),
 		FoundryActorID:        sqlNullString(req.Msg.FoundryActorId),
+		HealthCondition:       healthCondition,
 		KnownName:             sqlNullString(req.Msg.KnownName),
+		Labels:                req.Msg.Labels,
+		Level:                 characterLevel,
 		Personality:           sqlNullString(req.Msg.Personality),
 		PlayerNotes:           sqlNullString(req.Msg.PlayerNotes),
 		Race:                  sqlNullString(req.Msg.Race),
+		Role:                  sqlNullString(req.Msg.Role),
 		CurrentLocationID:     sqlNullString(req.Msg.CurrentLocationId),
 		OriginLocationID:      sqlNullString(req.Msg.OriginLocationId),
 		SessionEncounteredID:  sqlNullString(req.Msg.SessionEncounteredId),
 		Aliases:               req.Msg.Aliases,
+		RemovedFields:         req.Msg.RemovedFields,
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to update npc")
@@ -257,6 +285,40 @@ func relationToPartyToProto(r model.RelationToParty) v1.RelationToParty {
 	}
 }
 
+func protoToHealthCondition(h v1.HealthCondition) model.HealthCondition {
+	switch h {
+	case v1.HealthCondition_HEALTH_CONDITION_UNKNOWN:
+		return model.HealthConditionUnknown
+	case v1.HealthCondition_HEALTH_CONDITION_HEALTHY:
+		return model.HealthConditionHealthy
+	case v1.HealthCondition_HEALTH_CONDITION_SICK:
+		return model.HealthConditionSick
+	case v1.HealthCondition_HEALTH_CONDITION_INJURED:
+		return model.HealthConditionInjured
+	case v1.HealthCondition_HEALTH_CONDITION_DEAD:
+		return model.HealthConditionDead
+	default:
+		return model.HealthConditionHealthy
+	}
+}
+
+func healthConditionToProto(h model.HealthCondition) v1.HealthCondition {
+	switch h {
+	case model.HealthConditionUnknown:
+		return v1.HealthCondition_HEALTH_CONDITION_UNKNOWN
+	case model.HealthConditionHealthy:
+		return v1.HealthCondition_HEALTH_CONDITION_HEALTHY
+	case model.HealthConditionSick:
+		return v1.HealthCondition_HEALTH_CONDITION_SICK
+	case model.HealthConditionInjured:
+		return v1.HealthCondition_HEALTH_CONDITION_INJURED
+	case model.HealthConditionDead:
+		return v1.HealthCondition_HEALTH_CONDITION_DEAD
+	default:
+		return v1.HealthCondition_HEALTH_CONDITION_UNSPECIFIED
+	}
+}
+
 func npcToProto(npc *model.Npc) *v1.Npc {
 	if npc == nil {
 		return nil
@@ -268,49 +330,28 @@ func npcToProto(npc *model.Npc) *v1.Npc {
 		Status:                characterStatusToProto(npc.Status),
 		RelationToPartyStatus: relationToPartyToProto(npc.RelationToPartyStatus),
 		IsKnownToParty:        npc.IsKnownToParty,
+		HealthCondition:       healthConditionToProto(npc.HealthCondition),
+		Labels:                npc.Labels,
 		Aliases:               npc.Aliases,
 		CreatedAt:             timestamppb.New(npc.CreatedAt),
 		UpdatedAt:             timestamppb.New(npc.UpdatedAt),
 	}
-	if npc.Age.Valid {
-		proto.Age = &npc.Age.String
-	}
-	if npc.Appearance.Valid {
-		proto.Appearance = &npc.Appearance.String
-	}
-	if npc.Avatar.Valid {
-		proto.Avatar = &npc.Avatar.String
-	}
-	if npc.Backstory.Valid {
-		proto.Backstory = &npc.Backstory.String
-	}
-	if npc.DmNotes.Valid {
-		proto.DmNotes = &npc.DmNotes.String
-	}
-	if npc.FoundryActorID.Valid {
-		proto.FoundryActorId = &npc.FoundryActorID.String
-	}
-	if npc.KnownName.Valid {
-		proto.KnownName = &npc.KnownName.String
-	}
-	if npc.Personality.Valid {
-		proto.Personality = &npc.Personality.String
-	}
-	if npc.PlayerNotes.Valid {
-		proto.PlayerNotes = &npc.PlayerNotes.String
-	}
-	if npc.Race.Valid {
-		proto.Race = &npc.Race.String
-	}
-	if npc.CurrentLocationID.Valid {
-		proto.CurrentLocationId = &npc.CurrentLocationID.String
-	}
-	if npc.OriginLocationID.Valid {
-		proto.OriginLocationId = &npc.OriginLocationID.String
-	}
-	if npc.SessionEncounteredID.Valid {
-		proto.SessionEncounteredId = &npc.SessionEncounteredID.String
-	}
+	proto.Age = nullStringPtr(npc.Age)
+	proto.Appearance = nullStringPtr(npc.Appearance)
+	proto.Avatar = nullStringPtr(npc.Avatar)
+	proto.Backstory = nullStringPtr(npc.Backstory)
+	proto.CharacterClass = nullStringPtr(npc.CharacterClass)
+	proto.CurrentLocationId = nullStringPtr(npc.CurrentLocationID)
+	proto.DmNotes = nullStringPtr(npc.DmNotes)
+	proto.FoundryActorId = nullStringPtr(npc.FoundryActorID)
+	proto.KnownName = nullStringPtr(npc.KnownName)
+	proto.Level = nullInt16Ptr(npc.Level)
+	proto.OriginLocationId = nullStringPtr(npc.OriginLocationID)
+	proto.Personality = nullStringPtr(npc.Personality)
+	proto.PlayerNotes = nullStringPtr(npc.PlayerNotes)
+	proto.Race = nullStringPtr(npc.Race)
+	proto.Role = nullStringPtr(npc.Role)
+	proto.SessionEncounteredId = nullStringPtr(npc.SessionEncounteredID)
 	if npc.LastFoundrySyncAt.Valid {
 		proto.LastFoundrySyncAt = timestamppb.New(npc.LastFoundrySyncAt.Time)
 	}
@@ -346,4 +387,29 @@ func sqlNullString(s *string) sql.NullString {
 		return sql.NullString{Valid: false}
 	}
 	return sql.NullString{String: *s, Valid: true}
+}
+
+func sqlNullInt16(i *int32) (sql.NullInt16, error) {
+	if i == nil {
+		return sql.NullInt16{Valid: false}, nil
+	}
+	if *i < math.MinInt16 || *i > math.MaxInt16 {
+		return sql.NullInt16{}, fmt.Errorf("level must be between %d and %d", math.MinInt16, math.MaxInt16)
+	}
+	return sql.NullInt16{Int16: int16(*i), Valid: true}, nil
+}
+
+func nullStringPtr(ns sql.NullString) *string {
+	if !ns.Valid {
+		return nil
+	}
+	return &ns.String
+}
+
+func nullInt16Ptr(ni sql.NullInt16) *int32 {
+	if !ni.Valid {
+		return nil
+	}
+	v := int32(ni.Int16)
+	return &v
 }
