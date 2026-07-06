@@ -60,6 +60,8 @@ type Npc struct {
 	CurrentLocationID     sql.NullString
 	OriginLocationID      sql.NullString
 	SessionEncounteredID  sql.NullString
+	ColonyID              sql.NullString
+	WorkforceID           sql.NullString
 	Aliases               []string
 	Labels                []string
 	Level                 sql.NullInt16
@@ -90,6 +92,8 @@ type CreateNpcRequest struct {
 	CurrentLocationID     sql.NullString
 	OriginLocationID      sql.NullString
 	SessionEncounteredID  sql.NullString
+	ColonyID              sql.NullString
+	WorkforceID           sql.NullString
 	Aliases               []string
 	Labels                []string
 	Level                 sql.NullInt16
@@ -118,6 +122,8 @@ type UpdateNpcRequest struct {
 	CurrentLocationID     sql.NullString
 	OriginLocationID      sql.NullString
 	SessionEncounteredID  sql.NullString
+	ColonyID              sql.NullString
+	WorkforceID           sql.NullString
 	Aliases               []string
 	Labels                []string
 	Level                 sql.NullInt16

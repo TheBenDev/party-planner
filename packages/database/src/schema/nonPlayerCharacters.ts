@@ -18,6 +18,8 @@ import {
 } from "drizzle-orm/pg-core";
 import { enumToPgEnum } from "@/lib/enums";
 import { campaignsTable } from "./campaigns";
+import { colonyTable } from "./colony";
+import { colonyWorkforceTable } from "./colonyWorkforce";
 import { locationsTable } from "./locations";
 import { questsTable } from "./quests";
 import { sessionsTable } from "./sessions";
@@ -79,6 +81,8 @@ export const nonPlayerCharactersTable = pgTable(
 		currentLocationId: uuid("current_location_id"),
 		originLocationId: uuid("origin_location_id"),
 		sessionEncounteredId: uuid("session_encountered_id"),
+		colonyId: uuid("colony_id"),
+		workforceId: uuid("workforce_id"),
 	},
 	(table) => [
 		foreignKey({
@@ -105,6 +109,18 @@ export const nonPlayerCharactersTable = pgTable(
 			name: "fk_npc_session_encountered_id",
 		}).onDelete("set null"),
 		index("idx_npc_session_encountered_id").on(table.sessionEncounteredId),
+		foreignKey({
+			columns: [table.colonyId],
+			foreignColumns: [colonyTable.id],
+			name: "fk_npc_colony_id",
+		}).onDelete("set null"),
+		index("idx_npc_colony_id").on(table.colonyId),
+		foreignKey({
+			columns: [table.workforceId],
+			foreignColumns: [colonyWorkforceTable.id],
+			name: "fk_npc_workforce_id",
+		}).onDelete("set null"),
+		index("idx_npc_workforce_id").on(table.workforceId),
 	],
 );
 
@@ -130,5 +146,13 @@ export const nonPlayerCharactersRelations = relations(
 			references: [sessionsTable.id],
 		}),
 		quests: many(questsTable),
+		colony: one(colonyTable, {
+			fields: [nonPlayerCharactersTable.colonyId],
+			references: [colonyTable.id],
+		}),
+		workforceRole: one(colonyWorkforceTable, {
+			fields: [nonPlayerCharactersTable.workforceId],
+			references: [colonyWorkforceTable.id],
+		}),
 	}),
 );

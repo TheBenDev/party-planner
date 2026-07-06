@@ -33,6 +33,8 @@ export const NonPlayerCharacterSchema = BaseEntitySchema.extend({
 	relationToPartyStatus: z.enum(RelationToPartyEnum),
 	role: z.string().nullable().optional(),
 	sessionEncounteredId: z.uuid().nullable().optional(),
+	colonyId: z.uuid().nullable().optional(),
+	workforceId: z.uuid().nullable().optional(),
 	status: z.enum(CharacterStatusEnum),
 });
 
@@ -68,6 +70,8 @@ export const CreateNpcRequestSchema = z.object({
 		.default(RelationToPartyEnum.UNKNOWN),
 	role: z.string().optional(),
 	sessionEncounteredId: z.uuid().optional(),
+	colonyId: z.uuid().optional(),
+	workforceId: z.uuid().optional(),
 	status: z.enum(CharacterStatusEnum).default(CharacterStatusEnum.UNKNOWN),
 });
 
@@ -105,6 +109,8 @@ export const UpdateNpcRequestSchema = z.object({
 	removedFields: z.string().array(),
 	role: z.string().nullable().optional(),
 	sessionEncounteredId: z.uuid().nullable().optional(),
+	colonyId: z.uuid().nullable().optional(),
+	workforceId: z.uuid().nullable().optional(),
 	status: z.enum(CharacterStatusEnum).optional(),
 });
 

@@ -1,4 +1,5 @@
 import { campaignRouter } from "@/features/campaigns/procedures/campaign";
+import { colonyRouter } from "@/features/colony/procedures/colony";
 import { campaignIntegrationRouter } from "@/features/integrations/procedures/campaign-integration";
 import { userIntegrationRouter } from "@/features/integrations/procedures/user-integration";
 import { nonPlayerCharacterRouter } from "@/features/npcs/procedures/non-player-character";
@@ -17,6 +18,7 @@ import { userRouter } from "./user";
 const appRouter = {
 	campaign: campaignRouter,
 	campaignIntegration: campaignIntegrationRouter,
+	colony: colonyRouter,
 	location: locationRouter,
 	member: memberRouter,
 	npc: nonPlayerCharacterRouter,

@@ -66,6 +66,8 @@ message Npc {
   optional int32 level = 26;
   optional string role = 27;
   optional string character_class = 28;
+  optional string colony_id = 29;
+  optional string workforce_id = 30;
 }
 
 // -----------------------------------------------------------------------------
@@ -97,6 +99,8 @@ message CreateNpcRequest {
   optional int32 level = 22;
   optional string role = 23;
   optional string character_class = 24;
+  optional string colony_id = 25;
+  optional string workforce_id = 26;
 }
 
 message CreateNpcResponse {
@@ -147,6 +151,8 @@ message UpdateNpcRequest {
   optional string role = 24;
   optional string character_class = 25;
   repeated string removed_fields = 26;
+  optional string colony_id = 27;
+  optional string workforce_id = 28;
 }
 
 message UpdateNpcResponse {

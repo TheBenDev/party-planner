@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package planner.v1;
 
-import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
 // -----------------------------------------------------------------------------
@@ -16,6 +15,35 @@ enum QuestStatus {
   QUEST_STATUS_FAILED = 3;
 }
 
+enum QuestType {
+  QUEST_TYPE_UNSPECIFIED = 0;
+  QUEST_TYPE_MAINLAND = 1;
+  QUEST_TYPE_COLONY = 2;
+}
+
+// -----------------------------------------------------------------------------
+// Reward Messages
+// -----------------------------------------------------------------------------
+
+message QuestRewardColony {
+  optional int32 gold = 1;
+  optional int32 food = 2;
+  optional int32 building_materials = 3;
+  optional int32 colonist_count = 4;
+  optional int32 morale = 5;
+}
+
+message QuestRewardLootItem {
+  string name = 1;
+  optional int32 quantity = 2;
+  optional string description = 3;
+}
+
+message QuestReward {
+  optional QuestRewardColony colony = 1;
+  repeated QuestRewardLootItem loot = 2;
+}
+
 // -----------------------------------------------------------------------------
 // Core Messages
 // -----------------------------------------------------------------------------
@@ -27,11 +55,12 @@ message Quest {
   QuestStatus status = 4;
   optional string description = 5;
   optional string quest_giver_id = 6;
-  optional google.protobuf.Struct reward = 7; // TODO: fill out schema for reward
+  optional QuestReward reward = 7;
   optional google.protobuf.Timestamp completed_at = 8;
   optional google.protobuf.Timestamp deleted_at = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
+  optional QuestType type = 12;
 }
 
 // -----------------------------------------------------------------------------
@@ -44,7 +73,8 @@ message CreateQuestRequest {
   QuestStatus status = 3;
   optional string description = 4;
   optional string quest_giver_id = 5;
-  optional google.protobuf.Struct reward = 6; // TODO: fill out schema for reward
+  optional QuestReward reward = 6;
+  optional QuestType type = 7;
 }
 
 message CreateQuestResponse {
@@ -74,9 +104,20 @@ message UpdateQuestRequest {
   optional QuestStatus status = 3;
   optional string description = 4;
   string campaign_id = 5;
+  optional QuestType type = 6;
+  optional QuestReward reward = 7;
 }
 
 message UpdateQuestResponse {
+  Quest quest = 1;
+}
+
+message CompleteQuestRequest {
+  string id = 1;
+  string campaign_id = 2;
+}
+
+message CompleteQuestResponse {
   Quest quest = 1;
 }
 
@@ -96,5 +137,6 @@ service QuestService {
   rpc GetQuest(GetQuestRequest) returns (GetQuestResponse);
   rpc ListQuestsByCampaign(ListQuestsByCampaignRequest) returns (ListQuestsByCampaignResponse);
   rpc UpdateQuest(UpdateQuestRequest) returns (UpdateQuestResponse);
+  rpc CompleteQuest(CompleteQuestRequest) returns (CompleteQuestResponse);
   rpc RemoveQuest(RemoveQuestRequest) returns (RemoveQuestResponse);
 }

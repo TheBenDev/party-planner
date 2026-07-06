@@ -3,6 +3,17 @@ export const queryKeys = {
 		campaign: () => ["auth", "campaign"] as const,
 		user: () => ["auth", "user"] as const,
 	},
+	calendarConflicts: (
+		campaignId: string,
+		startsAt: string,
+		durationMinutes: number,
+	) => ["calendar-conflicts", campaignId, startsAt, durationMinutes] as const,
+	colony: {
+		detail: (campaignId: string) => ["colony", campaignId] as const,
+		workforce: {
+			list: (colonyId: string) => ["colony-workforce", colonyId] as const,
+		},
+	},
 	integrations: {
 		bySource: (campaignId: string, source: string) =>
 			["integrations", campaignId, source] as const,
@@ -16,10 +27,6 @@ export const queryKeys = {
 		detail: (locationId: string) => ["location", locationId] as const,
 		list: (campaignId: string) => ["locations", campaignId] as const,
 	},
-	regions: {
-		detail: (regionId: string) => ["region", regionId] as const,
-		list: (campaignId: string) => ["regions", campaignId] as const,
-	},
 	members: {
 		list: (campaignId: string) => ["members", campaignId] as const,
 	},
@@ -30,6 +37,10 @@ export const queryKeys = {
 	quests: {
 		detail: (questId: string) => ["quest", questId] as const,
 		list: (campaignId: string) => ["quests", campaignId] as const,
+	},
+	regions: {
+		detail: (regionId: string) => ["region", regionId] as const,
+		list: (campaignId: string) => ["regions", campaignId] as const,
 	},
 	sessionSeries: {
 		detail: (seriesId: string) => ["session-series", seriesId] as const,
@@ -45,6 +56,4 @@ export const queryKeys = {
 			["user-integrations", userId, source] as const,
 		list: (userId: string) => ["user-integrations", userId] as const,
 	},
-	calendarConflicts: (campaignId: string, startsAt: string, durationMinutes: number) =>
-		["calendar-conflicts", campaignId, startsAt, durationMinutes] as const,
 } as const;

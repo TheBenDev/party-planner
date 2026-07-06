@@ -24,6 +24,8 @@ import (
 	"github.com/BBruington/party-planner/api/internal/db"
 	campaignDomain "github.com/BBruington/party-planner/api/internal/domain/campaign"
 	campaignIntegrationDomain "github.com/BBruington/party-planner/api/internal/domain/campaign_integration"
+	colonyDomain "github.com/BBruington/party-planner/api/internal/domain/colony"
+	colonyWorkforceDomain "github.com/BBruington/party-planner/api/internal/domain/colony_workforce"
 	locationDomain "github.com/BBruington/party-planner/api/internal/domain/location"
 	regionDomain "github.com/BBruington/party-planner/api/internal/domain/region"
 	memberDomain "github.com/BBruington/party-planner/api/internal/domain/member"
@@ -46,6 +48,8 @@ type appServices struct {
 	SessionSeries       *seriesDomain.Service
 	Campaign            *campaignDomain.Service
 	CampaignIntegration *campaignIntegrationDomain.Service
+	Colony              *colonyDomain.Service
+	ColonyWorkforce     *colonyWorkforceDomain.Service
 	Member              *memberDomain.Service
 	Npc                 *npcDomain.Service
 	Quest               *questDomain.Service
@@ -185,9 +189,11 @@ func buildServices(database *db.DB, cfg *config.Config, botSession *discordgo.Se
 		SessionSeries:       sessionSeriesSvc,
 		Campaign:            &campaignDomain.Service{DB: campaignDomain.NewDB(database.Raw()), Log: logger.Logger},
 		CampaignIntegration: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: discordSvc},
+		Colony:              &colonyDomain.Service{DB: colonyDomain.NewDB(database.Raw()), Log: logger.Logger},
+		ColonyWorkforce:     &colonyWorkforceDomain.Service{DB: colonyWorkforceDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Member:              &memberDomain.Service{DB: memberDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Npc:                 npcSvc,
-		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), ColonyDB: colonyDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Location:            &locationDomain.Service{DB: locationDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Region:              &regionDomain.Service{DB: regionDomain.NewDB(database.Raw()), Log: logger.Logger},
 		User:                &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger},
@@ -224,6 +230,14 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 	npcPath, npcHandler := plannerv1connect.NewNonPlayerCharacterServiceHandler(
 		&npcDomain.Server{Npc: svcs.Npc, Log: logger.Logger}, interceptors)
 	mux.Handle(npcPath, npcHandler)
+
+	colonyPath, colonyHandler := plannerv1connect.NewColonyServiceHandler(
+		&colonyDomain.Server{Colony: svcs.Colony, Log: logger.Logger}, interceptors)
+	mux.Handle(colonyPath, colonyHandler)
+
+	colonyWorkforcePath, colonyWorkforceHandler := plannerv1connect.NewColonyWorkforceServiceHandler(
+		&colonyWorkforceDomain.Server{ColonyWorkforce: svcs.ColonyWorkforce, Log: logger.Logger}, interceptors)
+	mux.Handle(colonyWorkforcePath, colonyWorkforceHandler)
 
 	questPath, questHandler := plannerv1connect.NewQuestServiceHandler(
 		&questDomain.Server{Quest: svcs.Quest, Log: logger.Logger}, interceptors)

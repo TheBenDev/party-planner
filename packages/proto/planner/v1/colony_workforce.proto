@@ -1,0 +1,66 @@
+syntax = "proto3";
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// -----------------------------------------------------------------------------
+// Enums
+// -----------------------------------------------------------------------------
+
+enum WorkerType {
+  WORKER_TYPE_UNSPECIFIED = 0;
+  WORKER_TYPE_FARMER = 1;
+  WORKER_TYPE_HEALER = 2;
+  WORKER_TYPE_BLACKSMITH = 3;
+  WORKER_TYPE_SOLDIER = 4;
+  WORKER_TYPE_MINER = 5;
+  WORKER_TYPE_BUILDER = 6;
+  WORKER_TYPE_SCHOLAR = 7;
+  WORKER_TYPE_MAGE = 8;
+}
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message ColonyWorkforce {
+  string id = 1;
+  string colony_id = 2;
+  WorkerType worker_type = 3;
+  int32 count = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message ListColonyWorkforceRequest {
+  string colony_id = 1;
+  string campaign_id = 2;
+}
+
+message ListColonyWorkforceResponse {
+  repeated ColonyWorkforce workforce = 1;
+}
+
+message UpsertColonyWorkforceRequest {
+  string colony_id = 1;
+  string campaign_id = 2;
+  WorkerType worker_type = 3;
+  int32 count = 4;
+}
+
+message UpsertColonyWorkforceResponse {
+  ColonyWorkforce workforce = 1;
+}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service ColonyWorkforceService {
+  rpc ListColonyWorkforce(ListColonyWorkforceRequest) returns (ListColonyWorkforceResponse);
+  rpc UpsertColonyWorkforce(UpsertColonyWorkforceRequest) returns (UpsertColonyWorkforceResponse);
+}

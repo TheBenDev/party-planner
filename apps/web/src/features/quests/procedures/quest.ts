@@ -1,5 +1,7 @@
 import { ORPCError } from "@orpc/server";
 import {
+	CompleteQuestRequestSchema,
+	CompleteQuestResponseSchema,
 	CreateQuestRequestSchema,
 	CreateQuestResponseSchema,
 	GetQuestRequestSchema,
@@ -13,7 +15,7 @@ import {
 } from "@/features/quests/types";
 import { handleError } from "@/server/errors";
 import { campaignProcedure, dmProcedure } from "@/server/middleware";
-import { protoToQuest, questStatusToProto } from "./proto/quest";
+import { protoToQuest, questStatusToProto, questTypeToProto } from "./proto/quest";
 
 const createQuestDef = dmProcedure
 	.route({
@@ -35,6 +37,7 @@ export const createQuestHandler: Parameters<
 		const res = await api.quest.createQuest({
 			...input,
 			status: questStatusToProto(input.status),
+			type: input.type ? questTypeToProto(input.type) : undefined,
 		});
 		if (res.quest === undefined) {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -124,6 +127,7 @@ export const updateQuestHandler: Parameters<
 			...input,
 			campaignId: context.campaignId,
 			status: input.status ? questStatusToProto(input.status) : undefined,
+			type: input.type ? questTypeToProto(input.type) : undefined,
 		});
 		if (res.quest === undefined) {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
@@ -170,7 +174,42 @@ export const removeQuestHandler: Parameters<
 	}
 };
 
+const completeQuestDef = dmProcedure
+	.route({
+		method: "POST",
+		path: "/quest/complete",
+		summary: "Complete a quest and apply its rewards",
+	})
+	.input(CompleteQuestRequestSchema)
+	.output(CompleteQuestResponseSchema);
+
+export const completeQuestHandler: Parameters<
+	typeof completeQuestDef.handler
+>[0] = async ({ input, context }) => {
+	const api = context.api;
+	try {
+		const res = await api.quest.completeQuest({
+			campaignId: context.campaignId,
+			id: input.id,
+		});
+		if (res.quest === undefined) {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "failed to complete quest",
+			});
+		}
+		return { quest: protoToQuest(res.quest) };
+	} catch (err) {
+		handleError(
+			err,
+			"failed to complete quest",
+			{ questId: input.id },
+			context.logger,
+		);
+	}
+};
+
 export const questRouter = {
+	completeQuest: completeQuestDef.handler(completeQuestHandler),
 	createQuest: createQuestDef.handler(createQuestHandler),
 	getQuest: getQuestDef.handler(getQuestHandler),
 	listQuestsByCampaign: listQuestsByCampaignDef.handler(

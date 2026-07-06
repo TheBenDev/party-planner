@@ -1,4 +1,4 @@
-import { Status } from "@planner/enums/quest";
+import { QuestStatusEnum } from "@planner/enums/quest";
 import { UserRole } from "@planner/enums/user";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -16,9 +16,9 @@ import {
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
-import { useQuestData } from "../hooks/useQuestData";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import { useQuestData } from "../hooks/useQuestData";
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 	ACTIVE: {
@@ -41,31 +41,6 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 		label: "Unknown",
 	},
 };
-
-const QUEST_COLORS = [
-	"bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-300",
-	"bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
-	"bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
-	"bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300",
-	"bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-300",
-	"bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-900 dark:text-fuchsia-300",
-];
-
-function getQuestColor(title: string) {
-	const index =
-		title.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-		QUEST_COLORS.length;
-	return QUEST_COLORS[index];
-}
-
-function getInitials(title: string) {
-	return title
-		.split(" ")
-		.slice(0, 2)
-		.map((n) => n[0])
-		.join("")
-		.toUpperCase();
-}
 
 function QuestCardSkeleton() {
 	return (
@@ -101,8 +76,6 @@ function QuestRow({
 	onDelete: () => void;
 	isDm: boolean;
 }) {
-	const color = getQuestColor(quest.title);
-	const initials = getInitials(quest.title);
 	const status = STATUS_STYLES[quest.status] ?? STATUS_STYLES.UNSPECIFIED;
 
 	return (
@@ -112,12 +85,6 @@ function QuestRow({
 			size={null}
 			variant="ghost"
 		>
-			<div
-				className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm font-semibold ${color}`}
-			>
-				{initials}
-			</div>
-
 			<div className="flex-1 min-w-0">
 				<p className="font-medium text-sm leading-tight truncate">
 					{quest.title}
@@ -236,7 +203,16 @@ export function QuestsPage() {
 					<Button
 						className="shrink-0"
 						disabled={createQuest.isPending}
-						onClick={() => createQuest.mutate({ campaignId: campaign.campaign.id, status: Status.ACTIVE, title: "New Quest" }, { onError: () => toast.error("Failed to create Quest") })}
+						onClick={() =>
+							createQuest.mutate(
+								{
+									campaignId: campaign.campaign.id,
+									status: QuestStatusEnum.ACTIVE,
+									title: "New Quest",
+								},
+								{ onError: () => toast.error("Failed to create Quest") },
+							)
+						}
 					>
 						<Plus className="w-4 h-4 mr-2" />
 						New Quest
@@ -283,7 +259,19 @@ export function QuestsPage() {
 										<Button
 											className="mt-4"
 											disabled={createQuest.isPending}
-											onClick={() => createQuest.mutate({ campaignId: campaign.campaign.id, status: Status.ACTIVE, title: "New Quest" }, { onError: () => toast.error("Failed to create Quest") })}
+											onClick={() =>
+												createQuest.mutate(
+													{
+														campaignId: campaign.campaign.id,
+														status: QuestStatusEnum.ACTIVE,
+														title: "New Quest",
+													},
+													{
+														onError: () =>
+															toast.error("Failed to create Quest"),
+													},
+												)
+											}
 											size="sm"
 											variant="outline"
 										>
@@ -303,7 +291,12 @@ export function QuestsPage() {
 						<QuestRow
 							isDm={isDm}
 							key={quest.id}
-							onDelete={() => deleteQuest.mutate({ id: quest.id }, { onError: () => toast.error("Failed to delete Quest") })}
+							onDelete={() =>
+								deleteQuest.mutate(
+									{ id: quest.id },
+									{ onError: () => toast.error("Failed to delete Quest") },
+								)
+							}
 							onEdit={() =>
 								navigate({
 									params: { questId: quest.id },

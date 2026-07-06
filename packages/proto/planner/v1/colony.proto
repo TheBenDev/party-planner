@@ -1,0 +1,77 @@
+syntax = "proto3";
+package planner.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// -----------------------------------------------------------------------------
+// Core Messages
+// -----------------------------------------------------------------------------
+
+message Colony {
+  string id = 1;
+  string campaign_id = 2;
+  int32 colonist_count = 3;
+  int32 food = 4;
+  int32 building_materials = 5;
+  int32 gold = 6;
+  int32 morale = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+// -----------------------------------------------------------------------------
+// RPC Messages
+// -----------------------------------------------------------------------------
+
+message CreateColonyRequest {
+  string campaign_id = 1;
+  optional int32 colonist_count = 2;
+  optional int32 food = 3;
+  optional int32 building_materials = 4;
+  optional int32 gold = 5;
+  optional int32 morale = 6;
+}
+
+message CreateColonyResponse {
+  Colony colony = 1;
+}
+
+message GetColonyByCampaignRequest {
+  string campaign_id = 1;
+}
+
+message GetColonyByCampaignResponse {
+  Colony colony = 1;
+}
+
+message UpdateColonyRequest {
+  string id = 1;
+  string campaign_id = 2;
+  optional int32 colonist_count = 3;
+  optional int32 food = 4;
+  optional int32 building_materials = 5;
+  optional int32 gold = 6;
+  optional int32 morale = 7;
+}
+
+message UpdateColonyResponse {
+  Colony colony = 1;
+}
+
+message RemoveColonyRequest {
+  string id = 1;
+  string campaign_id = 2;
+}
+
+message RemoveColonyResponse {}
+
+// -----------------------------------------------------------------------------
+// Service
+// -----------------------------------------------------------------------------
+
+service ColonyService {
+  rpc CreateColony(CreateColonyRequest) returns (CreateColonyResponse);
+  rpc GetColonyByCampaign(GetColonyByCampaignRequest) returns (GetColonyByCampaignResponse);
+  rpc UpdateColony(UpdateColonyRequest) returns (UpdateColonyResponse);
+  rpc RemoveColony(RemoveColonyRequest) returns (RemoveColonyResponse);
+}

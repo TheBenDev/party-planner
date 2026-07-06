@@ -9,7 +9,6 @@ package plannerv1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	structpb "google.golang.org/protobuf/types/known/structpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
@@ -75,6 +74,243 @@ func (QuestStatus) EnumDescriptor() ([]byte, []int) {
 	return file_planner_v1_quest_proto_rawDescGZIP(), []int{0}
 }
 
+type QuestType int32
+
+const (
+	QuestType_QUEST_TYPE_UNSPECIFIED QuestType = 0
+	QuestType_QUEST_TYPE_MAINLAND    QuestType = 1
+	QuestType_QUEST_TYPE_COLONY      QuestType = 2
+)
+
+// Enum value maps for QuestType.
+var (
+	QuestType_name = map[int32]string{
+		0: "QUEST_TYPE_UNSPECIFIED",
+		1: "QUEST_TYPE_MAINLAND",
+		2: "QUEST_TYPE_COLONY",
+	}
+	QuestType_value = map[string]int32{
+		"QUEST_TYPE_UNSPECIFIED": 0,
+		"QUEST_TYPE_MAINLAND":    1,
+		"QUEST_TYPE_COLONY":      2,
+	}
+)
+
+func (x QuestType) Enum() *QuestType {
+	p := new(QuestType)
+	*p = x
+	return p
+}
+
+func (x QuestType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (QuestType) Descriptor() protoreflect.EnumDescriptor {
+	return file_planner_v1_quest_proto_enumTypes[1].Descriptor()
+}
+
+func (QuestType) Type() protoreflect.EnumType {
+	return &file_planner_v1_quest_proto_enumTypes[1]
+}
+
+func (x QuestType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use QuestType.Descriptor instead.
+func (QuestType) EnumDescriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{1}
+}
+
+type QuestRewardColony struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	Gold              *int32                 `protobuf:"varint,1,opt,name=gold,proto3,oneof" json:"gold,omitempty"`
+	Food              *int32                 `protobuf:"varint,2,opt,name=food,proto3,oneof" json:"food,omitempty"`
+	BuildingMaterials *int32                 `protobuf:"varint,3,opt,name=building_materials,json=buildingMaterials,proto3,oneof" json:"building_materials,omitempty"`
+	ColonistCount     *int32                 `protobuf:"varint,4,opt,name=colonist_count,json=colonistCount,proto3,oneof" json:"colonist_count,omitempty"`
+	Morale            *int32                 `protobuf:"varint,5,opt,name=morale,proto3,oneof" json:"morale,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *QuestRewardColony) Reset() {
+	*x = QuestRewardColony{}
+	mi := &file_planner_v1_quest_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestRewardColony) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestRewardColony) ProtoMessage() {}
+
+func (x *QuestRewardColony) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_quest_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestRewardColony.ProtoReflect.Descriptor instead.
+func (*QuestRewardColony) Descriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *QuestRewardColony) GetGold() int32 {
+	if x != nil && x.Gold != nil {
+		return *x.Gold
+	}
+	return 0
+}
+
+func (x *QuestRewardColony) GetFood() int32 {
+	if x != nil && x.Food != nil {
+		return *x.Food
+	}
+	return 0
+}
+
+func (x *QuestRewardColony) GetBuildingMaterials() int32 {
+	if x != nil && x.BuildingMaterials != nil {
+		return *x.BuildingMaterials
+	}
+	return 0
+}
+
+func (x *QuestRewardColony) GetColonistCount() int32 {
+	if x != nil && x.ColonistCount != nil {
+		return *x.ColonistCount
+	}
+	return 0
+}
+
+func (x *QuestRewardColony) GetMorale() int32 {
+	if x != nil && x.Morale != nil {
+		return *x.Morale
+	}
+	return 0
+}
+
+type QuestRewardLootItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Quantity      *int32                 `protobuf:"varint,2,opt,name=quantity,proto3,oneof" json:"quantity,omitempty"`
+	Description   *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuestRewardLootItem) Reset() {
+	*x = QuestRewardLootItem{}
+	mi := &file_planner_v1_quest_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestRewardLootItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestRewardLootItem) ProtoMessage() {}
+
+func (x *QuestRewardLootItem) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_quest_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestRewardLootItem.ProtoReflect.Descriptor instead.
+func (*QuestRewardLootItem) Descriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *QuestRewardLootItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *QuestRewardLootItem) GetQuantity() int32 {
+	if x != nil && x.Quantity != nil {
+		return *x.Quantity
+	}
+	return 0
+}
+
+func (x *QuestRewardLootItem) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+type QuestReward struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Colony        *QuestRewardColony     `protobuf:"bytes,1,opt,name=colony,proto3,oneof" json:"colony,omitempty"`
+	Loot          []*QuestRewardLootItem `protobuf:"bytes,2,rep,name=loot,proto3" json:"loot,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuestReward) Reset() {
+	*x = QuestReward{}
+	mi := &file_planner_v1_quest_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuestReward) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuestReward) ProtoMessage() {}
+
+func (x *QuestReward) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_quest_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuestReward.ProtoReflect.Descriptor instead.
+func (*QuestReward) Descriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *QuestReward) GetColony() *QuestRewardColony {
+	if x != nil {
+		return x.Colony
+	}
+	return nil
+}
+
+func (x *QuestReward) GetLoot() []*QuestRewardLootItem {
+	if x != nil {
+		return x.Loot
+	}
+	return nil
+}
+
 type Quest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -83,18 +319,19 @@ type Quest struct {
 	Status        QuestStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	QuestGiverId  *string                `protobuf:"bytes,6,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
-	Reward        *structpb.Struct       `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"` // TODO: fill out schema for reward
+	Reward        *QuestReward           `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Type          *QuestType             `protobuf:"varint,12,opt,name=type,proto3,enum=planner.v1.QuestType,oneof" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Quest) Reset() {
 	*x = Quest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[0]
+	mi := &file_planner_v1_quest_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -106,7 +343,7 @@ func (x *Quest) String() string {
 func (*Quest) ProtoMessage() {}
 
 func (x *Quest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[0]
+	mi := &file_planner_v1_quest_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -119,7 +356,7 @@ func (x *Quest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Quest.ProtoReflect.Descriptor instead.
 func (*Quest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{0}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Quest) GetId() string {
@@ -164,7 +401,7 @@ func (x *Quest) GetQuestGiverId() string {
 	return ""
 }
 
-func (x *Quest) GetReward() *structpb.Struct {
+func (x *Quest) GetReward() *QuestReward {
 	if x != nil {
 		return x.Reward
 	}
@@ -199,6 +436,13 @@ func (x *Quest) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Quest) GetType() QuestType {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return QuestType_QUEST_TYPE_UNSPECIFIED
+}
+
 type CreateQuestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -206,14 +450,15 @@ type CreateQuestRequest struct {
 	Status        QuestStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	QuestGiverId  *string                `protobuf:"bytes,5,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
-	Reward        *structpb.Struct       `protobuf:"bytes,6,opt,name=reward,proto3,oneof" json:"reward,omitempty"` // TODO: fill out schema for reward
+	Reward        *QuestReward           `protobuf:"bytes,6,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
+	Type          *QuestType             `protobuf:"varint,7,opt,name=type,proto3,enum=planner.v1.QuestType,oneof" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateQuestRequest) Reset() {
 	*x = CreateQuestRequest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[1]
+	mi := &file_planner_v1_quest_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -225,7 +470,7 @@ func (x *CreateQuestRequest) String() string {
 func (*CreateQuestRequest) ProtoMessage() {}
 
 func (x *CreateQuestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[1]
+	mi := &file_planner_v1_quest_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,7 +483,7 @@ func (x *CreateQuestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateQuestRequest.ProtoReflect.Descriptor instead.
 func (*CreateQuestRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{1}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *CreateQuestRequest) GetCampaignId() string {
@@ -276,11 +521,18 @@ func (x *CreateQuestRequest) GetQuestGiverId() string {
 	return ""
 }
 
-func (x *CreateQuestRequest) GetReward() *structpb.Struct {
+func (x *CreateQuestRequest) GetReward() *QuestReward {
 	if x != nil {
 		return x.Reward
 	}
 	return nil
+}
+
+func (x *CreateQuestRequest) GetType() QuestType {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return QuestType_QUEST_TYPE_UNSPECIFIED
 }
 
 type CreateQuestResponse struct {
@@ -292,7 +544,7 @@ type CreateQuestResponse struct {
 
 func (x *CreateQuestResponse) Reset() {
 	*x = CreateQuestResponse{}
-	mi := &file_planner_v1_quest_proto_msgTypes[2]
+	mi := &file_planner_v1_quest_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -304,7 +556,7 @@ func (x *CreateQuestResponse) String() string {
 func (*CreateQuestResponse) ProtoMessage() {}
 
 func (x *CreateQuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[2]
+	mi := &file_planner_v1_quest_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -317,7 +569,7 @@ func (x *CreateQuestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateQuestResponse.ProtoReflect.Descriptor instead.
 func (*CreateQuestResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{2}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *CreateQuestResponse) GetQuest() *Quest {
@@ -337,7 +589,7 @@ type GetQuestRequest struct {
 
 func (x *GetQuestRequest) Reset() {
 	*x = GetQuestRequest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[3]
+	mi := &file_planner_v1_quest_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -349,7 +601,7 @@ func (x *GetQuestRequest) String() string {
 func (*GetQuestRequest) ProtoMessage() {}
 
 func (x *GetQuestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[3]
+	mi := &file_planner_v1_quest_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -362,7 +614,7 @@ func (x *GetQuestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuestRequest.ProtoReflect.Descriptor instead.
 func (*GetQuestRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{3}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetQuestRequest) GetId() string {
@@ -388,7 +640,7 @@ type GetQuestResponse struct {
 
 func (x *GetQuestResponse) Reset() {
 	*x = GetQuestResponse{}
-	mi := &file_planner_v1_quest_proto_msgTypes[4]
+	mi := &file_planner_v1_quest_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -400,7 +652,7 @@ func (x *GetQuestResponse) String() string {
 func (*GetQuestResponse) ProtoMessage() {}
 
 func (x *GetQuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[4]
+	mi := &file_planner_v1_quest_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -413,7 +665,7 @@ func (x *GetQuestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetQuestResponse.ProtoReflect.Descriptor instead.
 func (*GetQuestResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{4}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetQuestResponse) GetQuest() *Quest {
@@ -432,7 +684,7 @@ type ListQuestsByCampaignRequest struct {
 
 func (x *ListQuestsByCampaignRequest) Reset() {
 	*x = ListQuestsByCampaignRequest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[5]
+	mi := &file_planner_v1_quest_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -444,7 +696,7 @@ func (x *ListQuestsByCampaignRequest) String() string {
 func (*ListQuestsByCampaignRequest) ProtoMessage() {}
 
 func (x *ListQuestsByCampaignRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[5]
+	mi := &file_planner_v1_quest_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -457,7 +709,7 @@ func (x *ListQuestsByCampaignRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListQuestsByCampaignRequest.ProtoReflect.Descriptor instead.
 func (*ListQuestsByCampaignRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{5}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListQuestsByCampaignRequest) GetCampaignId() string {
@@ -476,7 +728,7 @@ type ListQuestsByCampaignResponse struct {
 
 func (x *ListQuestsByCampaignResponse) Reset() {
 	*x = ListQuestsByCampaignResponse{}
-	mi := &file_planner_v1_quest_proto_msgTypes[6]
+	mi := &file_planner_v1_quest_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -488,7 +740,7 @@ func (x *ListQuestsByCampaignResponse) String() string {
 func (*ListQuestsByCampaignResponse) ProtoMessage() {}
 
 func (x *ListQuestsByCampaignResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[6]
+	mi := &file_planner_v1_quest_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -501,7 +753,7 @@ func (x *ListQuestsByCampaignResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListQuestsByCampaignResponse.ProtoReflect.Descriptor instead.
 func (*ListQuestsByCampaignResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{6}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *ListQuestsByCampaignResponse) GetQuests() []*Quest {
@@ -518,13 +770,15 @@ type UpdateQuestRequest struct {
 	Status        *QuestStatus           `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus,oneof" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	CampaignId    string                 `protobuf:"bytes,5,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Type          *QuestType             `protobuf:"varint,6,opt,name=type,proto3,enum=planner.v1.QuestType,oneof" json:"type,omitempty"`
+	Reward        *QuestReward           `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateQuestRequest) Reset() {
 	*x = UpdateQuestRequest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[7]
+	mi := &file_planner_v1_quest_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -536,7 +790,7 @@ func (x *UpdateQuestRequest) String() string {
 func (*UpdateQuestRequest) ProtoMessage() {}
 
 func (x *UpdateQuestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[7]
+	mi := &file_planner_v1_quest_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -549,7 +803,7 @@ func (x *UpdateQuestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateQuestRequest.ProtoReflect.Descriptor instead.
 func (*UpdateQuestRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *UpdateQuestRequest) GetId() string {
@@ -587,6 +841,20 @@ func (x *UpdateQuestRequest) GetCampaignId() string {
 	return ""
 }
 
+func (x *UpdateQuestRequest) GetType() QuestType {
+	if x != nil && x.Type != nil {
+		return *x.Type
+	}
+	return QuestType_QUEST_TYPE_UNSPECIFIED
+}
+
+func (x *UpdateQuestRequest) GetReward() *QuestReward {
+	if x != nil {
+		return x.Reward
+	}
+	return nil
+}
+
 type UpdateQuestResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Quest         *Quest                 `protobuf:"bytes,1,opt,name=quest,proto3" json:"quest,omitempty"`
@@ -596,7 +864,7 @@ type UpdateQuestResponse struct {
 
 func (x *UpdateQuestResponse) Reset() {
 	*x = UpdateQuestResponse{}
-	mi := &file_planner_v1_quest_proto_msgTypes[8]
+	mi := &file_planner_v1_quest_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -608,7 +876,7 @@ func (x *UpdateQuestResponse) String() string {
 func (*UpdateQuestResponse) ProtoMessage() {}
 
 func (x *UpdateQuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[8]
+	mi := &file_planner_v1_quest_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -621,10 +889,106 @@ func (x *UpdateQuestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateQuestResponse.ProtoReflect.Descriptor instead.
 func (*UpdateQuestResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateQuestResponse) GetQuest() *Quest {
+	if x != nil {
+		return x.Quest
+	}
+	return nil
+}
+
+type CompleteQuestRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteQuestRequest) Reset() {
+	*x = CompleteQuestRequest{}
+	mi := &file_planner_v1_quest_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteQuestRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteQuestRequest) ProtoMessage() {}
+
+func (x *CompleteQuestRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_quest_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteQuestRequest.ProtoReflect.Descriptor instead.
+func (*CompleteQuestRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *CompleteQuestRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CompleteQuestRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+type CompleteQuestResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Quest         *Quest                 `protobuf:"bytes,1,opt,name=quest,proto3" json:"quest,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompleteQuestResponse) Reset() {
+	*x = CompleteQuestResponse{}
+	mi := &file_planner_v1_quest_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompleteQuestResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompleteQuestResponse) ProtoMessage() {}
+
+func (x *CompleteQuestResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_quest_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompleteQuestResponse.ProtoReflect.Descriptor instead.
+func (*CompleteQuestResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *CompleteQuestResponse) GetQuest() *Quest {
 	if x != nil {
 		return x.Quest
 	}
@@ -641,7 +1005,7 @@ type RemoveQuestRequest struct {
 
 func (x *RemoveQuestRequest) Reset() {
 	*x = RemoveQuestRequest{}
-	mi := &file_planner_v1_quest_proto_msgTypes[9]
+	mi := &file_planner_v1_quest_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -653,7 +1017,7 @@ func (x *RemoveQuestRequest) String() string {
 func (*RemoveQuestRequest) ProtoMessage() {}
 
 func (x *RemoveQuestRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[9]
+	mi := &file_planner_v1_quest_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -666,7 +1030,7 @@ func (x *RemoveQuestRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveQuestRequest.ProtoReflect.Descriptor instead.
 func (*RemoveQuestRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{9}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *RemoveQuestRequest) GetId() string {
@@ -691,7 +1055,7 @@ type RemoveQuestResponse struct {
 
 func (x *RemoveQuestResponse) Reset() {
 	*x = RemoveQuestResponse{}
-	mi := &file_planner_v1_quest_proto_msgTypes[10]
+	mi := &file_planner_v1_quest_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -703,7 +1067,7 @@ func (x *RemoveQuestResponse) String() string {
 func (*RemoveQuestResponse) ProtoMessage() {}
 
 func (x *RemoveQuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_quest_proto_msgTypes[10]
+	mi := &file_planner_v1_quest_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -716,7 +1080,7 @@ func (x *RemoveQuestResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveQuestResponse.ProtoReflect.Descriptor instead.
 func (*RemoveQuestResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_quest_proto_rawDescGZIP(), []int{10}
+	return file_planner_v1_quest_proto_rawDescGZIP(), []int{15}
 }
 
 var File_planner_v1_quest_proto protoreflect.FileDescriptor
@@ -724,7 +1088,28 @@ var File_planner_v1_quest_proto protoreflect.FileDescriptor
 const file_planner_v1_quest_proto_rawDesc = "" +
 	"\n" +
 	"\x16planner/v1/quest.proto\x12\n" +
-	"planner.v1\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcf\x04\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x89\x02\n" +
+	"\x11QuestRewardColony\x12\x17\n" +
+	"\x04gold\x18\x01 \x01(\x05H\x00R\x04gold\x88\x01\x01\x12\x17\n" +
+	"\x04food\x18\x02 \x01(\x05H\x01R\x04food\x88\x01\x01\x122\n" +
+	"\x12building_materials\x18\x03 \x01(\x05H\x02R\x11buildingMaterials\x88\x01\x01\x12*\n" +
+	"\x0ecolonist_count\x18\x04 \x01(\x05H\x03R\rcolonistCount\x88\x01\x01\x12\x1b\n" +
+	"\x06morale\x18\x05 \x01(\x05H\x04R\x06morale\x88\x01\x01B\a\n" +
+	"\x05_goldB\a\n" +
+	"\x05_foodB\x15\n" +
+	"\x13_building_materialsB\x11\n" +
+	"\x0f_colonist_countB\t\n" +
+	"\a_morale\"\x8e\x01\n" +
+	"\x13QuestRewardLootItem\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
+	"\bquantity\x18\x02 \x01(\x05H\x00R\bquantity\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\x03 \x01(\tH\x01R\vdescription\x88\x01\x01B\v\n" +
+	"\t_quantityB\x0e\n" +
+	"\f_description\"\x89\x01\n" +
+	"\vQuestReward\x12:\n" +
+	"\x06colony\x18\x01 \x01(\v2\x1d.planner.v1.QuestRewardColonyH\x00R\x06colony\x88\x01\x01\x123\n" +
+	"\x04loot\x18\x02 \x03(\v2\x1f.planner.v1.QuestRewardLootItemR\x04lootB\t\n" +
+	"\a_colony\"\x88\x05\n" +
 	"\x05Quest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -733,7 +1118,7 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.planner.v1.QuestStatusR\x06status\x12%\n" +
 	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12)\n" +
 	"\x0equest_giver_id\x18\x06 \x01(\tH\x01R\fquestGiverId\x88\x01\x01\x124\n" +
-	"\x06reward\x18\a \x01(\v2\x17.google.protobuf.StructH\x02R\x06reward\x88\x01\x01\x12B\n" +
+	"\x06reward\x18\a \x01(\v2\x17.planner.v1.QuestRewardH\x02R\x06reward\x88\x01\x01\x12B\n" +
 	"\fcompleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vcompletedAt\x88\x01\x01\x12>\n" +
 	"\n" +
 	"deleted_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampH\x04R\tdeletedAt\x88\x01\x01\x129\n" +
@@ -741,12 +1126,14 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"created_at\x18\n" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x0e\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12.\n" +
+	"\x04type\x18\f \x01(\x0e2\x15.planner.v1.QuestTypeH\x05R\x04type\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\x11\n" +
 	"\x0f_quest_giver_idB\t\n" +
 	"\a_rewardB\x0f\n" +
 	"\r_completed_atB\r\n" +
-	"\v_deleted_at\"\xb2\x02\n" +
+	"\v_deleted_atB\a\n" +
+	"\x05_type\"\xeb\x02\n" +
 	"\x12CreateQuestRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
@@ -754,10 +1141,12 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\x06status\x18\x03 \x01(\x0e2\x17.planner.v1.QuestStatusR\x06status\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12)\n" +
 	"\x0equest_giver_id\x18\x05 \x01(\tH\x01R\fquestGiverId\x88\x01\x01\x124\n" +
-	"\x06reward\x18\x06 \x01(\v2\x17.google.protobuf.StructH\x02R\x06reward\x88\x01\x01B\x0e\n" +
+	"\x06reward\x18\x06 \x01(\v2\x17.planner.v1.QuestRewardH\x02R\x06reward\x88\x01\x01\x12.\n" +
+	"\x04type\x18\a \x01(\x0e2\x15.planner.v1.QuestTypeH\x03R\x04type\x88\x01\x01B\x0e\n" +
 	"\f_descriptionB\x11\n" +
 	"\x0f_quest_giver_idB\t\n" +
-	"\a_reward\">\n" +
+	"\a_rewardB\a\n" +
+	"\x05_type\">\n" +
 	"\x13CreateQuestResponse\x12'\n" +
 	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"B\n" +
 	"\x0fGetQuestRequest\x12\x0e\n" +
@@ -770,18 +1159,28 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"I\n" +
 	"\x1cListQuestsByCampaignResponse\x12)\n" +
-	"\x06quests\x18\x01 \x03(\v2\x11.planner.v1.QuestR\x06quests\"\xe2\x01\n" +
+	"\x06quests\x18\x01 \x03(\v2\x11.planner.v1.QuestR\x06quests\"\xdc\x02\n" +
 	"\x12UpdateQuestRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x124\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x17.planner.v1.QuestStatusH\x01R\x06status\x88\x01\x01\x12%\n" +
 	"\vdescription\x18\x04 \x01(\tH\x02R\vdescription\x88\x01\x01\x12\x1f\n" +
 	"\vcampaign_id\x18\x05 \x01(\tR\n" +
-	"campaignIdB\b\n" +
+	"campaignId\x12.\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x15.planner.v1.QuestTypeH\x03R\x04type\x88\x01\x01\x124\n" +
+	"\x06reward\x18\a \x01(\v2\x17.planner.v1.QuestRewardH\x04R\x06reward\x88\x01\x01B\b\n" +
 	"\x06_titleB\t\n" +
 	"\a_statusB\x0e\n" +
-	"\f_description\">\n" +
+	"\f_descriptionB\a\n" +
+	"\x05_typeB\t\n" +
+	"\a_reward\">\n" +
 	"\x13UpdateQuestResponse\x12'\n" +
+	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"G\n" +
+	"\x14CompleteQuestRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"@\n" +
+	"\x15CompleteQuestResponse\x12'\n" +
 	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"E\n" +
 	"\x12RemoveQuestRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
@@ -792,12 +1191,17 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\x18QUEST_STATUS_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13QUEST_STATUS_ACTIVE\x10\x01\x12\x1a\n" +
 	"\x16QUEST_STATUS_COMPLETED\x10\x02\x12\x17\n" +
-	"\x13QUEST_STATUS_FAILED\x10\x032\xb0\x03\n" +
+	"\x13QUEST_STATUS_FAILED\x10\x03*W\n" +
+	"\tQuestType\x12\x1a\n" +
+	"\x16QUEST_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
+	"\x13QUEST_TYPE_MAINLAND\x10\x01\x12\x15\n" +
+	"\x11QUEST_TYPE_COLONY\x10\x022\x86\x04\n" +
 	"\fQuestService\x12N\n" +
 	"\vCreateQuest\x12\x1e.planner.v1.CreateQuestRequest\x1a\x1f.planner.v1.CreateQuestResponse\x12E\n" +
 	"\bGetQuest\x12\x1b.planner.v1.GetQuestRequest\x1a\x1c.planner.v1.GetQuestResponse\x12i\n" +
 	"\x14ListQuestsByCampaign\x12'.planner.v1.ListQuestsByCampaignRequest\x1a(.planner.v1.ListQuestsByCampaignResponse\x12N\n" +
-	"\vUpdateQuest\x12\x1e.planner.v1.UpdateQuestRequest\x1a\x1f.planner.v1.UpdateQuestResponse\x12N\n" +
+	"\vUpdateQuest\x12\x1e.planner.v1.UpdateQuestRequest\x1a\x1f.planner.v1.UpdateQuestResponse\x12T\n" +
+	"\rCompleteQuest\x12 .planner.v1.CompleteQuestRequest\x1a!.planner.v1.CompleteQuestResponse\x12N\n" +
 	"\vRemoveQuest\x12\x1e.planner.v1.RemoveQuestRequest\x1a\x1f.planner.v1.RemoveQuestResponseB\xa7\x01\n" +
 	"\x0ecom.planner.v1B\n" +
 	"QuestProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
@@ -816,53 +1220,67 @@ func file_planner_v1_quest_proto_rawDescGZIP() []byte {
 	return file_planner_v1_quest_proto_rawDescData
 }
 
-var file_planner_v1_quest_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_planner_v1_quest_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_planner_v1_quest_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_planner_v1_quest_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
 var file_planner_v1_quest_proto_goTypes = []any{
 	(QuestStatus)(0),                     // 0: planner.v1.QuestStatus
-	(*Quest)(nil),                        // 1: planner.v1.Quest
-	(*CreateQuestRequest)(nil),           // 2: planner.v1.CreateQuestRequest
-	(*CreateQuestResponse)(nil),          // 3: planner.v1.CreateQuestResponse
-	(*GetQuestRequest)(nil),              // 4: planner.v1.GetQuestRequest
-	(*GetQuestResponse)(nil),             // 5: planner.v1.GetQuestResponse
-	(*ListQuestsByCampaignRequest)(nil),  // 6: planner.v1.ListQuestsByCampaignRequest
-	(*ListQuestsByCampaignResponse)(nil), // 7: planner.v1.ListQuestsByCampaignResponse
-	(*UpdateQuestRequest)(nil),           // 8: planner.v1.UpdateQuestRequest
-	(*UpdateQuestResponse)(nil),          // 9: planner.v1.UpdateQuestResponse
-	(*RemoveQuestRequest)(nil),           // 10: planner.v1.RemoveQuestRequest
-	(*RemoveQuestResponse)(nil),          // 11: planner.v1.RemoveQuestResponse
-	(*structpb.Struct)(nil),              // 12: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil),        // 13: google.protobuf.Timestamp
+	(QuestType)(0),                       // 1: planner.v1.QuestType
+	(*QuestRewardColony)(nil),            // 2: planner.v1.QuestRewardColony
+	(*QuestRewardLootItem)(nil),          // 3: planner.v1.QuestRewardLootItem
+	(*QuestReward)(nil),                  // 4: planner.v1.QuestReward
+	(*Quest)(nil),                        // 5: planner.v1.Quest
+	(*CreateQuestRequest)(nil),           // 6: planner.v1.CreateQuestRequest
+	(*CreateQuestResponse)(nil),          // 7: planner.v1.CreateQuestResponse
+	(*GetQuestRequest)(nil),              // 8: planner.v1.GetQuestRequest
+	(*GetQuestResponse)(nil),             // 9: planner.v1.GetQuestResponse
+	(*ListQuestsByCampaignRequest)(nil),  // 10: planner.v1.ListQuestsByCampaignRequest
+	(*ListQuestsByCampaignResponse)(nil), // 11: planner.v1.ListQuestsByCampaignResponse
+	(*UpdateQuestRequest)(nil),           // 12: planner.v1.UpdateQuestRequest
+	(*UpdateQuestResponse)(nil),          // 13: planner.v1.UpdateQuestResponse
+	(*CompleteQuestRequest)(nil),         // 14: planner.v1.CompleteQuestRequest
+	(*CompleteQuestResponse)(nil),        // 15: planner.v1.CompleteQuestResponse
+	(*RemoveQuestRequest)(nil),           // 16: planner.v1.RemoveQuestRequest
+	(*RemoveQuestResponse)(nil),          // 17: planner.v1.RemoveQuestResponse
+	(*timestamppb.Timestamp)(nil),        // 18: google.protobuf.Timestamp
 }
 var file_planner_v1_quest_proto_depIdxs = []int32{
-	0,  // 0: planner.v1.Quest.status:type_name -> planner.v1.QuestStatus
-	12, // 1: planner.v1.Quest.reward:type_name -> google.protobuf.Struct
-	13, // 2: planner.v1.Quest.completed_at:type_name -> google.protobuf.Timestamp
-	13, // 3: planner.v1.Quest.deleted_at:type_name -> google.protobuf.Timestamp
-	13, // 4: planner.v1.Quest.created_at:type_name -> google.protobuf.Timestamp
-	13, // 5: planner.v1.Quest.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: planner.v1.CreateQuestRequest.status:type_name -> planner.v1.QuestStatus
-	12, // 7: planner.v1.CreateQuestRequest.reward:type_name -> google.protobuf.Struct
-	1,  // 8: planner.v1.CreateQuestResponse.quest:type_name -> planner.v1.Quest
-	1,  // 9: planner.v1.GetQuestResponse.quest:type_name -> planner.v1.Quest
-	1,  // 10: planner.v1.ListQuestsByCampaignResponse.quests:type_name -> planner.v1.Quest
-	0,  // 11: planner.v1.UpdateQuestRequest.status:type_name -> planner.v1.QuestStatus
-	1,  // 12: planner.v1.UpdateQuestResponse.quest:type_name -> planner.v1.Quest
-	2,  // 13: planner.v1.QuestService.CreateQuest:input_type -> planner.v1.CreateQuestRequest
-	4,  // 14: planner.v1.QuestService.GetQuest:input_type -> planner.v1.GetQuestRequest
-	6,  // 15: planner.v1.QuestService.ListQuestsByCampaign:input_type -> planner.v1.ListQuestsByCampaignRequest
-	8,  // 16: planner.v1.QuestService.UpdateQuest:input_type -> planner.v1.UpdateQuestRequest
-	10, // 17: planner.v1.QuestService.RemoveQuest:input_type -> planner.v1.RemoveQuestRequest
-	3,  // 18: planner.v1.QuestService.CreateQuest:output_type -> planner.v1.CreateQuestResponse
-	5,  // 19: planner.v1.QuestService.GetQuest:output_type -> planner.v1.GetQuestResponse
-	7,  // 20: planner.v1.QuestService.ListQuestsByCampaign:output_type -> planner.v1.ListQuestsByCampaignResponse
-	9,  // 21: planner.v1.QuestService.UpdateQuest:output_type -> planner.v1.UpdateQuestResponse
-	11, // 22: planner.v1.QuestService.RemoveQuest:output_type -> planner.v1.RemoveQuestResponse
-	18, // [18:23] is the sub-list for method output_type
-	13, // [13:18] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	2,  // 0: planner.v1.QuestReward.colony:type_name -> planner.v1.QuestRewardColony
+	3,  // 1: planner.v1.QuestReward.loot:type_name -> planner.v1.QuestRewardLootItem
+	0,  // 2: planner.v1.Quest.status:type_name -> planner.v1.QuestStatus
+	4,  // 3: planner.v1.Quest.reward:type_name -> planner.v1.QuestReward
+	18, // 4: planner.v1.Quest.completed_at:type_name -> google.protobuf.Timestamp
+	18, // 5: planner.v1.Quest.deleted_at:type_name -> google.protobuf.Timestamp
+	18, // 6: planner.v1.Quest.created_at:type_name -> google.protobuf.Timestamp
+	18, // 7: planner.v1.Quest.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 8: planner.v1.Quest.type:type_name -> planner.v1.QuestType
+	0,  // 9: planner.v1.CreateQuestRequest.status:type_name -> planner.v1.QuestStatus
+	4,  // 10: planner.v1.CreateQuestRequest.reward:type_name -> planner.v1.QuestReward
+	1,  // 11: planner.v1.CreateQuestRequest.type:type_name -> planner.v1.QuestType
+	5,  // 12: planner.v1.CreateQuestResponse.quest:type_name -> planner.v1.Quest
+	5,  // 13: planner.v1.GetQuestResponse.quest:type_name -> planner.v1.Quest
+	5,  // 14: planner.v1.ListQuestsByCampaignResponse.quests:type_name -> planner.v1.Quest
+	0,  // 15: planner.v1.UpdateQuestRequest.status:type_name -> planner.v1.QuestStatus
+	1,  // 16: planner.v1.UpdateQuestRequest.type:type_name -> planner.v1.QuestType
+	4,  // 17: planner.v1.UpdateQuestRequest.reward:type_name -> planner.v1.QuestReward
+	5,  // 18: planner.v1.UpdateQuestResponse.quest:type_name -> planner.v1.Quest
+	5,  // 19: planner.v1.CompleteQuestResponse.quest:type_name -> planner.v1.Quest
+	6,  // 20: planner.v1.QuestService.CreateQuest:input_type -> planner.v1.CreateQuestRequest
+	8,  // 21: planner.v1.QuestService.GetQuest:input_type -> planner.v1.GetQuestRequest
+	10, // 22: planner.v1.QuestService.ListQuestsByCampaign:input_type -> planner.v1.ListQuestsByCampaignRequest
+	12, // 23: planner.v1.QuestService.UpdateQuest:input_type -> planner.v1.UpdateQuestRequest
+	14, // 24: planner.v1.QuestService.CompleteQuest:input_type -> planner.v1.CompleteQuestRequest
+	16, // 25: planner.v1.QuestService.RemoveQuest:input_type -> planner.v1.RemoveQuestRequest
+	7,  // 26: planner.v1.QuestService.CreateQuest:output_type -> planner.v1.CreateQuestResponse
+	9,  // 27: planner.v1.QuestService.GetQuest:output_type -> planner.v1.GetQuestResponse
+	11, // 28: planner.v1.QuestService.ListQuestsByCampaign:output_type -> planner.v1.ListQuestsByCampaignResponse
+	13, // 29: planner.v1.QuestService.UpdateQuest:output_type -> planner.v1.UpdateQuestResponse
+	15, // 30: planner.v1.QuestService.CompleteQuest:output_type -> planner.v1.CompleteQuestResponse
+	17, // 31: planner.v1.QuestService.RemoveQuest:output_type -> planner.v1.RemoveQuestResponse
+	26, // [26:32] is the sub-list for method output_type
+	20, // [20:26] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_quest_proto_init() }
@@ -872,14 +1290,17 @@ func file_planner_v1_quest_proto_init() {
 	}
 	file_planner_v1_quest_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_quest_proto_msgTypes[1].OneofWrappers = []any{}
-	file_planner_v1_quest_proto_msgTypes[7].OneofWrappers = []any{}
+	file_planner_v1_quest_proto_msgTypes[2].OneofWrappers = []any{}
+	file_planner_v1_quest_proto_msgTypes[3].OneofWrappers = []any{}
+	file_planner_v1_quest_proto_msgTypes[4].OneofWrappers = []any{}
+	file_planner_v1_quest_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_quest_proto_rawDesc), len(file_planner_v1_quest_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   11,
+			NumEnums:      2,
+			NumMessages:   16,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

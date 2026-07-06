@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
-import { Status } from "@planner/enums/quest";
+import { QuestStatusEnum } from "@planner/enums/quest";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -8,7 +8,7 @@ const mockQuest = {
 	createdAt: new Date("2024-01-01T00:00:00.000Z"),
 	id: "quest-1",
 	reward: null,
-	status: Status.ACTIVE,
+	status: QuestStatusEnum.ACTIVE,
 	title: "Retrieve the Orb",
 	updatedAt: new Date("2024-01-01T00:00:00.000Z"),
 };

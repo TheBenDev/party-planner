@@ -5,6 +5,8 @@ export * from "./campaignInvitations";
 export * from "./campaigns";
 export * from "./campaignUsers";
 export * from "./characters";
+export * from "./colony";
+export * from "./colonyWorkforce";
 export * from "./locations";
 export * from "./nonPlayerCharacters";
 export * from "./quests";

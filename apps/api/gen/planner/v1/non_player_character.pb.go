@@ -223,6 +223,8 @@ type Npc struct {
 	Level                 *int32                 `protobuf:"varint,26,opt,name=level,proto3,oneof" json:"level,omitempty"`
 	Role                  *string                `protobuf:"bytes,27,opt,name=role,proto3,oneof" json:"role,omitempty"`
 	CharacterClass        *string                `protobuf:"bytes,28,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
+	ColonyId              *string                `protobuf:"bytes,29,opt,name=colony_id,json=colonyId,proto3,oneof" json:"colony_id,omitempty"`
+	WorkforceId           *string                `protobuf:"bytes,30,opt,name=workforce_id,json=workforceId,proto3,oneof" json:"workforce_id,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -453,6 +455,20 @@ func (x *Npc) GetCharacterClass() string {
 	return ""
 }
 
+func (x *Npc) GetColonyId() string {
+	if x != nil && x.ColonyId != nil {
+		return *x.ColonyId
+	}
+	return ""
+}
+
+func (x *Npc) GetWorkforceId() string {
+	if x != nil && x.WorkforceId != nil {
+		return *x.WorkforceId
+	}
+	return ""
+}
+
 type CreateNpcRequest struct {
 	state                 protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId            string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
@@ -479,6 +495,8 @@ type CreateNpcRequest struct {
 	Level                 *int32                 `protobuf:"varint,22,opt,name=level,proto3,oneof" json:"level,omitempty"`
 	Role                  *string                `protobuf:"bytes,23,opt,name=role,proto3,oneof" json:"role,omitempty"`
 	CharacterClass        *string                `protobuf:"bytes,24,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
+	ColonyId              *string                `protobuf:"bytes,25,opt,name=colony_id,json=colonyId,proto3,oneof" json:"colony_id,omitempty"`
+	WorkforceId           *string                `protobuf:"bytes,26,opt,name=workforce_id,json=workforceId,proto3,oneof" json:"workforce_id,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -677,6 +695,20 @@ func (x *CreateNpcRequest) GetRole() string {
 func (x *CreateNpcRequest) GetCharacterClass() string {
 	if x != nil && x.CharacterClass != nil {
 		return *x.CharacterClass
+	}
+	return ""
+}
+
+func (x *CreateNpcRequest) GetColonyId() string {
+	if x != nil && x.ColonyId != nil {
+		return *x.ColonyId
+	}
+	return ""
+}
+
+func (x *CreateNpcRequest) GetWorkforceId() string {
+	if x != nil && x.WorkforceId != nil {
+		return *x.WorkforceId
 	}
 	return ""
 }
@@ -937,6 +969,8 @@ type UpdateNpcRequest struct {
 	Role                  *string                `protobuf:"bytes,24,opt,name=role,proto3,oneof" json:"role,omitempty"`
 	CharacterClass        *string                `protobuf:"bytes,25,opt,name=character_class,json=characterClass,proto3,oneof" json:"character_class,omitempty"`
 	RemovedFields         []string               `protobuf:"bytes,26,rep,name=removed_fields,json=removedFields,proto3" json:"removed_fields,omitempty"`
+	ColonyId              *string                `protobuf:"bytes,27,opt,name=colony_id,json=colonyId,proto3,oneof" json:"colony_id,omitempty"`
+	WorkforceId           *string                `protobuf:"bytes,28,opt,name=workforce_id,json=workforceId,proto3,oneof" json:"workforce_id,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -1153,6 +1187,20 @@ func (x *UpdateNpcRequest) GetRemovedFields() []string {
 	return nil
 }
 
+func (x *UpdateNpcRequest) GetColonyId() string {
+	if x != nil && x.ColonyId != nil {
+		return *x.ColonyId
+	}
+	return ""
+}
+
+func (x *UpdateNpcRequest) GetWorkforceId() string {
+	if x != nil && x.WorkforceId != nil {
+		return *x.WorkforceId
+	}
+	return ""
+}
+
 type UpdateNpcResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Npc           *Npc                   `protobuf:"bytes,1,opt,name=npc,proto3" json:"npc,omitempty"`
@@ -1290,7 +1338,7 @@ var File_planner_v1_non_player_character_proto protoreflect.FileDescriptor
 const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\n" +
 	"%planner/v1/non_player_character.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb3\v\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9c\f\n" +
 	"\x03Npc\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -1327,7 +1375,9 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x06labels\x18\x19 \x03(\tR\x06labels\x12\x19\n" +
 	"\x05level\x18\x1a \x01(\x05H\x0eR\x05level\x88\x01\x01\x12\x17\n" +
 	"\x04role\x18\x1b \x01(\tH\x0fR\x04role\x88\x01\x01\x12,\n" +
-	"\x0fcharacter_class\x18\x1c \x01(\tH\x10R\x0echaracterClass\x88\x01\x01B\x06\n" +
+	"\x0fcharacter_class\x18\x1c \x01(\tH\x10R\x0echaracterClass\x88\x01\x01\x12 \n" +
+	"\tcolony_id\x18\x1d \x01(\tH\x11R\bcolonyId\x88\x01\x01\x12&\n" +
+	"\fworkforce_id\x18\x1e \x01(\tH\x12R\vworkforceId\x88\x01\x01B\x06\n" +
 	"\x04_ageB\r\n" +
 	"\v_appearanceB\t\n" +
 	"\a_avatarB\f\n" +
@@ -1345,7 +1395,11 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x15_last_foundry_sync_atB\b\n" +
 	"\x06_levelB\a\n" +
 	"\x05_roleB\x12\n" +
-	"\x10_character_class\"\xcf\t\n" +
+	"\x10_character_classB\f\n" +
+	"\n" +
+	"_colony_idB\x0f\n" +
+	"\r_workforce_id\"\xb8\n" +
+	"\n" +
 	"\x10CreateNpcRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x12\n" +
@@ -1376,7 +1430,9 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x06labels\x18\x15 \x03(\tR\x06labels\x12\x19\n" +
 	"\x05level\x18\x16 \x01(\x05H\rR\x05level\x88\x01\x01\x12\x17\n" +
 	"\x04role\x18\x17 \x01(\tH\x0eR\x04role\x88\x01\x01\x12,\n" +
-	"\x0fcharacter_class\x18\x18 \x01(\tH\x0fR\x0echaracterClass\x88\x01\x01B\x06\n" +
+	"\x0fcharacter_class\x18\x18 \x01(\tH\x0fR\x0echaracterClass\x88\x01\x01\x12 \n" +
+	"\tcolony_id\x18\x19 \x01(\tH\x10R\bcolonyId\x88\x01\x01\x12&\n" +
+	"\fworkforce_id\x18\x1a \x01(\tH\x11R\vworkforceId\x88\x01\x01B\x06\n" +
 	"\x04_ageB\r\n" +
 	"\v_appearanceB\t\n" +
 	"\a_avatarB\f\n" +
@@ -1393,7 +1449,10 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x11_foundry_actor_idB\b\n" +
 	"\x06_levelB\a\n" +
 	"\x05_roleB\x12\n" +
-	"\x10_character_class\"6\n" +
+	"\x10_character_classB\f\n" +
+	"\n" +
+	"_colony_idB\x0f\n" +
+	"\r_workforce_id\"6\n" +
 	"\x11CreateNpcResponse\x12!\n" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"@\n" +
 	"\rGetNpcRequest\x12\x0e\n" +
@@ -1406,8 +1465,7 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"A\n" +
 	"\x1aListNpcsByCampaignResponse\x12#\n" +
-	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xfb\n" +
-	"\n" +
+	"\x04npcs\x18\x01 \x03(\v2\x0f.planner.v1.NpcR\x04npcs\"\xe4\v\n" +
 	"\x10UpdateNpcRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x128\n" +
@@ -1440,7 +1498,9 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x05level\x18\x17 \x01(\x05H\x12R\x05level\x88\x01\x01\x12\x17\n" +
 	"\x04role\x18\x18 \x01(\tH\x13R\x04role\x88\x01\x01\x12,\n" +
 	"\x0fcharacter_class\x18\x19 \x01(\tH\x14R\x0echaracterClass\x88\x01\x01\x12%\n" +
-	"\x0eremoved_fields\x18\x1a \x03(\tR\rremovedFieldsB\a\n" +
+	"\x0eremoved_fields\x18\x1a \x03(\tR\rremovedFields\x12 \n" +
+	"\tcolony_id\x18\x1b \x01(\tH\x15R\bcolonyId\x88\x01\x01\x12&\n" +
+	"\fworkforce_id\x18\x1c \x01(\tH\x16R\vworkforceId\x88\x01\x01B\a\n" +
 	"\x05_nameB\t\n" +
 	"\a_statusB\x1b\n" +
 	"\x19_relation_to_party_statusB\x14\n" +
@@ -1462,7 +1522,10 @@ const file_planner_v1_non_player_character_proto_rawDesc = "" +
 	"\x11_health_conditionB\b\n" +
 	"\x06_levelB\a\n" +
 	"\x05_roleB\x12\n" +
-	"\x10_character_class\"6\n" +
+	"\x10_character_classB\f\n" +
+	"\n" +
+	"_colony_idB\x0f\n" +
+	"\r_workforce_id\"6\n" +
 	"\x11UpdateNpcResponse\x12!\n" +
 	"\x03npc\x18\x01 \x01(\v2\x0f.planner.v1.NpcR\x03npc\"C\n" +
 	"\x10RemoveNpcRequest\x12\x0e\n" +

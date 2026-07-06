@@ -16,10 +16,11 @@ import (
 type mockServiceStore struct {
 	quest *model.Quest
 
-	createQuestErr error
-	getQuestErr    error
-	updateQuestErr error
-	removeQuestErr error
+	createQuestErr   error
+	getQuestErr      error
+	updateQuestErr   error
+	completeQuestErr error
+	removeQuestErr   error
 }
 
 func (m *mockServiceStore) CreateQuest(_ context.Context, _ *model.CreateQuestRequest) (*model.Quest, error) {
@@ -34,14 +35,30 @@ func (m *mockServiceStore) ListQuestsByCampaign(_ context.Context, _ string) ([]
 func (m *mockServiceStore) UpdateQuest(_ context.Context, _ *model.UpdateQuestRequest) (*model.Quest, error) {
 	return m.quest, m.updateQuestErr
 }
+func (m *mockServiceStore) CompleteQuest(_ context.Context, _, _ string) (*model.Quest, error) {
+	return m.quest, m.completeQuestErr
+}
 func (m *mockServiceStore) RemoveQuest(_ context.Context, _, _ string) error {
 	return m.removeQuestErr
+}
+
+type mockColonyStore struct {
+	colony *model.Colony
+	err    error
+}
+
+func (m *mockColonyStore) ApplyRewardByCampaign(_ context.Context, _ string, _ *model.QuestRewardColony) (*model.Colony, error) {
+	return m.colony, m.err
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 func newService(store quest.Store) *quest.Service {
-	return &quest.Service{DB: store, Log: slog.Default()}
+	return &quest.Service{DB: store, ColonyDB: &mockColonyStore{}, Log: slog.Default()}
+}
+
+func newServiceWithColony(store quest.Store, colonyStore quest.ColonyStore) *quest.Service {
+	return &quest.Service{DB: store, ColonyDB: colonyStore, Log: slog.Default()}
 }
 
 func pgUniqueViolation() error {
@@ -138,4 +155,52 @@ func TestQuestServiceRemove_HappyPath(t *testing.T) {
 func TestQuestServiceRemove_NotFound(t *testing.T) {
 	err := newService(&mockServiceStore{getQuestErr: sql.ErrNoRows}).Remove(context.Background(), "quest-1", "campaign-1")
 	assertError(t, err, quest.ErrNotFound)
+}
+
+// ── Complete ──────────────────────────────────────────────────────────────────
+
+func TestQuestServiceComplete_HappyPath(t *testing.T) {
+	want := testQuest()
+	want.Status = model.QuestStatusCompleted
+	got, err := newService(&mockServiceStore{quest: want}).Complete(context.Background(), want.ID, want.CampaignID)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.Status != model.QuestStatusCompleted {
+		t.Errorf("got status %v, want COMPLETED", got.Status)
+	}
+}
+
+func TestQuestServiceComplete_NotFound(t *testing.T) {
+	_, err := newService(&mockServiceStore{completeQuestErr: sql.ErrNoRows}).Complete(context.Background(), "quest-1", "campaign-1")
+	assertError(t, err, quest.ErrNotFound)
+}
+
+func TestQuestServiceComplete_WithColonyReward(t *testing.T) {
+	gold := int32(100)
+	want := testQuest()
+	want.Status = model.QuestStatusCompleted
+	want.Reward = &model.QuestReward{
+		Colony: &model.QuestRewardColony{Gold: &gold},
+	}
+	colonyStore := &mockColonyStore{colony: &model.Colony{}}
+	got, err := newServiceWithColony(&mockServiceStore{quest: want}, colonyStore).Complete(context.Background(), want.ID, want.CampaignID)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.Status != model.QuestStatusCompleted {
+		t.Errorf("got status %v, want COMPLETED", got.Status)
+	}
+}
+
+func TestQuestServiceComplete_NoColony(t *testing.T) {
+	gold := int32(50)
+	want := testQuest()
+	want.Status = model.QuestStatusCompleted
+	want.Reward = &model.QuestReward{
+		Colony: &model.QuestRewardColony{Gold: &gold},
+	}
+	colonyStore := &mockColonyStore{err: sql.ErrNoRows}
+	_, err := newServiceWithColony(&mockServiceStore{quest: want}, colonyStore).Complete(context.Background(), want.ID, want.CampaignID)
+	assertError(t, err, quest.ErrNoColony)
 }

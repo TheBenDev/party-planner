@@ -1,4 +1,4 @@
-import { Status } from "@planner/enums/quest";
+import { QuestStatusEnum, QuestTypeEnum } from "@planner/enums/quest";
 import { relations } from "drizzle-orm";
 import {
 	foreignKey,
@@ -14,8 +14,8 @@ import { enumToPgEnum } from "../lib/enums";
 import { campaignsTable } from "./campaigns";
 import { nonPlayerCharactersTable } from "./nonPlayerCharacters";
 
-export const questStatusEnum = pgEnum("quest_status", enumToPgEnum(Status));
-
+export const questStatusEnum = pgEnum("quest_status", enumToPgEnum(QuestStatusEnum));
+export const questTypeEnum = pgEnum("quest_type", enumToPgEnum(QuestTypeEnum))
 export const questsTable = pgTable(
 	"quest",
 	{
@@ -28,7 +28,8 @@ export const questsTable = pgTable(
 		questGiverId: uuid("quest_giver_id"),
 		reward: jsonb("reward"),
 		status: questStatusEnum("status").notNull(),
-		title: varchar("title").notNull(),
+    title: varchar("title").notNull(),
+		type: questTypeEnum("type").default(QuestTypeEnum.COLONY),
 		updatedAt: timestamp("updated_at", { mode: "date" })
 			.defaultNow()
 			.notNull()
