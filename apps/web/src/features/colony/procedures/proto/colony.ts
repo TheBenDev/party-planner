@@ -54,7 +54,9 @@ export function protoToWorkerType(workerType: WorkerType): WorkerTypeEnum {
 		case WorkerType.MAGE:
 			return WorkerTypeEnum.MAGE;
 		default:
-			throw new Error(`unknown worker type: ${workerType}`);
+			throw new ORPCError("BAD_REQUEST", {
+				message: `unknown worker type: ${workerType}`,
+			});
 	}
 }
 
@@ -77,7 +79,9 @@ export function workerTypeToProto(workerType: WorkerTypeEnum): WorkerType {
 		case WorkerTypeEnum.MAGE:
 			return WorkerType.MAGE;
 		default:
-			throw new Error(`unknown worker type: ${workerType}`);
+			throw new ORPCError("BAD_REQUEST", {
+				message: `unknown worker type: ${workerType}`,
+			});
 	}
 }
 

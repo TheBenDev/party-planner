@@ -37,9 +37,11 @@ func (s *Server) CreateQuest(ctx context.Context, req *connect.Request[v1.Create
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
-
 	var questType *model.QuestType
-	if req.Msg.Type != nil && *req.Msg.Type != v1.QuestType_QUEST_TYPE_UNSPECIFIED {
+	if req.Msg.Type != nil {
+		if *req.Msg.Type == v1.QuestType_QUEST_TYPE_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("quest type cannot be unspecified"))
+		}
 		t, err := protoToQuestType(*req.Msg.Type)
 		if err != nil {
 			return nil, connect.NewError(connect.CodeInvalidArgument, err)
@@ -124,7 +126,10 @@ func (s *Server) UpdateQuest(ctx context.Context, req *connect.Request[v1.Update
 	}
 
 	var questType *model.QuestType
-	if req.Msg.Type != nil && *req.Msg.Type != v1.QuestType_QUEST_TYPE_UNSPECIFIED {
+	if req.Msg.Type != nil {
+		if *req.Msg.Type == v1.QuestType_QUEST_TYPE_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("quest type cannot be unspecified"))
+		}
 		t, err := protoToQuestType(*req.Msg.Type)
 		if err != nil {
 			return nil, connect.NewError(connect.CodeInvalidArgument, err)

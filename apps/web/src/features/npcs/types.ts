@@ -16,6 +16,7 @@ export const NonPlayerCharacterSchema = BaseEntitySchema.extend({
 	backstory: z.string().nullable().optional(),
 	campaignId: z.uuid(),
 	characterClass: z.string().nullable().optional(),
+	colonyId: z.uuid().nullable().optional(),
 	currentLocationId: z.uuid().nullable().optional(),
 	dmNotes: z.string().nullable().optional(),
 	foundryActorId: z.string().nullable().optional(),
@@ -33,9 +34,8 @@ export const NonPlayerCharacterSchema = BaseEntitySchema.extend({
 	relationToPartyStatus: z.enum(RelationToPartyEnum),
 	role: z.string().nullable().optional(),
 	sessionEncounteredId: z.uuid().nullable().optional(),
-	colonyId: z.uuid().nullable().optional(),
-	workforceId: z.uuid().nullable().optional(),
 	status: z.enum(CharacterStatusEnum),
+	workforceId: z.uuid().nullable().optional(),
 });
 
 export type NonPlayerCharacter = z.infer<typeof NonPlayerCharacterSchema>;
@@ -50,6 +50,7 @@ export const CreateNpcRequestSchema = z.object({
 	backstory: z.string().optional(),
 	campaignId: z.uuid(),
 	characterClass: z.string().optional(),
+	colonyId: z.uuid().optional(),
 	currentLocationId: z.uuid().optional(),
 	dmNotes: z.string().optional(),
 	foundryActorId: z.string().optional(),
@@ -70,9 +71,8 @@ export const CreateNpcRequestSchema = z.object({
 		.default(RelationToPartyEnum.UNKNOWN),
 	role: z.string().optional(),
 	sessionEncounteredId: z.uuid().optional(),
-	colonyId: z.uuid().optional(),
-	workforceId: z.uuid().optional(),
 	status: z.enum(CharacterStatusEnum).default(CharacterStatusEnum.UNKNOWN),
+	workforceId: z.uuid().optional(),
 });
 
 export type CreateNpcRequest = z.infer<typeof CreateNpcRequestSchema>;
@@ -91,6 +91,7 @@ export const UpdateNpcRequestSchema = z.object({
 	avatar: z.string().nullable().optional(),
 	backstory: z.string().nullable().optional(),
 	characterClass: z.string().nullable().optional(),
+	colonyId: z.uuid().nullable().optional(),
 	currentLocationId: z.uuid().nullable().optional(),
 	dmNotes: z.string().nullable().optional(),
 	foundryActorId: z.string().nullable().optional(),
@@ -109,9 +110,8 @@ export const UpdateNpcRequestSchema = z.object({
 	removedFields: z.string().array(),
 	role: z.string().nullable().optional(),
 	sessionEncounteredId: z.uuid().nullable().optional(),
-	colonyId: z.uuid().nullable().optional(),
-	workforceId: z.uuid().nullable().optional(),
 	status: z.enum(CharacterStatusEnum).optional(),
+	workforceId: z.uuid().nullable().optional(),
 });
 
 export const UpdateNpcResponseSchema = z.object({
@@ -149,6 +149,17 @@ export const ListNonPlayerCharactersByCampaignResponseSchema = z.object({
 export type ListNonPlayerCharactersResponse = z.infer<
 	typeof ListNonPlayerCharactersByCampaignResponseSchema
 >;
+
+// ─── List NPCs by Colony ──────────────────────────────────────────────────────
+
+export const ListNpcsByColonyRequestSchema = z.object({
+	campaignId: z.uuid(),
+	colonyId: z.uuid(),
+});
+
+export const ListNpcsByColonyResponseSchema = z.object({
+	npcs: z.array(NonPlayerCharacterSchema),
+});
 
 // ─── Remove NPC ──────────────────────────────────────────────────────────────
 

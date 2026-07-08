@@ -15,6 +15,11 @@ type mockStore struct {
 	colonies []*model.Colony
 	err      error
 }
+type mockWorkforceStore struct {
+	err error
+}
+
+func (m *mockWorkforceStore) SeedWorkforce(_ context.Context, _ string) error { return m.err }
 
 func (m *mockStore) CreateColony(_ context.Context, _ *model.CreateColonyRequest) (*model.Colony, error) {
 	return m.one(), m.err
@@ -45,7 +50,7 @@ func testColony() *model.Colony {
 
 func newServer(store colony.Store) *colony.Server {
 	return &colony.Server{
-		Colony: &colony.Service{DB: store, Log: slog.Default()},
+		Colony: &colony.Service{DB: store, WorkforceDB: &mockWorkforceStore{}, Log: slog.Default()},
 		Log:    slog.Default(),
 	}
 }

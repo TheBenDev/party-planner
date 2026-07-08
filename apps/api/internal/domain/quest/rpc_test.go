@@ -32,6 +32,9 @@ func (m *mockStore) CompleteQuest(_ context.Context, _, _ string) (*model.Quest,
 	return m.one(), m.err
 }
 func (m *mockStore) RemoveQuest(_ context.Context, _, _ string) error { return m.err }
+func (m *mockStore) RunInTx(ctx context.Context, fn func(context.Context, quest.Store) error) error {
+	return fn(ctx, m)
+}
 
 func (m *mockStore) one() *model.Quest {
 	if len(m.quests) == 0 {

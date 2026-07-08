@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateNpcRequest, CreateNpcResponse, GetNpcRequest, GetNpcResponse, ListNpcsByCampaignRequest, ListNpcsByCampaignResponse, RemoveNpcRequest, RemoveNpcResponse, UpdateNpcRequest, UpdateNpcResponse } from "./non_player_character_pb.js";
+import { CreateNpcRequest, CreateNpcResponse, GetNpcRequest, GetNpcResponse, ListNpcsByCampaignRequest, ListNpcsByCampaignResponse, ListNpcsByColonyRequest, ListNpcsByColonyResponse, RemoveNpcRequest, RemoveNpcResponse, UpdateNpcRequest, UpdateNpcResponse } from "./non_player_character_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -37,6 +37,15 @@ export const NonPlayerCharacterService = {
       name: "ListNpcsByCampaign",
       I: ListNpcsByCampaignRequest,
       O: ListNpcsByCampaignResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc planner.v1.NonPlayerCharacterService.ListNpcsByColony
+     */
+    listNpcsByColony: {
+      name: "ListNpcsByColony",
+      I: ListNpcsByColonyRequest,
+      O: ListNpcsByColonyResponse,
       kind: MethodKind.Unary,
     },
     /**

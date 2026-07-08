@@ -19,6 +19,7 @@ const mockQuestProto = { id: "quest-1" };
 
 const mockProtoToQuest = mock(() => mockQuest);
 const mockQuestStatusToProto = mock(() => 1);
+const mockQuestTypeToProto = mock(() => 1);
 
 const makeChain = () => {
 	const chain: Record<string, () => unknown> = {};
@@ -39,6 +40,7 @@ mock.module("@/server/middleware", () => ({
 mock.module("./proto/quest", () => ({
 	protoToQuest: mockProtoToQuest,
 	questStatusToProto: mockQuestStatusToProto,
+	questTypeToProto: mockQuestTypeToProto,
 }));
 
 const {
@@ -140,9 +142,9 @@ describe("getQuestHandler", () => {
 	test("throws NOT_FOUND when api returns no quest", async () => {
 		const context = makeContext();
 		context.api.quest.getQuest = mock(async () => ({})) as never;
-		expect(
-			getQuestHandler({ context, input } as never),
-		).rejects.toMatchObject({ code: "NOT_FOUND" });
+		expect(getQuestHandler({ context, input } as never)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
 	});
 });
 

@@ -124,6 +124,15 @@ message ListNpcsByCampaignResponse {
   repeated Npc npcs = 1;
 }
 
+message ListNpcsByColonyRequest {
+  string colony_id = 1;
+  string campaign_id = 2;
+}
+
+message ListNpcsByColonyResponse {
+  repeated Npc npcs = 1;
+}
+
 message UpdateNpcRequest {
   string id = 1;
   optional string name = 2;
@@ -174,6 +183,7 @@ service NonPlayerCharacterService {
   rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
   rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
   rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
+  rpc ListNpcsByColony(ListNpcsByColonyRequest) returns (ListNpcsByColonyResponse);
   rpc UpdateNpc(UpdateNpcRequest) returns (UpdateNpcResponse);
   rpc RemoveNpc(RemoveNpcRequest) returns (RemoveNpcResponse);
 }

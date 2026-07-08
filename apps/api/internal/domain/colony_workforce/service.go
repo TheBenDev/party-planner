@@ -21,12 +21,20 @@ var (
 type Store interface {
 	GetColonyByCampaign(ctx context.Context, colonyID, campaignID string) error
 	ListWorkforceByColony(ctx context.Context, colonyID string) ([]*model.ColonyWorkforce, error)
+	SeedWorkforce(ctx context.Context, colonyID string) error
 	UpsertColonyWorkforce(ctx context.Context, req *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error)
 }
 
 type Service struct {
 	DB  Store
 	Log *slog.Logger
+}
+
+func (s *Service) SeedWorkforce(ctx context.Context, colonyID string) error {
+	if err := s.DB.SeedWorkforce(ctx, colonyID); err != nil {
+		return fmt.Errorf("seed workforce: %w", err)
+	}
+	return nil
 }
 
 func (s *Service) ListByColony(ctx context.Context, colonyID, campaignID string) ([]*model.ColonyWorkforce, error) {

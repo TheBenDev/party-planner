@@ -68,6 +68,22 @@ func (db *DB) ListWorkforceByColony(ctx context.Context, colonyID string) ([]*mo
 	return workforce, nil
 }
 
+func (db *DB) SeedWorkforce(ctx context.Context, colonyID string) error {
+	_, err := db.conn.ExecContext(ctx, `
+		INSERT INTO colony_workforce (colony_id, worker_type, count) VALUES
+			($1, 'FARMER', 0),
+			($1, 'HEALER', 0),
+			($1, 'BLACKSMITH', 0),
+			($1, 'SOLDIER', 0),
+			($1, 'MINER', 0),
+			($1, 'BUILDER', 0),
+			($1, 'SCHOLAR', 0),
+			($1, 'MAGE', 0)
+		ON CONFLICT (colony_id, worker_type) DO NOTHING
+	`, colonyID)
+	return err
+}
+
 func (db *DB) UpsertColonyWorkforce(ctx context.Context, req *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
 	row := db.conn.QueryRowContext(ctx, `
 		INSERT INTO colony_workforce (colony_id, worker_type, count)

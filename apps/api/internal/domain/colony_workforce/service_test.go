@@ -20,6 +20,7 @@ type mockServiceStore struct {
 	getColonyByCampaignErr error
 	listWorkforceErr       error
 	upsertWorkforceErr     error
+	seedWorkForceErr       error
 }
 
 func (m *mockServiceStore) GetColonyByCampaign(_ context.Context, _, _ string) error {
@@ -30,6 +31,9 @@ func (m *mockServiceStore) ListWorkforceByColony(_ context.Context, _ string) ([
 }
 func (m *mockServiceStore) UpsertColonyWorkforce(_ context.Context, _ *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
 	return m.workforce, m.upsertWorkforceErr
+}
+func (m *mockServiceStore) SeedWorkforce(_ context.Context, _ string) error {
+	return m.seedWorkForceErr
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

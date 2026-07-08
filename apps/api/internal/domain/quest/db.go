@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -20,6 +21,24 @@ type DB struct {
 // NewDB creates a new quest DB wrapping the given connection.
 func NewDB(conn *sql.DB) *DB {
 	return &DB{conn: conn, raw: conn}
+}
+
+// RunInTx executes fn inside a database transaction, rolling back on error.
+func (db *DB) RunInTx(ctx context.Context, fn func(context.Context, Store) error) error {
+	tx, err := db.raw.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin tx: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
+			slog.Error("failed to rollback transaction", "error", err)
+		}
+	}()
+	txDB := &DB{conn: tx, raw: db.raw}
+	if err := fn(ctx, txDB); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // ── Quest ─────────────────────────────────────────────────────────────────────
@@ -39,9 +58,10 @@ func scanQuest(row interface{ Scan(...any) error }) (*model.Quest, error) {
 	}
 	if rewardBytes != nil {
 		var reward model.QuestReward
-		if err := json.Unmarshal(rewardBytes, &reward); err == nil {
-			q.Reward = &reward
+		if err := json.Unmarshal(rewardBytes, &reward); err != nil {
+			return nil, fmt.Errorf("unmarshal quest reward: %w", err)
 		}
+		q.Reward = &reward
 	}
 	if questType.Valid {
 		t := model.QuestType(questType.String)

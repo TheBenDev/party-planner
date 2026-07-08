@@ -1,4 +1,5 @@
 import { UserRole } from "@planner/enums/user";
+import { Link, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { Coins, Hammer, Heart, Pencil, Users, Wheat, X } from "lucide-react";
 import { useState } from "react";
@@ -63,6 +64,9 @@ export default function ColonyDetailsCard({
 }) {
 	const { data, isLoading } = useColony(campaignId);
 	const { role } = useAuth();
+	const pathName = useRouterState({
+		select: (state) => state.location.pathname,
+	});
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const [isEditing, setIsEditing] = useState(false);
 	const { createColony } = useColonyData();
@@ -107,7 +111,16 @@ export default function ColonyDetailsCard({
 		<>
 			<div className="flex items-center justify-between mb-3">
 				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-					Colony
+					{pathName.startsWith("/campaign/colony") ? (
+						"Colony"
+					) : (
+						<Link
+							params={{ colonyId: data.colony.id }}
+							to="/campaign/colony/$colonyId"
+						>
+							Colony
+						</Link>
+					)}
 				</h2>
 				{isDm && (
 					<button

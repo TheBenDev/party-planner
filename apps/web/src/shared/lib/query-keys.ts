@@ -33,6 +33,7 @@ export const queryKeys = {
 	npcs: {
 		detail: (npcId: string) => ["npc", npcId] as const,
 		list: (campaignId: string) => ["npcs", campaignId] as const,
+		listByColony: (colonyId: string) => ["npcs-by-colony", colonyId] as const,
 	},
 	quests: {
 		detail: (questId: string) => ["quest", questId] as const,

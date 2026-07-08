@@ -3,12 +3,12 @@ import z from "zod";
 import { BaseEntitySchema } from "@/shared/types";
 
 export const ColonySchema = BaseEntitySchema.extend({
-	buildingMaterials: z.number().int(),
+	buildingMaterials: z.number().int().min(0),
 	campaignId: z.uuid(),
-	colonistCount: z.number().int(),
-	food: z.number().int(),
-	gold: z.number().int(),
-	morale: z.number().int(),
+	colonistCount: z.number().int().min(0),
+	food: z.number().int().min(0),
+	gold: z.number().int().min(0),
+	morale: z.number().int().min(0).max(100),
 });
 
 export const ColonyWorkforceSchema = BaseEntitySchema.extend({
@@ -32,12 +32,12 @@ export const GetColonyByCampaignResponseSchema = z.object({
 });
 
 export const UpdateColonyRequestSchema = z.object({
-	buildingMaterials: z.number().int().optional(),
-	colonistCount: z.number().int().optional(),
-	food: z.number().int().optional(),
-	gold: z.number().int().optional(),
+	buildingMaterials: z.number().int().min(0).optional(),
+	colonistCount: z.number().int().min(0).optional(),
+	food: z.number().int().min(0).optional(),
+	gold: z.number().int().min(0).optional(),
 	id: z.uuid(),
-	morale: z.number().int().optional(),
+	morale: z.number().int().min(0).max(100).optional(),
 });
 
 export const UpdateColonyResponseSchema = z.object({ colony: ColonySchema });
@@ -46,7 +46,9 @@ export const RemoveColonyRequestSchema = z.object({ id: z.uuid() });
 
 export const RemoveColonyResponseSchema = z.object({});
 
-export const ListColonyWorkforceRequestSchema = z.object({ colonyId: z.uuid() });
+export const ListColonyWorkforceRequestSchema = z.object({
+	colonyId: z.uuid(),
+});
 
 export const ListColonyWorkforceResponseSchema = z.object({
 	workforce: z.array(ColonyWorkforceSchema),

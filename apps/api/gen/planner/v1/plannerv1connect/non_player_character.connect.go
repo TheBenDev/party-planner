@@ -43,6 +43,9 @@ const (
 	// NonPlayerCharacterServiceListNpcsByCampaignProcedure is the fully-qualified name of the
 	// NonPlayerCharacterService's ListNpcsByCampaign RPC.
 	NonPlayerCharacterServiceListNpcsByCampaignProcedure = "/planner.v1.NonPlayerCharacterService/ListNpcsByCampaign"
+	// NonPlayerCharacterServiceListNpcsByColonyProcedure is the fully-qualified name of the
+	// NonPlayerCharacterService's ListNpcsByColony RPC.
+	NonPlayerCharacterServiceListNpcsByColonyProcedure = "/planner.v1.NonPlayerCharacterService/ListNpcsByColony"
 	// NonPlayerCharacterServiceUpdateNpcProcedure is the fully-qualified name of the
 	// NonPlayerCharacterService's UpdateNpc RPC.
 	NonPlayerCharacterServiceUpdateNpcProcedure = "/planner.v1.NonPlayerCharacterService/UpdateNpc"
@@ -56,6 +59,7 @@ type NonPlayerCharacterServiceClient interface {
 	CreateNpc(context.Context, *connect.Request[v1.CreateNpcRequest]) (*connect.Response[v1.CreateNpcResponse], error)
 	GetNpc(context.Context, *connect.Request[v1.GetNpcRequest]) (*connect.Response[v1.GetNpcResponse], error)
 	ListNpcsByCampaign(context.Context, *connect.Request[v1.ListNpcsByCampaignRequest]) (*connect.Response[v1.ListNpcsByCampaignResponse], error)
+	ListNpcsByColony(context.Context, *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error)
 	UpdateNpc(context.Context, *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error)
 	RemoveNpc(context.Context, *connect.Request[v1.RemoveNpcRequest]) (*connect.Response[v1.RemoveNpcResponse], error)
 }
@@ -89,6 +93,12 @@ func NewNonPlayerCharacterServiceClient(httpClient connect.HTTPClient, baseURL s
 			connect.WithSchema(nonPlayerCharacterServiceMethods.ByName("ListNpcsByCampaign")),
 			connect.WithClientOptions(opts...),
 		),
+		listNpcsByColony: connect.NewClient[v1.ListNpcsByColonyRequest, v1.ListNpcsByColonyResponse](
+			httpClient,
+			baseURL+NonPlayerCharacterServiceListNpcsByColonyProcedure,
+			connect.WithSchema(nonPlayerCharacterServiceMethods.ByName("ListNpcsByColony")),
+			connect.WithClientOptions(opts...),
+		),
 		updateNpc: connect.NewClient[v1.UpdateNpcRequest, v1.UpdateNpcResponse](
 			httpClient,
 			baseURL+NonPlayerCharacterServiceUpdateNpcProcedure,
@@ -109,6 +119,7 @@ type nonPlayerCharacterServiceClient struct {
 	createNpc          *connect.Client[v1.CreateNpcRequest, v1.CreateNpcResponse]
 	getNpc             *connect.Client[v1.GetNpcRequest, v1.GetNpcResponse]
 	listNpcsByCampaign *connect.Client[v1.ListNpcsByCampaignRequest, v1.ListNpcsByCampaignResponse]
+	listNpcsByColony   *connect.Client[v1.ListNpcsByColonyRequest, v1.ListNpcsByColonyResponse]
 	updateNpc          *connect.Client[v1.UpdateNpcRequest, v1.UpdateNpcResponse]
 	removeNpc          *connect.Client[v1.RemoveNpcRequest, v1.RemoveNpcResponse]
 }
@@ -128,6 +139,11 @@ func (c *nonPlayerCharacterServiceClient) ListNpcsByCampaign(ctx context.Context
 	return c.listNpcsByCampaign.CallUnary(ctx, req)
 }
 
+// ListNpcsByColony calls planner.v1.NonPlayerCharacterService.ListNpcsByColony.
+func (c *nonPlayerCharacterServiceClient) ListNpcsByColony(ctx context.Context, req *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error) {
+	return c.listNpcsByColony.CallUnary(ctx, req)
+}
+
 // UpdateNpc calls planner.v1.NonPlayerCharacterService.UpdateNpc.
 func (c *nonPlayerCharacterServiceClient) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error) {
 	return c.updateNpc.CallUnary(ctx, req)
@@ -144,6 +160,7 @@ type NonPlayerCharacterServiceHandler interface {
 	CreateNpc(context.Context, *connect.Request[v1.CreateNpcRequest]) (*connect.Response[v1.CreateNpcResponse], error)
 	GetNpc(context.Context, *connect.Request[v1.GetNpcRequest]) (*connect.Response[v1.GetNpcResponse], error)
 	ListNpcsByCampaign(context.Context, *connect.Request[v1.ListNpcsByCampaignRequest]) (*connect.Response[v1.ListNpcsByCampaignResponse], error)
+	ListNpcsByColony(context.Context, *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error)
 	UpdateNpc(context.Context, *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error)
 	RemoveNpc(context.Context, *connect.Request[v1.RemoveNpcRequest]) (*connect.Response[v1.RemoveNpcResponse], error)
 }
@@ -173,6 +190,12 @@ func NewNonPlayerCharacterServiceHandler(svc NonPlayerCharacterServiceHandler, o
 		connect.WithSchema(nonPlayerCharacterServiceMethods.ByName("ListNpcsByCampaign")),
 		connect.WithHandlerOptions(opts...),
 	)
+	nonPlayerCharacterServiceListNpcsByColonyHandler := connect.NewUnaryHandler(
+		NonPlayerCharacterServiceListNpcsByColonyProcedure,
+		svc.ListNpcsByColony,
+		connect.WithSchema(nonPlayerCharacterServiceMethods.ByName("ListNpcsByColony")),
+		connect.WithHandlerOptions(opts...),
+	)
 	nonPlayerCharacterServiceUpdateNpcHandler := connect.NewUnaryHandler(
 		NonPlayerCharacterServiceUpdateNpcProcedure,
 		svc.UpdateNpc,
@@ -193,6 +216,8 @@ func NewNonPlayerCharacterServiceHandler(svc NonPlayerCharacterServiceHandler, o
 			nonPlayerCharacterServiceGetNpcHandler.ServeHTTP(w, r)
 		case NonPlayerCharacterServiceListNpcsByCampaignProcedure:
 			nonPlayerCharacterServiceListNpcsByCampaignHandler.ServeHTTP(w, r)
+		case NonPlayerCharacterServiceListNpcsByColonyProcedure:
+			nonPlayerCharacterServiceListNpcsByColonyHandler.ServeHTTP(w, r)
 		case NonPlayerCharacterServiceUpdateNpcProcedure:
 			nonPlayerCharacterServiceUpdateNpcHandler.ServeHTTP(w, r)
 		case NonPlayerCharacterServiceRemoveNpcProcedure:
@@ -216,6 +241,10 @@ func (UnimplementedNonPlayerCharacterServiceHandler) GetNpc(context.Context, *co
 
 func (UnimplementedNonPlayerCharacterServiceHandler) ListNpcsByCampaign(context.Context, *connect.Request[v1.ListNpcsByCampaignRequest]) (*connect.Response[v1.ListNpcsByCampaignResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.NonPlayerCharacterService.ListNpcsByCampaign is not implemented"))
+}
+
+func (UnimplementedNonPlayerCharacterServiceHandler) ListNpcsByColony(context.Context, *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.NonPlayerCharacterService.ListNpcsByColony is not implemented"))
 }
 
 func (UnimplementedNonPlayerCharacterServiceHandler) UpdateNpc(context.Context, *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error) {

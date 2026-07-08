@@ -27,6 +27,7 @@ type Store interface {
 	UpdateQuest(ctx context.Context, req *model.UpdateQuestRequest) (*model.Quest, error)
 	CompleteQuest(ctx context.Context, id, campaignID string) (*model.Quest, error)
 	RemoveQuest(ctx context.Context, id, campaignID string) error
+	RunInTx(ctx context.Context, fn func(context.Context, Store) error) error
 }
 
 type ColonyStore interface {
@@ -85,20 +86,27 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateQuestRequest) (*m
 }
 
 func (s *Service) Complete(ctx context.Context, id, campaignID string) (*model.Quest, error) {
-	quest, err := s.DB.CompleteQuest(ctx, id, campaignID)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrNotFound
-		}
-		return nil, fmt.Errorf("complete quest: %w", err)
-	}
-	if quest.Reward != nil && quest.Reward.Colony != nil {
-		if _, err := s.ColonyDB.ApplyRewardByCampaign(ctx, campaignID, quest.Reward.Colony); err != nil {
+	var quest *model.Quest
+	var err error
+	if err := s.DB.RunInTx(ctx, func(ctx context.Context, txDB Store) error {
+		quest, err = txDB.CompleteQuest(ctx, id, campaignID)
+		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return nil, ErrNoColony
+				return ErrNotFound
 			}
-			return nil, fmt.Errorf("apply colony reward: %w", err)
+			return fmt.Errorf("complete quest: %w", err)
 		}
+		if quest.Reward != nil && quest.Reward.Colony != nil {
+			if _, err := s.ColonyDB.ApplyRewardByCampaign(ctx, campaignID, quest.Reward.Colony); err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					return ErrNoColony
+				}
+				return fmt.Errorf("apply colony reward: %w", err)
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
 	return quest, nil
 }

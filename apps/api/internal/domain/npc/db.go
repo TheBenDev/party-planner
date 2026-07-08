@@ -101,6 +101,34 @@ func (db *DB) ListNpcsByCampaign(ctx context.Context, campaignID string) ([]*mod
 	return npcs, nil
 }
 
+func (db *DB) ListNpcsByColony(ctx context.Context, colonyID, campaignID string) ([]*model.Npc, error) {
+	rows, err := db.conn.QueryContext(ctx,
+		`SELECT `+npcColumns+` FROM non_player_character WHERE colony_id = $1 AND campaign_id = $2`,
+		colonyID, campaignID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list npcs by colony: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var npcs []*model.Npc
+	for rows.Next() {
+		npc, err := scanNpc(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan npc: %w", err)
+		}
+		npcs = append(npcs, npc)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("list npcs by colony rows: %w", err)
+	}
+	return npcs, nil
+}
+
 func (db *DB) GetNpcByNameAndCampaign(ctx context.Context, name, campaignID string) (*model.Npc, error) {
 	pattern := "%" + escapeLikePattern(name) + "%"
 	row := db.conn.QueryRowContext(ctx, `

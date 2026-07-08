@@ -31,6 +31,9 @@ func (m *mockServiceStore) GetNpc(_ context.Context, _, _ string) (*model.Npc, e
 func (m *mockServiceStore) ListNpcsByCampaign(_ context.Context, _ string) ([]*model.Npc, error) {
 	return nil, nil
 }
+func (m *mockServiceStore) ListNpcsByColony(_ context.Context, _, _ string) ([]*model.Npc, error) {
+	return nil, nil
+}
 func (m *mockServiceStore) GetNpcByNameAndCampaign(_ context.Context, _, _ string) (*model.Npc, error) {
 	return m.npc, m.getNpcErr
 }
@@ -119,6 +122,15 @@ func TestNpcServiceGetByID_HappyPath(t *testing.T) {
 func TestNpcServiceGetByID_NotFound(t *testing.T) {
 	_, err := newService(&mockServiceStore{getNpcErr: sql.ErrNoRows}).GetByID(context.Background(), "npc-1", "campaign-1")
 	assertError(t, err, npc.ErrNotFound)
+}
+
+// ── ListByColony ──────────────────────────────────────────────────────────────
+
+func TestNpcServiceListByColony_HappyPath(t *testing.T) {
+	_, err := newService(&mockServiceStore{}).ListByColony(context.Background(), "colony-1", "campaign-1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 }
 
 // ── Update ────────────────────────────────────────────────────────────────────

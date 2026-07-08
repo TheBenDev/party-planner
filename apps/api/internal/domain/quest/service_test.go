@@ -41,6 +41,9 @@ func (m *mockServiceStore) CompleteQuest(_ context.Context, _, _ string) (*model
 func (m *mockServiceStore) RemoveQuest(_ context.Context, _, _ string) error {
 	return m.removeQuestErr
 }
+func (m *mockServiceStore) RunInTx(ctx context.Context, fn func(context.Context, quest.Store) error) error {
+	return fn(ctx, m)
+}
 
 type mockColonyStore struct {
 	colony *model.Colony

@@ -125,6 +125,29 @@ func (s *Server) ListNpcsByCampaign(ctx context.Context, req *connect.Request[v1
 	}), nil
 }
 
+func (s *Server) ListNpcsByColony(ctx context.Context, req *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error) {
+	if req.Msg.ColonyId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("colony id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	npcs, err := s.Npc.ListByColony(ctx, req.Msg.ColonyId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapError(ctx, s.Log, err, "failed to list npcs by colony")
+	}
+
+	protoNpcs := make([]*v1.Npc, len(npcs))
+	for i, npc := range npcs {
+		protoNpcs[i] = npcToProto(npc)
+	}
+
+	return connect.NewResponse(&v1.ListNpcsByColonyResponse{
+		Npcs: protoNpcs,
+	}), nil
+}
+
 func (s *Server) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNpcRequest]) (*connect.Response[v1.UpdateNpcResponse], error) {
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))

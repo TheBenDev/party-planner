@@ -26,7 +26,12 @@ export default function Sidebar() {
 
 	const campaignOptions: LinkItems = [
 		{ icon: User, label: "npcs", url: "/campaign/npcs" },
-		{ icon: Location, label: "locations", matchPrefix: true, url: "/campaign/regions" },
+		{
+			icon: Location,
+			label: "locations",
+			matchPrefix: true,
+			url: "/campaign/regions",
+		},
 		{ icon: Compass, label: "quests", url: "/campaign/quests" },
 		{ icon: Activity, label: "sessions", url: "/campaign/sessions" },
 	];
@@ -98,7 +103,7 @@ function LinkComponent({
 				isActive && "bg-accent text-foreground cursor-default font-medium",
 			)}
 			key={item.label}
-			onClick={(e) => {
+			onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
 				if (item.url === pathName) e.preventDefault();
 			}}
 			to={item.url}

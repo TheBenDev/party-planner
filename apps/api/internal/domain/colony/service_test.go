@@ -38,7 +38,7 @@ func (m *mockServiceStore) RemoveColony(_ context.Context, _, _ string) error {
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 func newService(store colony.Store) *colony.Service {
-	return &colony.Service{DB: store, Log: slog.Default()}
+	return &colony.Service{DB: store, WorkforceDB: &mockWorkforceStore{}, Log: slog.Default()}
 }
 
 func pgUniqueViolation() error {

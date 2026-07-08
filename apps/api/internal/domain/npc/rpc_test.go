@@ -25,6 +25,9 @@ func (m *mockStore) GetNpc(_ context.Context, _, _ string) (*model.Npc, error) {
 func (m *mockStore) ListNpcsByCampaign(_ context.Context, _ string) ([]*model.Npc, error) {
 	return m.npcs, m.err
 }
+func (m *mockStore) ListNpcsByColony(_ context.Context, _, _ string) ([]*model.Npc, error) {
+	return m.npcs, m.err
+}
 func (m *mockStore) GetNpcByNameAndCampaign(_ context.Context, _, _ string) (*model.Npc, error) {
 	return m.one(), m.err
 }
@@ -162,6 +165,23 @@ func TestRemoveNpc_Validation(t *testing.T) {
 	}
 }
 
+func TestListNpcsByColony_Validation(t *testing.T) {
+	server := validationServer()
+	tests := []struct {
+		name string
+		req  *v1.ListNpcsByColonyRequest
+	}{
+		{"missing colony id", &v1.ListNpcsByColonyRequest{CampaignId: "campaign-1"}},
+		{"missing campaign id", &v1.ListNpcsByColonyRequest{ColonyId: "colony-1"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := server.ListNpcsByColony(context.Background(), connect.NewRequest(tt.req))
+			assertCode(t, err, connect.CodeInvalidArgument)
+		})
+	}
+}
+
 // ── Happy path tests ──────────────────────────────────────────────────────────
 
 func TestCreateNpc_HappyPath(t *testing.T) {
@@ -182,6 +202,25 @@ func TestCreateNpc_HappyPath(t *testing.T) {
 	}
 	if resp.Msg.Npc.Name != want.Name {
 		t.Errorf("got name %q, want %q", resp.Msg.Npc.Name, want.Name)
+	}
+}
+
+func TestListNpcsByColony_HappyPath(t *testing.T) {
+	want := testNpc()
+	server := newServer(&mockStore{npcs: []*model.Npc{want}})
+
+	resp, err := server.ListNpcsByColony(context.Background(), connect.NewRequest(&v1.ListNpcsByColonyRequest{
+		ColonyId:   "colony-1",
+		CampaignId: want.CampaignID,
+	}))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp.Msg.Npcs) != 1 {
+		t.Fatalf("got %d npcs, want 1", len(resp.Msg.Npcs))
+	}
+	if resp.Msg.Npcs[0].Id != want.ID {
+		t.Errorf("got id %q, want %q", resp.Msg.Npcs[0].Id, want.ID)
 	}
 }
 

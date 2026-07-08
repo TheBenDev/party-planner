@@ -25,9 +25,14 @@ type Store interface {
 	RemoveColony(ctx context.Context, id, campaignID string) error
 }
 
+type WorkforceStore interface {
+	SeedWorkforce(ctx context.Context, colonyID string) error
+}
+
 type Service struct {
-	DB  Store
-	Log *slog.Logger
+	DB          Store
+	WorkforceDB WorkforceStore
+	Log         *slog.Logger
 }
 
 func (s *Service) Create(ctx context.Context, req *model.CreateColonyRequest) (*model.Colony, error) {
@@ -37,6 +42,9 @@ func (s *Service) Create(ctx context.Context, req *model.CreateColonyRequest) (*
 			return nil, mapped
 		}
 		return nil, fmt.Errorf("create colony: %w", err)
+	}
+	if err := s.WorkforceDB.SeedWorkforce(ctx, colony.ID); err != nil {
+		s.Log.ErrorContext(ctx, "failed to seed colony workforce", "colonyId", colony.ID, "error", err)
 	}
 	return colony, nil
 }
@@ -68,6 +76,9 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateColonyRequest) (*
 
 func (s *Service) Remove(ctx context.Context, id, campaignID string) error {
 	if err := s.DB.RemoveColony(ctx, id, campaignID); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNotFound
+		}
 		return fmt.Errorf("remove colony: %w", err)
 	}
 	return nil

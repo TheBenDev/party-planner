@@ -54,6 +54,9 @@ func (s *Server) UpsertColonyWorkforce(ctx context.Context, req *connect.Request
 	if req.Msg.WorkerType == v1.WorkerType_WORKER_TYPE_UNSPECIFIED {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("worker type required"))
 	}
+	if req.Msg.Count < 0 {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("count cannot be negative"))
+	}
 
 	workerType, err := protoToWorkerType(req.Msg.WorkerType)
 	if err != nil {

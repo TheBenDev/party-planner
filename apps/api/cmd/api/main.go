@@ -184,13 +184,14 @@ func buildServices(database *db.DB, cfg *config.Config, botSession *discordgo.Se
 		Log:           logger.Logger,
 	}
 	sessionSeriesSvc := &seriesDomain.Service{DB: seriesDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: discordSvc, UserIntegration: userIntegrationSvc}
+	colonyWorkforceSvc := &colonyWorkforceDomain.Service{DB: colonyWorkforceDomain.NewDB(database.Raw()), Log: logger.Logger}
 	return &appServices{
 		Session:             sessionSvc,
 		SessionSeries:       sessionSeriesSvc,
 		Campaign:            &campaignDomain.Service{DB: campaignDomain.NewDB(database.Raw()), Log: logger.Logger},
 		CampaignIntegration: &campaignIntegrationDomain.Service{DB: campaignIntegrationDomain.NewDB(database.Raw()), Log: logger.Logger, Discord: discordSvc},
-		Colony:              &colonyDomain.Service{DB: colonyDomain.NewDB(database.Raw()), Log: logger.Logger},
-		ColonyWorkforce:     &colonyWorkforceDomain.Service{DB: colonyWorkforceDomain.NewDB(database.Raw()), Log: logger.Logger},
+		Colony:              &colonyDomain.Service{DB: colonyDomain.NewDB(database.Raw()), WorkforceDB: colonyWorkforceSvc, Log: logger.Logger},
+		ColonyWorkforce:     colonyWorkforceSvc,
 		Member:              &memberDomain.Service{DB: memberDomain.NewDB(database.Raw()), Log: logger.Logger},
 		Npc:                 npcSvc,
 		Quest:               &questDomain.Service{DB: questDomain.NewDB(database.Raw()), ColonyDB: colonyDomain.NewDB(database.Raw()), Log: logger.Logger},

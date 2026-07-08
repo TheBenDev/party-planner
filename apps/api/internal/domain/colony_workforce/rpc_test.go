@@ -23,6 +23,9 @@ func (m *mockStore) ListWorkforceByColony(_ context.Context, _ string) ([]*model
 func (m *mockStore) UpsertColonyWorkforce(_ context.Context, _ *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
 	return m.one(), m.err
 }
+func (m *mockStore) SeedWorkforce(_ context.Context, _ string) error {
+	return m.err
+}
 
 func (m *mockStore) one() *model.ColonyWorkforce {
 	if len(m.workforce) == 0 {

@@ -54,6 +54,7 @@ const {
 	createNpcHandler,
 	getNonPlayerCharacterHandler,
 	listNonPlayerCharactersByCampaignHandler,
+	listNpcsByColonyHandler,
 	removeNpcHandler,
 	updateNpcHandler,
 } = await import("./non-player-character");
@@ -66,6 +67,7 @@ function makeApi() {
 			createNpc: mock(async () => ({ npc: mockNpcProto })),
 			getNpc: mock(async () => ({ npc: mockNpcProto })),
 			listNpcsByCampaign: mock(async () => ({ npcs: [mockNpcProto] })),
+			listNpcsByColony: mock(async () => ({ npcs: [mockNpcProto] })),
 			removeNpc: mock(async () => ({})),
 			updateNpc: mock(async () => ({ npc: mockNpcProto })),
 		},
@@ -183,6 +185,39 @@ describe("listNonPlayerCharactersByCampaignHandler", () => {
 			input,
 		} as never);
 		expect(result).toEqual({ npcs: [mockNpc] });
+	});
+});
+
+// ── listNpcsByColonyHandler ───────────────────────────────────────────────────
+
+describe("listNpcsByColonyHandler", () => {
+	const input = { campaignId: "campaign-1", colonyId: "colony-1" };
+
+	beforeEach(() => {
+		mockProtoToNpc.mockClear();
+		mockProtoToNpc.mockImplementation(() => mockNpc);
+	});
+
+	test("throws FORBIDDEN when campaignId does not match context", async () => {
+		const context = makeContext({ campaignId: "other-campaign" });
+		expect(
+			listNpcsByColonyHandler({ context, input } as never),
+		).rejects.toMatchObject({ code: "FORBIDDEN" });
+	});
+
+	test("returns mapped npcs on success", async () => {
+		const context = makeContext();
+		const result = await listNpcsByColonyHandler({ context, input } as never);
+		expect(result).toEqual({ npcs: [mockNpc] });
+	});
+
+	test("calls listNpcsByColony with colonyId and campaignId", async () => {
+		const context = makeContext();
+		await listNpcsByColonyHandler({ context, input } as never);
+		expect(context.api.npc.listNpcsByColony).toHaveBeenCalledWith({
+			campaignId: "campaign-1",
+			colonyId: "colony-1",
+		});
 	});
 });
 
