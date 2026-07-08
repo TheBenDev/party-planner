@@ -74,6 +74,8 @@ func (s *Server) CreateNpc(ctx context.Context, req *connect.Request[v1.CreateNp
 		CurrentLocationID:     sqlNullString(req.Msg.CurrentLocationId),
 		OriginLocationID:      sqlNullString(req.Msg.OriginLocationId),
 		SessionEncounteredID:  sqlNullString(req.Msg.SessionEncounteredId),
+		ColonyID:              sqlNullString(req.Msg.ColonyId),
+		WorkforceID:           sqlNullString(req.Msg.WorkforceId),
 		Aliases:               req.Msg.Aliases,
 	})
 	if err != nil {
@@ -119,6 +121,29 @@ func (s *Server) ListNpcsByCampaign(ctx context.Context, req *connect.Request[v1
 	}
 
 	return connect.NewResponse(&v1.ListNpcsByCampaignResponse{
+		Npcs: protoNpcs,
+	}), nil
+}
+
+func (s *Server) ListNpcsByColony(ctx context.Context, req *connect.Request[v1.ListNpcsByColonyRequest]) (*connect.Response[v1.ListNpcsByColonyResponse], error) {
+	if req.Msg.ColonyId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("colony id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	npcs, err := s.Npc.ListByColony(ctx, req.Msg.ColonyId, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapError(ctx, s.Log, err, "failed to list npcs by colony")
+	}
+
+	protoNpcs := make([]*v1.Npc, len(npcs))
+	for i, npc := range npcs {
+		protoNpcs[i] = npcToProto(npc)
+	}
+
+	return connect.NewResponse(&v1.ListNpcsByColonyResponse{
 		Npcs: protoNpcs,
 	}), nil
 }
@@ -192,6 +217,8 @@ func (s *Server) UpdateNpc(ctx context.Context, req *connect.Request[v1.UpdateNp
 		CurrentLocationID:     sqlNullString(req.Msg.CurrentLocationId),
 		OriginLocationID:      sqlNullString(req.Msg.OriginLocationId),
 		SessionEncounteredID:  sqlNullString(req.Msg.SessionEncounteredId),
+		ColonyID:              sqlNullString(req.Msg.ColonyId),
+		WorkforceID:           sqlNullString(req.Msg.WorkforceId),
 		Aliases:               req.Msg.Aliases,
 		RemovedFields:         req.Msg.RemovedFields,
 	})
@@ -352,6 +379,8 @@ func npcToProto(npc *model.Npc) *v1.Npc {
 	proto.Race = nullStringPtr(npc.Race)
 	proto.Role = nullStringPtr(npc.Role)
 	proto.SessionEncounteredId = nullStringPtr(npc.SessionEncounteredID)
+	proto.ColonyId = nullStringPtr(npc.ColonyID)
+	proto.WorkforceId = nullStringPtr(npc.WorkforceID)
 	if npc.LastFoundrySyncAt.Valid {
 		proto.LastFoundrySyncAt = timestamppb.New(npc.LastFoundrySyncAt.Time)
 	}

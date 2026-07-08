@@ -3,7 +3,9 @@ package campaign
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/BBruington/party-planner/api/internal/pg"
@@ -27,9 +29,13 @@ func (db *DB) RunInTx(ctx context.Context, fn func(context.Context, Store) error
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}
+	defer func() {
+		if err := tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
+			slog.Error("failed to rollback transaction", "error", err)
+		}
+	}()
 	txDB := &DB{conn: tx, raw: db.raw}
 	if err := fn(ctx, txDB); err != nil {
-		_ = tx.Rollback()
 		return err
 	}
 	return tx.Commit()

@@ -44,6 +44,9 @@ const (
 	// QuestServiceUpdateQuestProcedure is the fully-qualified name of the QuestService's UpdateQuest
 	// RPC.
 	QuestServiceUpdateQuestProcedure = "/planner.v1.QuestService/UpdateQuest"
+	// QuestServiceCompleteQuestProcedure is the fully-qualified name of the QuestService's
+	// CompleteQuest RPC.
+	QuestServiceCompleteQuestProcedure = "/planner.v1.QuestService/CompleteQuest"
 	// QuestServiceRemoveQuestProcedure is the fully-qualified name of the QuestService's RemoveQuest
 	// RPC.
 	QuestServiceRemoveQuestProcedure = "/planner.v1.QuestService/RemoveQuest"
@@ -55,6 +58,7 @@ type QuestServiceClient interface {
 	GetQuest(context.Context, *connect.Request[v1.GetQuestRequest]) (*connect.Response[v1.GetQuestResponse], error)
 	ListQuestsByCampaign(context.Context, *connect.Request[v1.ListQuestsByCampaignRequest]) (*connect.Response[v1.ListQuestsByCampaignResponse], error)
 	UpdateQuest(context.Context, *connect.Request[v1.UpdateQuestRequest]) (*connect.Response[v1.UpdateQuestResponse], error)
+	CompleteQuest(context.Context, *connect.Request[v1.CompleteQuestRequest]) (*connect.Response[v1.CompleteQuestResponse], error)
 	RemoveQuest(context.Context, *connect.Request[v1.RemoveQuestRequest]) (*connect.Response[v1.RemoveQuestResponse], error)
 }
 
@@ -93,6 +97,12 @@ func NewQuestServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(questServiceMethods.ByName("UpdateQuest")),
 			connect.WithClientOptions(opts...),
 		),
+		completeQuest: connect.NewClient[v1.CompleteQuestRequest, v1.CompleteQuestResponse](
+			httpClient,
+			baseURL+QuestServiceCompleteQuestProcedure,
+			connect.WithSchema(questServiceMethods.ByName("CompleteQuest")),
+			connect.WithClientOptions(opts...),
+		),
 		removeQuest: connect.NewClient[v1.RemoveQuestRequest, v1.RemoveQuestResponse](
 			httpClient,
 			baseURL+QuestServiceRemoveQuestProcedure,
@@ -108,6 +118,7 @@ type questServiceClient struct {
 	getQuest             *connect.Client[v1.GetQuestRequest, v1.GetQuestResponse]
 	listQuestsByCampaign *connect.Client[v1.ListQuestsByCampaignRequest, v1.ListQuestsByCampaignResponse]
 	updateQuest          *connect.Client[v1.UpdateQuestRequest, v1.UpdateQuestResponse]
+	completeQuest        *connect.Client[v1.CompleteQuestRequest, v1.CompleteQuestResponse]
 	removeQuest          *connect.Client[v1.RemoveQuestRequest, v1.RemoveQuestResponse]
 }
 
@@ -131,6 +142,11 @@ func (c *questServiceClient) UpdateQuest(ctx context.Context, req *connect.Reque
 	return c.updateQuest.CallUnary(ctx, req)
 }
 
+// CompleteQuest calls planner.v1.QuestService.CompleteQuest.
+func (c *questServiceClient) CompleteQuest(ctx context.Context, req *connect.Request[v1.CompleteQuestRequest]) (*connect.Response[v1.CompleteQuestResponse], error) {
+	return c.completeQuest.CallUnary(ctx, req)
+}
+
 // RemoveQuest calls planner.v1.QuestService.RemoveQuest.
 func (c *questServiceClient) RemoveQuest(ctx context.Context, req *connect.Request[v1.RemoveQuestRequest]) (*connect.Response[v1.RemoveQuestResponse], error) {
 	return c.removeQuest.CallUnary(ctx, req)
@@ -142,6 +158,7 @@ type QuestServiceHandler interface {
 	GetQuest(context.Context, *connect.Request[v1.GetQuestRequest]) (*connect.Response[v1.GetQuestResponse], error)
 	ListQuestsByCampaign(context.Context, *connect.Request[v1.ListQuestsByCampaignRequest]) (*connect.Response[v1.ListQuestsByCampaignResponse], error)
 	UpdateQuest(context.Context, *connect.Request[v1.UpdateQuestRequest]) (*connect.Response[v1.UpdateQuestResponse], error)
+	CompleteQuest(context.Context, *connect.Request[v1.CompleteQuestRequest]) (*connect.Response[v1.CompleteQuestResponse], error)
 	RemoveQuest(context.Context, *connect.Request[v1.RemoveQuestRequest]) (*connect.Response[v1.RemoveQuestResponse], error)
 }
 
@@ -176,6 +193,12 @@ func NewQuestServiceHandler(svc QuestServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(questServiceMethods.ByName("UpdateQuest")),
 		connect.WithHandlerOptions(opts...),
 	)
+	questServiceCompleteQuestHandler := connect.NewUnaryHandler(
+		QuestServiceCompleteQuestProcedure,
+		svc.CompleteQuest,
+		connect.WithSchema(questServiceMethods.ByName("CompleteQuest")),
+		connect.WithHandlerOptions(opts...),
+	)
 	questServiceRemoveQuestHandler := connect.NewUnaryHandler(
 		QuestServiceRemoveQuestProcedure,
 		svc.RemoveQuest,
@@ -192,6 +215,8 @@ func NewQuestServiceHandler(svc QuestServiceHandler, opts ...connect.HandlerOpti
 			questServiceListQuestsByCampaignHandler.ServeHTTP(w, r)
 		case QuestServiceUpdateQuestProcedure:
 			questServiceUpdateQuestHandler.ServeHTTP(w, r)
+		case QuestServiceCompleteQuestProcedure:
+			questServiceCompleteQuestHandler.ServeHTTP(w, r)
 		case QuestServiceRemoveQuestProcedure:
 			questServiceRemoveQuestHandler.ServeHTTP(w, r)
 		default:
@@ -217,6 +242,10 @@ func (UnimplementedQuestServiceHandler) ListQuestsByCampaign(context.Context, *c
 
 func (UnimplementedQuestServiceHandler) UpdateQuest(context.Context, *connect.Request[v1.UpdateQuestRequest]) (*connect.Response[v1.UpdateQuestResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.QuestService.UpdateQuest is not implemented"))
+}
+
+func (UnimplementedQuestServiceHandler) CompleteQuest(context.Context, *connect.Request[v1.CompleteQuestRequest]) (*connect.Response[v1.CompleteQuestResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.QuestService.CompleteQuest is not implemented"))
 }
 
 func (UnimplementedQuestServiceHandler) RemoveQuest(context.Context, *connect.Request[v1.RemoveQuestRequest]) (*connect.Response[v1.RemoveQuestResponse], error) {

@@ -162,6 +162,8 @@ export function protoToNpc(proto: Npc) {
 		relationToPartyStatus: protoToRelationToParty(proto.relationToPartyStatus),
 		role: proto.role ?? null,
 		sessionEncounteredId: proto.sessionEncounteredId ?? null,
+		colonyId: proto.colonyId ?? null,
+		workforceId: proto.workforceId ?? null,
 		status: protoToCharacterStatus(proto.status),
 		updatedAt: timestampDate(proto.updatedAt),
 	});

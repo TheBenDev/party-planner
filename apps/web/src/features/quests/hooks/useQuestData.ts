@@ -3,6 +3,7 @@ import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 import type {
+	CompleteQuestRequest,
 	CreateQuestRequest,
 	RemoveQuestRequest,
 	UpdateQuestRequest,
@@ -14,7 +15,11 @@ export function useQuestData() {
 	const campaignId = campaign?.campaign.id ?? "";
 
 	const invalidateList = () =>
-		queryClient.invalidateQueries({ queryKey: queryKeys.quests.list(campaignId) });
+		queryClient.invalidateQueries({
+			queryKey: queryKeys.quests.list(campaignId),
+		});
+	const invalidateDetail = (id: string) =>
+		queryClient.invalidateQueries({ queryKey: queryKeys.quests.detail(id) });
 
 	const createQuest = useMutation({
 		mutationFn: (input: CreateQuestRequest) => client.quest.createQuest(input),
@@ -24,10 +29,26 @@ export function useQuestData() {
 	const updateQuest = useMutation({
 		mutationFn: (input: UpdateQuestRequest) => client.quest.updateQuest(input),
 		onSuccess: (_, variables) =>
-			Promise.all([
-				queryClient.invalidateQueries({ queryKey: queryKeys.quests.detail(variables.id) }),
+			Promise.all([invalidateDetail(variables.id), invalidateList()]),
+	});
+
+	const completeQuest = useMutation({
+		mutationFn: (input: CompleteQuestRequest) =>
+			client.quest.completeQuest(input),
+		onSuccess: (data, variables) => {
+			const invalidations: Promise<unknown>[] = [
+				invalidateDetail(variables.id),
 				invalidateList(),
-			]),
+			];
+			if (data.quest.reward?.colony) {
+				invalidations.push(
+					queryClient.invalidateQueries({
+						queryKey: queryKeys.colony.detail(campaignId),
+					}),
+				);
+			}
+			return Promise.all(invalidations);
+		},
 	});
 
 	const deleteQuest = useMutation({
@@ -35,5 +56,5 @@ export function useQuestData() {
 		onSuccess: invalidateList,
 	});
 
-	return { createQuest, deleteQuest, updateQuest };
+	return { completeQuest, createQuest, deleteQuest, updateQuest };
 }

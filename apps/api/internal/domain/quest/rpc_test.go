@@ -28,7 +28,13 @@ func (m *mockStore) ListQuestsByCampaign(_ context.Context, _ string) ([]*model.
 func (m *mockStore) UpdateQuest(_ context.Context, _ *model.UpdateQuestRequest) (*model.Quest, error) {
 	return m.one(), m.err
 }
+func (m *mockStore) CompleteQuest(_ context.Context, _, _ string) (*model.Quest, error) {
+	return m.one(), m.err
+}
 func (m *mockStore) RemoveQuest(_ context.Context, _, _ string) error { return m.err }
+func (m *mockStore) RunInTx(ctx context.Context, fn func(context.Context, quest.Store) error) error {
+	return fn(ctx, m)
+}
 
 func (m *mockStore) one() *model.Quest {
 	if len(m.quests) == 0 {
@@ -132,6 +138,23 @@ func TestUpdateQuest_Validation(t *testing.T) {
 	}
 }
 
+func TestCompleteQuest_Validation(t *testing.T) {
+	server := validationServer()
+	tests := []struct {
+		name string
+		req  *v1.CompleteQuestRequest
+	}{
+		{"missing id", &v1.CompleteQuestRequest{CampaignId: "campaign-1"}},
+		{"missing campaign id", &v1.CompleteQuestRequest{Id: "quest-1"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := server.CompleteQuest(context.Background(), connect.NewRequest(tt.req))
+			assertCode(t, err, connect.CodeInvalidArgument)
+		})
+	}
+}
+
 func TestRemoveQuest_Validation(t *testing.T) {
 	server := validationServer()
 	tests := []struct {
@@ -171,6 +194,43 @@ func TestCreateQuest_HappyPath(t *testing.T) {
 	}
 }
 
+func TestCreateQuest_WithReward(t *testing.T) {
+	gold := int32(100)
+	want := testQuest()
+	want.Reward = &model.QuestReward{
+		Colony: &model.QuestRewardColony{Gold: &gold},
+		Loot: []model.QuestRewardLootItem{
+			{Name: "Healing Potion", Quantity: ptr(int32(2))},
+		},
+	}
+	server := newServer(&mockStore{quests: []*model.Quest{want}})
+
+	resp, err := server.CreateQuest(context.Background(), connect.NewRequest(&v1.CreateQuestRequest{
+		CampaignId: want.CampaignID,
+		Title:      want.Title,
+		Status:     v1.QuestStatus_QUEST_STATUS_ACTIVE,
+		Reward: &v1.QuestReward{
+			Colony: &v1.QuestRewardColony{Gold: &gold},
+			Loot:   []*v1.QuestRewardLootItem{{Name: "Healing Potion", Quantity: ptr(int32(2))}},
+		},
+	}))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.Msg.Quest.Reward == nil {
+		t.Fatal("expected reward, got nil")
+	}
+	if resp.Msg.Quest.Reward.Colony == nil || resp.Msg.Quest.Reward.Colony.Gold == nil {
+		t.Fatal("expected colony reward with gold")
+	}
+	if *resp.Msg.Quest.Reward.Colony.Gold != gold {
+		t.Errorf("got gold %d, want %d", *resp.Msg.Quest.Reward.Colony.Gold, gold)
+	}
+	if len(resp.Msg.Quest.Reward.Loot) != 1 || resp.Msg.Quest.Reward.Loot[0].Name != "Healing Potion" {
+		t.Errorf("unexpected loot: %v", resp.Msg.Quest.Reward.Loot)
+	}
+}
+
 func TestGetQuest_HappyPath(t *testing.T) {
 	want := testQuest()
 	server := newServer(&mockStore{quests: []*model.Quest{want}})
@@ -186,3 +246,24 @@ func TestGetQuest_HappyPath(t *testing.T) {
 		t.Errorf("got id %q, want %q", resp.Msg.Quest.Id, want.ID)
 	}
 }
+
+func TestCompleteQuest_HappyPath(t *testing.T) {
+	want := testQuest()
+	want.Status = model.QuestStatusCompleted
+	server := newServer(&mockStore{quests: []*model.Quest{want}})
+
+	resp, err := server.CompleteQuest(context.Background(), connect.NewRequest(&v1.CompleteQuestRequest{
+		Id:         want.ID,
+		CampaignId: want.CampaignID,
+	}))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if resp.Msg.Quest.Status != v1.QuestStatus_QUEST_STATUS_COMPLETED {
+		t.Errorf("got status %v, want COMPLETED", resp.Msg.Quest.Status)
+	}
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+func ptr[T any](v T) *T { return &v }

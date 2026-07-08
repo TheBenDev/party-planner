@@ -9,6 +9,11 @@
       "require": "./dist/character.js",
       "types": "./dist/character.d.ts"
     },
+    "./colony": {
+      "import": "./dist/colony.js",
+      "require": "./dist/colony.js",
+      "types": "./dist/colony.d.ts"
+    },
     "./common": {
       "import": "./dist/common.js",
       "require": "./dist/common.js",

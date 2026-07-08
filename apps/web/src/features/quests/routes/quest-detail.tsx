@@ -1,9 +1,13 @@
+import { QuestStatusEnum } from "@planner/enums/quest";
 import { UserRole } from "@planner/enums/user";
 import { useNavigate, useParams } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { QuestRewardCard } from "@/features/quests/components/QuestRewardCard";
+import { useQuest } from "@/features/quests/hooks/useQuest";
+import { useQuestData } from "@/features/quests/hooks/useQuestData";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { useAuth } from "@/shared/hooks/auth";
-import { useQuest } from "@/features/quests/hooks/useQuest";
 
 const STATUS_STYLES: Record<string, { label: string; className: string }> = {
 	ACTIVE: {
@@ -28,6 +32,7 @@ export function QuestDetailPage() {
 	const { questId } = useParams({ from: "/_authenticated/campaign/quests/$questId/" });
 	const navigate = useNavigate();
 	const { role } = useAuth();
+	const { completeQuest } = useQuestData();
 
 	const { data, isLoading } = useQuest(questId);
 
@@ -39,29 +44,49 @@ export function QuestDetailPage() {
 		return <div className="p-8 text-muted-foreground">Quest not found.</div>;
 
 	const status = STATUS_STYLES[quest.status] ?? STATUS_STYLES.UNSPECIFIED;
+	const isDm = role === UserRole.DUNGEON_MASTER;
+	const isActive = quest.status === QuestStatusEnum.ACTIVE;
 
 	return (
 		<div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-			{/* Header */}
 			<div className="flex items-start justify-between gap-4">
 				<h1 className="text-3xl font-semibold tracking-tight">{quest.title}</h1>
-				{role === UserRole.DUNGEON_MASTER && (
-					<Button
-						onClick={() =>
-							navigate({
-								params: { questId },
-								to: "/campaign/quests/$questId/edit",
-							})
-						}
-						size="sm"
-						variant="outline"
-					>
-						Edit
-					</Button>
+				{isDm && (
+					<div className="flex items-center gap-2 shrink-0">
+						{isActive && (
+							<Button
+								disabled={completeQuest.isPending}
+								onClick={() =>
+									completeQuest.mutate(
+										{ id: questId },
+										{
+											onError: () => toast.error("Failed to complete quest"),
+											onSuccess: () => toast.success("Quest completed"),
+										},
+									)
+								}
+								size="sm"
+								variant="default"
+							>
+								Complete
+							</Button>
+						)}
+						<Button
+							onClick={() =>
+								navigate({
+									params: { questId },
+									to: "/campaign/quests/$questId/edit",
+								})
+							}
+							size="sm"
+							variant="outline"
+						>
+							Edit
+						</Button>
+					</div>
 				)}
 			</div>
 
-			{/* Status badge */}
 			<div>
 				<span
 					className={`text-xs font-medium px-2.5 py-1 rounded-full border ${status.className}`}
@@ -78,6 +103,7 @@ export function QuestDetailPage() {
 					placeholder="No description recorded."
 					title="Description"
 				/>
+				<QuestRewardCard reward={quest.reward} />
 			</div>
 
 			{quest.completedAt && (

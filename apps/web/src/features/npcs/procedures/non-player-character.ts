@@ -6,6 +6,8 @@ import {
 	GetNonPlayerCharacterResponseSchema,
 	ListNonPlayerCharactersByCampaignRequestSchema,
 	ListNonPlayerCharactersByCampaignResponseSchema,
+	ListNpcsByColonyRequestSchema,
+	ListNpcsByColonyResponseSchema,
 	RemoveNpcRequestSchema,
 	RemoveNpcResponseSchema,
 	UpdateNpcRequestSchema,
@@ -113,6 +115,38 @@ export const listNonPlayerCharactersByCampaignHandler: Parameters<
 	}
 };
 
+const listNpcsByColonyDef = campaignProcedure
+	.route({
+		method: "POST",
+		path: "/npc/list-by-colony",
+		summary: "List non-player characters by colony",
+	})
+	.input(ListNpcsByColonyRequestSchema)
+	.output(ListNpcsByColonyResponseSchema);
+
+export const listNpcsByColonyHandler: Parameters<
+	typeof listNpcsByColonyDef.handler
+>[0] = async ({ input, context }) => {
+	if (input.campaignId !== context.campaignId) {
+		throw new ORPCError("FORBIDDEN", { message: "campaign mismatch" });
+	}
+	const api = context.api;
+	try {
+		const res = await api.npc.listNpcsByColony({
+			campaignId: input.campaignId,
+			colonyId: input.colonyId,
+		});
+		return { npcs: res.npcs.map(protoToNpc) };
+	} catch (err) {
+		handleError(
+			err,
+			"failed to list npcs by colony",
+			{ colonyId: input.colonyId },
+			context.logger,
+		);
+	}
+};
+
 const removeNpcDef = dmProcedure
 	.route({
 		method: "POST",
@@ -158,6 +192,7 @@ export const updateNpcHandler: Parameters<typeof updateNpcDef.handler>[0] =
 				backstory: input.backstory ?? undefined,
 				campaignId: context.campaignId,
 				characterClass: input.characterClass ?? undefined,
+				colonyId: input.colonyId ?? undefined,
 				currentLocationId: input.currentLocationId ?? undefined,
 				dmNotes: input.dmNotes ?? undefined,
 				foundryActorId: input.foundryActorId ?? undefined,
@@ -181,6 +216,7 @@ export const updateNpcHandler: Parameters<typeof updateNpcDef.handler>[0] =
 				role: input.role ?? undefined,
 				sessionEncounteredId: input.sessionEncounteredId ?? undefined,
 				status: input.status ? characterStatusToProto(input.status) : undefined,
+				workforceId: input.workforceId ?? undefined,
 			});
 
 			if (!res.npc) {
@@ -211,6 +247,7 @@ export const nonPlayerCharacterRouter = {
 		listNonPlayerCharactersByCampaignDef.handler(
 			listNonPlayerCharactersByCampaignHandler,
 		),
+	listNpcsByColony: listNpcsByColonyDef.handler(listNpcsByColonyHandler),
 	removeNpc: removeNpcDef.handler(removeNpcHandler),
 	updateNpc: updateNpcDef.handler(updateNpcHandler),
 };

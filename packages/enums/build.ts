@@ -3,6 +3,7 @@ import { build, spawn } from "bun";
 await build({
 	entrypoints: [
 		"src/common.ts",
+		"src/colony.ts",
 		"src/character.ts",
 		"src/i18n.ts",
 		"src/integration.ts",

@@ -27,7 +27,7 @@ func NewDB(conn *sql.DB) *DB {
 const npcColumns = `id, campaign_id, name, status, relation_to_party_status, is_known_to_party, ` +
 	`age, appearance, avatar, backstory, character_class, dm_notes, foundry_actor_id, health_condition, ` +
 	`known_name, personality, player_notes, race, role, ` +
-	`current_location_id, origin_location_id, session_encountered_id, ` +
+	`current_location_id, origin_location_id, session_encountered_id, colony_id, workforce_id, ` +
 	`aliases, labels, level, last_foundry_sync_at, created_at, updated_at`
 
 func scanNpc(row interface{ Scan(...any) error }) (*model.Npc, error) {
@@ -36,7 +36,7 @@ func scanNpc(row interface{ Scan(...any) error }) (*model.Npc, error) {
 		&n.ID, &n.CampaignID, &n.Name, &n.Status, &n.RelationToPartyStatus, &n.IsKnownToParty,
 		&n.Age, &n.Appearance, &n.Avatar, &n.Backstory, &n.CharacterClass, &n.DmNotes, &n.FoundryActorID,
 		&n.HealthCondition, &n.KnownName, &n.Personality, &n.PlayerNotes, &n.Race, &n.Role,
-		&n.CurrentLocationID, &n.OriginLocationID, &n.SessionEncounteredID,
+		&n.CurrentLocationID, &n.OriginLocationID, &n.SessionEncounteredID, &n.ColonyID, &n.WorkforceID,
 		pq.Array(&n.Aliases), pq.Array(&n.Labels), &n.Level,
 		&n.LastFoundrySyncAt, &n.CreatedAt, &n.UpdatedAt,
 	)
@@ -52,14 +52,14 @@ func (db *DB) CreateNpc(ctx context.Context, npc *model.CreateNpcRequest) (*mode
 			campaign_id, name, status, relation_to_party_status, is_known_to_party,
 			age, appearance, avatar, backstory, character_class, dm_notes, foundry_actor_id, health_condition,
 			known_name, personality, player_notes, race, role,
-			current_location_id, origin_location_id, session_encountered_id,
+			current_location_id, origin_location_id, session_encountered_id, colony_id, workforce_id,
 			aliases, labels, level
-		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)
+		) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
 		RETURNING `+npcColumns,
 		npc.CampaignID, npc.Name, npc.Status, npc.RelationToPartyStatus, npc.IsKnownToParty,
 		npc.Age, npc.Appearance, npc.Avatar, npc.Backstory, npc.CharacterClass, npc.DmNotes, npc.FoundryActorID,
 		npc.HealthCondition, npc.KnownName, npc.Personality, npc.PlayerNotes, npc.Race, npc.Role,
-		npc.CurrentLocationID, npc.OriginLocationID, npc.SessionEncounteredID,
+		npc.CurrentLocationID, npc.OriginLocationID, npc.SessionEncounteredID, npc.ColonyID, npc.WorkforceID,
 		pq.Array(npc.Aliases), pq.Array(npc.Labels), npc.Level,
 	)
 	return scanNpc(row)
@@ -97,6 +97,34 @@ func (db *DB) ListNpcsByCampaign(ctx context.Context, campaignID string) ([]*mod
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("list npcs rows: %w", err)
+	}
+	return npcs, nil
+}
+
+func (db *DB) ListNpcsByColony(ctx context.Context, colonyID, campaignID string) ([]*model.Npc, error) {
+	rows, err := db.conn.QueryContext(ctx,
+		`SELECT `+npcColumns+` FROM non_player_character WHERE colony_id = $1 AND campaign_id = $2`,
+		colonyID, campaignID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("list npcs by colony: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+
+	var npcs []*model.Npc
+	for rows.Next() {
+		npc, err := scanNpc(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan npc: %w", err)
+		}
+		npcs = append(npcs, npc)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("list npcs by colony rows: %w", err)
 	}
 	return npcs, nil
 }
@@ -144,6 +172,8 @@ func (db *DB) UpdateNpc(ctx context.Context, npc *model.UpdateNpcRequest) (*mode
 			role                     = CASE WHEN 'role' = ANY($26) THEN NULL ELSE COALESCE($21, role) END,
 			labels                   = COALESCE($22, labels),
 			level                    = CASE WHEN 'level' = ANY($26) THEN NULL ELSE COALESCE($23, level) END,
+			colony_id                = CASE WHEN 'colonyId' = ANY($26) THEN NULL ELSE COALESCE($27, colony_id) END,
+			workforce_id             = CASE WHEN 'workforceId' = ANY($26) THEN NULL ELSE COALESCE($28, workforce_id) END,
 			updated_at               = NOW()
 		WHERE id = $24 AND campaign_id = $25
 		RETURNING `+npcColumns,
@@ -154,6 +184,7 @@ func (db *DB) UpdateNpc(ctx context.Context, npc *model.UpdateNpcRequest) (*mode
 		pq.Array(aliases),
 		npc.HealthCondition, npc.CharacterClass, npc.Role, pq.Array(labels), npc.Level,
 		npc.ID, npc.CampaignID, pq.Array(npc.RemovedFields),
+		npc.ColonyID, npc.WorkforceID,
 	)
 	return scanNpc(row)
 }

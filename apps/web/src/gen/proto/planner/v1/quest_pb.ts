@@ -5,14 +5,100 @@
 import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv2";
 import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv2";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
-import { file_google_protobuf_struct, file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
-import type { JsonObject, Message } from "@bufbuild/protobuf";
+import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
+import type { Message } from "@bufbuild/protobuf";
 
 /**
  * Describes the file planner/v1/quest.proto.
  */
 export const file_planner_v1_quest: GenFile = /*@__PURE__*/
-  fileDesc("ChZwbGFubmVyL3YxL3F1ZXN0LnByb3RvEgpwbGFubmVyLnYxIt8DCgVRdWVzdBIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCRINCgV0aXRsZRgDIAEoCRInCgZzdGF0dXMYBCABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAUgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBiABKAlIAYgBARIsCgZyZXdhcmQYByABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQESNQoMY29tcGxldGVkX2F0GAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgDiAEBEjMKCmRlbGV0ZWRfYXQYCSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSASIAQESLgoKY3JlYXRlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkQg8KDV9jb21wbGV0ZWRfYXRCDQoLX2RlbGV0ZWRfYXQi9AEKEkNyZWF0ZVF1ZXN0UmVxdWVzdBITCgtjYW1wYWlnbl9pZBgBIAEoCRINCgV0aXRsZRgCIAEoCRInCgZzdGF0dXMYAyABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzEhgKC2Rlc2NyaXB0aW9uGAQgASgJSACIAQESGwoOcXVlc3RfZ2l2ZXJfaWQYBSABKAlIAYgBARIsCgZyZXdhcmQYBiABKAsyFy5nb29nbGUucHJvdG9idWYuU3RydWN0SAKIAQFCDgoMX2Rlc2NyaXB0aW9uQhEKD19xdWVzdF9naXZlcl9pZEIJCgdfcmV3YXJkIjcKE0NyZWF0ZVF1ZXN0UmVzcG9uc2USIAoFcXVlc3QYASABKAsyES5wbGFubmVyLnYxLlF1ZXN0IjIKD0dldFF1ZXN0UmVxdWVzdBIKCgJpZBgBIAEoCRITCgtjYW1wYWlnbl9pZBgCIAEoCSI0ChBHZXRRdWVzdFJlc3BvbnNlEiAKBXF1ZXN0GAEgASgLMhEucGxhbm5lci52MS5RdWVzdCIyChtMaXN0UXVlc3RzQnlDYW1wYWlnblJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkiQQocTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXNwb25zZRIhCgZxdWVzdHMYASADKAsyES5wbGFubmVyLnYxLlF1ZXN0IrYBChJVcGRhdGVRdWVzdFJlcXVlc3QSCgoCaWQYASABKAkSEgoFdGl0bGUYAiABKAlIAIgBARIsCgZzdGF0dXMYAyABKA4yFy5wbGFubmVyLnYxLlF1ZXN0U3RhdHVzSAGIAQESGAoLZGVzY3JpcHRpb24YBCABKAlIAogBARITCgtjYW1wYWlnbl9pZBgFIAEoCUIICgZfdGl0bGVCCQoHX3N0YXR1c0IOCgxfZGVzY3JpcHRpb24iNwoTVXBkYXRlUXVlc3RSZXNwb25zZRIgCgVxdWVzdBgBIAEoCzIRLnBsYW5uZXIudjEuUXVlc3QiNQoSUmVtb3ZlUXVlc3RSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIhUKE1JlbW92ZVF1ZXN0UmVzcG9uc2UqeQoLUXVlc3RTdGF0dXMSHAoYUVVFU1RfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTUVVFU1RfU1RBVFVTX0FDVElWRRABEhoKFlFVRVNUX1NUQVRVU19DT01QTEVURUQQAhIXChNRVUVTVF9TVEFUVVNfRkFJTEVEEAMysAMKDFF1ZXN0U2VydmljZRJOCgtDcmVhdGVRdWVzdBIeLnBsYW5uZXIudjEuQ3JlYXRlUXVlc3RSZXF1ZXN0Gh8ucGxhbm5lci52MS5DcmVhdGVRdWVzdFJlc3BvbnNlEkUKCEdldFF1ZXN0EhsucGxhbm5lci52MS5HZXRRdWVzdFJlcXVlc3QaHC5wbGFubmVyLnYxLkdldFF1ZXN0UmVzcG9uc2USaQoUTGlzdFF1ZXN0c0J5Q2FtcGFpZ24SJy5wbGFubmVyLnYxLkxpc3RRdWVzdHNCeUNhbXBhaWduUmVxdWVzdBooLnBsYW5uZXIudjEuTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXNwb25zZRJOCgtVcGRhdGVRdWVzdBIeLnBsYW5uZXIudjEuVXBkYXRlUXVlc3RSZXF1ZXN0Gh8ucGxhbm5lci52MS5VcGRhdGVRdWVzdFJlc3BvbnNlEk4KC1JlbW92ZVF1ZXN0Eh4ucGxhbm5lci52MS5SZW1vdmVRdWVzdFJlcXVlc3QaHy5wbGFubmVyLnYxLlJlbW92ZVF1ZXN0UmVzcG9uc2VCpwEKDmNvbS5wbGFubmVyLnYxQgpRdWVzdFByb3RvUAFaQGdpdGh1Yi5jb20vQkJydWluZ3Rvbi9wYXJ0eS1wbGFubmVyL2FwaS9nZW4vcGxhbm5lci92MTtwbGFubmVydjGiAgNQWFiqAgpQbGFubmVyLlYxygIKUGxhbm5lclxWMeICFlBsYW5uZXJcVjFcR1BCTWV0YWRhdGHqAgtQbGFubmVyOjpWMWIGcHJvdG8z", [file_google_protobuf_struct, file_google_protobuf_timestamp]);
+  fileDesc("ChZwbGFubmVyL3YxL3F1ZXN0LnByb3RvEgpwbGFubmVyLnYxItMBChFRdWVzdFJld2FyZENvbG9ueRIRCgRnb2xkGAEgASgFSACIAQESEQoEZm9vZBgCIAEoBUgBiAEBEh8KEmJ1aWxkaW5nX21hdGVyaWFscxgDIAEoBUgCiAEBEhsKDmNvbG9uaXN0X2NvdW50GAQgASgFSAOIAQESEwoGbW9yYWxlGAUgASgFSASIAQFCBwoFX2dvbGRCBwoFX2Zvb2RCFQoTX2J1aWxkaW5nX21hdGVyaWFsc0IRCg9fY29sb25pc3RfY291bnRCCQoHX21vcmFsZSJxChNRdWVzdFJld2FyZExvb3RJdGVtEgwKBG5hbWUYASABKAkSFQoIcXVhbnRpdHkYAiABKAVIAIgBARIYCgtkZXNjcmlwdGlvbhgDIAEoCUgBiAEBQgsKCV9xdWFudGl0eUIOCgxfZGVzY3JpcHRpb24iewoLUXVlc3RSZXdhcmQSMgoGY29sb255GAEgASgLMh0ucGxhbm5lci52MS5RdWVzdFJld2FyZENvbG9ueUgAiAEBEi0KBGxvb3QYAiADKAsyHy5wbGFubmVyLnYxLlF1ZXN0UmV3YXJkTG9vdEl0ZW1CCQoHX2NvbG9ueSKSBAoFUXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSDQoFdGl0bGUYAyABKAkSJwoGc3RhdHVzGAQgASgOMhcucGxhbm5lci52MS5RdWVzdFN0YXR1cxIYCgtkZXNjcmlwdGlvbhgFIAEoCUgAiAEBEhsKDnF1ZXN0X2dpdmVyX2lkGAYgASgJSAGIAQESLAoGcmV3YXJkGAcgASgLMhcucGxhbm5lci52MS5RdWVzdFJld2FyZEgCiAEBEjUKDGNvbXBsZXRlZF9hdBgIIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIA4gBARIzCgpkZWxldGVkX2F0GAkgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcEgEiAEBEi4KCmNyZWF0ZWRfYXQYCiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEi4KCnVwZGF0ZWRfYXQYCyABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEigKBHR5cGUYDCABKA4yFS5wbGFubmVyLnYxLlF1ZXN0VHlwZUgFiAEBQg4KDF9kZXNjcmlwdGlvbkIRCg9fcXVlc3RfZ2l2ZXJfaWRCCQoHX3Jld2FyZEIPCg1fY29tcGxldGVkX2F0Qg0KC19kZWxldGVkX2F0QgcKBV90eXBlIqcCChJDcmVhdGVRdWVzdFJlcXVlc3QSEwoLY2FtcGFpZ25faWQYASABKAkSDQoFdGl0bGUYAiABKAkSJwoGc3RhdHVzGAMgASgOMhcucGxhbm5lci52MS5RdWVzdFN0YXR1cxIYCgtkZXNjcmlwdGlvbhgEIAEoCUgAiAEBEhsKDnF1ZXN0X2dpdmVyX2lkGAUgASgJSAGIAQESLAoGcmV3YXJkGAYgASgLMhcucGxhbm5lci52MS5RdWVzdFJld2FyZEgCiAEBEigKBHR5cGUYByABKA4yFS5wbGFubmVyLnYxLlF1ZXN0VHlwZUgDiAEBQg4KDF9kZXNjcmlwdGlvbkIRCg9fcXVlc3RfZ2l2ZXJfaWRCCQoHX3Jld2FyZEIHCgVfdHlwZSI3ChNDcmVhdGVRdWVzdFJlc3BvbnNlEiAKBXF1ZXN0GAEgASgLMhEucGxhbm5lci52MS5RdWVzdCIyCg9HZXRRdWVzdFJlcXVlc3QSCgoCaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkiNAoQR2V0UXVlc3RSZXNwb25zZRIgCgVxdWVzdBgBIAEoCzIRLnBsYW5uZXIudjEuUXVlc3QiMgobTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXF1ZXN0EhMKC2NhbXBhaWduX2lkGAEgASgJIkEKHExpc3RRdWVzdHNCeUNhbXBhaWduUmVzcG9uc2USIQoGcXVlc3RzGAEgAygLMhEucGxhbm5lci52MS5RdWVzdCKiAgoSVXBkYXRlUXVlc3RSZXF1ZXN0EgoKAmlkGAEgASgJEhIKBXRpdGxlGAIgASgJSACIAQESLAoGc3RhdHVzGAMgASgOMhcucGxhbm5lci52MS5RdWVzdFN0YXR1c0gBiAEBEhgKC2Rlc2NyaXB0aW9uGAQgASgJSAKIAQESEwoLY2FtcGFpZ25faWQYBSABKAkSKAoEdHlwZRgGIAEoDjIVLnBsYW5uZXIudjEuUXVlc3RUeXBlSAOIAQESLAoGcmV3YXJkGAcgASgLMhcucGxhbm5lci52MS5RdWVzdFJld2FyZEgEiAEBQggKBl90aXRsZUIJCgdfc3RhdHVzQg4KDF9kZXNjcmlwdGlvbkIHCgVfdHlwZUIJCgdfcmV3YXJkIjcKE1VwZGF0ZVF1ZXN0UmVzcG9uc2USIAoFcXVlc3QYASABKAsyES5wbGFubmVyLnYxLlF1ZXN0IjcKFENvbXBsZXRlUXVlc3RSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIjkKFUNvbXBsZXRlUXVlc3RSZXNwb25zZRIgCgVxdWVzdBgBIAEoCzIRLnBsYW5uZXIudjEuUXVlc3QiNQoSUmVtb3ZlUXVlc3RSZXF1ZXN0EgoKAmlkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIhUKE1JlbW92ZVF1ZXN0UmVzcG9uc2UqeQoLUXVlc3RTdGF0dXMSHAoYUVVFU1RfU1RBVFVTX1VOU1BFQ0lGSUVEEAASFwoTUVVFU1RfU1RBVFVTX0FDVElWRRABEhoKFlFVRVNUX1NUQVRVU19DT01QTEVURUQQAhIXChNRVUVTVF9TVEFUVVNfRkFJTEVEEAMqVwoJUXVlc3RUeXBlEhoKFlFVRVNUX1RZUEVfVU5TUEVDSUZJRUQQABIXChNRVUVTVF9UWVBFX01BSU5MQU5EEAESFQoRUVVFU1RfVFlQRV9DT0xPTlkQAjKGBAoMUXVlc3RTZXJ2aWNlEk4KC0NyZWF0ZVF1ZXN0Eh4ucGxhbm5lci52MS5DcmVhdGVRdWVzdFJlcXVlc3QaHy5wbGFubmVyLnYxLkNyZWF0ZVF1ZXN0UmVzcG9uc2USRQoIR2V0UXVlc3QSGy5wbGFubmVyLnYxLkdldFF1ZXN0UmVxdWVzdBocLnBsYW5uZXIudjEuR2V0UXVlc3RSZXNwb25zZRJpChRMaXN0UXVlc3RzQnlDYW1wYWlnbhInLnBsYW5uZXIudjEuTGlzdFF1ZXN0c0J5Q2FtcGFpZ25SZXF1ZXN0GigucGxhbm5lci52MS5MaXN0UXVlc3RzQnlDYW1wYWlnblJlc3BvbnNlEk4KC1VwZGF0ZVF1ZXN0Eh4ucGxhbm5lci52MS5VcGRhdGVRdWVzdFJlcXVlc3QaHy5wbGFubmVyLnYxLlVwZGF0ZVF1ZXN0UmVzcG9uc2USVAoNQ29tcGxldGVRdWVzdBIgLnBsYW5uZXIudjEuQ29tcGxldGVRdWVzdFJlcXVlc3QaIS5wbGFubmVyLnYxLkNvbXBsZXRlUXVlc3RSZXNwb25zZRJOCgtSZW1vdmVRdWVzdBIeLnBsYW5uZXIudjEuUmVtb3ZlUXVlc3RSZXF1ZXN0Gh8ucGxhbm5lci52MS5SZW1vdmVRdWVzdFJlc3BvbnNlQqcBCg5jb20ucGxhbm5lci52MUIKUXVlc3RQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
+
+/**
+ * @generated from message planner.v1.QuestRewardColony
+ */
+export type QuestRewardColony = Message<"planner.v1.QuestRewardColony"> & {
+  /**
+   * @generated from field: optional int32 gold = 1;
+   */
+  gold?: number | undefined;
+
+  /**
+   * @generated from field: optional int32 food = 2;
+   */
+  food?: number | undefined;
+
+  /**
+   * @generated from field: optional int32 building_materials = 3;
+   */
+  buildingMaterials?: number | undefined;
+
+  /**
+   * @generated from field: optional int32 colonist_count = 4;
+   */
+  colonistCount?: number | undefined;
+
+  /**
+   * @generated from field: optional int32 morale = 5;
+   */
+  morale?: number | undefined;
+};
+
+/**
+ * Describes the message planner.v1.QuestRewardColony.
+ * Use `create(QuestRewardColonySchema)` to create a new message.
+ */
+export const QuestRewardColonySchema: GenMessage<QuestRewardColony> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 0);
+
+/**
+ * @generated from message planner.v1.QuestRewardLootItem
+ */
+export type QuestRewardLootItem = Message<"planner.v1.QuestRewardLootItem"> & {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name: string;
+
+  /**
+   * @generated from field: optional int32 quantity = 2;
+   */
+  quantity?: number | undefined;
+
+  /**
+   * @generated from field: optional string description = 3;
+   */
+  description?: string | undefined;
+};
+
+/**
+ * Describes the message planner.v1.QuestRewardLootItem.
+ * Use `create(QuestRewardLootItemSchema)` to create a new message.
+ */
+export const QuestRewardLootItemSchema: GenMessage<QuestRewardLootItem> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 1);
+
+/**
+ * @generated from message planner.v1.QuestReward
+ */
+export type QuestReward = Message<"planner.v1.QuestReward"> & {
+  /**
+   * @generated from field: optional planner.v1.QuestRewardColony colony = 1;
+   */
+  colony?: QuestRewardColony | undefined;
+
+  /**
+   * @generated from field: repeated planner.v1.QuestRewardLootItem loot = 2;
+   */
+  loot: QuestRewardLootItem[];
+};
+
+/**
+ * Describes the message planner.v1.QuestReward.
+ * Use `create(QuestRewardSchema)` to create a new message.
+ */
+export const QuestRewardSchema: GenMessage<QuestReward> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 2);
 
 /**
  * @generated from message planner.v1.Quest
@@ -49,11 +135,9 @@ export type Quest = Message<"planner.v1.Quest"> & {
   questGiverId?: string | undefined;
 
   /**
-   * TODO: fill out schema for reward
-   *
-   * @generated from field: optional google.protobuf.Struct reward = 7;
+   * @generated from field: optional planner.v1.QuestReward reward = 7;
    */
-  reward?: JsonObject | undefined;
+  reward?: QuestReward | undefined;
 
   /**
    * @generated from field: optional google.protobuf.Timestamp completed_at = 8;
@@ -74,6 +158,11 @@ export type Quest = Message<"planner.v1.Quest"> & {
    * @generated from field: google.protobuf.Timestamp updated_at = 11;
    */
   updatedAt?: Timestamp | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.QuestType type = 12;
+   */
+  type?: QuestType | undefined;
 };
 
 /**
@@ -81,7 +170,7 @@ export type Quest = Message<"planner.v1.Quest"> & {
  * Use `create(QuestSchema)` to create a new message.
  */
 export const QuestSchema: GenMessage<Quest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 0);
+  messageDesc(file_planner_v1_quest, 3);
 
 /**
  * @generated from message planner.v1.CreateQuestRequest
@@ -113,11 +202,14 @@ export type CreateQuestRequest = Message<"planner.v1.CreateQuestRequest"> & {
   questGiverId?: string | undefined;
 
   /**
-   * TODO: fill out schema for reward
-   *
-   * @generated from field: optional google.protobuf.Struct reward = 6;
+   * @generated from field: optional planner.v1.QuestReward reward = 6;
    */
-  reward?: JsonObject | undefined;
+  reward?: QuestReward | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.QuestType type = 7;
+   */
+  type?: QuestType | undefined;
 };
 
 /**
@@ -125,7 +217,7 @@ export type CreateQuestRequest = Message<"planner.v1.CreateQuestRequest"> & {
  * Use `create(CreateQuestRequestSchema)` to create a new message.
  */
 export const CreateQuestRequestSchema: GenMessage<CreateQuestRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 1);
+  messageDesc(file_planner_v1_quest, 4);
 
 /**
  * @generated from message planner.v1.CreateQuestResponse
@@ -142,7 +234,7 @@ export type CreateQuestResponse = Message<"planner.v1.CreateQuestResponse"> & {
  * Use `create(CreateQuestResponseSchema)` to create a new message.
  */
 export const CreateQuestResponseSchema: GenMessage<CreateQuestResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 2);
+  messageDesc(file_planner_v1_quest, 5);
 
 /**
  * @generated from message planner.v1.GetQuestRequest
@@ -164,7 +256,7 @@ export type GetQuestRequest = Message<"planner.v1.GetQuestRequest"> & {
  * Use `create(GetQuestRequestSchema)` to create a new message.
  */
 export const GetQuestRequestSchema: GenMessage<GetQuestRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 3);
+  messageDesc(file_planner_v1_quest, 6);
 
 /**
  * @generated from message planner.v1.GetQuestResponse
@@ -181,7 +273,7 @@ export type GetQuestResponse = Message<"planner.v1.GetQuestResponse"> & {
  * Use `create(GetQuestResponseSchema)` to create a new message.
  */
 export const GetQuestResponseSchema: GenMessage<GetQuestResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 4);
+  messageDesc(file_planner_v1_quest, 7);
 
 /**
  * @generated from message planner.v1.ListQuestsByCampaignRequest
@@ -198,7 +290,7 @@ export type ListQuestsByCampaignRequest = Message<"planner.v1.ListQuestsByCampai
  * Use `create(ListQuestsByCampaignRequestSchema)` to create a new message.
  */
 export const ListQuestsByCampaignRequestSchema: GenMessage<ListQuestsByCampaignRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 5);
+  messageDesc(file_planner_v1_quest, 8);
 
 /**
  * @generated from message planner.v1.ListQuestsByCampaignResponse
@@ -215,7 +307,7 @@ export type ListQuestsByCampaignResponse = Message<"planner.v1.ListQuestsByCampa
  * Use `create(ListQuestsByCampaignResponseSchema)` to create a new message.
  */
 export const ListQuestsByCampaignResponseSchema: GenMessage<ListQuestsByCampaignResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 6);
+  messageDesc(file_planner_v1_quest, 9);
 
 /**
  * @generated from message planner.v1.UpdateQuestRequest
@@ -245,6 +337,16 @@ export type UpdateQuestRequest = Message<"planner.v1.UpdateQuestRequest"> & {
    * @generated from field: string campaign_id = 5;
    */
   campaignId: string;
+
+  /**
+   * @generated from field: optional planner.v1.QuestType type = 6;
+   */
+  type?: QuestType | undefined;
+
+  /**
+   * @generated from field: optional planner.v1.QuestReward reward = 7;
+   */
+  reward?: QuestReward | undefined;
 };
 
 /**
@@ -252,7 +354,7 @@ export type UpdateQuestRequest = Message<"planner.v1.UpdateQuestRequest"> & {
  * Use `create(UpdateQuestRequestSchema)` to create a new message.
  */
 export const UpdateQuestRequestSchema: GenMessage<UpdateQuestRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 7);
+  messageDesc(file_planner_v1_quest, 10);
 
 /**
  * @generated from message planner.v1.UpdateQuestResponse
@@ -269,7 +371,46 @@ export type UpdateQuestResponse = Message<"planner.v1.UpdateQuestResponse"> & {
  * Use `create(UpdateQuestResponseSchema)` to create a new message.
  */
 export const UpdateQuestResponseSchema: GenMessage<UpdateQuestResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 8);
+  messageDesc(file_planner_v1_quest, 11);
+
+/**
+ * @generated from message planner.v1.CompleteQuestRequest
+ */
+export type CompleteQuestRequest = Message<"planner.v1.CompleteQuestRequest"> & {
+  /**
+   * @generated from field: string id = 1;
+   */
+  id: string;
+
+  /**
+   * @generated from field: string campaign_id = 2;
+   */
+  campaignId: string;
+};
+
+/**
+ * Describes the message planner.v1.CompleteQuestRequest.
+ * Use `create(CompleteQuestRequestSchema)` to create a new message.
+ */
+export const CompleteQuestRequestSchema: GenMessage<CompleteQuestRequest> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 12);
+
+/**
+ * @generated from message planner.v1.CompleteQuestResponse
+ */
+export type CompleteQuestResponse = Message<"planner.v1.CompleteQuestResponse"> & {
+  /**
+   * @generated from field: planner.v1.Quest quest = 1;
+   */
+  quest?: Quest | undefined;
+};
+
+/**
+ * Describes the message planner.v1.CompleteQuestResponse.
+ * Use `create(CompleteQuestResponseSchema)` to create a new message.
+ */
+export const CompleteQuestResponseSchema: GenMessage<CompleteQuestResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_quest, 13);
 
 /**
  * @generated from message planner.v1.RemoveQuestRequest
@@ -291,7 +432,7 @@ export type RemoveQuestRequest = Message<"planner.v1.RemoveQuestRequest"> & {
  * Use `create(RemoveQuestRequestSchema)` to create a new message.
  */
 export const RemoveQuestRequestSchema: GenMessage<RemoveQuestRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 9);
+  messageDesc(file_planner_v1_quest, 14);
 
 /**
  * @generated from message planner.v1.RemoveQuestResponse
@@ -304,7 +445,7 @@ export type RemoveQuestResponse = Message<"planner.v1.RemoveQuestResponse"> & {
  * Use `create(RemoveQuestResponseSchema)` to create a new message.
  */
 export const RemoveQuestResponseSchema: GenMessage<RemoveQuestResponse> = /*@__PURE__*/
-  messageDesc(file_planner_v1_quest, 10);
+  messageDesc(file_planner_v1_quest, 15);
 
 /**
  * @generated from enum planner.v1.QuestStatus
@@ -336,6 +477,32 @@ export enum QuestStatus {
  */
 export const QuestStatusSchema: GenEnum<QuestStatus> = /*@__PURE__*/
   enumDesc(file_planner_v1_quest, 0);
+
+/**
+ * @generated from enum planner.v1.QuestType
+ */
+export enum QuestType {
+  /**
+   * @generated from enum value: QUEST_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: QUEST_TYPE_MAINLAND = 1;
+   */
+  MAINLAND = 1,
+
+  /**
+   * @generated from enum value: QUEST_TYPE_COLONY = 2;
+   */
+  COLONY = 2,
+}
+
+/**
+ * Describes the enum planner.v1.QuestType.
+ */
+export const QuestTypeSchema: GenEnum<QuestType> = /*@__PURE__*/
+  enumDesc(file_planner_v1_quest, 1);
 
 /**
  * @generated from service planner.v1.QuestService
@@ -372,6 +539,14 @@ export const QuestService: GenService<{
     methodKind: "unary";
     input: typeof UpdateQuestRequestSchema;
     output: typeof UpdateQuestResponseSchema;
+  },
+  /**
+   * @generated from rpc planner.v1.QuestService.CompleteQuest
+   */
+  completeQuest: {
+    methodKind: "unary";
+    input: typeof CompleteQuestRequestSchema;
+    output: typeof CompleteQuestResponseSchema;
   },
   /**
    * @generated from rpc planner.v1.QuestService.RemoveQuest

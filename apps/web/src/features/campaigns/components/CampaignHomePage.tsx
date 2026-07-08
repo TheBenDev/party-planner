@@ -1,6 +1,7 @@
 import { UserRole } from "@planner/enums/user";
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, ChevronRight, Clock } from "lucide-react";
+import ColonyDetailsCard from "@/features/colony/components/ColonyDetailsCard";
 import { useSessionsData } from "@/features/sessions/hooks/useSessionsData";
 import type { Session } from "@/features/sessions/types";
 import { Skeleton } from "@/shared/components/ui/skeleton";
@@ -128,8 +129,9 @@ function RecentSessionRow({ session }: { session: Session }) {
 }
 
 export function CampaignHomePage() {
-	const { role } = useAuth();
+	const { role, campaign } = useAuth();
 	const isDm = role === UserRole.DUNGEON_MASTER;
+	const campaignId = campaign?.campaign.id || "";
 	const { seriesQuery, oneOffSessionsQuery } = useSessionsData();
 
 	const isLoading = seriesQuery.isLoading || oneOffSessionsQuery.isLoading;
@@ -174,6 +176,10 @@ export function CampaignHomePage() {
 
 	return (
 		<div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
+			<section>
+				<ColonyDetailsCard campaignId={campaignId} />
+			</section>
+
 			<section>
 				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-3">
 					Next Session

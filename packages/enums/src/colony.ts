@@ -1,0 +1,10 @@
+export enum WorkerTypeEnum {
+	FARMER = "FARMER",
+	HEALER = "HEALER",
+	BLACKSMITH = "BLACKSMITH",
+	SOLDIER = "SOLDIER",
+	MINER = "MINER",
+	BUILDER = "BUILDER",
+	SCHOLAR = "SCHOLAR",
+	MAGE = "MAGE",
+}

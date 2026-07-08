@@ -25,6 +25,7 @@ type Store interface {
 	CreateNpc(ctx context.Context, npc *model.CreateNpcRequest) (*model.Npc, error)
 	GetNpc(ctx context.Context, id, campaignID string) (*model.Npc, error)
 	ListNpcsByCampaign(ctx context.Context, campaignID string) ([]*model.Npc, error)
+	ListNpcsByColony(ctx context.Context, colonyID, campaignID string) ([]*model.Npc, error)
 	GetNpcByNameAndCampaign(ctx context.Context, name, campaignID string) (*model.Npc, error)
 	UpdateNpc(ctx context.Context, npc *model.UpdateNpcRequest) (*model.Npc, error)
 	RemoveNpc(ctx context.Context, id, campaignID string) error
@@ -61,6 +62,14 @@ func (s *Service) ListByCampaign(ctx context.Context, campaignID string) ([]*mod
 	npcs, err := s.DB.ListNpcsByCampaign(ctx, campaignID)
 	if err != nil {
 		return nil, fmt.Errorf("list npcs by campaign: %w", err)
+	}
+	return npcs, nil
+}
+
+func (s *Service) ListByColony(ctx context.Context, colonyID, campaignID string) ([]*model.Npc, error) {
+	npcs, err := s.DB.ListNpcsByColony(ctx, colonyID, campaignID)
+	if err != nil {
+		return nil, fmt.Errorf("list npcs by colony: %w", err)
 	}
 	return npcs, nil
 }

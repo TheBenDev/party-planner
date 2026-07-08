@@ -66,6 +66,8 @@ message Npc {
   optional int32 level = 26;
   optional string role = 27;
   optional string character_class = 28;
+  optional string colony_id = 29;
+  optional string workforce_id = 30;
 }
 
 // -----------------------------------------------------------------------------
@@ -97,6 +99,8 @@ message CreateNpcRequest {
   optional int32 level = 22;
   optional string role = 23;
   optional string character_class = 24;
+  optional string colony_id = 25;
+  optional string workforce_id = 26;
 }
 
 message CreateNpcResponse {
@@ -117,6 +121,15 @@ message ListNpcsByCampaignRequest {
 }
 
 message ListNpcsByCampaignResponse {
+  repeated Npc npcs = 1;
+}
+
+message ListNpcsByColonyRequest {
+  string colony_id = 1;
+  string campaign_id = 2;
+}
+
+message ListNpcsByColonyResponse {
   repeated Npc npcs = 1;
 }
 
@@ -147,6 +160,8 @@ message UpdateNpcRequest {
   optional string role = 24;
   optional string character_class = 25;
   repeated string removed_fields = 26;
+  optional string colony_id = 27;
+  optional string workforce_id = 28;
 }
 
 message UpdateNpcResponse {
@@ -168,6 +183,7 @@ service NonPlayerCharacterService {
   rpc CreateNpc(CreateNpcRequest) returns (CreateNpcResponse);
   rpc GetNpc(GetNpcRequest) returns (GetNpcResponse);
   rpc ListNpcsByCampaign(ListNpcsByCampaignRequest) returns (ListNpcsByCampaignResponse);
+  rpc ListNpcsByColony(ListNpcsByColonyRequest) returns (ListNpcsByColonyResponse);
   rpc UpdateNpc(UpdateNpcRequest) returns (UpdateNpcResponse);
   rpc RemoveNpc(RemoveNpcRequest) returns (RemoveNpcResponse);
 }

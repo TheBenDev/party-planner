@@ -8,3 +8,10 @@ export function useNpc(npcId: string) {
 		queryKey: queryKeys.npcs.detail(npcId),
 	});
 }
+
+export function useNpcsByCampaign(campaignId: string) {
+	return useQuery({
+		queryFn: () => client.npc.listNonPlayerCharactersByCampaign({ campaignId }),
+		queryKey: queryKeys.npcs.list(campaignId),
+	});
+}

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/BBruington/party-planner/api/internal/pg"
 	model "github.com/BBruington/party-planner/api/internal/models"
+	"github.com/BBruington/party-planner/api/internal/pg"
 )
 
 // Domain errors.
@@ -17,6 +17,7 @@ var (
 	ErrAlreadyExists     = errors.New("quest already exists")
 	ErrInvalidCampaign   = errors.New("campaign does not exist")
 	ErrInvalidQuestGiver = errors.New("quest giver npc does not exist")
+	ErrNoColony          = errors.New("no colony found for campaign")
 )
 
 type Store interface {
@@ -24,12 +25,19 @@ type Store interface {
 	GetQuest(ctx context.Context, id, campaignID string) (*model.Quest, error)
 	ListQuestsByCampaign(ctx context.Context, campaignID string) ([]*model.Quest, error)
 	UpdateQuest(ctx context.Context, req *model.UpdateQuestRequest) (*model.Quest, error)
+	CompleteQuest(ctx context.Context, id, campaignID string) (*model.Quest, error)
 	RemoveQuest(ctx context.Context, id, campaignID string) error
+	RunInTx(ctx context.Context, fn func(context.Context, Store) error) error
+}
+
+type ColonyStore interface {
+	ApplyRewardByCampaign(ctx context.Context, campaignID string, reward *model.QuestRewardColony) (*model.Colony, error)
 }
 
 type Service struct {
-	DB  Store
-	Log *slog.Logger
+	DB       Store
+	ColonyDB ColonyStore
+	Log      *slog.Logger
 }
 
 func (s *Service) Create(ctx context.Context, req *model.CreateQuestRequest) (*model.Quest, error) {
@@ -73,6 +81,32 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateQuestRequest) (*m
 			return nil, mapped
 		}
 		return nil, fmt.Errorf("update quest: %w", err)
+	}
+	return quest, nil
+}
+
+func (s *Service) Complete(ctx context.Context, id, campaignID string) (*model.Quest, error) {
+	var quest *model.Quest
+	var err error
+	if err := s.DB.RunInTx(ctx, func(ctx context.Context, txDB Store) error {
+		quest, err = txDB.CompleteQuest(ctx, id, campaignID)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return ErrNotFound
+			}
+			return fmt.Errorf("complete quest: %w", err)
+		}
+		if quest.Reward != nil && quest.Reward.Colony != nil {
+			if _, err := s.ColonyDB.ApplyRewardByCampaign(ctx, campaignID, quest.Reward.Colony); err != nil {
+				if errors.Is(err, sql.ErrNoRows) {
+					return ErrNoColony
+				}
+				return fmt.Errorf("apply colony reward: %w", err)
+			}
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
 	return quest, nil
 }
