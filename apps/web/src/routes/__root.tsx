@@ -23,7 +23,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		meta: [
 			{ charSet: "utf-8" },
 			{ content: "width=device-width, initial-scale=1", name: "viewport" },
-			{ title: "Party Planner App" },
+			{ title: "Party Planner" },
 			{
 				content: "Document and schedule D&D campaign",
 				name: "description",

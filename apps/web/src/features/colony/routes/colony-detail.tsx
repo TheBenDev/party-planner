@@ -43,7 +43,7 @@ export default function ColonyDetailPage() {
 				</TabsList>
 
 				<TabsContent value="colonists">
-					<ColonistsCard campaignId={campaignId} colonyId={colonyId} />
+					<ColonistsCard colonyId={colonyId} />
 				</TabsContent>
 
 				<TabsContent value="map">

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { ListColonyWorkforceRequest, ListColonyWorkforceResponse, UpsertColonyWorkforceRequest, UpsertColonyWorkforceResponse } from "./colony_workforce_pb.js";
+import { ListColonyWorkforceRequest, ListColonyWorkforceResponse, UpsertColonyWorkforcesRequest, UpsertColonyWorkforcesResponse } from "./colony_workforce_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -22,12 +22,12 @@ export const ColonyWorkforceService = {
       kind: MethodKind.Unary,
     },
     /**
-     * @generated from rpc planner.v1.ColonyWorkforceService.UpsertColonyWorkforce
+     * @generated from rpc planner.v1.ColonyWorkforceService.UpsertColonyWorkforces
      */
-    upsertColonyWorkforce: {
-      name: "UpsertColonyWorkforce",
-      I: UpsertColonyWorkforceRequest,
-      O: UpsertColonyWorkforceResponse,
+    upsertColonyWorkforces: {
+      name: "UpsertColonyWorkforces",
+      I: UpsertColonyWorkforcesRequest,
+      O: UpsertColonyWorkforcesResponse,
       kind: MethodKind.Unary,
     },
   }

@@ -269,30 +269,28 @@ func (x *ListColonyWorkforceResponse) GetWorkforce() []*ColonyWorkforce {
 	return nil
 }
 
-type UpsertColonyWorkforceRequest struct {
+type UpsertWorkforceItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ColonyId      string                 `protobuf:"bytes,1,opt,name=colony_id,json=colonyId,proto3" json:"colony_id,omitempty"`
-	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
-	WorkerType    WorkerType             `protobuf:"varint,3,opt,name=worker_type,json=workerType,proto3,enum=planner.v1.WorkerType" json:"worker_type,omitempty"`
-	Count         int32                  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	Type          WorkerType             `protobuf:"varint,1,opt,name=type,proto3,enum=planner.v1.WorkerType" json:"type,omitempty"`
+	Count         int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpsertColonyWorkforceRequest) Reset() {
-	*x = UpsertColonyWorkforceRequest{}
+func (x *UpsertWorkforceItem) Reset() {
+	*x = UpsertWorkforceItem{}
 	mi := &file_planner_v1_colony_workforce_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpsertColonyWorkforceRequest) String() string {
+func (x *UpsertWorkforceItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpsertColonyWorkforceRequest) ProtoMessage() {}
+func (*UpsertWorkforceItem) ProtoMessage() {}
 
-func (x *UpsertColonyWorkforceRequest) ProtoReflect() protoreflect.Message {
+func (x *UpsertWorkforceItem) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_colony_workforce_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -304,60 +302,48 @@ func (x *UpsertColonyWorkforceRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertColonyWorkforceRequest.ProtoReflect.Descriptor instead.
-func (*UpsertColonyWorkforceRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpsertWorkforceItem.ProtoReflect.Descriptor instead.
+func (*UpsertWorkforceItem) Descriptor() ([]byte, []int) {
 	return file_planner_v1_colony_workforce_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UpsertColonyWorkforceRequest) GetColonyId() string {
+func (x *UpsertWorkforceItem) GetType() WorkerType {
 	if x != nil {
-		return x.ColonyId
-	}
-	return ""
-}
-
-func (x *UpsertColonyWorkforceRequest) GetCampaignId() string {
-	if x != nil {
-		return x.CampaignId
-	}
-	return ""
-}
-
-func (x *UpsertColonyWorkforceRequest) GetWorkerType() WorkerType {
-	if x != nil {
-		return x.WorkerType
+		return x.Type
 	}
 	return WorkerType_WORKER_TYPE_UNSPECIFIED
 }
 
-func (x *UpsertColonyWorkforceRequest) GetCount() int32 {
+func (x *UpsertWorkforceItem) GetCount() int32 {
 	if x != nil {
 		return x.Count
 	}
 	return 0
 }
 
-type UpsertColonyWorkforceResponse struct {
+type UpsertColonyWorkforcesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Workforce     *ColonyWorkforce       `protobuf:"bytes,1,opt,name=workforce,proto3" json:"workforce,omitempty"`
+	ColonyId      string                 `protobuf:"bytes,1,opt,name=colony_id,json=colonyId,proto3" json:"colony_id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	Workforces    []*UpsertWorkforceItem `protobuf:"bytes,3,rep,name=workforces,proto3" json:"workforces,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpsertColonyWorkforceResponse) Reset() {
-	*x = UpsertColonyWorkforceResponse{}
+func (x *UpsertColonyWorkforcesRequest) Reset() {
+	*x = UpsertColonyWorkforcesRequest{}
 	mi := &file_planner_v1_colony_workforce_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpsertColonyWorkforceResponse) String() string {
+func (x *UpsertColonyWorkforcesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpsertColonyWorkforceResponse) ProtoMessage() {}
+func (*UpsertColonyWorkforcesRequest) ProtoMessage() {}
 
-func (x *UpsertColonyWorkforceResponse) ProtoReflect() protoreflect.Message {
+func (x *UpsertColonyWorkforcesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_planner_v1_colony_workforce_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -369,14 +355,72 @@ func (x *UpsertColonyWorkforceResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpsertColonyWorkforceResponse.ProtoReflect.Descriptor instead.
-func (*UpsertColonyWorkforceResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpsertColonyWorkforcesRequest.ProtoReflect.Descriptor instead.
+func (*UpsertColonyWorkforcesRequest) Descriptor() ([]byte, []int) {
 	return file_planner_v1_colony_workforce_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UpsertColonyWorkforceResponse) GetWorkforce() *ColonyWorkforce {
+func (x *UpsertColonyWorkforcesRequest) GetColonyId() string {
 	if x != nil {
-		return x.Workforce
+		return x.ColonyId
+	}
+	return ""
+}
+
+func (x *UpsertColonyWorkforcesRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+func (x *UpsertColonyWorkforcesRequest) GetWorkforces() []*UpsertWorkforceItem {
+	if x != nil {
+		return x.Workforces
+	}
+	return nil
+}
+
+type UpsertColonyWorkforcesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Workforces    []*ColonyWorkforce     `protobuf:"bytes,1,rep,name=workforces,proto3" json:"workforces,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpsertColonyWorkforcesResponse) Reset() {
+	*x = UpsertColonyWorkforcesResponse{}
+	mi := &file_planner_v1_colony_workforce_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertColonyWorkforcesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertColonyWorkforcesResponse) ProtoMessage() {}
+
+func (x *UpsertColonyWorkforcesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_colony_workforce_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertColonyWorkforcesResponse.ProtoReflect.Descriptor instead.
+func (*UpsertColonyWorkforcesResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_colony_workforce_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UpsertColonyWorkforcesResponse) GetWorkforces() []*ColonyWorkforce {
+	if x != nil {
+		return x.Workforces
 	}
 	return nil
 }
@@ -402,16 +446,21 @@ const file_planner_v1_colony_workforce_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"X\n" +
 	"\x1bListColonyWorkforceResponse\x129\n" +
-	"\tworkforce\x18\x01 \x03(\v2\x1b.planner.v1.ColonyWorkforceR\tworkforce\"\xab\x01\n" +
-	"\x1cUpsertColonyWorkforceRequest\x12\x1b\n" +
+	"\tworkforce\x18\x01 \x03(\v2\x1b.planner.v1.ColonyWorkforceR\tworkforce\"W\n" +
+	"\x13UpsertWorkforceItem\x12*\n" +
+	"\x04type\x18\x01 \x01(\x0e2\x16.planner.v1.WorkerTypeR\x04type\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\"\x9e\x01\n" +
+	"\x1dUpsertColonyWorkforcesRequest\x12\x1b\n" +
 	"\tcolony_id\x18\x01 \x01(\tR\bcolonyId\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
-	"campaignId\x127\n" +
-	"\vworker_type\x18\x03 \x01(\x0e2\x16.planner.v1.WorkerTypeR\n" +
-	"workerType\x12\x14\n" +
-	"\x05count\x18\x04 \x01(\x05R\x05count\"Z\n" +
-	"\x1dUpsertColonyWorkforceResponse\x129\n" +
-	"\tworkforce\x18\x01 \x01(\v2\x1b.planner.v1.ColonyWorkforceR\tworkforce*\xed\x01\n" +
+	"campaignId\x12?\n" +
+	"\n" +
+	"workforces\x18\x03 \x03(\v2\x1f.planner.v1.UpsertWorkforceItemR\n" +
+	"workforces\"]\n" +
+	"\x1eUpsertColonyWorkforcesResponse\x12;\n" +
+	"\n" +
+	"workforces\x18\x01 \x03(\v2\x1b.planner.v1.ColonyWorkforceR\n" +
+	"workforces*\xed\x01\n" +
 	"\n" +
 	"WorkerType\x12\x1b\n" +
 	"\x17WORKER_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
@@ -422,10 +471,10 @@ const file_planner_v1_colony_workforce_proto_rawDesc = "" +
 	"\x11WORKER_TYPE_MINER\x10\x05\x12\x17\n" +
 	"\x13WORKER_TYPE_BUILDER\x10\x06\x12\x17\n" +
 	"\x13WORKER_TYPE_SCHOLAR\x10\a\x12\x14\n" +
-	"\x10WORKER_TYPE_MAGE\x10\b2\xee\x01\n" +
+	"\x10WORKER_TYPE_MAGE\x10\b2\xf1\x01\n" +
 	"\x16ColonyWorkforceService\x12f\n" +
-	"\x13ListColonyWorkforce\x12&.planner.v1.ListColonyWorkforceRequest\x1a'.planner.v1.ListColonyWorkforceResponse\x12l\n" +
-	"\x15UpsertColonyWorkforce\x12(.planner.v1.UpsertColonyWorkforceRequest\x1a).planner.v1.UpsertColonyWorkforceResponseB\xb1\x01\n" +
+	"\x13ListColonyWorkforce\x12&.planner.v1.ListColonyWorkforceRequest\x1a'.planner.v1.ListColonyWorkforceResponse\x12o\n" +
+	"\x16UpsertColonyWorkforces\x12).planner.v1.UpsertColonyWorkforcesRequest\x1a*.planner.v1.UpsertColonyWorkforcesResponseB\xb1\x01\n" +
 	"\x0ecom.planner.v1B\x14ColonyWorkforceProtoP\x01Z@github.com/BBruington/party-planner/api/gen/planner/v1;plannerv1\xa2\x02\x03PXX\xaa\x02\n" +
 	"Planner.V1\xca\x02\n" +
 	"Planner\\V1\xe2\x02\x16Planner\\V1\\GPBMetadata\xea\x02\vPlanner::V1b\x06proto3"
@@ -443,32 +492,34 @@ func file_planner_v1_colony_workforce_proto_rawDescGZIP() []byte {
 }
 
 var file_planner_v1_colony_workforce_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_planner_v1_colony_workforce_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_planner_v1_colony_workforce_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_planner_v1_colony_workforce_proto_goTypes = []any{
-	(WorkerType)(0),                       // 0: planner.v1.WorkerType
-	(*ColonyWorkforce)(nil),               // 1: planner.v1.ColonyWorkforce
-	(*ListColonyWorkforceRequest)(nil),    // 2: planner.v1.ListColonyWorkforceRequest
-	(*ListColonyWorkforceResponse)(nil),   // 3: planner.v1.ListColonyWorkforceResponse
-	(*UpsertColonyWorkforceRequest)(nil),  // 4: planner.v1.UpsertColonyWorkforceRequest
-	(*UpsertColonyWorkforceResponse)(nil), // 5: planner.v1.UpsertColonyWorkforceResponse
-	(*timestamppb.Timestamp)(nil),         // 6: google.protobuf.Timestamp
+	(WorkerType)(0),                        // 0: planner.v1.WorkerType
+	(*ColonyWorkforce)(nil),                // 1: planner.v1.ColonyWorkforce
+	(*ListColonyWorkforceRequest)(nil),     // 2: planner.v1.ListColonyWorkforceRequest
+	(*ListColonyWorkforceResponse)(nil),    // 3: planner.v1.ListColonyWorkforceResponse
+	(*UpsertWorkforceItem)(nil),            // 4: planner.v1.UpsertWorkforceItem
+	(*UpsertColonyWorkforcesRequest)(nil),  // 5: planner.v1.UpsertColonyWorkforcesRequest
+	(*UpsertColonyWorkforcesResponse)(nil), // 6: planner.v1.UpsertColonyWorkforcesResponse
+	(*timestamppb.Timestamp)(nil),          // 7: google.protobuf.Timestamp
 }
 var file_planner_v1_colony_workforce_proto_depIdxs = []int32{
 	0, // 0: planner.v1.ColonyWorkforce.worker_type:type_name -> planner.v1.WorkerType
-	6, // 1: planner.v1.ColonyWorkforce.created_at:type_name -> google.protobuf.Timestamp
-	6, // 2: planner.v1.ColonyWorkforce.updated_at:type_name -> google.protobuf.Timestamp
+	7, // 1: planner.v1.ColonyWorkforce.created_at:type_name -> google.protobuf.Timestamp
+	7, // 2: planner.v1.ColonyWorkforce.updated_at:type_name -> google.protobuf.Timestamp
 	1, // 3: planner.v1.ListColonyWorkforceResponse.workforce:type_name -> planner.v1.ColonyWorkforce
-	0, // 4: planner.v1.UpsertColonyWorkforceRequest.worker_type:type_name -> planner.v1.WorkerType
-	1, // 5: planner.v1.UpsertColonyWorkforceResponse.workforce:type_name -> planner.v1.ColonyWorkforce
-	2, // 6: planner.v1.ColonyWorkforceService.ListColonyWorkforce:input_type -> planner.v1.ListColonyWorkforceRequest
-	4, // 7: planner.v1.ColonyWorkforceService.UpsertColonyWorkforce:input_type -> planner.v1.UpsertColonyWorkforceRequest
-	3, // 8: planner.v1.ColonyWorkforceService.ListColonyWorkforce:output_type -> planner.v1.ListColonyWorkforceResponse
-	5, // 9: planner.v1.ColonyWorkforceService.UpsertColonyWorkforce:output_type -> planner.v1.UpsertColonyWorkforceResponse
-	8, // [8:10] is the sub-list for method output_type
-	6, // [6:8] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	0, // 4: planner.v1.UpsertWorkforceItem.type:type_name -> planner.v1.WorkerType
+	4, // 5: planner.v1.UpsertColonyWorkforcesRequest.workforces:type_name -> planner.v1.UpsertWorkforceItem
+	1, // 6: planner.v1.UpsertColonyWorkforcesResponse.workforces:type_name -> planner.v1.ColonyWorkforce
+	2, // 7: planner.v1.ColonyWorkforceService.ListColonyWorkforce:input_type -> planner.v1.ListColonyWorkforceRequest
+	5, // 8: planner.v1.ColonyWorkforceService.UpsertColonyWorkforces:input_type -> planner.v1.UpsertColonyWorkforcesRequest
+	3, // 9: planner.v1.ColonyWorkforceService.ListColonyWorkforce:output_type -> planner.v1.ListColonyWorkforceResponse
+	6, // 10: planner.v1.ColonyWorkforceService.UpsertColonyWorkforces:output_type -> planner.v1.UpsertColonyWorkforcesResponse
+	9, // [9:11] is the sub-list for method output_type
+	7, // [7:9] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_colony_workforce_proto_init() }
@@ -482,7 +533,7 @@ func file_planner_v1_colony_workforce_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_colony_workforce_proto_rawDesc), len(file_planner_v1_colony_workforce_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

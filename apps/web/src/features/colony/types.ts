@@ -51,17 +51,21 @@ export const ListColonyWorkforceRequestSchema = z.object({
 });
 
 export const ListColonyWorkforceResponseSchema = z.object({
-	workforce: z.array(ColonyWorkforceSchema),
+	workforces: z.array(ColonyWorkforceSchema),
 });
 
-export const UpsertColonyWorkforceRequestSchema = z.object({
+export const UpsertColonyWorkforcesRequestSchema = z.object({
 	colonyId: z.uuid(),
-	count: z.number().int(),
-	workerType: z.enum(WorkerTypeEnum),
+	workforces: z
+		.object({
+			count: z.number().int().min(0),
+			type: z.enum(WorkerTypeEnum),
+		})
+		.array(),
 });
 
-export const UpsertColonyWorkforceResponseSchema = z.object({
-	workforce: ColonyWorkforceSchema,
+export const UpsertColonyWorkforcesResponseSchema = z.object({
+	workforces: ColonyWorkforceSchema.array(),
 });
 
 export type Colony = z.infer<typeof ColonySchema>;
@@ -69,6 +73,6 @@ export type ColonyWorkforce = z.infer<typeof ColonyWorkforceSchema>;
 export type CreateColonyRequest = z.infer<typeof CreateColonyRequestSchema>;
 export type UpdateColonyRequest = z.infer<typeof UpdateColonyRequestSchema>;
 export type RemoveColonyRequest = z.infer<typeof RemoveColonyRequestSchema>;
-export type UpsertColonyWorkforceRequest = z.infer<
-	typeof UpsertColonyWorkforceRequestSchema
+export type UpsertColonyWorkforcesRequest = z.infer<
+	typeof UpsertColonyWorkforcesRequestSchema
 >;

@@ -12,7 +12,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file planner/v1/colony_workforce.proto.
  */
 export const file_planner_v1_colony_workforce: GenFile = /*@__PURE__*/
-  fileDesc("CiFwbGFubmVyL3YxL2NvbG9ueV93b3JrZm9yY2UucHJvdG8SCnBsYW5uZXIudjEizAEKD0NvbG9ueVdvcmtmb3JjZRIKCgJpZBgBIAEoCRIRCgljb2xvbnlfaWQYAiABKAkSKwoLd29ya2VyX3R5cGUYAyABKA4yFi5wbGFubmVyLnYxLldvcmtlclR5cGUSDQoFY291bnQYBCABKAUSLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRAoaTGlzdENvbG9ueVdvcmtmb3JjZVJlcXVlc3QSEQoJY29sb255X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIk0KG0xpc3RDb2xvbnlXb3JrZm9yY2VSZXNwb25zZRIuCgl3b3JrZm9yY2UYASADKAsyGy5wbGFubmVyLnYxLkNvbG9ueVdvcmtmb3JjZSKCAQocVXBzZXJ0Q29sb255V29ya2ZvcmNlUmVxdWVzdBIRCgljb2xvbnlfaWQYASABKAkSEwoLY2FtcGFpZ25faWQYAiABKAkSKwoLd29ya2VyX3R5cGUYAyABKA4yFi5wbGFubmVyLnYxLldvcmtlclR5cGUSDQoFY291bnQYBCABKAUiTwodVXBzZXJ0Q29sb255V29ya2ZvcmNlUmVzcG9uc2USLgoJd29ya2ZvcmNlGAEgASgLMhsucGxhbm5lci52MS5Db2xvbnlXb3JrZm9yY2Uq7QEKCldvcmtlclR5cGUSGwoXV09SS0VSX1RZUEVfVU5TUEVDSUZJRUQQABIWChJXT1JLRVJfVFlQRV9GQVJNRVIQARIWChJXT1JLRVJfVFlQRV9IRUFMRVIQAhIaChZXT1JLRVJfVFlQRV9CTEFDS1NNSVRIEAMSFwoTV09SS0VSX1RZUEVfU09MRElFUhAEEhUKEVdPUktFUl9UWVBFX01JTkVSEAUSFwoTV09SS0VSX1RZUEVfQlVJTERFUhAGEhcKE1dPUktFUl9UWVBFX1NDSE9MQVIQBxIUChBXT1JLRVJfVFlQRV9NQUdFEAgy7gEKFkNvbG9ueVdvcmtmb3JjZVNlcnZpY2USZgoTTGlzdENvbG9ueVdvcmtmb3JjZRImLnBsYW5uZXIudjEuTGlzdENvbG9ueVdvcmtmb3JjZVJlcXVlc3QaJy5wbGFubmVyLnYxLkxpc3RDb2xvbnlXb3JrZm9yY2VSZXNwb25zZRJsChVVcHNlcnRDb2xvbnlXb3JrZm9yY2USKC5wbGFubmVyLnYxLlVwc2VydENvbG9ueVdvcmtmb3JjZVJlcXVlc3QaKS5wbGFubmVyLnYxLlVwc2VydENvbG9ueVdvcmtmb3JjZVJlc3BvbnNlQrEBCg5jb20ucGxhbm5lci52MUIUQ29sb255V29ya2ZvcmNlUHJvdG9QAVpAZ2l0aHViLmNvbS9CQnJ1aW5ndG9uL3BhcnR5LXBsYW5uZXIvYXBpL2dlbi9wbGFubmVyL3YxO3BsYW5uZXJ2MaICA1BYWKoCClBsYW5uZXIuVjHKAgpQbGFubmVyXFYx4gIWUGxhbm5lclxWMVxHUEJNZXRhZGF0YeoCC1BsYW5uZXI6OlYxYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("CiFwbGFubmVyL3YxL2NvbG9ueV93b3JrZm9yY2UucHJvdG8SCnBsYW5uZXIudjEizAEKD0NvbG9ueVdvcmtmb3JjZRIKCgJpZBgBIAEoCRIRCgljb2xvbnlfaWQYAiABKAkSKwoLd29ya2VyX3R5cGUYAyABKA4yFi5wbGFubmVyLnYxLldvcmtlclR5cGUSDQoFY291bnQYBCABKAUSLgoKY3JlYXRlZF9hdBgFIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKdXBkYXRlZF9hdBgGIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRAoaTGlzdENvbG9ueVdvcmtmb3JjZVJlcXVlc3QSEQoJY29sb255X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJIk0KG0xpc3RDb2xvbnlXb3JrZm9yY2VSZXNwb25zZRIuCgl3b3JrZm9yY2UYASADKAsyGy5wbGFubmVyLnYxLkNvbG9ueVdvcmtmb3JjZSJKChNVcHNlcnRXb3JrZm9yY2VJdGVtEiQKBHR5cGUYASABKA4yFi5wbGFubmVyLnYxLldvcmtlclR5cGUSDQoFY291bnQYAiABKAUifAodVXBzZXJ0Q29sb255V29ya2ZvcmNlc1JlcXVlc3QSEQoJY29sb255X2lkGAEgASgJEhMKC2NhbXBhaWduX2lkGAIgASgJEjMKCndvcmtmb3JjZXMYAyADKAsyHy5wbGFubmVyLnYxLlVwc2VydFdvcmtmb3JjZUl0ZW0iUQoeVXBzZXJ0Q29sb255V29ya2ZvcmNlc1Jlc3BvbnNlEi8KCndvcmtmb3JjZXMYASADKAsyGy5wbGFubmVyLnYxLkNvbG9ueVdvcmtmb3JjZSrtAQoKV29ya2VyVHlwZRIbChdXT1JLRVJfVFlQRV9VTlNQRUNJRklFRBAAEhYKEldPUktFUl9UWVBFX0ZBUk1FUhABEhYKEldPUktFUl9UWVBFX0hFQUxFUhACEhoKFldPUktFUl9UWVBFX0JMQUNLU01JVEgQAxIXChNXT1JLRVJfVFlQRV9TT0xESUVSEAQSFQoRV09SS0VSX1RZUEVfTUlORVIQBRIXChNXT1JLRVJfVFlQRV9CVUlMREVSEAYSFwoTV09SS0VSX1RZUEVfU0NIT0xBUhAHEhQKEFdPUktFUl9UWVBFX01BR0UQCDLxAQoWQ29sb255V29ya2ZvcmNlU2VydmljZRJmChNMaXN0Q29sb255V29ya2ZvcmNlEiYucGxhbm5lci52MS5MaXN0Q29sb255V29ya2ZvcmNlUmVxdWVzdBonLnBsYW5uZXIudjEuTGlzdENvbG9ueVdvcmtmb3JjZVJlc3BvbnNlEm8KFlVwc2VydENvbG9ueVdvcmtmb3JjZXMSKS5wbGFubmVyLnYxLlVwc2VydENvbG9ueVdvcmtmb3JjZXNSZXF1ZXN0GioucGxhbm5lci52MS5VcHNlcnRDb2xvbnlXb3JrZm9yY2VzUmVzcG9uc2VCsQEKDmNvbS5wbGFubmVyLnYxQhRDb2xvbnlXb3JrZm9yY2VQcm90b1ABWkBnaXRodWIuY29tL0JCcnVpbmd0b24vcGFydHktcGxhbm5lci9hcGkvZ2VuL3BsYW5uZXIvdjE7cGxhbm5lcnYxogIDUFhYqgIKUGxhbm5lci5WMcoCClBsYW5uZXJcVjHiAhZQbGFubmVyXFYxXEdQQk1ldGFkYXRh6gILUGxhbm5lcjo6VjFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * @generated from message planner.v1.ColonyWorkforce
@@ -96,9 +96,31 @@ export const ListColonyWorkforceResponseSchema: GenMessage<ListColonyWorkforceRe
   messageDesc(file_planner_v1_colony_workforce, 2);
 
 /**
- * @generated from message planner.v1.UpsertColonyWorkforceRequest
+ * @generated from message planner.v1.UpsertWorkforceItem
  */
-export type UpsertColonyWorkforceRequest = Message<"planner.v1.UpsertColonyWorkforceRequest"> & {
+export type UpsertWorkforceItem = Message<"planner.v1.UpsertWorkforceItem"> & {
+  /**
+   * @generated from field: planner.v1.WorkerType type = 1;
+   */
+  type: WorkerType;
+
+  /**
+   * @generated from field: int32 count = 2;
+   */
+  count: number;
+};
+
+/**
+ * Describes the message planner.v1.UpsertWorkforceItem.
+ * Use `create(UpsertWorkforceItemSchema)` to create a new message.
+ */
+export const UpsertWorkforceItemSchema: GenMessage<UpsertWorkforceItem> = /*@__PURE__*/
+  messageDesc(file_planner_v1_colony_workforce, 3);
+
+/**
+ * @generated from message planner.v1.UpsertColonyWorkforcesRequest
+ */
+export type UpsertColonyWorkforcesRequest = Message<"planner.v1.UpsertColonyWorkforcesRequest"> & {
   /**
    * @generated from field: string colony_id = 1;
    */
@@ -110,39 +132,34 @@ export type UpsertColonyWorkforceRequest = Message<"planner.v1.UpsertColonyWorkf
   campaignId: string;
 
   /**
-   * @generated from field: planner.v1.WorkerType worker_type = 3;
+   * @generated from field: repeated planner.v1.UpsertWorkforceItem workforces = 3;
    */
-  workerType: WorkerType;
-
-  /**
-   * @generated from field: int32 count = 4;
-   */
-  count: number;
+  workforces: UpsertWorkforceItem[];
 };
 
 /**
- * Describes the message planner.v1.UpsertColonyWorkforceRequest.
- * Use `create(UpsertColonyWorkforceRequestSchema)` to create a new message.
+ * Describes the message planner.v1.UpsertColonyWorkforcesRequest.
+ * Use `create(UpsertColonyWorkforcesRequestSchema)` to create a new message.
  */
-export const UpsertColonyWorkforceRequestSchema: GenMessage<UpsertColonyWorkforceRequest> = /*@__PURE__*/
-  messageDesc(file_planner_v1_colony_workforce, 3);
-
-/**
- * @generated from message planner.v1.UpsertColonyWorkforceResponse
- */
-export type UpsertColonyWorkforceResponse = Message<"planner.v1.UpsertColonyWorkforceResponse"> & {
-  /**
-   * @generated from field: planner.v1.ColonyWorkforce workforce = 1;
-   */
-  workforce?: ColonyWorkforce | undefined;
-};
-
-/**
- * Describes the message planner.v1.UpsertColonyWorkforceResponse.
- * Use `create(UpsertColonyWorkforceResponseSchema)` to create a new message.
- */
-export const UpsertColonyWorkforceResponseSchema: GenMessage<UpsertColonyWorkforceResponse> = /*@__PURE__*/
+export const UpsertColonyWorkforcesRequestSchema: GenMessage<UpsertColonyWorkforcesRequest> = /*@__PURE__*/
   messageDesc(file_planner_v1_colony_workforce, 4);
+
+/**
+ * @generated from message planner.v1.UpsertColonyWorkforcesResponse
+ */
+export type UpsertColonyWorkforcesResponse = Message<"planner.v1.UpsertColonyWorkforcesResponse"> & {
+  /**
+   * @generated from field: repeated planner.v1.ColonyWorkforce workforces = 1;
+   */
+  workforces: ColonyWorkforce[];
+};
+
+/**
+ * Describes the message planner.v1.UpsertColonyWorkforcesResponse.
+ * Use `create(UpsertColonyWorkforcesResponseSchema)` to create a new message.
+ */
+export const UpsertColonyWorkforcesResponseSchema: GenMessage<UpsertColonyWorkforcesResponse> = /*@__PURE__*/
+  messageDesc(file_planner_v1_colony_workforce, 5);
 
 /**
  * @generated from enum planner.v1.WorkerType
@@ -213,12 +230,12 @@ export const ColonyWorkforceService: GenService<{
     output: typeof ListColonyWorkforceResponseSchema;
   },
   /**
-   * @generated from rpc planner.v1.ColonyWorkforceService.UpsertColonyWorkforce
+   * @generated from rpc planner.v1.ColonyWorkforceService.UpsertColonyWorkforces
    */
-  upsertColonyWorkforce: {
+  upsertColonyWorkforces: {
     methodKind: "unary";
-    input: typeof UpsertColonyWorkforceRequestSchema;
-    output: typeof UpsertColonyWorkforceResponseSchema;
+    input: typeof UpsertColonyWorkforcesRequestSchema;
+    output: typeof UpsertColonyWorkforcesResponseSchema;
   },
 }> = /*@__PURE__*/
   serviceDesc(file_planner_v1_colony_workforce, 0);

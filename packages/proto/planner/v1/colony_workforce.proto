@@ -45,15 +45,18 @@ message ListColonyWorkforceResponse {
   repeated ColonyWorkforce workforce = 1;
 }
 
-message UpsertColonyWorkforceRequest {
+message UpsertWorkforceItem {
+    WorkerType type = 1;
+    int32 count = 2;
+}
+message UpsertColonyWorkforcesRequest {
   string colony_id = 1;
   string campaign_id = 2;
-  WorkerType worker_type = 3;
-  int32 count = 4;
+  repeated UpsertWorkforceItem workforces = 3;
 }
 
-message UpsertColonyWorkforceResponse {
-  ColonyWorkforce workforce = 1;
+message UpsertColonyWorkforcesResponse {
+  repeated ColonyWorkforce workforces = 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -62,5 +65,5 @@ message UpsertColonyWorkforceResponse {
 
 service ColonyWorkforceService {
   rpc ListColonyWorkforce(ListColonyWorkforceRequest) returns (ListColonyWorkforceResponse);
-  rpc UpsertColonyWorkforce(UpsertColonyWorkforceRequest) returns (UpsertColonyWorkforceResponse);
+  rpc UpsertColonyWorkforces(UpsertColonyWorkforcesRequest) returns (UpsertColonyWorkforcesResponse);
 }

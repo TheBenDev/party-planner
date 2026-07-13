@@ -6,7 +6,7 @@ import type {
 	CreateColonyRequest,
 	RemoveColonyRequest,
 	UpdateColonyRequest,
-	UpsertColonyWorkforceRequest,
+	UpsertColonyWorkforcesRequest,
 } from "../types";
 
 export function useColonyData() {
@@ -37,14 +37,14 @@ export function useColonyData() {
 		onSuccess: invalidateColony,
 	});
 
-	const upsertColonyWorkforce = useMutation({
-		mutationFn: (input: UpsertColonyWorkforceRequest) =>
-			client.colony.upsertColonyWorkforce(input),
+	const upsertColonyWorkforces = useMutation({
+		mutationFn: (input: UpsertColonyWorkforcesRequest) =>
+			client.colony.upsertColonyWorkforces(input),
 		onSuccess: (_, variables) =>
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.colony.workforce.list(variables.colonyId),
 			}),
 	});
 
-	return { createColony, removeColony, updateColony, upsertColonyWorkforce };
+	return { createColony, removeColony, updateColony, upsertColonyWorkforces };
 }

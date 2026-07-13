@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/BBruington/party-planner/api/internal/pg"
@@ -84,14 +85,39 @@ func (db *DB) SeedWorkforce(ctx context.Context, colonyID string) error {
 	return err
 }
 
-func (db *DB) UpsertColonyWorkforce(ctx context.Context, req *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
-	row := db.conn.QueryRowContext(ctx, `
+func (db *DB) UpsertColonyWorkforces(ctx context.Context, req *model.UpsertColonyWorkforceRequest) ([]*model.ColonyWorkforce, error) {
+	updatedWorkforces := make([]string, len(req.Workforces))
+	args := make([]any, 0, len(req.Workforces)*3)
+	for i, w := range req.Workforces {
+		updatedWorkforces[i] = fmt.Sprintf("($%d, $%d, $%d)", i*3+1, i*3+2, i*3+3)
+		args = append(args, req.ColonyID, w.WorkerType, w.Count)
+	}
+	rows, err := db.conn.QueryContext(ctx, `
 		INSERT INTO colony_workforce (colony_id, worker_type, count)
-		VALUES ($1, $2, $3)
+		VALUES `+strings.Join(updatedWorkforces, ", ")+`
 		ON CONFLICT (colony_id, worker_type) DO UPDATE
 			SET count = EXCLUDED.count, updated_at = NOW()
 		RETURNING `+workforceColumns,
-		req.ColonyID, req.WorkerType, req.Count,
+		args...,
 	)
-	return scanColonyWorkforce(row)
+	if err != nil {
+		return nil, fmt.Errorf("upsert workforce: %w", err)
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			slog.Error("failed to close rows", "error", err)
+		}
+	}()
+	var workforces []*model.ColonyWorkforce
+	for rows.Next() {
+		w, err := scanColonyWorkforce(rows)
+		if err != nil {
+			return nil, fmt.Errorf("scan workforce: %w", err)
+		}
+		workforces = append(workforces, w)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("upsert workforce rows: %w", err)
+	}
+	return workforces, nil
 }

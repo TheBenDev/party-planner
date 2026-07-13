@@ -14,7 +14,6 @@ import (
 )
 
 type mockServiceStore struct {
-	workforce     *model.ColonyWorkforce
 	workforceList []*model.ColonyWorkforce
 
 	getColonyByCampaignErr error
@@ -29,8 +28,8 @@ func (m *mockServiceStore) GetColonyByCampaign(_ context.Context, _, _ string) e
 func (m *mockServiceStore) ListWorkforceByColony(_ context.Context, _ string) ([]*model.ColonyWorkforce, error) {
 	return m.workforceList, m.listWorkforceErr
 }
-func (m *mockServiceStore) UpsertColonyWorkforce(_ context.Context, _ *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
-	return m.workforce, m.upsertWorkforceErr
+func (m *mockServiceStore) UpsertColonyWorkforces(_ context.Context, _ *model.UpsertColonyWorkforceRequest) ([]*model.ColonyWorkforce, error) {
+	return m.workforceList, m.upsertWorkforceErr
 }
 func (m *mockServiceStore) SeedWorkforce(_ context.Context, _ string) error {
 	return m.seedWorkForceErr
@@ -74,30 +73,37 @@ func TestWorkforceServiceListByColony_ColonyNotFound(t *testing.T) {
 	assertError(t, err, colony_workforce.ErrColonyNotFound)
 }
 
-// ── Upsert ────────────────────────────────────────────────────────────────────
+// ── UpsertMany ────────────────────────────────────────────────────────────────
 
-func TestWorkforceServiceUpsert_HappyPath(t *testing.T) {
+func TestWorkforceServiceUpsertMany_HappyPath(t *testing.T) {
 	want := testWorkforce()
-	got, err := newService(&mockServiceStore{workforce: want}).Upsert(context.Background(), &model.UpsertColonyWorkforceRequest{
+	got, err := newService(&mockServiceStore{workforceList: []*model.ColonyWorkforce{want}}).UpsertMany(context.Background(), &model.UpsertColonyWorkforceRequest{
 		ColonyID:   want.ColonyID,
 		CampaignID: "campaign-1",
-		WorkerType: want.WorkerType,
-		Count:      want.Count,
+		Workforces: []*model.WorkforceItem{{WorkerType: want.WorkerType, Count: want.Count}},
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if got.ID != want.ID {
-		t.Errorf("got id %q, want %q", got.ID, want.ID)
+	if len(got) != 1 || got[0].ID != want.ID {
+		t.Errorf("got %v, want one workforce with id %q", got, want.ID)
 	}
 }
 
-func TestWorkforceServiceUpsert_ColonyNotFound(t *testing.T) {
-	_, err := newService(&mockServiceStore{getColonyByCampaignErr: sql.ErrNoRows}).Upsert(context.Background(), &model.UpsertColonyWorkforceRequest{ColonyID: "colony-1", CampaignID: "campaign-1"})
+func TestWorkforceServiceUpsertMany_ColonyNotFound(t *testing.T) {
+	_, err := newService(&mockServiceStore{getColonyByCampaignErr: sql.ErrNoRows}).UpsertMany(context.Background(), &model.UpsertColonyWorkforceRequest{
+		ColonyID:   "colony-1",
+		CampaignID: "campaign-1",
+		Workforces: []*model.WorkforceItem{{WorkerType: model.WorkerTypeFarmer, Count: 1}},
+	})
 	assertError(t, err, colony_workforce.ErrColonyNotFound)
 }
 
-func TestWorkforceServiceUpsert_FK_InvalidColony(t *testing.T) {
-	_, err := newService(&mockServiceStore{upsertWorkforceErr: pgFKViolation("fk_colony_workforce_colony_id")}).Upsert(context.Background(), &model.UpsertColonyWorkforceRequest{ColonyID: "colony-1", CampaignID: "campaign-1"})
+func TestWorkforceServiceUpsertMany_FK_InvalidColony(t *testing.T) {
+	_, err := newService(&mockServiceStore{upsertWorkforceErr: pgFKViolation("fk_colony_workforce_colony_id")}).UpsertMany(context.Background(), &model.UpsertColonyWorkforceRequest{
+		ColonyID:   "colony-1",
+		CampaignID: "campaign-1",
+		Workforces: []*model.WorkforceItem{{WorkerType: model.WorkerTypeFarmer, Count: 1}},
+	})
 	assertError(t, err, colony_workforce.ErrInvalidColony)
 }
