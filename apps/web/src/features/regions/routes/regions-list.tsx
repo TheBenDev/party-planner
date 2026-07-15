@@ -97,11 +97,14 @@ function LocationRow({
 	const hasCoords = location.mapX != null && location.mapY != null;
 
 	return (
-		<Button
-			className="group flex w-full items-center gap-3 px-4 py-3.5 border rounded-xl hover:bg-muted/40 transition-colors justify-start h-auto"
+		<div
+			className="group flex w-full items-center gap-3 px-4 py-3.5 border rounded-xl hover:bg-muted/40 transition-colors justify-start h-auto cursor-pointer"
 			onClick={onView}
-			size={null}
-			variant="ghost"
+			onKeyDown={(e) => {
+				if (e.key === "Enter" || e.key === " ") onView();
+			}}
+			role="button"
+			tabIndex={0}
 		>
 			<div
 				className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm font-semibold ${color}`}
@@ -123,32 +126,30 @@ function LocationRow({
 			</div>
 
 			{isDm && !hasCoords && onPin && (
-				<div
+				<button
 					className="inline-flex items-center justify-center rounded-lg h-8 w-8 opacity-0 hover:bg-accent group-hover:opacity-100 hover:cursor-pointer transition-opacity shrink-0 text-muted-foreground hover:text-foreground"
-					onKeyDown={(e) => {
+					onClick={(e) => {
 						e.stopPropagation();
 						onPin();
 					}}
-					role="button"
-					tabIndex={0}
 					title="Place on map"
+					type="button"
 				>
 					<MapPin className="w-4 h-4" />
-				</div>
+				</button>
 			)}
 			{isDm && hasCoords && onRemovePin && (
-				<div
+				<button
 					className="inline-flex items-center justify-center rounded-lg h-8 w-8 opacity-0 hover:bg-accent group-hover:opacity-100 hover:cursor-pointer transition-opacity shrink-0 text-muted-foreground hover:text-destructive"
-					onKeyDown={(e) => {
+					onClick={(e) => {
 						e.stopPropagation();
 						onRemovePin();
 					}}
-					role="button"
-					tabIndex={0}
 					title="Remove from map"
+					type="button"
 				>
 					<MapPinOff className="w-4 h-4" />
-				</div>
+				</button>
 			)}
 
 			<DropdownMenu>
@@ -191,7 +192,7 @@ function LocationRow({
 					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
-		</Button>
+		</div>
 	);
 }
 

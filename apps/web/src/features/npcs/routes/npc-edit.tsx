@@ -6,6 +6,7 @@ import {
 } from "@planner/enums/character";
 import { UserRole } from "@planner/enums/user";
 import { Navigate, useNavigate, useParams } from "@tanstack/react-router";
+import { Fragment } from "react/jsx-runtime";
 import {
 	Controller,
 	type Resolver,
@@ -27,6 +28,7 @@ import {
 } from "@/shared/components/ui/select";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useAuth } from "@/shared/hooks/auth";
+import EditLabel from "../components/EditLabel";
 import { useNpcData } from "../hooks/useNpcData";
 import type { NonPlayerCharacterSchema, UpdateNpcRequest } from "../types";
 
@@ -87,7 +89,7 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 		formState: { dirtyFields },
 	} = useForm<NpcEditForm>({
 		defaultValues: {
-			age: npc.age ?? undefined,
+			age: npc.age ?? "",
 			aliases: npc.aliases?.map((a) => ({ value: a })) ?? [],
 			appearance: npc.appearance ?? "",
 			avatar: npc.avatar ?? "",
@@ -112,6 +114,16 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 
 	const aliases = useFieldArray({ control, name: "aliases" });
 	const labels = useFieldArray({ control, name: "labels" });
+	const editTextAreas: {
+		key: "appearance" | "backstory" | "personality" | "dmNotes" | "playerNotes";
+		label: string;
+	}[] = [
+		{ key: "appearance", label: "Appearance" },
+		{ key: "backstory", label: "Backstory" },
+		{ key: "personality", label: "Personality" },
+		{ key: "dmNotes", label: "DM Notes" },
+		{ key: "playerNotes", label: "Player Notes" },
+	];
 
 	return (
 		<form
@@ -125,6 +137,7 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 						const value = currentValues[key as keyof typeof currentValues];
 						acc[key] = value === "" ? null : value;
 						if (value === "") removedFields.push(key);
+						if (key === "level" && value === undefined) removedFields.push(key);
 						return acc;
 					},
 					{} as Record<string, unknown>,
@@ -215,7 +228,9 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 				<div className="space-y-2">
 					<Label>Level</Label>
 					<Input
-						{...register("level")}
+						{...register("level", {
+							setValueAs: (v) => (v === "" ? undefined : Number(v)),
+						})}
 						max={20}
 						min={1}
 						placeholder="1–20"
@@ -330,13 +345,17 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 			</div>
 
 			{/* Lore */}
-			<Textarea {...register("appearance")} placeholder="Appearance" />
-			<Textarea {...register("backstory")} placeholder="Backstory" />
-			<Textarea {...register("personality")} placeholder="Personality" />
-
-			{/* Notes */}
-			<Textarea {...register("dmNotes")} placeholder="DM Notes" />
-			<Textarea {...register("playerNotes")} placeholder="Player Notes" />
+			<div className="space-y-2">
+				{editTextAreas.map((textArea) => (
+					<Fragment key={textArea.key}>
+						<EditLabel>{textArea.label}</EditLabel>
+						<Textarea
+							{...register(textArea.key)}
+							placeholder={textArea.label}
+						/>
+					</Fragment>
+				))}
+			</div>
 
 			<div className="flex justify-end gap-2 pt-4">
 				<Button
@@ -348,7 +367,12 @@ function NpcEditFormInner({ npc, npcId }: { npc: Npc; npcId: string }) {
 				>
 					Cancel
 				</Button>
-				<Button disabled={updateNpc.isPending} type="submit">
+				<Button
+					disabled={
+						Object.keys(dirtyFields).length === 0 || updateNpc.isPending
+					}
+					type="submit"
+				>
 					Save Changes
 				</Button>
 			</div>

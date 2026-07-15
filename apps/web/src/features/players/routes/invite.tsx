@@ -18,10 +18,10 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Separator } from "@/shared/components/ui/separator";
-import { useMemberData } from "../hooks/useMemberData";
 import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import { useMemberData } from "../hooks/useMemberData";
 
 interface CampaignRole {
 	style: string;
@@ -73,6 +73,7 @@ export function InvitePlayerPage() {
 		setEmail("");
 		setSelectedRole(UserRole.PLAYER);
 		setSuccessEmail(null);
+		toast.success("Invitation form cleared.");
 	}
 
 	function handleSend() {
