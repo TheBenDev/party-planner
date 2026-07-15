@@ -9,8 +9,8 @@ import {
 	RemoveColonyResponseSchema,
 	UpdateColonyRequestSchema,
 	UpdateColonyResponseSchema,
-	UpsertColonyWorkforceRequestSchema,
-	UpsertColonyWorkforceResponseSchema,
+	UpsertColonyWorkforcesRequestSchema,
+	UpsertColonyWorkforcesResponseSchema,
 } from "@/features/colony/types";
 import { handleError } from "@/server/errors";
 import { campaignProcedure, dmProcedure } from "@/server/middleware";
@@ -160,7 +160,7 @@ export const listColonyWorkforceHandler: Parameters<
 			campaignId: context.campaignId,
 			colonyId: input.colonyId,
 		});
-		return { workforce: res.workforce.map(protoToColonyWorkforce) };
+		return { workforces: res.workforce.map(protoToColonyWorkforce) };
 	} catch (err) {
 		handleError(
 			err,
@@ -171,31 +171,37 @@ export const listColonyWorkforceHandler: Parameters<
 	}
 };
 
-const upsertColonyWorkforceDef = dmProcedure
+const upsertColonyWorkforcesDef = dmProcedure
 	.route({
 		method: "POST",
 		path: "/colony/workforce/upsert",
 		summary: "Upsert a worker type count for a colony",
 	})
-	.input(UpsertColonyWorkforceRequestSchema)
-	.output(UpsertColonyWorkforceResponseSchema);
+	.input(UpsertColonyWorkforcesRequestSchema)
+	.output(UpsertColonyWorkforcesResponseSchema);
 
-export const upsertColonyWorkforceHandler: Parameters<
-	typeof upsertColonyWorkforceDef.handler
+export const upsertColonyWorkforcesHandler: Parameters<
+	typeof upsertColonyWorkforcesDef.handler
 >[0] = async ({ input, context }) => {
 	try {
-		const res = await context.api.colonyWorkforce.upsertColonyWorkforce({
+		const res = await context.api.colonyWorkforce.upsertColonyWorkforces({
 			campaignId: context.campaignId,
 			colonyId: input.colonyId,
-			count: input.count,
-			workerType: workerTypeToProto(input.workerType),
+			workforces: input.workforces.map((type) => ({
+				count: type.count,
+				type: workerTypeToProto(type.type),
+			})),
 		});
-		if (res.workforce === undefined) {
+		if (res.workforces === undefined) {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "failed to upsert colony workforce",
 			});
 		}
-		return { workforce: protoToColonyWorkforce(res.workforce) };
+		return {
+			workforces: res.workforces.map((workforce) =>
+				protoToColonyWorkforce(workforce),
+			),
+		};
 	} catch (err) {
 		handleError(
 			err,
@@ -216,7 +222,7 @@ export const colonyRouter = {
 	),
 	removeColony: removeColonyDef.handler(removeColonyHandler),
 	updateColony: updateColonyDef.handler(updateColonyHandler),
-	upsertColonyWorkforce: upsertColonyWorkforceDef.handler(
-		upsertColonyWorkforceHandler,
+	upsertColonyWorkforces: upsertColonyWorkforcesDef.handler(
+		upsertColonyWorkforcesHandler,
 	),
 };

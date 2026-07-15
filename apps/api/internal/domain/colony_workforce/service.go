@@ -13,16 +13,16 @@ import (
 
 // Domain errors.
 var (
-	ErrNotFound           = errors.New("colony workforce not found")
-	ErrColonyNotFound     = errors.New("colony not found")
-	ErrInvalidColony      = errors.New("colony does not exist or does not belong to campaign")
+	ErrNotFound       = errors.New("colony workforce not found")
+	ErrColonyNotFound = errors.New("colony not found")
+	ErrInvalidColony  = errors.New("colony does not exist or does not belong to campaign")
 )
 
 type Store interface {
 	GetColonyByCampaign(ctx context.Context, colonyID, campaignID string) error
 	ListWorkforceByColony(ctx context.Context, colonyID string) ([]*model.ColonyWorkforce, error)
 	SeedWorkforce(ctx context.Context, colonyID string) error
-	UpsertColonyWorkforce(ctx context.Context, req *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error)
+	UpsertColonyWorkforces(ctx context.Context, req *model.UpsertColonyWorkforceRequest) ([]*model.ColonyWorkforce, error)
 }
 
 type Service struct {
@@ -51,21 +51,21 @@ func (s *Service) ListByColony(ctx context.Context, colonyID, campaignID string)
 	return workforce, nil
 }
 
-func (s *Service) Upsert(ctx context.Context, req *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
+func (s *Service) UpsertMany(ctx context.Context, req *model.UpsertColonyWorkforceRequest) ([]*model.ColonyWorkforce, error) {
 	if err := s.DB.GetColonyByCampaign(ctx, req.ColonyID, req.CampaignID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrColonyNotFound
 		}
 		return nil, fmt.Errorf("verify colony: %w", err)
 	}
-	workforce, err := s.DB.UpsertColonyWorkforce(ctx, req)
+	workforces, err := s.DB.UpsertColonyWorkforces(ctx, req)
 	if err != nil {
 		if mapped := mapPgError(err); mapped != err {
 			return nil, mapped
 		}
 		return nil, fmt.Errorf("upsert colony workforce: %w", err)
 	}
-	return workforce, nil
+	return workforces, nil
 }
 
 func mapPgError(err error) error {

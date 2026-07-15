@@ -1,7 +1,7 @@
 import { UserRole } from "@planner/enums/user";
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { Coins, Hammer, Heart, Pencil, Users, Wheat, X } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
@@ -10,22 +10,8 @@ import { useAuth } from "@/shared/hooks/auth";
 import { useColony } from "../hooks/useColony";
 import { useColonyData } from "../hooks/useColonyData";
 import type { Colony } from "../types";
+import { COLONY_STATS } from "../constants";
 import EditColonyCard from "./EditColonyCard";
-
-type StatKey =
-	| "gold"
-	| "food"
-	| "buildingMaterials"
-	| "colonistCount"
-	| "morale";
-
-const STATS: { icon: LucideIcon; key: StatKey; label: string }[] = [
-	{ icon: Coins, key: "gold", label: "Gold" },
-	{ icon: Wheat, key: "food", label: "Food" },
-	{ icon: Hammer, key: "buildingMaterials", label: "Materials" },
-	{ icon: Users, key: "colonistCount", label: "Colonists" },
-	{ icon: Heart, key: "morale", label: "Morale" },
-];
 
 function StatTile({
 	icon: Icon,
@@ -148,7 +134,7 @@ export default function ColonyDetailsCard({
 			) : (
 				<div className="border rounded-2xl p-6">
 					<div className="grid grid-cols-3 gap-x-4 gap-y-5">
-						{STATS.map((stat) => (
+						{COLONY_STATS.map((stat) => (
 							<StatTile
 								icon={stat.icon}
 								key={stat.key}

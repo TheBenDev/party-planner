@@ -57,10 +57,12 @@ type UpdateColonyRequest struct {
 	Gold              sql.NullInt32
 	Morale            sql.NullInt32
 }
-
+type WorkforceItem struct {
+	WorkerType WorkerType
+	Count      int32
+}
 type UpsertColonyWorkforceRequest struct {
 	ColonyID   string
 	CampaignID string
-	WorkerType WorkerType
-	Count      int32
+	Workforces []*WorkforceItem
 }

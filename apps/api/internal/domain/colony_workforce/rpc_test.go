@@ -20,18 +20,11 @@ func (m *mockStore) GetColonyByCampaign(_ context.Context, _, _ string) error { 
 func (m *mockStore) ListWorkforceByColony(_ context.Context, _ string) ([]*model.ColonyWorkforce, error) {
 	return m.workforce, m.err
 }
-func (m *mockStore) UpsertColonyWorkforce(_ context.Context, _ *model.UpsertColonyWorkforceRequest) (*model.ColonyWorkforce, error) {
-	return m.one(), m.err
+func (m *mockStore) UpsertColonyWorkforces(_ context.Context, _ *model.UpsertColonyWorkforceRequest) ([]*model.ColonyWorkforce, error) {
+	return m.workforce, m.err
 }
 func (m *mockStore) SeedWorkforce(_ context.Context, _ string) error {
 	return m.err
-}
-
-func (m *mockStore) one() *model.ColonyWorkforce {
-	if len(m.workforce) == 0 {
-		return nil
-	}
-	return m.workforce[0]
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -84,18 +77,19 @@ func TestListColonyWorkforce_Validation(t *testing.T) {
 	}
 }
 
-func TestUpsertColonyWorkforce_Validation(t *testing.T) {
+func TestUpsertColonyWorkforces_Validation(t *testing.T) {
 	tests := []struct {
 		name string
-		req  *v1.UpsertColonyWorkforceRequest
+		req  *v1.UpsertColonyWorkforcesRequest
 	}{
-		{"missing colony id", &v1.UpsertColonyWorkforceRequest{CampaignId: "campaign-1", WorkerType: v1.WorkerType_WORKER_TYPE_FARMER}},
-		{"missing campaign id", &v1.UpsertColonyWorkforceRequest{ColonyId: "colony-1", WorkerType: v1.WorkerType_WORKER_TYPE_FARMER}},
-		{"unspecified worker type", &v1.UpsertColonyWorkforceRequest{ColonyId: "colony-1", CampaignId: "campaign-1"}},
+		{"missing colony id", &v1.UpsertColonyWorkforcesRequest{CampaignId: "campaign-1", Workforces: []*v1.UpsertWorkforceItem{{Type: v1.WorkerType_WORKER_TYPE_FARMER, Count: 1}}}},
+		{"missing campaign id", &v1.UpsertColonyWorkforcesRequest{ColonyId: "colony-1", Workforces: []*v1.UpsertWorkforceItem{{Type: v1.WorkerType_WORKER_TYPE_FARMER, Count: 1}}}},
+		{"empty workforces", &v1.UpsertColonyWorkforcesRequest{ColonyId: "colony-1", CampaignId: "campaign-1"}},
+		{"unspecified worker type", &v1.UpsertColonyWorkforcesRequest{ColonyId: "colony-1", CampaignId: "campaign-1", Workforces: []*v1.UpsertWorkforceItem{{Type: v1.WorkerType_WORKER_TYPE_UNSPECIFIED}}}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := validationServer().UpsertColonyWorkforce(context.Background(), connect.NewRequest(tt.req))
+			_, err := validationServer().UpsertColonyWorkforces(context.Background(), connect.NewRequest(tt.req))
 			assertCode(t, err, connect.CodeInvalidArgument)
 		})
 	}
@@ -117,18 +111,19 @@ func TestListColonyWorkforce_HappyPath(t *testing.T) {
 	}
 }
 
-func TestUpsertColonyWorkforce_HappyPath(t *testing.T) {
+func TestUpsertColonyWorkforces_HappyPath(t *testing.T) {
 	want := testWorkforce()
-	resp, err := newServer(&mockStore{workforce: []*model.ColonyWorkforce{want}}).UpsertColonyWorkforce(context.Background(), connect.NewRequest(&v1.UpsertColonyWorkforceRequest{
+	resp, err := newServer(&mockStore{workforce: []*model.ColonyWorkforce{want}}).UpsertColonyWorkforces(context.Background(), connect.NewRequest(&v1.UpsertColonyWorkforcesRequest{
 		ColonyId:   want.ColonyID,
 		CampaignId: "campaign-1",
-		WorkerType: v1.WorkerType_WORKER_TYPE_FARMER,
-		Count:      want.Count,
+		Workforces: []*v1.UpsertWorkforceItem{
+			{Type: v1.WorkerType_WORKER_TYPE_FARMER, Count: want.Count},
+		},
 	}))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if resp.Msg.Workforce.Id != want.ID {
-		t.Errorf("got id %q, want %q", resp.Msg.Workforce.Id, want.ID)
+	if len(resp.Msg.Workforces) != 1 || resp.Msg.Workforces[0].Id != want.ID {
+		t.Errorf("got %v, want one workforce with id %q", resp.Msg.Workforces, want.ID)
 	}
 }

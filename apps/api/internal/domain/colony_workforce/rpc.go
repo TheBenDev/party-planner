@@ -44,37 +44,49 @@ func (s *Server) ListColonyWorkforce(ctx context.Context, req *connect.Request[v
 	}), nil
 }
 
-func (s *Server) UpsertColonyWorkforce(ctx context.Context, req *connect.Request[v1.UpsertColonyWorkforceRequest]) (*connect.Response[v1.UpsertColonyWorkforceResponse], error) {
+func (s *Server) UpsertColonyWorkforces(ctx context.Context, req *connect.Request[v1.UpsertColonyWorkforcesRequest]) (*connect.Response[v1.UpsertColonyWorkforcesResponse], error) {
 	if req.Msg.ColonyId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("colony id required"))
 	}
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	if req.Msg.WorkerType == v1.WorkerType_WORKER_TYPE_UNSPECIFIED {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("worker type required"))
+	if len(req.Msg.Workforces) == 0 {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("workforces required"))
 	}
-	if req.Msg.Count < 0 {
-		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("count cannot be negative"))
+	workforces := make([]*model.WorkforceItem, len(req.Msg.Workforces))
+	for i, w := range req.Msg.Workforces {
+		if w.Type == v1.WorkerType_WORKER_TYPE_UNSPECIFIED {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("worker type required"))
+		}
+		if w.Count < 0 {
+			return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("count cannot be negative"))
+		}
+		workerType, err := protoToWorkerType(w.Type)
+		if err != nil {
+			return nil, connect.NewError(connect.CodeInvalidArgument, err)
+		}
+		workforces[i] = &model.WorkforceItem{
+			WorkerType: workerType,
+			Count:      w.Count,
+		}
 	}
 
-	workerType, err := protoToWorkerType(req.Msg.WorkerType)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
-	}
-
-	workforce, err := s.ColonyWorkforce.Upsert(ctx, &model.UpsertColonyWorkforceRequest{
+	res, err := s.ColonyWorkforce.UpsertMany(ctx, &model.UpsertColonyWorkforceRequest{
 		ColonyID:   req.Msg.ColonyId,
 		CampaignID: req.Msg.CampaignId,
-		WorkerType: workerType,
-		Count:      req.Msg.Count,
+		Workforces: workforces,
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to upsert colony workforce")
 	}
+	protoWorkforces := make([]*v1.ColonyWorkforce, len(res))
+	for i, w := range res {
+		protoWorkforces[i] = workforceToProto(w)
+	}
 
-	return connect.NewResponse(&v1.UpsertColonyWorkforceResponse{
-		Workforce: workforceToProto(workforce),
+	return connect.NewResponse(&v1.UpsertColonyWorkforcesResponse{
+		Workforces: protoWorkforces,
 	}), nil
 }
 

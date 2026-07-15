@@ -36,15 +36,15 @@ const (
 	// ColonyWorkforceServiceListColonyWorkforceProcedure is the fully-qualified name of the
 	// ColonyWorkforceService's ListColonyWorkforce RPC.
 	ColonyWorkforceServiceListColonyWorkforceProcedure = "/planner.v1.ColonyWorkforceService/ListColonyWorkforce"
-	// ColonyWorkforceServiceUpsertColonyWorkforceProcedure is the fully-qualified name of the
-	// ColonyWorkforceService's UpsertColonyWorkforce RPC.
-	ColonyWorkforceServiceUpsertColonyWorkforceProcedure = "/planner.v1.ColonyWorkforceService/UpsertColonyWorkforce"
+	// ColonyWorkforceServiceUpsertColonyWorkforcesProcedure is the fully-qualified name of the
+	// ColonyWorkforceService's UpsertColonyWorkforces RPC.
+	ColonyWorkforceServiceUpsertColonyWorkforcesProcedure = "/planner.v1.ColonyWorkforceService/UpsertColonyWorkforces"
 )
 
 // ColonyWorkforceServiceClient is a client for the planner.v1.ColonyWorkforceService service.
 type ColonyWorkforceServiceClient interface {
 	ListColonyWorkforce(context.Context, *connect.Request[v1.ListColonyWorkforceRequest]) (*connect.Response[v1.ListColonyWorkforceResponse], error)
-	UpsertColonyWorkforce(context.Context, *connect.Request[v1.UpsertColonyWorkforceRequest]) (*connect.Response[v1.UpsertColonyWorkforceResponse], error)
+	UpsertColonyWorkforces(context.Context, *connect.Request[v1.UpsertColonyWorkforcesRequest]) (*connect.Response[v1.UpsertColonyWorkforcesResponse], error)
 }
 
 // NewColonyWorkforceServiceClient constructs a client for the planner.v1.ColonyWorkforceService
@@ -64,10 +64,10 @@ func NewColonyWorkforceServiceClient(httpClient connect.HTTPClient, baseURL stri
 			connect.WithSchema(colonyWorkforceServiceMethods.ByName("ListColonyWorkforce")),
 			connect.WithClientOptions(opts...),
 		),
-		upsertColonyWorkforce: connect.NewClient[v1.UpsertColonyWorkforceRequest, v1.UpsertColonyWorkforceResponse](
+		upsertColonyWorkforces: connect.NewClient[v1.UpsertColonyWorkforcesRequest, v1.UpsertColonyWorkforcesResponse](
 			httpClient,
-			baseURL+ColonyWorkforceServiceUpsertColonyWorkforceProcedure,
-			connect.WithSchema(colonyWorkforceServiceMethods.ByName("UpsertColonyWorkforce")),
+			baseURL+ColonyWorkforceServiceUpsertColonyWorkforcesProcedure,
+			connect.WithSchema(colonyWorkforceServiceMethods.ByName("UpsertColonyWorkforces")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -75,8 +75,8 @@ func NewColonyWorkforceServiceClient(httpClient connect.HTTPClient, baseURL stri
 
 // colonyWorkforceServiceClient implements ColonyWorkforceServiceClient.
 type colonyWorkforceServiceClient struct {
-	listColonyWorkforce   *connect.Client[v1.ListColonyWorkforceRequest, v1.ListColonyWorkforceResponse]
-	upsertColonyWorkforce *connect.Client[v1.UpsertColonyWorkforceRequest, v1.UpsertColonyWorkforceResponse]
+	listColonyWorkforce    *connect.Client[v1.ListColonyWorkforceRequest, v1.ListColonyWorkforceResponse]
+	upsertColonyWorkforces *connect.Client[v1.UpsertColonyWorkforcesRequest, v1.UpsertColonyWorkforcesResponse]
 }
 
 // ListColonyWorkforce calls planner.v1.ColonyWorkforceService.ListColonyWorkforce.
@@ -84,16 +84,16 @@ func (c *colonyWorkforceServiceClient) ListColonyWorkforce(ctx context.Context, 
 	return c.listColonyWorkforce.CallUnary(ctx, req)
 }
 
-// UpsertColonyWorkforce calls planner.v1.ColonyWorkforceService.UpsertColonyWorkforce.
-func (c *colonyWorkforceServiceClient) UpsertColonyWorkforce(ctx context.Context, req *connect.Request[v1.UpsertColonyWorkforceRequest]) (*connect.Response[v1.UpsertColonyWorkforceResponse], error) {
-	return c.upsertColonyWorkforce.CallUnary(ctx, req)
+// UpsertColonyWorkforces calls planner.v1.ColonyWorkforceService.UpsertColonyWorkforces.
+func (c *colonyWorkforceServiceClient) UpsertColonyWorkforces(ctx context.Context, req *connect.Request[v1.UpsertColonyWorkforcesRequest]) (*connect.Response[v1.UpsertColonyWorkforcesResponse], error) {
+	return c.upsertColonyWorkforces.CallUnary(ctx, req)
 }
 
 // ColonyWorkforceServiceHandler is an implementation of the planner.v1.ColonyWorkforceService
 // service.
 type ColonyWorkforceServiceHandler interface {
 	ListColonyWorkforce(context.Context, *connect.Request[v1.ListColonyWorkforceRequest]) (*connect.Response[v1.ListColonyWorkforceResponse], error)
-	UpsertColonyWorkforce(context.Context, *connect.Request[v1.UpsertColonyWorkforceRequest]) (*connect.Response[v1.UpsertColonyWorkforceResponse], error)
+	UpsertColonyWorkforces(context.Context, *connect.Request[v1.UpsertColonyWorkforcesRequest]) (*connect.Response[v1.UpsertColonyWorkforcesResponse], error)
 }
 
 // NewColonyWorkforceServiceHandler builds an HTTP handler from the service implementation. It
@@ -109,18 +109,18 @@ func NewColonyWorkforceServiceHandler(svc ColonyWorkforceServiceHandler, opts ..
 		connect.WithSchema(colonyWorkforceServiceMethods.ByName("ListColonyWorkforce")),
 		connect.WithHandlerOptions(opts...),
 	)
-	colonyWorkforceServiceUpsertColonyWorkforceHandler := connect.NewUnaryHandler(
-		ColonyWorkforceServiceUpsertColonyWorkforceProcedure,
-		svc.UpsertColonyWorkforce,
-		connect.WithSchema(colonyWorkforceServiceMethods.ByName("UpsertColonyWorkforce")),
+	colonyWorkforceServiceUpsertColonyWorkforcesHandler := connect.NewUnaryHandler(
+		ColonyWorkforceServiceUpsertColonyWorkforcesProcedure,
+		svc.UpsertColonyWorkforces,
+		connect.WithSchema(colonyWorkforceServiceMethods.ByName("UpsertColonyWorkforces")),
 		connect.WithHandlerOptions(opts...),
 	)
 	return "/planner.v1.ColonyWorkforceService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ColonyWorkforceServiceListColonyWorkforceProcedure:
 			colonyWorkforceServiceListColonyWorkforceHandler.ServeHTTP(w, r)
-		case ColonyWorkforceServiceUpsertColonyWorkforceProcedure:
-			colonyWorkforceServiceUpsertColonyWorkforceHandler.ServeHTTP(w, r)
+		case ColonyWorkforceServiceUpsertColonyWorkforcesProcedure:
+			colonyWorkforceServiceUpsertColonyWorkforcesHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -134,6 +134,6 @@ func (UnimplementedColonyWorkforceServiceHandler) ListColonyWorkforce(context.Co
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.ColonyWorkforceService.ListColonyWorkforce is not implemented"))
 }
 
-func (UnimplementedColonyWorkforceServiceHandler) UpsertColonyWorkforce(context.Context, *connect.Request[v1.UpsertColonyWorkforceRequest]) (*connect.Response[v1.UpsertColonyWorkforceResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.ColonyWorkforceService.UpsertColonyWorkforce is not implemented"))
+func (UnimplementedColonyWorkforceServiceHandler) UpsertColonyWorkforces(context.Context, *connect.Request[v1.UpsertColonyWorkforcesRequest]) (*connect.Response[v1.UpsertColonyWorkforcesResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.ColonyWorkforceService.UpsertColonyWorkforces is not implemented"))
 }
