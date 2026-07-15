@@ -1,5 +1,5 @@
-import type { SessionSeries } from "@/features/sessions/types";
 import { useState } from "react";
+import type { SessionSeries } from "@/features/sessions/types";
 import { Button } from "@/shared/components/ui/button";
 import {
 	Dialog,
@@ -10,7 +10,11 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { RRuleBuilder } from "./RRuleBuilder";
-import { localTimeToUtc, toDateInputValue, utcTimeToLocal } from "./session-utils";
+import {
+	localTimeToUtc,
+	toDateInputValue,
+	utcTimeToLocal,
+} from "./session-utils";
 
 type SaveInput = {
 	title?: string;
@@ -34,7 +38,9 @@ export function EditSeriesDialog({
 	const [title, setTitle] = useState(series.title);
 	const [description, setDescription] = useState(series.description ?? "");
 	const [rrule, setRrule] = useState(series.rrule);
-	const [startTime, setStartTime] = useState(utcTimeToLocal(series.startTime, series.seriesStartDate));
+	const [startTime, setStartTime] = useState(
+		utcTimeToLocal(series.startTime, series.seriesStartDate),
+	);
 	const [seriesEndDate, setSeriesEndDate] = useState(
 		series.seriesEndDate ? toDateInputValue(series.seriesEndDate) : "",
 	);
@@ -112,7 +118,9 @@ export function EditSeriesDialog({
 								seriesEndDate: seriesEndDate
 									? new Date(`${seriesEndDate}T00:00`)
 									: undefined,
-								startTime: startTime ? localTimeToUtc(startTime, series.seriesStartDate) : undefined,
+								startTime: startTime
+									? localTimeToUtc(startTime, series.seriesStartDate)
+									: undefined,
 								title: title.trim() || undefined,
 							})
 						}
