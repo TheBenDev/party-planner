@@ -44,11 +44,15 @@ func (s *Server) GetCampaign(ctx context.Context, req *connect.Request[v1.GetCam
 	if req.Msg.Id == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
 	}
-	campaign, err := s.Campaign.GetByID(ctx, req.Msg.Id)
+	campaignAuth, err := s.Campaign.GetByID(ctx, req.Msg.Id)
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to get campaign")
 	}
-	return connect.NewResponse(&v1.GetCampaignResponse{Campaign: toProto(campaign)}), nil
+	resp := &v1.GetCampaignResponse{Campaign: toProto(campaignAuth.Campaign)}
+	if campaignAuth.ColonyID != nil {
+		resp.ColonyId = campaignAuth.ColonyID
+	}
+	return connect.NewResponse(resp), nil
 }
 
 func (s *Server) UpdateCampaign(ctx context.Context, req *connect.Request[v1.UpdateCampaignRequest]) (*connect.Response[v1.UpdateCampaignResponse], error) {

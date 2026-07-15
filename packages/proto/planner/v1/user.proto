@@ -63,6 +63,7 @@ message GetAuthResponse {
   User user = 1;
   optional Campaign campaign = 2;
   optional MemberRole role = 3;
+  optional string colony_id = 4;
 }
 
 message UpdateUserRequest {

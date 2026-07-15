@@ -7,11 +7,11 @@ import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
+import { COLONY_STATS } from "../constants";
 import { useColony } from "../hooks/useColony";
 import { useColonyData } from "../hooks/useColonyData";
 import type { Colony } from "../types";
-import { COLONY_STATS } from "../constants";
-import EditColonyCard from "./EditColonyCard";
+import EditColonyResourcesCard from "./EditColonyResourcesCard";
 
 function StatTile({
 	icon: Icon,
@@ -43,7 +43,7 @@ const LOADING_HEADER = (
 	</h2>
 );
 
-export default function ColonyDetailsCard({
+export default function ColonyResourcesCard({
 	campaignId,
 }: {
 	campaignId: string;
@@ -123,7 +123,7 @@ export default function ColonyDetailsCard({
 				)}
 			</div>
 			{isEditing ? (
-				<EditColonyCard
+				<EditColonyResourcesCard
 					buildingMaterials={data.colony.buildingMaterials}
 					colonistCount={data.colony.colonistCount}
 					colonyId={data.colony.id}

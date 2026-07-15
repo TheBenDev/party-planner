@@ -21,6 +21,7 @@ export const GetAuthRequestSchema = z.object({
 
 export const GetAuthResponseSchema = z.object({
 	campaign: CampaignSchema.nullable(),
+	colonyId: z.uuid().nullable(),
 	role: z.enum(UserRole).nullable(),
 	user: UserSchema,
 });

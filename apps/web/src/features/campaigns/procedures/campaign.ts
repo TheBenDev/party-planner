@@ -1,8 +1,7 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/server";
-import { deleteCookie, getCookie } from "@orpc/server/helpers";
+import { deleteCookie } from "@orpc/server/helpers";
 import { UserRole } from "@planner/enums/user";
-import { decryptAuthCookie } from "@planner/security/auth";
 import {
 	CreateCampaignRequestSchema,
 	CreateCampaignResponseSchema,
@@ -15,12 +14,10 @@ import {
 import { handleError } from "@/server/errors";
 import {
 	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
-	AUTH_COOKIE_NAME,
 	dmProcedure,
 	privateProcedure,
-	updateAuthCookie,
+	tryRefreshAuthCookie,
 } from "@/server/middleware";
-import { env } from "@/shared/lib/env";
 import { protoToCampaign } from "@/shared/lib/proto/campaign";
 
 const createCampaignDef = privateProcedure
@@ -54,33 +51,11 @@ export const createCampaignHandler: Parameters<
 				message: "failed to create campaign",
 			});
 		const campaign = protoToCampaign(campaignProto);
-		const encryptedAuthCookie = getCookie(
-			context.reqHeaders,
-			AUTH_COOKIE_NAME,
-		);
-		try {
-			if (encryptedAuthCookie) {
-				const rawCookie = await decryptAuthCookie(
-					encryptedAuthCookie,
-					env.AUTH_PRIVATE_KEY_PEM,
-				);
-				await updateAuthCookie(env.AUTH_PUBLIC_KEY_PEM, context, {
-					campaign,
-					role: UserRole.DUNGEON_MASTER,
-					user: rawCookie.user,
-				});
-			} else {
-				deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
-				context.logger?.warn(
-					"Failed to get and update auth cookie creating new campaign",
-				);
-			}
-		} catch (error) {
-			context.logger?.error(
-				{ err: error },
-				"Failed to set auth cookie after creating campaign",
-			);
-		}
+		await tryRefreshAuthCookie(context, {
+			campaign,
+			colonyId: null,
+			role: UserRole.DUNGEON_MASTER,
+		});
 		return {
 			campaign,
 		};
@@ -122,6 +97,7 @@ export const getActiveCampaignHandler: Parameters<
 		const campaign = protoToCampaign(result.campaign);
 		return {
 			campaign,
+			colonyId: result.colonyId ?? null,
 			role,
 		};
 	} catch (err) {

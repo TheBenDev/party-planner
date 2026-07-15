@@ -1,18 +1,19 @@
 import { useAuth as useClerkAuth } from "@clerk/clerk-react";
 import type { UserRole } from "@planner/enums/user";
-import type { GetActiveCampaignResponse } from "@/features/campaigns/types";
-import type { GetUserResponse } from "@/shared/types";
 import { useQuery } from "@tanstack/react-query";
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
+import type { GetActiveCampaignResponse } from "@/features/campaigns/types";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
+import type { GetUserResponse } from "@/shared/types";
 
 export type AuthContextValue = {
 	user: GetUserResponse | null;
 	userIsLoading: boolean;
 	campaign: GetActiveCampaignResponse | null;
 	campaignIsLoading: boolean;
+	colonyId: string | null;
 	role: UserRole | null;
 };
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -36,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 		return {
 			campaign,
 			campaignIsLoading,
+			colonyId: campaign?.colonyId ?? null,
 			role: campaign?.role ?? null,
 			user,
 			userIsLoading,

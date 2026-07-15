@@ -483,6 +483,7 @@ type GetAuthResponse struct {
 	User          *User                  `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	Campaign      *Campaign              `protobuf:"bytes,2,opt,name=campaign,proto3,oneof" json:"campaign,omitempty"`
 	Role          *MemberRole            `protobuf:"varint,3,opt,name=role,proto3,enum=planner.v1.MemberRole,oneof" json:"role,omitempty"`
+	ColonyId      *string                `protobuf:"bytes,4,opt,name=colony_id,json=colonyId,proto3,oneof" json:"colony_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -536,6 +537,13 @@ func (x *GetAuthResponse) GetRole() MemberRole {
 		return *x.Role
 	}
 	return MemberRole_MEMBER_ROLE_UNSPECIFIED
+}
+
+func (x *GetAuthResponse) GetColonyId() string {
+	if x != nil && x.ColonyId != nil {
+		return *x.ColonyId
+	}
+	return ""
 }
 
 type UpdateUserRequest struct {
@@ -783,13 +791,16 @@ const file_planner_v1_user_proto_rawDesc = "" +
 	"\bclerk_id\x18\x01 \x01(\tR\aclerkId\x12$\n" +
 	"\vcampaign_id\x18\x02 \x01(\tH\x00R\n" +
 	"campaignId\x88\x01\x01B\x0e\n" +
-	"\f_campaign_id\"\xb5\x01\n" +
+	"\f_campaign_id\"\xe5\x01\n" +
 	"\x0fGetAuthResponse\x12$\n" +
 	"\x04user\x18\x01 \x01(\v2\x10.planner.v1.UserR\x04user\x125\n" +
 	"\bcampaign\x18\x02 \x01(\v2\x14.planner.v1.CampaignH\x00R\bcampaign\x88\x01\x01\x12/\n" +
-	"\x04role\x18\x03 \x01(\x0e2\x16.planner.v1.MemberRoleH\x01R\x04role\x88\x01\x01B\v\n" +
+	"\x04role\x18\x03 \x01(\x0e2\x16.planner.v1.MemberRoleH\x01R\x04role\x88\x01\x01\x12 \n" +
+	"\tcolony_id\x18\x04 \x01(\tH\x02R\bcolonyId\x88\x01\x01B\v\n" +
 	"\t_campaignB\a\n" +
-	"\x05_role\"\xbf\x01\n" +
+	"\x05_roleB\f\n" +
+	"\n" +
+	"_colony_id\"\xbf\x01\n" +
 	"\x11UpdateUserRequest\x12\x1f\n" +
 	"\vexternal_id\x18\x01 \x01(\tR\n" +
 	"externalId\x12\x1b\n" +

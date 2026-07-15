@@ -36,7 +36,7 @@ func (m *mockStore) GetUserByID(_ context.Context, _ string) (*model.User, error
 func (m *mockStore) UpdateUserByClerkID(_ context.Context, _ *model.UpdateUserRequest) (*model.User, error) {
 	return m.oneUser(), m.err
 }
-func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
+func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.CampaignAuth, error) {
 	return nil, m.err
 }
 func (m *mockStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {

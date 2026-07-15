@@ -13,7 +13,11 @@ import {
 	UpsertColonyWorkforcesResponseSchema,
 } from "@/features/colony/types";
 import { handleError } from "@/server/errors";
-import { campaignProcedure, dmProcedure } from "@/server/middleware";
+import {
+	campaignProcedure,
+	dmProcedure,
+	tryRefreshAuthCookie,
+} from "@/server/middleware";
 import {
 	protoToColony,
 	protoToColonyWorkforce,
@@ -37,11 +41,12 @@ export const createColonyHandler: Parameters<
 			campaignId: context.campaignId,
 			...input,
 		});
-		if (res.colony === undefined) {
+		if (!res.colony) {
 			throw new ORPCError("INTERNAL_SERVER_ERROR", {
 				message: "failed to create colony",
 			});
 		}
+		await tryRefreshAuthCookie(context, { colonyId: res.colony.id });
 		return { colony: protoToColony(res.colony) };
 	} catch (err) {
 		handleError(

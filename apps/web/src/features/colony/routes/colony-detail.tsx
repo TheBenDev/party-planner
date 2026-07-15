@@ -7,8 +7,10 @@ import {
 	TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { useAuth } from "@/shared/hooks/auth";
-import ColonistsCard from "../components/ColonistsCard";
-import ColonyDetailsCard from "../components/ColonyDetailsCard";
+import NpcColonistsCard from "../components/NpcColonistsCard";
+import ColonyResourcesCard from "../components/ColonyResourcesCard";
+import { WorkforceCard } from "../components/WorkforceCard";
+import { useColonyWorkforce } from "../hooks/useColony";
 
 function MapTab() {
 	return (
@@ -23,12 +25,26 @@ export default function ColonyDetailPage() {
 		from: "/_authenticated/campaign/colony/$colonyId/",
 	});
 	const { campaign, campaignIsLoading } = useAuth();
+	const { data, isPending: workforceIsLoading } = useColonyWorkforce(colonyId);
 	const campaignId = campaign?.campaign.id ?? "";
 	if (campaignIsLoading) return <div>Loading...</div>;
 
 	return (
 		<div className="space-y-6">
-			<ColonyDetailsCard campaignId={campaignId} />
+			<div className="flex flex-col lg:flex-row gap-4 items-start">
+				<div className="w-full lg:w-1/2 min-w-0">
+					<ColonyResourcesCard campaignId={campaignId} />
+				</div>
+				{data?.workforces && (
+					<div className="border rounded-2xl overflow-hidden w-full lg:w-1/2">
+						<WorkforceCard
+							colonyId={colonyId}
+							workforceIsLoading={workforceIsLoading}
+							workforces={data.workforces}
+						/>
+					</div>
+				)}
+			</div>
 
 			<Tabs defaultValue="colonists">
 				<TabsList>
@@ -43,7 +59,7 @@ export default function ColonyDetailPage() {
 				</TabsList>
 
 				<TabsContent value="colonists">
-					<ColonistsCard colonyId={colonyId} />
+					<NpcColonistsCard colonyId={colonyId} />
 				</TabsContent>
 
 				<TabsContent value="map">

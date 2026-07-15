@@ -15,7 +15,7 @@ import (
 
 type mockServiceStore struct {
 	user     *model.User
-	campaign *model.Campaign
+	campaign *model.CampaignAuth
 	member   *model.Member
 	members  []*model.MemberWithUser
 
@@ -46,7 +46,7 @@ func (m *mockServiceStore) GetUserByID(_ context.Context, _ string) (*model.User
 func (m *mockServiceStore) UpdateUserByClerkID(_ context.Context, _ *model.UpdateUserRequest) (*model.User, error) {
 	return m.user, m.updateUserErr
 }
-func (m *mockServiceStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
+func (m *mockServiceStore) GetCampaign(_ context.Context, _ string) (*model.CampaignAuth, error) {
 	return m.campaign, m.getCampaignErr
 }
 func (m *mockServiceStore) GetCampaignUser(_ context.Context, _, _ string) (*model.Member, error) {
@@ -76,8 +76,8 @@ func assertError(t *testing.T, err error, want error) {
 	}
 }
 
-func testCampaign() *model.Campaign {
-	return &model.Campaign{ID: "campaign-1", UserID: "user-1", Title: "Test Campaign"}
+func testCampaign() *model.CampaignAuth {
+	return &model.CampaignAuth{Campaign: &model.Campaign{ID: "campaign-1", UserID: "user-1", Title: "Test Campaign"}}
 }
 
 // ── Create ────────────────────────────────────────────────────────────────────

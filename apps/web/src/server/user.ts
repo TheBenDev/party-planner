@@ -1,15 +1,15 @@
 import { Code, ConnectError } from "@connectrpc/connect";
 import { ORPCError } from "@orpc/server";
 import { deleteCookie } from "@orpc/server/helpers";
-import { GetUserResponseSchema } from "@/shared/types";
 import z from "zod";
+import { protoToUser } from "@/shared/lib/proto/user";
+import { GetUserResponseSchema } from "@/shared/types";
 import { handleError } from "./errors";
 import {
 	ACTIVE_CAMPAIGN_ID_COOKIE_NAME,
 	AUTH_COOKIE_NAME,
 	privateProcedure,
 } from "./middleware";
-import { protoToUser } from "@/shared/lib/proto/user";
 
 const getUser = privateProcedure
 	.route({

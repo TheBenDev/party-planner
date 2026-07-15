@@ -26,7 +26,7 @@ interface EditColonyCardProps {
 	morale: number;
 }
 
-export default function EditColonyCard({
+export default function EditColonyResourcesCard({
 	colonyId,
 	...defaults
 }: EditColonyCardProps) {

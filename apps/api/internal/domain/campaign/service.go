@@ -21,7 +21,7 @@ var (
 
 type Store interface {
 	CreateCampaign(ctx context.Context, req *model.CreateCampaignRequest) (*model.Campaign, error)
-	GetCampaign(ctx context.Context, id string) (*model.Campaign, error)
+	GetCampaign(ctx context.Context, id string) (*model.CampaignAuth, error)
 	UpdateCampaign(ctx context.Context, req *model.UpdateCampaignRequest) (*model.Campaign, error)
 	DeleteCampaign(ctx context.Context, id string) (*model.Campaign, error)
 	CreateCampaignUser(ctx context.Context, req *model.CreateMemberRequest) (*model.Member, error)
@@ -61,15 +61,15 @@ func (s *Service) Create(ctx context.Context, req *model.CreateCampaignRequest) 
 	return campaign, nil
 }
 
-func (s *Service) GetByID(ctx context.Context, id string) (*model.Campaign, error) {
-	campaign, err := s.DB.GetCampaign(ctx, id)
+func (s *Service) GetByID(ctx context.Context, id string) (*model.CampaignAuth, error) {
+	campaignAuth, err := s.DB.GetCampaign(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound
 		}
 		return nil, fmt.Errorf("get campaign: %w", err)
 	}
-	return campaign, nil
+	return campaignAuth, nil
 }
 
 func (s *Service) Update(ctx context.Context, userID string, req *model.UpdateCampaignRequest) (*model.Campaign, error) {
