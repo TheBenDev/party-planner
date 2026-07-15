@@ -68,6 +68,21 @@ export const UpsertColonyWorkforcesResponseSchema = z.object({
 	workforces: ColonyWorkforceSchema.array(),
 });
 
+export const WorkerCountsEditFormSchema = z.object({
+	[WorkerTypeEnum.FARMER]: z.number().int().min(0),
+	[WorkerTypeEnum.HEALER]: z.number().int().min(0),
+	[WorkerTypeEnum.BLACKSMITH]: z.number().int().min(0),
+	[WorkerTypeEnum.SOLDIER]: z.number().int().min(0),
+	[WorkerTypeEnum.MINER]: z.number().int().min(0),
+	[WorkerTypeEnum.BUILDER]: z.number().int().min(0),
+	[WorkerTypeEnum.SCHOLAR]: z.number().int().min(0),
+	[WorkerTypeEnum.MAGE]: z.number().int().min(0),
+});
+
+export const EditWorkforceDetailsSchema = WorkerCountsEditFormSchema.extend({
+	colonyId: z.string(),
+});
+
 export type Colony = z.infer<typeof ColonySchema>;
 export type ColonyWorkforce = z.infer<typeof ColonyWorkforceSchema>;
 export type CreateColonyRequest = z.infer<typeof CreateColonyRequestSchema>;
@@ -76,3 +91,5 @@ export type RemoveColonyRequest = z.infer<typeof RemoveColonyRequestSchema>;
 export type UpsertColonyWorkforcesRequest = z.infer<
 	typeof UpsertColonyWorkforcesRequestSchema
 >;
+export type WorkerCountsEditForm = z.infer<typeof WorkerCountsEditFormSchema>;
+export type EditWorkforceDetailsProps = z.infer<typeof EditWorkforceDetailsSchema>;

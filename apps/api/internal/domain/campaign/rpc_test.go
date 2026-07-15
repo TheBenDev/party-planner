@@ -25,8 +25,8 @@ func (m *mockStore) CreateCampaign(_ context.Context, _ *model.CreateCampaignReq
 	return m.camp, m.err
 }
 
-func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.Campaign, error) {
-	return m.camp, m.err
+func (m *mockStore) GetCampaign(_ context.Context, _ string) (*model.CampaignAuth, error) {
+	return &model.CampaignAuth{Campaign: m.camp}, m.err
 }
 
 func (m *mockStore) UpdateCampaign(_ context.Context, _ *model.UpdateCampaignRequest) (*model.Campaign, error) {

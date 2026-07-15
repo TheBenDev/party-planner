@@ -1,27 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	CharacterStatusEnum,
 	HealthConditionEnum,
 	RelationToPartyEnum,
 } from "@planner/enums/character";
-import { WorkerTypeEnum } from "@planner/enums/colony";
+import type { WorkerTypeEnum } from "@planner/enums/colony";
 import { UserRole } from "@planner/enums/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import {
-	ArrowRight,
-	EyeOff,
-	Pencil,
-	Plus,
-	Search,
-	Trash2,
-	User2,
-	X,
-} from "lucide-react";
+import { ArrowRight, EyeOff, Plus, Search, Trash2, User2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import z from "zod";
 import {
 	characterStatusBadgeColor,
 	healthConditionBadgeColor,
@@ -48,14 +36,8 @@ import {
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
 import { queryKeys } from "@/shared/lib/query-keys";
-import {
-	AVATAR_COLORS,
-	WORKER_TYPE_LABEL,
-	WORKER_TYPE_OPTIONS,
-} from "../constants";
+import { AVATAR_COLORS, WORKER_TYPE_LABEL } from "../constants";
 import { useColonyNpcs, useColonyWorkforce } from "../hooks/useColony";
-import { useColonyData } from "../hooks/useColonyData";
-import type { ColonyWorkforce } from "../types";
 
 // ── Shared helpers ────────────────────────────────────────────────────────────
 
@@ -105,9 +87,9 @@ function NpcAvatar({
 	);
 }
 
-// ── ColonistsCard ─────────────────────────────────────────────────────────────
+// ── NpcColonistsCard ─────────────────────────────────────────────────────────────
 
-export default function ColonistsCard({ colonyId }: { colonyId: string }) {
+export default function NpcColonistsCard({ colonyId }: { colonyId: string }) {
 	const { campaign, role } = useAuth();
 	const campaignId = campaign?.campaign.id ?? "";
 	const isDm = role === UserRole.DUNGEON_MASTER;
@@ -265,9 +247,9 @@ export default function ColonistsCard({ colonyId }: { colonyId: string }) {
 	return (
 		<>
 			<div className="border rounded-2xl overflow-hidden">
-				<div className="flex h-[480px]">
+				<div className="flex flex-col lg:flex-row lg:h-[480px]">
 					{/* Left: NPC list */}
-					<div className="flex flex-col w-1/2 border-r">
+					<div className="flex flex-col w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r shrink-0">
 						<div className="p-3 space-y-2 border-b shrink-0">
 							<div className="flex items-center gap-2">
 								<div className="relative flex-1">
@@ -364,39 +346,31 @@ export default function ColonistsCard({ colonyId }: { colonyId: string }) {
 						</div>
 					</div>
 
-					{/* Right: workforce summary + NPC detail */}
-					<div className="flex flex-col flex-1 min-w-0">
-						<WorkforceDetails
-							colonyId={colonyId}
-							workforceIsLoading={workforceIsLoading}
-							workforces={workforces}
-						/>
-
-						<div className="flex-1 overflow-y-auto p-4">
-							{!selectedNpc && (
-								<div className="flex items-center justify-center h-full">
-									<p className="text-xs text-muted-foreground">
-										Select a colonist to view details
-									</p>
-								</div>
-							)}
-							{selectedNpc && (
-								<NpcDetail
-									isPending={updateNpc.isPending}
-									npc={selectedNpc}
-									onJobChange={(workforceId) =>
-										handleJobChange(selectedNpc, workforceId)
-									}
-									onRemoveFromColony={() => handleRemoveFromColony(selectedNpc)}
-									workerType={
-										selectedNpc.workforceId
-											? (workforceTypeMap.get(selectedNpc.workforceId) ?? null)
-											: null
-									}
-									workforces={workforces}
-								/>
-							)}
-						</div>
+					{/* Right: NPC detail */}
+					<div className="flex-1 overflow-y-auto p-4 min-w-0">
+						{!selectedNpc && (
+							<div className="flex items-center justify-center h-full">
+								<p className="text-xs text-muted-foreground">
+									Select a colonist to view details
+								</p>
+							</div>
+						)}
+						{selectedNpc && (
+							<NpcDetail
+								isPending={updateNpc.isPending}
+								npc={selectedNpc}
+								onJobChange={(workforceId) =>
+									handleJobChange(selectedNpc, workforceId)
+								}
+								onRemoveFromColony={() => handleRemoveFromColony(selectedNpc)}
+								workerType={
+									selectedNpc.workforceId
+										? (workforceTypeMap.get(selectedNpc.workforceId) ?? null)
+										: null
+								}
+								workforces={workforces}
+							/>
+						)}
 					</div>
 				</div>
 			</div>
@@ -651,179 +625,179 @@ function NpcRow({
 	);
 }
 
-// ── WorkforceDetails ──────────────────────────────────────────────────────────
+// // ── WorkforceDetails ──────────────────────────────────────────────────────────
 
-function WorkforceDetails({
-	colonyId,
-	workforces,
-	workforceIsLoading,
-}: {
-	colonyId: string;
-	workforces: ColonyWorkforce[];
-	workforceIsLoading: boolean;
-}) {
-	const { role } = useAuth();
-	const isDm = role === UserRole.DUNGEON_MASTER;
-	const [isEditing, setIsEditing] = useState(false);
-	return (
-		<div className="p-4 border-b shrink-0">
-			<div className="flex items-center justify-between">
-				<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
-					Colonist Roles
-				</p>
-				{isDm && (
-					<button
-						disabled={workforceIsLoading}
-						onClick={() => setIsEditing((prev) => !prev)}
-						type="button"
-					>
-						{isEditing ? (
-							<X className="w-3.5 h-3.5" />
-						) : (
-							<Pencil className="w-3.5 h-3.5" />
-						)}
-					</button>
-				)}
-			</div>
-			{workforceIsLoading && (
-				<div className="space-y-2">
-					{Array.from({ length: 3 }).map((_, index) => (
-						<Skeleton className="h-4 w-full" key={index} />
-					))}
-				</div>
-			)}
-			{isEditing ? (
-				<EditWorkforceDetails
-					colonyId={colonyId}
-					{...(Object.fromEntries(
-						WORKER_TYPE_OPTIONS.map((option) => [
-							option.key,
-							workforces.find((w) => w.workerType === option.key)?.count ?? 0,
-						]),
-					) as WorkerCountsEditForm)}
-				/>
-			) : (
-				<>
-					{!workforceIsLoading && workforces.length === 0 && (
-						<p className="text-xs text-muted-foreground">
-							No workforce assigned yet.
-						</p>
-					)}
-					{!workforceIsLoading && workforces.length > 0 && (
-						<div className="space-y-1.5">
-							{workforces.map((entry) => (
-								<div
-									className="flex items-center justify-between"
-									key={entry.id}
-								>
-									<span className="text-sm text-muted-foreground">
-										{WORKER_TYPE_LABEL[entry.workerType as WorkerTypeEnum]}
-									</span>
-									<span className="text-sm font-medium tabular-nums">
-										{entry.count}
-									</span>
-								</div>
-							))}
-						</div>
-					)}
-				</>
-			)}
-		</div>
-	);
-}
+// function WorkforceDetails({
+// 	colonyId,
+// 	workforces,
+// 	workforceIsLoading,
+// }: {
+// 	colonyId: string;
+// 	workforces: ColonyWorkforce[];
+// 	workforceIsLoading: boolean;
+// }) {
+// 	const { role } = useAuth();
+// 	const isDm = role === UserRole.DUNGEON_MASTER;
+// 	const [isEditing, setIsEditing] = useState(false);
+// 	return (
+// 		<div className="p-4 border-b shrink-0">
+// 			<div className="flex items-center justify-between">
+// 				<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+// 					Colonist Roles
+// 				</p>
+// 				{isDm && (
+// 					<button
+// 						disabled={workforceIsLoading}
+// 						onClick={() => setIsEditing((prev) => !prev)}
+// 						type="button"
+// 					>
+// 						{isEditing ? (
+// 							<X className="w-3.5 h-3.5" />
+// 						) : (
+// 							<Pencil className="w-3.5 h-3.5" />
+// 						)}
+// 					</button>
+// 				)}
+// 			</div>
+// 			{workforceIsLoading && (
+// 				<div className="space-y-2">
+// 					{Array.from({ length: 3 }).map((_, index) => (
+// 						<Skeleton className="h-4 w-full" key={index} />
+// 					))}
+// 				</div>
+// 			)}
+// 			{isEditing ? (
+// 				<EditWorkforceDetails
+// 					colonyId={colonyId}
+// 					{...(Object.fromEntries(
+// 						WORKER_TYPE_OPTIONS.map((option) => [
+// 							option.key,
+// 							workforces.find((w) => w.workerType === option.key)?.count ?? 0,
+// 						]),
+// 					) as WorkerCountsEditForm)}
+// 				/>
+// 			) : (
+// 				<>
+// 					{!workforceIsLoading && workforces.length === 0 && (
+// 						<p className="text-xs text-muted-foreground">
+// 							No workforce assigned yet.
+// 						</p>
+// 					)}
+// 					{!workforceIsLoading && workforces.length > 0 && (
+// 						<div className="space-y-1.5">
+// 							{workforces.map((entry) => (
+// 								<div
+// 									className="flex items-center justify-between"
+// 									key={entry.id}
+// 								>
+// 									<span className="text-sm text-muted-foreground">
+// 										{WORKER_TYPE_LABEL[entry.workerType as WorkerTypeEnum]}
+// 									</span>
+// 									<span className="text-sm font-medium tabular-nums">
+// 										{entry.count}
+// 									</span>
+// 								</div>
+// 							))}
+// 						</div>
+// 					)}
+// 				</>
+// 			)}
+// 		</div>
+// 	);
+// }
 
-// ── EditWorkforceDetails ──────────────────────────────────────────────────────
+// // ── EditWorkforceDetails ──────────────────────────────────────────────────────
 
-const NUMERIC_KEY_REGEX = /[0-9]/;
+// const NUMERIC_KEY_REGEX = /[0-9]/;
 
-const WorkerCountsEditFormSchema = z.object({
-	[WorkerTypeEnum.FARMER]: z.number().int().min(0),
-	[WorkerTypeEnum.HEALER]: z.number().int().min(0),
-	[WorkerTypeEnum.BLACKSMITH]: z.number().int().min(0),
-	[WorkerTypeEnum.SOLDIER]: z.number().int().min(0),
-	[WorkerTypeEnum.MINER]: z.number().int().min(0),
-	[WorkerTypeEnum.BUILDER]: z.number().int().min(0),
-	[WorkerTypeEnum.SCHOLAR]: z.number().int().min(0),
-	[WorkerTypeEnum.MAGE]: z.number().int().min(0),
-});
-type WorkerCountsEditForm = z.infer<typeof WorkerCountsEditFormSchema>;
+// const WorkerCountsEditFormSchema = z.object({
+// 	[WorkerTypeEnum.FARMER]: z.number().int().min(0),
+// 	[WorkerTypeEnum.HEALER]: z.number().int().min(0),
+// 	[WorkerTypeEnum.BLACKSMITH]: z.number().int().min(0),
+// 	[WorkerTypeEnum.SOLDIER]: z.number().int().min(0),
+// 	[WorkerTypeEnum.MINER]: z.number().int().min(0),
+// 	[WorkerTypeEnum.BUILDER]: z.number().int().min(0),
+// 	[WorkerTypeEnum.SCHOLAR]: z.number().int().min(0),
+// 	[WorkerTypeEnum.MAGE]: z.number().int().min(0),
+// });
+// type WorkerCountsEditForm = z.infer<typeof WorkerCountsEditFormSchema>;
 
-const EditWorkforceDetailsSchema = WorkerCountsEditFormSchema.extend({
-	colonyId: z.string(),
-});
+// const EditWorkforceDetailsSchema = WorkerCountsEditFormSchema.extend({
+// 	colonyId: z.string(),
+// });
 
-type EditWorkforceDetailsProps = z.infer<typeof EditWorkforceDetailsSchema>;
+// type EditWorkforceDetailsProps = z.infer<typeof EditWorkforceDetailsSchema>;
 
-function EditWorkforceDetails({
-	colonyId,
-	...defaults
-}: EditWorkforceDetailsProps) {
-	const { upsertColonyWorkforces } = useColonyData();
-	const form = useForm<WorkerCountsEditForm>({
-		defaultValues: defaults,
-		resolver: zodResolver(WorkerCountsEditFormSchema),
-	});
-	return (
-		<form
-			onSubmit={form.handleSubmit((data) =>
-				upsertColonyWorkforces.mutate(
-					{
-						colonyId,
-						workforces: Object.entries(data).map(([type, count]) => ({
-							count,
-							type: type as WorkerTypeEnum,
-						})),
-					},
-					{
-						onError: () => toast.error("Failed to update workforces."),
-						onSuccess: () => toast.success("Workforces updated."),
-					},
-				),
-			)}
-		>
-			<div className="space-y-1.5">
-				{WORKER_TYPE_OPTIONS.map((option) => (
-					<div className="flex items-center justify-between" key={option.key}>
-						<span className="text-sm text-muted-foreground">
-							{option.label}
-						</span>
-						<Input
-							className="h-7 w-16 text-sm text-right tabular-nums"
-							inputMode="numeric"
-							onKeyDown={(e) => {
-								if (e.ctrlKey || e.metaKey) {
-									return;
-								}
-								if (
-									!(
-										NUMERIC_KEY_REGEX.test(e.key) ||
-										[
-											"Backspace",
-											"Delete",
-											"ArrowLeft",
-											"ArrowRight",
-											"Tab",
-										].includes(e.key)
-									)
-								) {
-									e.preventDefault();
-								}
-							}}
-							type="text"
-							{...form.register(option.key, { setValueAs: (v) => Number(v) })}
-						/>
-					</div>
-				))}
-			</div>
-			<div className="flex justify-end mt-3">
-				<Button
-					disabled={upsertColonyWorkforces.isPending}
-					size="sm"
-					type="submit"
-				>
-					Save
-				</Button>
-			</div>
-		</form>
-	);
-}
+// function EditWorkforceDetails({
+// 	colonyId,
+// 	...defaults
+// }: EditWorkforceDetailsProps) {
+// 	const { upsertColonyWorkforces } = useColonyData();
+// 	const form = useForm<WorkerCountsEditForm>({
+// 		defaultValues: defaults,
+// 		resolver: zodResolver(WorkerCountsEditFormSchema),
+// 	});
+// 	return (
+// 		<form
+// 			onSubmit={form.handleSubmit((data) =>
+// 				upsertColonyWorkforces.mutate(
+// 					{
+// 						colonyId,
+// 						workforces: Object.entries(data).map(([type, count]) => ({
+// 							count,
+// 							type: type as WorkerTypeEnum,
+// 						})),
+// 					},
+// 					{
+// 						onError: () => toast.error("Failed to update workforces."),
+// 						onSuccess: () => toast.success("Workforces updated."),
+// 					},
+// 				),
+// 			)}
+// 		>
+// 			<div className="space-y-1.5">
+// 				{WORKER_TYPE_OPTIONS.map((option) => (
+// 					<div className="flex items-center justify-between" key={option.key}>
+// 						<span className="text-sm text-muted-foreground">
+// 							{option.label}
+// 						</span>
+// 						<Input
+// 							className="h-7 w-16 text-sm text-right tabular-nums"
+// 							inputMode="numeric"
+// 							onKeyDown={(e) => {
+// 								if (e.ctrlKey || e.metaKey) {
+// 									return;
+// 								}
+// 								if (
+// 									!(
+// 										NUMERIC_KEY_REGEX.test(e.key) ||
+// 										[
+// 											"Backspace",
+// 											"Delete",
+// 											"ArrowLeft",
+// 											"ArrowRight",
+// 											"Tab",
+// 										].includes(e.key)
+// 									)
+// 								) {
+// 									e.preventDefault();
+// 								}
+// 							}}
+// 							type="text"
+// 							{...form.register(option.key, { setValueAs: (v) => Number(v) })}
+// 						/>
+// 					</div>
+// 				))}
+// 			</div>
+// 			<div className="flex justify-end mt-3">
+// 				<Button
+// 					disabled={upsertColonyWorkforces.isPending}
+// 					size="sm"
+// 					type="submit"
+// 				>
+// 					Save
+// 				</Button>
+// 			</div>
+// 		</form>
+// 	);
+// }

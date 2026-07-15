@@ -36,4 +36,5 @@ type GetAuthResponse struct {
 	User     *User
 	Campaign *Campaign
 	Role     *MemberRole
+	ColonyId *string
 }

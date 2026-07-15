@@ -40,6 +40,7 @@ message GetCampaignRequest {
 
 message GetCampaignResponse {
   Campaign campaign = 1;
+  optional string colony_id = 2;
 }
 
 message UpdateCampaignRequest {

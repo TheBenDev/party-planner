@@ -67,11 +67,28 @@ func (db *DB) CreateCampaign(ctx context.Context, req *model.CreateCampaignReque
 	return scanCampaign(row)
 }
 
-func (db *DB) GetCampaign(ctx context.Context, id string) (*model.Campaign, error) {
-	row := db.conn.QueryRowContext(ctx,
-		`SELECT `+campaignColumns+` FROM campaigns WHERE id = $1 AND deleted_at IS NULL LIMIT 1`, id,
+func (db *DB) GetCampaign(ctx context.Context, id string) (*model.CampaignAuth, error) {
+	var campaign model.Campaign
+	var colonyID sql.NullString
+	row := db.conn.QueryRowContext(ctx, `
+		SELECT c.id, c.user_id, c.title, c.description, c.tags, c.created_at, c.updated_at, c.deleted_at,
+		       (SELECT id FROM colony WHERE campaign_id = c.id ORDER BY created_at LIMIT 1)
+		FROM campaigns c
+		WHERE c.id = $1 AND c.deleted_at IS NULL`, id,
 	)
-	return scanCampaign(row)
+	err := row.Scan(
+		&campaign.ID, &campaign.UserID, &campaign.Title, &campaign.Description, pq.Array(&campaign.Tags),
+		&campaign.CreatedAt, &campaign.UpdatedAt, &campaign.DeletedAt,
+		&colonyID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	auth := &model.CampaignAuth{Campaign: &campaign}
+	if colonyID.Valid {
+		auth.ColonyID = &colonyID.String
+	}
+	return auth, nil
 }
 
 func (db *DB) UpdateCampaign(ctx context.Context, req *model.UpdateCampaignRequest) (*model.Campaign, error) {

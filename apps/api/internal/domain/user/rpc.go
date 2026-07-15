@@ -88,6 +88,7 @@ func (s *Server) GetAuth(ctx context.Context, req *connect.Request[v1.GetAuthReq
 		User:     userToProto(auth.User),
 		Campaign: campaignToProto(auth.Campaign),
 		Role:     role,
+		ColonyId: auth.ColonyId,
 	}), nil
 }
 

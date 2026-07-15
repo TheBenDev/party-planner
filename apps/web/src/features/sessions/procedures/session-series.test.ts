@@ -60,6 +60,7 @@ mock.module("@/server/middleware", () => ({
 	campaignProcedure: makeChain(),
 	dmProcedure: makeChain(),
 	privateProcedure: makeChain(),
+	tryRefreshAuthCookie: mock(async () => {}),
 	updateAuthCookie: mock(() => {}),
 }));
 mock.module("./proto/session-series", () => ({

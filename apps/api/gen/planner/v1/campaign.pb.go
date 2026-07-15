@@ -281,6 +281,7 @@ func (x *GetCampaignRequest) GetId() string {
 type GetCampaignResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Campaign      *Campaign              `protobuf:"bytes,1,opt,name=campaign,proto3" json:"campaign,omitempty"`
+	ColonyId      *string                `protobuf:"bytes,2,opt,name=colony_id,json=colonyId,proto3,oneof" json:"colony_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -320,6 +321,13 @@ func (x *GetCampaignResponse) GetCampaign() *Campaign {
 		return x.Campaign
 	}
 	return nil
+}
+
+func (x *GetCampaignResponse) GetColonyId() string {
+	if x != nil && x.ColonyId != nil {
+		return *x.ColonyId
+	}
+	return ""
 }
 
 type UpdateCampaignRequest struct {
@@ -567,9 +575,12 @@ const file_planner_v1_campaign_proto_rawDesc = "" +
 	"\x16CreateCampaignResponse\x120\n" +
 	"\bcampaign\x18\x01 \x01(\v2\x14.planner.v1.CampaignR\bcampaign\"$\n" +
 	"\x12GetCampaignRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"G\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"w\n" +
 	"\x13GetCampaignResponse\x120\n" +
-	"\bcampaign\x18\x01 \x01(\v2\x14.planner.v1.CampaignR\bcampaign\"\xb0\x01\n" +
+	"\bcampaign\x18\x01 \x01(\v2\x14.planner.v1.CampaignR\bcampaign\x12 \n" +
+	"\tcolony_id\x18\x02 \x01(\tH\x00R\bcolonyId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_colony_id\"\xb0\x01\n" +
 	"\x15UpdateCampaignRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\x05title\x18\x02 \x01(\tH\x00R\x05title\x88\x01\x01\x12%\n" +
@@ -649,6 +660,7 @@ func file_planner_v1_campaign_proto_init() {
 	}
 	file_planner_v1_campaign_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_campaign_proto_msgTypes[1].OneofWrappers = []any{}
+	file_planner_v1_campaign_proto_msgTypes[4].OneofWrappers = []any{}
 	file_planner_v1_campaign_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

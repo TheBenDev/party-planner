@@ -29,3 +29,8 @@ type UpdateCampaignRequest struct {
 	Description sql.NullString
 	Tags        []string
 }
+
+type CampaignAuth struct {
+	*Campaign
+	ColonyID *string
+}

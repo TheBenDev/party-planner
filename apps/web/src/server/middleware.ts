@@ -79,17 +79,20 @@ export async function updateAuthCookie(
 	context: Context,
 	{
 		campaign,
+		colonyId,
 		role,
 		user,
 	}: {
 		campaign: Campaign | null;
 		role: UserRole | null;
 		user: User;
+		colonyId: string | null;
 	},
 ) {
 	const encryptedCookie = await encryptAuthCookie(
 		{
 			campaign,
+			colonyId,
 			role,
 			user,
 		},
@@ -113,6 +116,38 @@ export async function updateAuthCookie(
 		sameSite: "lax",
 		secure: env.NODE_ENV === "production",
 	});
+}
+
+export async function tryRefreshAuthCookie(
+	context: Context,
+	overrides: Partial<{
+		campaign: Campaign | null;
+		colonyId: string | null;
+		role: UserRole | null;
+		user: User;
+	}>,
+): Promise<void> {
+	const encryptedAuthCookie = getCookie(context.reqHeaders, AUTH_COOKIE_NAME);
+	if (!encryptedAuthCookie) {
+		deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+		context.logger?.warn("Auth cookie missing while trying to refresh");
+		return;
+	}
+	try {
+		const rawCookie = await decryptAuthCookie(
+			encryptedAuthCookie,
+			env.AUTH_PRIVATE_KEY_PEM,
+		);
+		await updateAuthCookie(env.AUTH_PUBLIC_KEY_PEM, context, {
+			campaign: overrides.campaign !== undefined ? overrides.campaign : rawCookie.campaign,
+			colonyId: overrides.colonyId !== undefined ? overrides.colonyId : rawCookie.colonyId,
+			role: overrides.role !== undefined ? overrides.role : rawCookie.role,
+			user: overrides.user !== undefined ? overrides.user : rawCookie.user,
+		});
+	} catch (error) {
+		deleteCookie(context.reqHeaders, ACTIVE_CAMPAIGN_ID_COOKIE_NAME);
+		context.logger?.warn({ err: error }, "Failed to refresh auth cookie");
+	}
 }
 
 export const authMiddleware = os
@@ -183,7 +218,12 @@ export const authMiddleware = os
 						? null
 						: protoRoleToUserRole(authProto.role);
 
-				return { campaign, role, user: protoToUser(authProto.user) };
+				return {
+					campaign,
+					colonyId: authProto.colonyId || null,
+					role,
+					user: protoToUser(authProto.user),
+				};
 			}
 			let auth: GetAuthResponse;
 			try {
@@ -237,6 +277,7 @@ export const authMiddleware = os
 
 			return {
 				campaign: auth.campaign,
+				colonyId: auth.colonyId,
 				role: auth.role,
 				user: auth.user,
 			};
@@ -283,6 +324,7 @@ export const authMiddleware = os
 			try {
 				await updateAuthCookie(publicKey, c, {
 					campaign: authPayload.campaign,
+					colonyId: authPayload.colonyId,
 					role: authPayload.role,
 					user: authPayload.user,
 				});
@@ -300,6 +342,7 @@ export const authMiddleware = os
 				campaignId: authPayload.campaign?.id ?? null,
 				clerkClient,
 				clerkUserId,
+				colonyId: authPayload.colonyId,
 				logger: requestLogger,
 				resend,
 				role: authPayload.role,

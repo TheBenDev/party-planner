@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
 	Activity,
+	Castle,
 	Compass,
 	Map as Location,
 	Settings,
@@ -17,7 +18,7 @@ import {
 } from "./ui/accordion";
 
 export default function Sidebar() {
-	const { campaign } = useAuth();
+	const { campaign, colonyId } = useAuth();
 	const pathName = useRouterState({
 		select: (state) => state.location.pathname,
 	});
@@ -25,6 +26,16 @@ export default function Sidebar() {
 	if (!campaign?.campaign?.title) return null;
 
 	const campaignOptions: LinkItems = [
+		...(colonyId
+			? [
+					{
+						icon: Castle,
+						label: "colony",
+						params: { colonyId },
+						url: "/campaign/colony/$colonyId",
+					} satisfies LinkItem,
+				]
+			: []),
 		{ icon: User, label: "npcs", url: "/campaign/npcs" },
 		{
 			icon: Location,
@@ -35,14 +46,16 @@ export default function Sidebar() {
 		{ icon: Compass, label: "quests", url: "/campaign/quests" },
 		{ icon: Activity, label: "sessions", url: "/campaign/sessions" },
 	];
-
 	return (
 		<div className="flex flex-col w-56 h-full border-r border-muted-foreground/20 px-3 py-5 space-y-1">
 			<Accordion defaultValue={["campaign"]} type="multiple">
 				<AccordionItem className="border-none" value="campaign">
-					<AccordionTrigger className="px-2 py-1.5 text-sm font-medium hover:no-underline">
-						{campaign.campaign.title.substring(0, 30)}
-					</AccordionTrigger>
+					<div className="flex items-center px-2 py-1.5">
+						<Link className="flex-1 text-sm font-medium" to="/campaign">
+							{campaign.campaign.title.substring(0, 30)}
+						</Link>
+						<AccordionTrigger className="p-0 hover:no-underline" />
+					</div>
 					<AccordionContent className="pb-1 space-y-1">
 						{campaignOptions.map((option) => (
 							<LinkComponent
@@ -82,6 +95,7 @@ interface LinkItem {
 	matchPrefix?: boolean;
 	url: string;
 	icon: React.ComponentType<{ className?: string }>;
+	params?: { colonyId: string | undefined };
 }
 type LinkItems = LinkItem[];
 
@@ -106,6 +120,7 @@ function LinkComponent({
 			onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
 				if (item.url === pathName) e.preventDefault();
 			}}
+			params={item.params ? { ...item.params } : undefined}
 			to={item.url}
 		>
 			<item.icon className="h-4 w-4 shrink-0" />

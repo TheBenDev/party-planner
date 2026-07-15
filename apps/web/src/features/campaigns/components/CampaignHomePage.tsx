@@ -1,7 +1,7 @@
 import { UserRole } from "@planner/enums/user";
 import { Link } from "@tanstack/react-router";
 import { CalendarDays, ChevronRight, Clock } from "lucide-react";
-import ColonyDetailsCard from "@/features/colony/components/ColonyDetailsCard";
+import ColonyResourcesCard from "@/features/colony/components/ColonyResourcesCard";
 import { useSessionsData } from "@/features/sessions/hooks/useSessionsData";
 import type { Session } from "@/features/sessions/types";
 import { Skeleton } from "@/shared/components/ui/skeleton";
@@ -177,7 +177,7 @@ export function CampaignHomePage() {
 	return (
 		<div className="max-w-2xl mx-auto px-4 py-8 space-y-8">
 			<section>
-				<ColonyDetailsCard campaignId={campaignId} />
+				<ColonyResourcesCard campaignId={campaignId} />
 			</section>
 
 			<section>

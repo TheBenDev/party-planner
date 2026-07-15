@@ -22,6 +22,7 @@ export const GetAuthRequestSchema = z.object({
 
 export const GetAuthResponseSchema = z.object({
 	campaign: CampaignSchema.nullable(),
+	colonyId: z.uuid().nullable(),
 	role: z.enum(UserRole).nullable(),
 	user: UserSchema,
 });
@@ -34,7 +35,11 @@ export type GetAuthResponse = z.infer<typeof GetAuthResponseSchema>;
 export const GetActiveCampaignRequestSchema = z.undefined();
 
 export const GetActiveCampaignResponseSchema = z
-	.object({ campaign: CampaignSchema, role: z.enum(UserRole) })
+	.object({
+		campaign: CampaignSchema,
+		colonyId: z.uuid().nullable(),
+		role: z.enum(UserRole),
+	})
 	.nullable();
 
 export type GetActiveCampaignResponse = z.infer<

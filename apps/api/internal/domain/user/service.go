@@ -26,7 +26,7 @@ type Store interface {
 	GetUserByEmail(ctx context.Context, email string) (*model.User, error)
 	GetUserByID(ctx context.Context, userID string) (*model.User, error)
 	UpdateUserByClerkID(ctx context.Context, req *model.UpdateUserRequest) (*model.User, error)
-	GetCampaign(ctx context.Context, id string) (*model.Campaign, error)
+	GetCampaign(ctx context.Context, id string) (*model.CampaignAuth, error)
 	GetCampaignUser(ctx context.Context, campaignID, userID string) (*model.Member, error)
 	ListCampaignUsersByUser(ctx context.Context, userID string) ([]*model.MemberWithUser, error)
 }
@@ -113,8 +113,9 @@ func (s *Service) GetAuth(ctx context.Context, externalID string, campaignID *st
 
 		return &model.GetAuthResponse{
 			User:     user,
-			Campaign: campaign,
+			Campaign: campaign.Campaign,
 			Role:     &member.Role,
+			ColonyId: campaign.ColonyID,
 		}, nil
 	}
 
@@ -128,6 +129,7 @@ func (s *Service) GetAuth(ctx context.Context, externalID string, campaignID *st
 			User:     user,
 			Campaign: nil,
 			Role:     nil,
+			ColonyId: nil,
 		}, nil
 	}
 
@@ -145,8 +147,9 @@ func (s *Service) GetAuth(ctx context.Context, externalID string, campaignID *st
 
 	return &model.GetAuthResponse{
 		User:     user,
-		Campaign: campaign,
+		Campaign: campaign.Campaign,
 		Role:     &members[0].Role,
+		ColonyId: campaign.ColonyID,
 	}, nil
 }
 

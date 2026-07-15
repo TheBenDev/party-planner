@@ -19,17 +19,11 @@ const mockCampaignProto = { id: mockCampaign.id };
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
-const mockUpdateAuthCookie = mock(async () => {});
-const mockDecryptAuthCookie = mock(async () => ({
-	campaign: null,
-	role: null,
-	user: { clerkId: "clerk-1", id: "user-1" },
-}));
+const mockTryRefreshAuthCookie = mock(async () => {});
 const mockHandleError = mock((err: unknown): never => {
 	throw err;
 });
 const mockProtoToCampaign = mock(() => mockCampaign);
-const mockGetCookie = mock(() => "encrypted-cookie");
 const mockDeleteCookie = mock(() => {});
 
 const makeChain = () => {
@@ -54,11 +48,7 @@ mock.module("@/server/middleware", () => ({
 	campaignProcedure: makeChain(),
 	dmProcedure: makeChain(),
 	privateProcedure: makeChain(),
-	updateAuthCookie: mockUpdateAuthCookie,
-}));
-
-mock.module("@planner/security/auth", () => ({
-	decryptAuthCookie: mockDecryptAuthCookie,
+	tryRefreshAuthCookie: mockTryRefreshAuthCookie,
 }));
 
 mock.module("@/server/errors", () => ({
@@ -71,7 +61,6 @@ mock.module("@/shared/lib/proto/campaign", () => ({
 
 mock.module("@orpc/server/helpers", () => ({
 	deleteCookie: mockDeleteCookie,
-	getCookie: mockGetCookie,
 }));
 
 const {
@@ -121,13 +110,10 @@ describe("createCampaignHandler", () => {
 	};
 
 	beforeEach(() => {
-		mockGetCookie.mockClear();
 		mockDeleteCookie.mockClear();
-		mockUpdateAuthCookie.mockClear();
-		mockDecryptAuthCookie.mockClear();
+		mockTryRefreshAuthCookie.mockClear();
 		mockProtoToCampaign.mockClear();
 		mockProtoToCampaign.mockImplementation(() => mockCampaign);
-		mockGetCookie.mockImplementation(() => "encrypted-cookie");
 	});
 
 	test("returns the campaign on success", async () => {
@@ -147,38 +133,17 @@ describe("createCampaignHandler", () => {
 		});
 	});
 
-	test("decrypts and updates auth cookie when cookie is present", async () => {
+	test("calls tryRefreshAuthCookie with campaign, null colonyId, and DM role", async () => {
 		const context = makeContext();
 		await createCampaignHandler({ context, input } as never);
-		expect(mockDecryptAuthCookie).toHaveBeenCalledWith(
-			"encrypted-cookie",
-			"test-private-pem",
-		);
-		expect(mockUpdateAuthCookie).toHaveBeenCalledWith(
-			"test-public-pem",
+		expect(mockTryRefreshAuthCookie).toHaveBeenCalledWith(
 			context,
 			expect.objectContaining({
 				campaign: mockCampaign,
+				colonyId: null,
 				role: UserRole.DUNGEON_MASTER,
 			}),
 		);
-	});
-
-	test("deletes active campaign cookie and warns when cookie is absent", async () => {
-		mockGetCookie.mockImplementation(() => null as never);
-		const context = makeContext();
-		await createCampaignHandler({ context, input } as never);
-		expect(mockDeleteCookie).toHaveBeenCalled();
-		expect(context.logger.warn).toHaveBeenCalled();
-		expect(mockUpdateAuthCookie).not.toHaveBeenCalled();
-	});
-
-	test("swallows cookie error, logs it, and still returns campaign", async () => {
-		mockDecryptAuthCookie.mockRejectedValueOnce(new Error("decrypt failed"));
-		const context = makeContext();
-		const result = await createCampaignHandler({ context, input } as never);
-		expect(result).toEqual({ campaign: mockCampaign });
-		expect(context.logger.error).toHaveBeenCalled();
 	});
 
 	test("throws when api returns no campaign proto", async () => {
@@ -211,6 +176,7 @@ describe("getActiveCampaignHandler", () => {
 		const result = await getActiveCampaignHandler({ context } as never);
 		expect(result).toEqual({
 			campaign: mockCampaign,
+			colonyId: null,
 			role: UserRole.DUNGEON_MASTER,
 		});
 	});
