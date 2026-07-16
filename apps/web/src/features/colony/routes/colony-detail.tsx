@@ -7,8 +7,8 @@ import {
 	TabsTrigger,
 } from "@/shared/components/ui/tabs";
 import { useAuth } from "@/shared/hooks/auth";
-import NpcColonistsCard from "../components/NpcColonistsCard";
 import ColonyResourcesCard from "../components/ColonyResourcesCard";
+import NpcColonistsCard from "../components/NpcColonistsCard";
 import { WorkforceCard } from "../components/WorkforceCard";
 import { useColonyWorkforce } from "../hooks/useColony";
 
@@ -36,7 +36,7 @@ export default function ColonyDetailPage() {
 					<ColonyResourcesCard campaignId={campaignId} />
 				</div>
 				{data?.workforces && (
-					<div className="border rounded-2xl overflow-hidden w-full lg:w-1/2">
+					<div className="overflow-hidden w-full lg:w-1/2">
 						<WorkforceCard
 							colonyId={colonyId}
 							workforceIsLoading={workforceIsLoading}

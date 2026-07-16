@@ -7,7 +7,7 @@ import type { WorkerTypeEnum } from "@planner/enums/colony";
 import { UserRole } from "@planner/enums/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { ArrowRight, EyeOff, Plus, Search, Trash2, User2 } from "lucide-react";
+import { EyeOff, Plus, Search, User2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -566,7 +566,6 @@ function NpcDetail({
 					variant="outline"
 				>
 					View full profile
-					<ArrowRight className="w-3.5 h-3.5 ml-1.5" />
 				</Button>
 				{isDm && (
 					<Button
@@ -576,7 +575,7 @@ function NpcDetail({
 						title="Remove from colony"
 						variant="destructive"
 					>
-						<Trash2 className="w-3.5 h-3.5" />
+						Remove from colony
 					</Button>
 				)}
 			</div>
@@ -624,180 +623,3 @@ function NpcRow({
 		</button>
 	);
 }
-
-// // ── WorkforceDetails ──────────────────────────────────────────────────────────
-
-// function WorkforceDetails({
-// 	colonyId,
-// 	workforces,
-// 	workforceIsLoading,
-// }: {
-// 	colonyId: string;
-// 	workforces: ColonyWorkforce[];
-// 	workforceIsLoading: boolean;
-// }) {
-// 	const { role } = useAuth();
-// 	const isDm = role === UserRole.DUNGEON_MASTER;
-// 	const [isEditing, setIsEditing] = useState(false);
-// 	return (
-// 		<div className="p-4 border-b shrink-0">
-// 			<div className="flex items-center justify-between">
-// 				<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
-// 					Colonist Roles
-// 				</p>
-// 				{isDm && (
-// 					<button
-// 						disabled={workforceIsLoading}
-// 						onClick={() => setIsEditing((prev) => !prev)}
-// 						type="button"
-// 					>
-// 						{isEditing ? (
-// 							<X className="w-3.5 h-3.5" />
-// 						) : (
-// 							<Pencil className="w-3.5 h-3.5" />
-// 						)}
-// 					</button>
-// 				)}
-// 			</div>
-// 			{workforceIsLoading && (
-// 				<div className="space-y-2">
-// 					{Array.from({ length: 3 }).map((_, index) => (
-// 						<Skeleton className="h-4 w-full" key={index} />
-// 					))}
-// 				</div>
-// 			)}
-// 			{isEditing ? (
-// 				<EditWorkforceDetails
-// 					colonyId={colonyId}
-// 					{...(Object.fromEntries(
-// 						WORKER_TYPE_OPTIONS.map((option) => [
-// 							option.key,
-// 							workforces.find((w) => w.workerType === option.key)?.count ?? 0,
-// 						]),
-// 					) as WorkerCountsEditForm)}
-// 				/>
-// 			) : (
-// 				<>
-// 					{!workforceIsLoading && workforces.length === 0 && (
-// 						<p className="text-xs text-muted-foreground">
-// 							No workforce assigned yet.
-// 						</p>
-// 					)}
-// 					{!workforceIsLoading && workforces.length > 0 && (
-// 						<div className="space-y-1.5">
-// 							{workforces.map((entry) => (
-// 								<div
-// 									className="flex items-center justify-between"
-// 									key={entry.id}
-// 								>
-// 									<span className="text-sm text-muted-foreground">
-// 										{WORKER_TYPE_LABEL[entry.workerType as WorkerTypeEnum]}
-// 									</span>
-// 									<span className="text-sm font-medium tabular-nums">
-// 										{entry.count}
-// 									</span>
-// 								</div>
-// 							))}
-// 						</div>
-// 					)}
-// 				</>
-// 			)}
-// 		</div>
-// 	);
-// }
-
-// // ── EditWorkforceDetails ──────────────────────────────────────────────────────
-
-// const NUMERIC_KEY_REGEX = /[0-9]/;
-
-// const WorkerCountsEditFormSchema = z.object({
-// 	[WorkerTypeEnum.FARMER]: z.number().int().min(0),
-// 	[WorkerTypeEnum.HEALER]: z.number().int().min(0),
-// 	[WorkerTypeEnum.BLACKSMITH]: z.number().int().min(0),
-// 	[WorkerTypeEnum.SOLDIER]: z.number().int().min(0),
-// 	[WorkerTypeEnum.MINER]: z.number().int().min(0),
-// 	[WorkerTypeEnum.BUILDER]: z.number().int().min(0),
-// 	[WorkerTypeEnum.SCHOLAR]: z.number().int().min(0),
-// 	[WorkerTypeEnum.MAGE]: z.number().int().min(0),
-// });
-// type WorkerCountsEditForm = z.infer<typeof WorkerCountsEditFormSchema>;
-
-// const EditWorkforceDetailsSchema = WorkerCountsEditFormSchema.extend({
-// 	colonyId: z.string(),
-// });
-
-// type EditWorkforceDetailsProps = z.infer<typeof EditWorkforceDetailsSchema>;
-
-// function EditWorkforceDetails({
-// 	colonyId,
-// 	...defaults
-// }: EditWorkforceDetailsProps) {
-// 	const { upsertColonyWorkforces } = useColonyData();
-// 	const form = useForm<WorkerCountsEditForm>({
-// 		defaultValues: defaults,
-// 		resolver: zodResolver(WorkerCountsEditFormSchema),
-// 	});
-// 	return (
-// 		<form
-// 			onSubmit={form.handleSubmit((data) =>
-// 				upsertColonyWorkforces.mutate(
-// 					{
-// 						colonyId,
-// 						workforces: Object.entries(data).map(([type, count]) => ({
-// 							count,
-// 							type: type as WorkerTypeEnum,
-// 						})),
-// 					},
-// 					{
-// 						onError: () => toast.error("Failed to update workforces."),
-// 						onSuccess: () => toast.success("Workforces updated."),
-// 					},
-// 				),
-// 			)}
-// 		>
-// 			<div className="space-y-1.5">
-// 				{WORKER_TYPE_OPTIONS.map((option) => (
-// 					<div className="flex items-center justify-between" key={option.key}>
-// 						<span className="text-sm text-muted-foreground">
-// 							{option.label}
-// 						</span>
-// 						<Input
-// 							className="h-7 w-16 text-sm text-right tabular-nums"
-// 							inputMode="numeric"
-// 							onKeyDown={(e) => {
-// 								if (e.ctrlKey || e.metaKey) {
-// 									return;
-// 								}
-// 								if (
-// 									!(
-// 										NUMERIC_KEY_REGEX.test(e.key) ||
-// 										[
-// 											"Backspace",
-// 											"Delete",
-// 											"ArrowLeft",
-// 											"ArrowRight",
-// 											"Tab",
-// 										].includes(e.key)
-// 									)
-// 								) {
-// 									e.preventDefault();
-// 								}
-// 							}}
-// 							type="text"
-// 							{...form.register(option.key, { setValueAs: (v) => Number(v) })}
-// 						/>
-// 					</div>
-// 				))}
-// 			</div>
-// 			<div className="flex justify-end mt-3">
-// 				<Button
-// 					disabled={upsertColonyWorkforces.isPending}
-// 					size="sm"
-// 					type="submit"
-// 				>
-// 					Save
-// 				</Button>
-// 			</div>
-// 		</form>
-// 	);
-// }

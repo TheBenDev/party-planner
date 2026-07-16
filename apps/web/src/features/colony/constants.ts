@@ -30,14 +30,14 @@ export interface WorkerTypeOption {
 }
 
 export const WORKER_TYPE_OPTIONS: WorkerTypeOption[] = [
-	{ icon: Wheat, key: WorkerTypeEnum.FARMER, label: "Farmer" },
-	{ icon: HeartPulse, key: WorkerTypeEnum.HEALER, label: "Healer" },
-	{ icon: Hammer, key: WorkerTypeEnum.BLACKSMITH, label: "Blacksmith" },
-	{ icon: Sword, key: WorkerTypeEnum.SOLDIER, label: "Soldier" },
-	{ icon: Pickaxe, key: WorkerTypeEnum.MINER, label: "Miner" },
-	{ icon: HardHat, key: WorkerTypeEnum.BUILDER, label: "Builder" },
-	{ icon: BookOpen, key: WorkerTypeEnum.SCHOLAR, label: "Scholar" },
-	{ icon: Wand2, key: WorkerTypeEnum.MAGE, label: "Mage" },
+	{ icon: Wheat, key: WorkerTypeEnum.FARMER, label: "Farmers" },
+	{ icon: HeartPulse, key: WorkerTypeEnum.HEALER, label: "Healers" },
+	{ icon: Hammer, key: WorkerTypeEnum.BLACKSMITH, label: "Blacksmiths" },
+	{ icon: Sword, key: WorkerTypeEnum.SOLDIER, label: "Soldiers" },
+	{ icon: Pickaxe, key: WorkerTypeEnum.MINER, label: "Miners" },
+	{ icon: HardHat, key: WorkerTypeEnum.BUILDER, label: "Builders" },
+	{ icon: BookOpen, key: WorkerTypeEnum.SCHOLAR, label: "Scholars" },
+	{ icon: Wand2, key: WorkerTypeEnum.MAGE, label: "Mages" },
 ];
 
 export const WORKER_TYPE_LABEL = Object.fromEntries(
