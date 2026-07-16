@@ -94,7 +94,7 @@ export default function ColonyResourcesCard({
 	}
 
 	return (
-		<>
+		<div className="lg:min-h-[380px] flex flex-col">
 			<div className="flex items-center justify-between mb-3">
 				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
 					{pathName.startsWith("/campaign/colony") ? (
@@ -132,7 +132,7 @@ export default function ColonyResourcesCard({
 					morale={data.colony.morale}
 				/>
 			) : (
-				<div className="border rounded-2xl p-6">
+				<div className="border rounded-2xl flex-1 p-6">
 					<div className="grid grid-cols-3 gap-x-4 gap-y-5">
 						{COLONY_STATS.map((stat) => (
 							<StatTile
@@ -145,6 +145,6 @@ export default function ColonyResourcesCard({
 					</div>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }

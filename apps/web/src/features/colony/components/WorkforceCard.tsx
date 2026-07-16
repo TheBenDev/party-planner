@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { WorkerTypeEnum } from "@planner/enums/colony";
+import type { WorkerTypeEnum } from "@planner/enums/colony";
 import { UserRole } from "@planner/enums/user";
 import { Pencil, X } from "lucide-react";
 import { useState } from "react";
@@ -34,8 +34,8 @@ export function WorkforceCard({
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const [isEditing, setIsEditing] = useState(false);
 	return (
-		<div className="p-4 min-h-[380px]">
-			<div className="flex items-center justify-between mb-3">
+		<div className="min-h-[380px] flex flex-col">
+			<div className="flex text-muted-foreground items-center justify-between mb-3">
 				<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
 					Colonist Roles
 				</p>
@@ -56,7 +56,7 @@ export function WorkforceCard({
 					</button>
 				)}
 			</div>
-			<div>
+			<div className="rounded-2xl border p-4 flex-1">
 				{workforceIsLoading && (
 					<div className="space-y-4">
 						{Array.from({ length: 3 }).map((_, index) => (
@@ -82,10 +82,10 @@ export function WorkforceCard({
 							</p>
 						)}
 						{!workforceIsLoading && workforces.length > 0 && (
-							<div className="space-y-4">
+							<div className="space-y-2">
 								{workforces.map((entry) => (
 									<div
-										className="flex items-center justify-between"
+										className="flex items-center justify-between border-b pb-2"
 										key={entry.id}
 									>
 										<span className="text-sm text-muted-foreground">
@@ -136,9 +136,12 @@ function EditWorkforceDetails({
 				),
 			)}
 		>
-			<div className="space-y-4">
+			<div className="space-y-2">
 				{WORKER_TYPE_OPTIONS.map((option) => (
-					<div className="flex items-center justify-between" key={option.key}>
+					<div
+						className="flex items-center justify-between pb-2 border-b"
+						key={option.key}
+					>
 						<span className="text-sm text-muted-foreground">
 							{option.label}
 						</span>
@@ -172,6 +175,7 @@ function EditWorkforceDetails({
 			</div>
 			<div className="flex justify-end mt-2">
 				<Button
+					className="h-5 w-16"
 					disabled={upsertColonyWorkforces.isPending}
 					size="sm"
 					type="submit"
