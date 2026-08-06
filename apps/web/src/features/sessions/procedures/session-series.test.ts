@@ -36,8 +36,8 @@ const mockSeriesProto = { id: "series-1" };
 const mockDiscordEventProto = { eventId: "discord-event-1" };
 const mockPollProto = { seriesId: "series-1" };
 
-const futureDate = new Date(Date.now() + 86400000 * 7);
-const farFutureDate = new Date(Date.now() + 86400000 * 14);
+const futureDate = new Date(Date.now() + 86_400_000 * 7);
+const farFutureDate = new Date(Date.now() + 86_400_000 * 14);
 const pastDate = new Date(0);
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────

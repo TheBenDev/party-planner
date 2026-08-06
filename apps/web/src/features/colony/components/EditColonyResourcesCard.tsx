@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import z from "zod";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
-import { useColonyData } from "../hooks/useColonyData";
 import { COLONY_STATS } from "../constants";
+import { useColonyData } from "../hooks/useColonyData";
 
 const ColonyEditFormSchema = z.object({
 	buildingMaterials: z.number().int().min(0),
@@ -38,6 +38,7 @@ export default function EditColonyResourcesCard({
 
 	return (
 		<form
+			className="flex-1 flex flex-col"
 			onSubmit={form.handleSubmit((data) =>
 				updateColony.mutate(
 					{ id: colonyId, ...data },
@@ -48,7 +49,7 @@ export default function EditColonyResourcesCard({
 				),
 			)}
 		>
-			<div className="border rounded-2xl p-6">
+			<div className="border rounded-2xl flex-1 p-6">
 				<div className="grid grid-cols-3 gap-x-4 gap-y-5">
 					{COLONY_STATS.map(({ icon: Icon, key, label }) => (
 						<div className="space-y-1" key={key}>

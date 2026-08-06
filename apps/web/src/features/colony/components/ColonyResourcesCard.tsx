@@ -1,7 +1,6 @@
 import { UserRole } from "@planner/enums/user";
 import { Link, useRouterState } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
-import { Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/shared/components/ui/button";
@@ -12,6 +11,7 @@ import { useColony } from "../hooks/useColony";
 import { useColonyData } from "../hooks/useColonyData";
 import type { Colony } from "../types";
 import EditColonyResourcesCard from "./EditColonyResourcesCard";
+import EditModeButton from "./EditModeButton";
 
 function StatTile({
 	icon: Icon,
@@ -109,17 +109,16 @@ export default function ColonyResourcesCard({
 					)}
 				</h2>
 				{isDm && (
-					<button
+          <EditModeButton
+            ariaLabel={
+  							isEditing
+  								? "Cancel colony resource editing"
+  								: "Edit colony resources"
+  						}
 						className="text-muted-foreground hover:text-foreground transition-colors"
+						isEditing={isEditing}
 						onClick={() => setIsEditing((prev) => !prev)}
-						type="button"
-					>
-						{isEditing ? (
-							<X className="w-3.5 h-3.5" />
-						) : (
-							<Pencil className="w-3.5 h-3.5" />
-						)}
-					</button>
+					/>
 				)}
 			</div>
 			{isEditing ? (

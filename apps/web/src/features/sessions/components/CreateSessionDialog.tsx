@@ -129,7 +129,7 @@ export function CreateSessionDialog({
 
 	const handleSubmit = form.handleSubmit((data) => {
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		onCreateSeries({
+		const series = {
 			description: data.description?.trim() || undefined,
 			durationMinutes: data.durationMinutes,
 			rrule: data.rrule,
@@ -143,7 +143,8 @@ export function CreateSessionDialog({
 			),
 			timezone,
 			title: data.title.trim(),
-		});
+		};
+		onCreateSeries(series);
 		handleClose();
 	});
 
@@ -180,10 +181,7 @@ export function CreateSessionDialog({
 								control={form.control}
 								name="rrule"
 								render={({ field }) => (
-									<RRuleBuilder
-										onChange={field.onChange}
-										value={field.value}
-									/>
+									<RRuleBuilder onChange={field.onChange} value={field.value} />
 								)}
 							/>
 							{form.formState.errors.rrule && (
@@ -210,7 +208,10 @@ export function CreateSessionDialog({
 								)}
 							</div>
 							<div className="space-y-1.5">
-								<Label className="text-sm font-medium" htmlFor="seriesStartDate">
+								<Label
+									className="text-sm font-medium"
+									htmlFor="seriesStartDate"
+								>
 									{isOneOff ? "Session date" : "First session"}{" "}
 									<span className="text-destructive">*</span>
 								</Label>
@@ -228,7 +229,10 @@ export function CreateSessionDialog({
 							</div>
 						</div>
 
-						<ConflictWarning conflicts={conflicts} isLoading={conflictsLoading} />
+						<ConflictWarning
+							conflicts={conflicts}
+							isLoading={conflictsLoading}
+						/>
 
 						{!isOneOff && (
 							<div className="space-y-1.5">

@@ -372,7 +372,7 @@ func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID s
 				return ErrSeriesDiscordEventAlreadyExists
 			}
 		}
-		if computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime) == nil {
+		if computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime, lockedSeries.Timezone) == nil {
 			return ErrSeriesMissingStartTime
 		}
 		newEventID, txErr = s.Discord.CreateScheduledEvent(ctx, integration.ExternalID, lockedSeries)
@@ -390,7 +390,7 @@ func (s *Service) CreateDiscordEvent(ctx context.Context, seriesID, campaignID s
 	if newEventID != "" {
 		channelID := s.Discord.GetNotificationChannelID(integration)
 		if channelID != "" {
-			firstOccurrence := computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime)
+			firstOccurrence := computeFirstOccurrence(lockedSeries.SeriesStartDate, lockedSeries.StartTime, lockedSeries.Timezone)
 			msg := fmt.Sprintf("**%s** is scheduled for <t:%d:F> (<t:%d:R>).", lockedSeries.Title, firstOccurrence.Unix(), firstOccurrence.Unix())
 			if _, sendErr := s.Discord.SendDiscordMessage(ctx, channelID, msg); sendErr != nil {
 				s.Log.WarnContext(ctx, "failed to send series announcement message",
@@ -536,7 +536,7 @@ func mapPgError(err error) error {
 	return err
 }
 
-func computeFirstOccurrence(seriesStartDate time.Time, startTime sql.NullString) *time.Time {
+func computeFirstOccurrence(seriesStartDate time.Time, startTime sql.NullString, timezone string) *time.Time {
 	if !startTime.Valid {
 		return nil
 	}
@@ -544,8 +544,14 @@ func computeFirstOccurrence(seriesStartDate time.Time, startTime sql.NullString)
 	if !ok {
 		return nil
 	}
-	year, month, day := seriesStartDate.UTC().Date()
-	t := time.Date(year, month, day, h, m, sec, 0, time.UTC)
+	loc := time.UTC
+	if timezone != "" {
+		if parsed, err := time.LoadLocation(timezone); err == nil {
+			loc = parsed
+		}
+	}
+	year, month, day := seriesStartDate.In(loc).Date()
+	t := time.Date(year, month, day, h, m, sec, 0, loc)
 	return &t
 }
 
