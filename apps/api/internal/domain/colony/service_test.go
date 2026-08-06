@@ -16,10 +16,16 @@ import (
 type mockServiceStore struct {
 	colony *model.Colony
 
-	createColonyErr        error
-	getColonyByCampaignErr error
-	updateColonyErr        error
-	removeColonyErr        error
+	runInTxErr                      error
+	createColonyErr                 error
+	getColonyByCampaignErr          error
+	getColonyByCampaignForUpdateErr error
+	updateColonyErr                 error
+	removeColonyErr                 error
+}
+
+func (m *mockServiceStore) RunInTx(_ context.Context, _ func(context.Context, colony.Store) error) error {
+	return m.runInTxErr
 }
 
 func (m *mockServiceStore) CreateColony(_ context.Context, _ *model.CreateColonyRequest) (*model.Colony, error) {
@@ -27,6 +33,9 @@ func (m *mockServiceStore) CreateColony(_ context.Context, _ *model.CreateColony
 }
 func (m *mockServiceStore) GetColonyByCampaign(_ context.Context, _ string) (*model.Colony, error) {
 	return m.colony, m.getColonyByCampaignErr
+}
+func (m *mockServiceStore) GetColonyByCampaignForUpdate(_ context.Context, _ string) (*model.Colony, error) {
+	return m.colony, m.getColonyByCampaignForUpdateErr
 }
 func (m *mockServiceStore) UpdateColony(_ context.Context, _ *model.UpdateColonyRequest) (*model.Colony, error) {
 	return m.colony, m.updateColonyErr
@@ -123,6 +132,21 @@ func TestColonyServiceUpdate_FK_InvalidCampaign(t *testing.T) {
 	assertError(t, err, colony.ErrInvalidCampaign)
 }
 
+// ── AdvanceColonyDay ──────────────────────────────────────────────────────────
+
+func TestColonyServiceAdvanceColonyDay_HappyPath(t *testing.T) {
+	want := testColony()
+	_, err := newService(&mockServiceStore{colony: want}).AdvanceColonyDay(context.Background(), want.ID, want.CampaignID)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestColonyServiceAdvanceColonyDay_NotFound(t *testing.T) {
+	_, err := newService(&mockServiceStore{runInTxErr: sql.ErrNoRows}).AdvanceColonyDay(context.Background(), "colony-1", "campaign-1")
+	assertError(t, err, colony.ErrNotFound)
+}
+
 // ── Remove ────────────────────────────────────────────────────────────────────
 
 func TestColonyServiceRemove_HappyPath(t *testing.T) {
@@ -131,3 +155,4 @@ func TestColonyServiceRemove_HappyPath(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+

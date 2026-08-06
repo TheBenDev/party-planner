@@ -3,6 +3,7 @@ import { useAuth } from "@/shared/hooks/auth";
 import { client } from "@/shared/lib/client";
 import { queryKeys } from "@/shared/lib/query-keys";
 import type {
+	AdvanceColonyDayRequest,
 	CreateColonyRequest,
 	RemoveColonyRequest,
 	UpdateColonyRequest,
@@ -18,6 +19,12 @@ export function useColonyData() {
 		queryClient.invalidateQueries({
 			queryKey: queryKeys.colony.detail(campaignId),
 		});
+
+	const advanceColonyDay = useMutation({
+		mutationFn: (input: AdvanceColonyDayRequest) =>
+			client.colony.advanceColonyDay(input),
+		onSuccess: invalidateColony,
+	});
 
 	const createColony = useMutation({
 		mutationFn: (input: CreateColonyRequest) =>
@@ -46,5 +53,5 @@ export function useColonyData() {
 			}),
 	});
 
-	return { createColony, removeColony, updateColony, upsertColonyWorkforces };
+	return { advanceColonyDay, createColony, removeColony, updateColony, upsertColonyWorkforces };
 }

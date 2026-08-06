@@ -238,6 +238,13 @@
       "when": 1783441948445,
       "tag": "0033_add_colony_id_to_regions",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1786039204541,
+      "tag": "0034_colony_shpments",
+      "breakpoints": true
     }
   ],
   "version": "7"

@@ -12,7 +12,9 @@ const ColonyEditFormSchema = z.object({
 	colonistCount: z.number().int().min(0),
 	food: z.number().int().min(0),
 	gold: z.number().int().min(0),
-	morale: z.number().int().min(0).max(100),
+	lifespanDays: z.number().min(0),
+  morale: z.number().int().min(0).max(100),
+  shipmentAt: z.number().min(0)
 });
 
 type ColonyEditForm = z.infer<typeof ColonyEditFormSchema>;
@@ -23,7 +25,9 @@ interface EditColonyCardProps {
 	colonyId: string;
 	food: number;
 	gold: number;
+	lifespanDays: number;
 	morale: number;
+	shipmentAt?: number;
 }
 
 export default function EditColonyResourcesCard({
@@ -67,8 +71,19 @@ export default function EditColonyResourcesCard({
 							/>
 						</div>
 					))}
-				</div>
-				<div className="mt-5 flex justify-end">
+        </div>
+        <div className="my-5">
+          <span className="text-xs font-medium uppercase tracking-wide">
+            Shipment interval
+          </span>
+          <Input
+            min={0}
+            type="number"
+            {...form.register("shipmentAt", { valueAsNumber: true })}
+            className="h-8 text-base font-semibold tabular-nums"
+          />
+        </div>
+				<div className="flex justify-end">
 					<Button disabled={updateColony.isPending} size="sm" type="submit">
 						Save
 					</Button>

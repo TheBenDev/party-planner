@@ -7,6 +7,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
 import { COLONY_STATS } from "../constants";
+import { nextShipmentDays } from "../helpers";
 import { useColony } from "../hooks/useColony";
 import { useColonyData } from "../hooks/useColonyData";
 import type { Colony } from "../types";
@@ -55,7 +56,7 @@ export default function ColonyResourcesCard({
 	});
 	const isDm = role === UserRole.DUNGEON_MASTER;
 	const [isEditing, setIsEditing] = useState(false);
-	const { createColony } = useColonyData();
+	const { advanceColonyDay, createColony } = useColonyData();
 
 	if (isLoading) {
 		return (
@@ -95,7 +96,7 @@ export default function ColonyResourcesCard({
 
 	return (
 		<div className="lg:min-h-[380px] flex flex-col">
-			<div className="flex items-center justify-between mb-3">
+			<div className="flex items-center justify-between h-6 mb-1">
 				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
 					{pathName.startsWith("/campaign/colony") ? (
 						"Colony"
@@ -109,16 +110,37 @@ export default function ColonyResourcesCard({
 					)}
 				</h2>
 				{isDm && (
-          <EditModeButton
-            ariaLabel={
-  							isEditing
-  								? "Cancel colony resource editing"
-  								: "Edit colony resources"
-  						}
-						className="text-muted-foreground hover:text-foreground transition-colors"
-						isEditing={isEditing}
-						onClick={() => setIsEditing((prev) => !prev)}
-					/>
+					<div className="flex items-center gap-2">
+						{!isEditing && (
+							<Button
+								className="h-6 text-xs"
+								disabled={advanceColonyDay.isPending}
+								onClick={() =>
+									advanceColonyDay.mutate(
+										{ id: data.colony.id },
+										{
+											onError: () => toast.error("Failed to advance day"),
+											onSuccess: () => toast.success("Day advanced"),
+										},
+									)
+								}
+								size="sm"
+								variant="outline"
+							>
+								Advance Day
+							</Button>
+						)}
+						<EditModeButton
+							ariaLabel={
+								isEditing
+									? "Cancel colony resource editing"
+									: "Edit colony resources"
+							}
+							className="text-muted-foreground hover:text-foreground transition-colors"
+							isEditing={isEditing}
+							onClick={() => setIsEditing((prev) => !prev)}
+						/>
+					</div>
 				)}
 			</div>
 			{isEditing ? (
@@ -128,7 +150,9 @@ export default function ColonyResourcesCard({
 					colonyId={data.colony.id}
 					food={data.colony.food}
 					gold={data.colony.gold}
+					lifespanDays={data.colony.lifespanDays}
 					morale={data.colony.morale}
+					shipmentAt={data.colony.shipmentAt}
 				/>
 			) : (
 				<div className="border rounded-2xl flex-1 p-6">
@@ -142,6 +166,11 @@ export default function ColonyResourcesCard({
 							/>
 						))}
 					</div>
+					{data.colony.shipmentAt && (
+						<div className="my-5">
+							Days until next shipment: {nextShipmentDays(data.colony)}
+						</div>
+					)}
 				</div>
 			)}
 		</div>

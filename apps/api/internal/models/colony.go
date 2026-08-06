@@ -26,6 +26,9 @@ type Colony struct {
 	BuildingMaterials int32
 	Gold              int32
 	Morale            int32
+	LifespanDays      int32
+	ShipmentAt        sql.NullInt32
+	LastShipment      sql.NullInt32
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 }
@@ -56,6 +59,9 @@ type UpdateColonyRequest struct {
 	BuildingMaterials sql.NullInt32
 	Gold              sql.NullInt32
 	Morale            sql.NullInt32
+	LifespanDays      sql.NullInt32
+	ShipmentAt        sql.NullInt32
+	LastShipment      sql.NullInt32
 }
 type WorkforceItem struct {
 	WorkerType WorkerType

@@ -30,7 +30,10 @@ export function protoToColony(proto: ColonyProto): Colony {
 		food: proto.food,
 		gold: proto.gold,
 		id: proto.id,
+		lastShipment: proto.lastShipment ?? undefined,
+		lifespanDays: proto.lifespanDays,
 		morale: proto.morale,
+		shipmentAt: proto.shipmentAt ?? undefined,
 		updatedAt: timestampDate(proto.updatedAt),
 	});
 }

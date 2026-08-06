@@ -8,7 +8,10 @@ export const ColonySchema = BaseEntitySchema.extend({
 	colonistCount: z.number().int().min(0),
 	food: z.number().int().min(0),
 	gold: z.number().int().min(0),
+	lastShipment: z.number().optional(),
+	lifespanDays: z.number().min(0),
 	morale: z.number().int().min(0).max(100),
+	shipmentAt: z.number().optional(),
 });
 
 export const ColonyWorkforceSchema = BaseEntitySchema.extend({
@@ -37,10 +40,18 @@ export const UpdateColonyRequestSchema = z.object({
 	food: z.number().int().min(0).optional(),
 	gold: z.number().int().min(0).optional(),
 	id: z.uuid(),
+	lastShipment: z.number().int().optional(),
+	lifespanDays: z.number().int().min(0).optional(),
 	morale: z.number().int().min(0).max(100).optional(),
+	shipmentAt: z.number().int().min(0).optional(),
 });
 
 export const UpdateColonyResponseSchema = z.object({ colony: ColonySchema });
+
+export const AdvanceColonyDayRequestSchema = z.object({ id: z.uuid() });
+export const AdvanceColonyDayResponseSchema = z.object({
+	colony: ColonySchema,
+});
 
 export const RemoveColonyRequestSchema = z.object({ id: z.uuid() });
 
@@ -85,6 +96,9 @@ export const EditWorkforceDetailsSchema = WorkerCountsEditFormSchema.extend({
 
 export type Colony = z.infer<typeof ColonySchema>;
 export type ColonyWorkforce = z.infer<typeof ColonyWorkforceSchema>;
+export type AdvanceColonyDayRequest = z.infer<
+	typeof AdvanceColonyDayRequestSchema
+>;
 export type CreateColonyRequest = z.infer<typeof CreateColonyRequestSchema>;
 export type UpdateColonyRequest = z.infer<typeof UpdateColonyRequestSchema>;
 export type RemoveColonyRequest = z.infer<typeof RemoveColonyRequestSchema>;
@@ -92,4 +106,6 @@ export type UpsertColonyWorkforcesRequest = z.infer<
 	typeof UpsertColonyWorkforcesRequestSchema
 >;
 export type WorkerCountsEditForm = z.infer<typeof WorkerCountsEditFormSchema>;
-export type EditWorkforceDetailsProps = z.infer<typeof EditWorkforceDetailsSchema>;
+export type EditWorkforceDetailsProps = z.infer<
+	typeof EditWorkforceDetailsSchema
+>;

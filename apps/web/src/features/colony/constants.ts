@@ -6,6 +6,7 @@ import {
 	HardHat,
 	Heart,
 	HeartPulse,
+	Hourglass,
 	type LucideIcon,
 	Pickaxe,
 	Sword,
@@ -45,11 +46,12 @@ export const WORKER_TYPE_LABEL = Object.fromEntries(
 ) as Record<WorkerTypeEnum, string>;
 
 export type StatKey =
-	| "gold"
-	| "food"
-	| "buildingMaterials"
-	| "colonistCount"
-	| "morale";
+  | "gold"
+  | "food"
+  | "buildingMaterials"
+  | "colonistCount"
+  | "morale"
+  | "lifespanDays";
 
 export const COLONY_STATS: { icon: LucideIcon; key: StatKey; label: string }[] =
 	[
@@ -58,4 +60,5 @@ export const COLONY_STATS: { icon: LucideIcon; key: StatKey; label: string }[] =
 		{ icon: Hammer, key: "buildingMaterials", label: "Materials" },
 		{ icon: Users, key: "colonistCount", label: "Colonists" },
 		{ icon: Heart, key: "morale", label: "Morale" },
+		{ icon: Hourglass, key: "lifespanDays", label: "Days" },
 	];

@@ -15,6 +15,9 @@ message Colony {
   int32 building_materials = 5;
   int32 gold = 6;
   int32 morale = 7;
+  int32 lifespan_days = 10;
+  optional int32 shipment_at = 11;
+  optional int32 last_shipment = 12;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
 }
@@ -52,9 +55,21 @@ message UpdateColonyRequest {
   optional int32 building_materials = 5;
   optional int32 gold = 6;
   optional int32 morale = 7;
+  optional int32 lifespan_days = 8;
+  optional int32 shipment_at = 9;
+  optional int32 last_shipment = 10;
 }
 
 message UpdateColonyResponse {
+  Colony colony = 1;
+}
+
+message AdvanceColonyDayRequest {
+  string id = 1;
+  string campaign_id = 2;
+}
+
+message AdvanceColonyDayResponse {
   Colony colony = 1;
 }
 
@@ -70,6 +85,7 @@ message RemoveColonyResponse {}
 // -----------------------------------------------------------------------------
 
 service ColonyService {
+  rpc AdvanceColonyDay(AdvanceColonyDayRequest) returns (AdvanceColonyDayResponse);
   rpc CreateColony(CreateColonyRequest) returns (CreateColonyResponse);
   rpc GetColonyByCampaign(GetColonyByCampaignRequest) returns (GetColonyByCampaignResponse);
   rpc UpdateColony(UpdateColonyRequest) returns (UpdateColonyResponse);

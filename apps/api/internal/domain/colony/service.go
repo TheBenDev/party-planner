@@ -19,8 +19,10 @@ var (
 )
 
 type Store interface {
+	RunInTx(ctx context.Context, fn func(context.Context, Store) error) error
 	CreateColony(ctx context.Context, req *model.CreateColonyRequest) (*model.Colony, error)
 	GetColonyByCampaign(ctx context.Context, campaignID string) (*model.Colony, error)
+	GetColonyByCampaignForUpdate(ctx context.Context, campaignID string) (*model.Colony, error)
 	UpdateColony(ctx context.Context, req *model.UpdateColonyRequest) (*model.Colony, error)
 	RemoveColony(ctx context.Context, id, campaignID string) error
 }
@@ -72,6 +74,46 @@ func (s *Service) Update(ctx context.Context, req *model.UpdateColonyRequest) (*
 		return nil, fmt.Errorf("update colony: %w", err)
 	}
 	return colony, nil
+}
+
+func (s *Service) AdvanceColonyDay(ctx context.Context, id, campaignID string) (*model.Colony, error) {
+	var result *model.Colony
+	err := s.DB.RunInTx(ctx, func(ctx context.Context, tx Store) error {
+		colony, err := tx.GetColonyByCampaignForUpdate(ctx, campaignID)
+		if err != nil {
+			return err
+		}
+
+		lifespanDays := colony.LifespanDays + 1
+		food := max(colony.Food-colony.ColonistCount, 0)
+
+		var lastShipment sql.NullInt32
+		if colony.ShipmentAt.Valid {
+			lastShipmentVal := int32(0)
+			if colony.LastShipment.Valid {
+				lastShipmentVal = colony.LastShipment.Int32
+			}
+			if colony.ShipmentAt.Int32+lastShipmentVal-colony.LifespanDays == 0 {
+				lastShipment = sql.NullInt32{Int32: lifespanDays, Valid: true}
+			}
+		}
+
+		result, err = tx.UpdateColony(ctx, &model.UpdateColonyRequest{
+			ID:           id,
+			CampaignID:   campaignID,
+			Food:         sql.NullInt32{Int32: food, Valid: true},
+			LifespanDays: sql.NullInt32{Int32: lifespanDays, Valid: true},
+			LastShipment: lastShipment,
+		})
+		return err
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("advance colony day: %w", err)
+	}
+	return result, nil
 }
 
 func (s *Service) Remove(ctx context.Context, id, campaignID string) error {

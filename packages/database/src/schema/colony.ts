@@ -28,7 +28,11 @@ export const colonyTable = pgTable(
 		food: integer("food").notNull().default(0),
 		buildingMaterials: integer("building_materials").notNull().default(0),
 		gold: integer("gold").notNull().default(0),
-		morale: smallint("morale").notNull().default(100),
+    morale: smallint("morale").notNull().default(100),
+
+    lifespanDays: integer("lifespan_days").notNull().default(0),
+    shipmentAt: integer("shipment_at"),
+    lastShipment: integer("last_shipment"),
 
 		campaignId: uuid("campaign_id").notNull(),
 	},

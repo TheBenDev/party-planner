@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CreateColonyRequest, CreateColonyResponse, GetColonyByCampaignRequest, GetColonyByCampaignResponse, RemoveColonyRequest, RemoveColonyResponse, UpdateColonyRequest, UpdateColonyResponse } from "./colony_pb.js";
+import { AdvanceColonyDayRequest, AdvanceColonyDayResponse, CreateColonyRequest, CreateColonyResponse, GetColonyByCampaignRequest, GetColonyByCampaignResponse, RemoveColonyRequest, RemoveColonyResponse, UpdateColonyRequest, UpdateColonyResponse } from "./colony_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -12,6 +12,15 @@ import { MethodKind } from "@bufbuild/protobuf";
 export const ColonyService = {
   typeName: "planner.v1.ColonyService",
   methods: {
+    /**
+     * @generated from rpc planner.v1.ColonyService.AdvanceColonyDay
+     */
+    advanceColonyDay: {
+      name: "AdvanceColonyDay",
+      I: AdvanceColonyDayRequest,
+      O: AdvanceColonyDayResponse,
+      kind: MethodKind.Unary,
+    },
     /**
      * @generated from rpc planner.v1.ColonyService.CreateColony
      */
