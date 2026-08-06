@@ -124,7 +124,7 @@ func (s *Service) CreateScheduledEvent(
 		t := series.SeriesEndDate.Time.UTC()
 		seriesEnd = &t
 	}
-	// discord go does not support events that use the frequency setting so i decided that a raw http request was required.
+	// discord go does not support events that use the frequency so im using a http request.
 	payload := discordScheduledEventPayload{
 		Name:               series.Title,
 		Description:        description,

@@ -36,8 +36,8 @@ func computeFirstOccurrence(seriesStartDate time.Time, startTime sql.NullString)
 		return nil
 	}
 	year, month, day := seriesStartDate.UTC().Date()
-	time := time.Date(year, month, day, hours, minutes, seconds, 0, time.UTC)
-	return &time
+	t := time.Date(year, month, day, hours, minutes, seconds, 0, time.UTC)
+	return &t
 }
 
 func parseStartTime(s string) (hours, minutes, seconds int, ok bool) {

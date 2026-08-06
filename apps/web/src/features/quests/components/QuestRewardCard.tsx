@@ -90,7 +90,6 @@ export function QuestRewardCard({ reward }: { reward?: QuestReward | null }) {
 					</p>
 					<ul className="space-y-3">
 						{reward.loot?.map((item, index) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: loot items have no stable id
 							<li className="flex items-center gap-3" key={index}>
 								<Package className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
 								<div className="min-w-0">

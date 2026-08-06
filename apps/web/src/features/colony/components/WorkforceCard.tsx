@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { WorkerTypeEnum } from "@planner/enums/colony";
 import { UserRole } from "@planner/enums/user";
-import { Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -20,6 +19,7 @@ import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { useAuth } from "@/shared/hooks/auth";
+import EditModeButton from "./EditModeButton";
 
 export function WorkforceCard({
 	colonyId,
@@ -40,20 +40,15 @@ export function WorkforceCard({
 					Colonist Roles
 				</p>
 				{isDm && (
-					<button
-						aria-label={
+					<EditModeButton
+						ariaLabel={
 							isEditing ? "Cancel workforce editing" : "Edit workforce"
 						}
-						disabled={workforceIsLoading}
+						className="hover:text-foreground"
+						isDisabled={workforceIsLoading}
+						isEditing={isEditing}
 						onClick={() => setIsEditing((prev) => !prev)}
-						type="button"
-					>
-						{isEditing ? (
-							<X className="w-3.5 h-3.5" />
-						) : (
-							<Pencil className="w-3.5 h-3.5" />
-						)}
-					</button>
+					/>
 				)}
 			</div>
 			<div className="rounded-2xl border p-4 flex-1">
