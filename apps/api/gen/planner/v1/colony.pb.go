@@ -31,6 +31,9 @@ type Colony struct {
 	BuildingMaterials int32                  `protobuf:"varint,5,opt,name=building_materials,json=buildingMaterials,proto3" json:"building_materials,omitempty"`
 	Gold              int32                  `protobuf:"varint,6,opt,name=gold,proto3" json:"gold,omitempty"`
 	Morale            int32                  `protobuf:"varint,7,opt,name=morale,proto3" json:"morale,omitempty"`
+	LifespanDays      int32                  `protobuf:"varint,10,opt,name=lifespan_days,json=lifespanDays,proto3" json:"lifespan_days,omitempty"`
+	ShipmentAt        *int32                 `protobuf:"varint,11,opt,name=shipment_at,json=shipmentAt,proto3,oneof" json:"shipment_at,omitempty"`
+	LastShipment      *int32                 `protobuf:"varint,12,opt,name=last_shipment,json=lastShipment,proto3,oneof" json:"last_shipment,omitempty"`
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields     protoimpl.UnknownFields
@@ -112,6 +115,27 @@ func (x *Colony) GetGold() int32 {
 func (x *Colony) GetMorale() int32 {
 	if x != nil {
 		return x.Morale
+	}
+	return 0
+}
+
+func (x *Colony) GetLifespanDays() int32 {
+	if x != nil {
+		return x.LifespanDays
+	}
+	return 0
+}
+
+func (x *Colony) GetShipmentAt() int32 {
+	if x != nil && x.ShipmentAt != nil {
+		return *x.ShipmentAt
+	}
+	return 0
+}
+
+func (x *Colony) GetLastShipment() int32 {
+	if x != nil && x.LastShipment != nil {
+		return *x.LastShipment
 	}
 	return 0
 }
@@ -355,6 +379,9 @@ type UpdateColonyRequest struct {
 	BuildingMaterials *int32                 `protobuf:"varint,5,opt,name=building_materials,json=buildingMaterials,proto3,oneof" json:"building_materials,omitempty"`
 	Gold              *int32                 `protobuf:"varint,6,opt,name=gold,proto3,oneof" json:"gold,omitempty"`
 	Morale            *int32                 `protobuf:"varint,7,opt,name=morale,proto3,oneof" json:"morale,omitempty"`
+	LifespanDays      *int32                 `protobuf:"varint,8,opt,name=lifespan_days,json=lifespanDays,proto3,oneof" json:"lifespan_days,omitempty"`
+	ShipmentAt        *int32                 `protobuf:"varint,9,opt,name=shipment_at,json=shipmentAt,proto3,oneof" json:"shipment_at,omitempty"`
+	LastShipment      *int32                 `protobuf:"varint,10,opt,name=last_shipment,json=lastShipment,proto3,oneof" json:"last_shipment,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -438,6 +465,27 @@ func (x *UpdateColonyRequest) GetMorale() int32 {
 	return 0
 }
 
+func (x *UpdateColonyRequest) GetLifespanDays() int32 {
+	if x != nil && x.LifespanDays != nil {
+		return *x.LifespanDays
+	}
+	return 0
+}
+
+func (x *UpdateColonyRequest) GetShipmentAt() int32 {
+	if x != nil && x.ShipmentAt != nil {
+		return *x.ShipmentAt
+	}
+	return 0
+}
+
+func (x *UpdateColonyRequest) GetLastShipment() int32 {
+	if x != nil && x.LastShipment != nil {
+		return *x.LastShipment
+	}
+	return 0
+}
+
 type UpdateColonyResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Colony        *Colony                `protobuf:"bytes,1,opt,name=colony,proto3" json:"colony,omitempty"`
@@ -482,6 +530,102 @@ func (x *UpdateColonyResponse) GetColony() *Colony {
 	return nil
 }
 
+type AdvanceColonyDayRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CampaignId    string                 `protobuf:"bytes,2,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdvanceColonyDayRequest) Reset() {
+	*x = AdvanceColonyDayRequest{}
+	mi := &file_planner_v1_colony_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdvanceColonyDayRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdvanceColonyDayRequest) ProtoMessage() {}
+
+func (x *AdvanceColonyDayRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_colony_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdvanceColonyDayRequest.ProtoReflect.Descriptor instead.
+func (*AdvanceColonyDayRequest) Descriptor() ([]byte, []int) {
+	return file_planner_v1_colony_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *AdvanceColonyDayRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AdvanceColonyDayRequest) GetCampaignId() string {
+	if x != nil {
+		return x.CampaignId
+	}
+	return ""
+}
+
+type AdvanceColonyDayResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Colony        *Colony                `protobuf:"bytes,1,opt,name=colony,proto3" json:"colony,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdvanceColonyDayResponse) Reset() {
+	*x = AdvanceColonyDayResponse{}
+	mi := &file_planner_v1_colony_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdvanceColonyDayResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdvanceColonyDayResponse) ProtoMessage() {}
+
+func (x *AdvanceColonyDayResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_planner_v1_colony_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdvanceColonyDayResponse.ProtoReflect.Descriptor instead.
+func (*AdvanceColonyDayResponse) Descriptor() ([]byte, []int) {
+	return file_planner_v1_colony_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *AdvanceColonyDayResponse) GetColony() *Colony {
+	if x != nil {
+		return x.Colony
+	}
+	return nil
+}
+
 type RemoveColonyRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -492,7 +636,7 @@ type RemoveColonyRequest struct {
 
 func (x *RemoveColonyRequest) Reset() {
 	*x = RemoveColonyRequest{}
-	mi := &file_planner_v1_colony_proto_msgTypes[7]
+	mi := &file_planner_v1_colony_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -504,7 +648,7 @@ func (x *RemoveColonyRequest) String() string {
 func (*RemoveColonyRequest) ProtoMessage() {}
 
 func (x *RemoveColonyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_colony_proto_msgTypes[7]
+	mi := &file_planner_v1_colony_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -517,7 +661,7 @@ func (x *RemoveColonyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveColonyRequest.ProtoReflect.Descriptor instead.
 func (*RemoveColonyRequest) Descriptor() ([]byte, []int) {
-	return file_planner_v1_colony_proto_rawDescGZIP(), []int{7}
+	return file_planner_v1_colony_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RemoveColonyRequest) GetId() string {
@@ -542,7 +686,7 @@ type RemoveColonyResponse struct {
 
 func (x *RemoveColonyResponse) Reset() {
 	*x = RemoveColonyResponse{}
-	mi := &file_planner_v1_colony_proto_msgTypes[8]
+	mi := &file_planner_v1_colony_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -554,7 +698,7 @@ func (x *RemoveColonyResponse) String() string {
 func (*RemoveColonyResponse) ProtoMessage() {}
 
 func (x *RemoveColonyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_planner_v1_colony_proto_msgTypes[8]
+	mi := &file_planner_v1_colony_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -567,7 +711,7 @@ func (x *RemoveColonyResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RemoveColonyResponse.ProtoReflect.Descriptor instead.
 func (*RemoveColonyResponse) Descriptor() ([]byte, []int) {
-	return file_planner_v1_colony_proto_rawDescGZIP(), []int{8}
+	return file_planner_v1_colony_proto_rawDescGZIP(), []int{10}
 }
 
 var File_planner_v1_colony_proto protoreflect.FileDescriptor
@@ -575,7 +719,7 @@ var File_planner_v1_colony_proto protoreflect.FileDescriptor
 const file_planner_v1_colony_proto_rawDesc = "" +
 	"\n" +
 	"\x17planner/v1/colony.proto\x12\n" +
-	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc5\x02\n" +
+	"planner.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xdc\x03\n" +
 	"\x06Colony\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -584,11 +728,18 @@ const file_planner_v1_colony_proto_rawDesc = "" +
 	"\x04food\x18\x04 \x01(\x05R\x04food\x12-\n" +
 	"\x12building_materials\x18\x05 \x01(\x05R\x11buildingMaterials\x12\x12\n" +
 	"\x04gold\x18\x06 \x01(\x05R\x04gold\x12\x16\n" +
-	"\x06morale\x18\a \x01(\x05R\x06morale\x129\n" +
+	"\x06morale\x18\a \x01(\x05R\x06morale\x12#\n" +
+	"\rlifespan_days\x18\n" +
+	" \x01(\x05R\flifespanDays\x12$\n" +
+	"\vshipment_at\x18\v \x01(\x05H\x00R\n" +
+	"shipmentAt\x88\x01\x01\x12(\n" +
+	"\rlast_shipment\x18\f \x01(\x05H\x01R\flastShipment\x88\x01\x01\x129\n" +
 	"\n" +
 	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xac\x02\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\x0e\n" +
+	"\f_shipment_atB\x10\n" +
+	"\x0e_last_shipment\"\xac\x02\n" +
 	"\x13CreateColonyRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12*\n" +
@@ -608,7 +759,7 @@ const file_planner_v1_colony_proto_rawDesc = "" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\"I\n" +
 	"\x1bGetColonyByCampaignResponse\x12*\n" +
-	"\x06colony\x18\x01 \x01(\v2\x12.planner.v1.ColonyR\x06colony\"\xbc\x02\n" +
+	"\x06colony\x18\x01 \x01(\v2\x12.planner.v1.ColonyR\x06colony\"\xea\x03\n" +
 	"\x13UpdateColonyRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
@@ -617,20 +768,35 @@ const file_planner_v1_colony_proto_rawDesc = "" +
 	"\x04food\x18\x04 \x01(\x05H\x01R\x04food\x88\x01\x01\x122\n" +
 	"\x12building_materials\x18\x05 \x01(\x05H\x02R\x11buildingMaterials\x88\x01\x01\x12\x17\n" +
 	"\x04gold\x18\x06 \x01(\x05H\x03R\x04gold\x88\x01\x01\x12\x1b\n" +
-	"\x06morale\x18\a \x01(\x05H\x04R\x06morale\x88\x01\x01B\x11\n" +
+	"\x06morale\x18\a \x01(\x05H\x04R\x06morale\x88\x01\x01\x12(\n" +
+	"\rlifespan_days\x18\b \x01(\x05H\x05R\flifespanDays\x88\x01\x01\x12$\n" +
+	"\vshipment_at\x18\t \x01(\x05H\x06R\n" +
+	"shipmentAt\x88\x01\x01\x12(\n" +
+	"\rlast_shipment\x18\n" +
+	" \x01(\x05H\aR\flastShipment\x88\x01\x01B\x11\n" +
 	"\x0f_colonist_countB\a\n" +
 	"\x05_foodB\x15\n" +
 	"\x13_building_materialsB\a\n" +
 	"\x05_goldB\t\n" +
-	"\a_morale\"B\n" +
+	"\a_moraleB\x10\n" +
+	"\x0e_lifespan_daysB\x0e\n" +
+	"\f_shipment_atB\x10\n" +
+	"\x0e_last_shipment\"B\n" +
 	"\x14UpdateColonyResponse\x12*\n" +
+	"\x06colony\x18\x01 \x01(\v2\x12.planner.v1.ColonyR\x06colony\"J\n" +
+	"\x17AdvanceColonyDayRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcampaign_id\x18\x02 \x01(\tR\n" +
+	"campaignId\"F\n" +
+	"\x18AdvanceColonyDayResponse\x12*\n" +
 	"\x06colony\x18\x01 \x01(\v2\x12.planner.v1.ColonyR\x06colony\"F\n" +
 	"\x13RemoveColonyRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\"\x16\n" +
-	"\x14RemoveColonyResponse2\xf0\x02\n" +
-	"\rColonyService\x12Q\n" +
+	"\x14RemoveColonyResponse2\xcf\x03\n" +
+	"\rColonyService\x12]\n" +
+	"\x10AdvanceColonyDay\x12#.planner.v1.AdvanceColonyDayRequest\x1a$.planner.v1.AdvanceColonyDayResponse\x12Q\n" +
 	"\fCreateColony\x12\x1f.planner.v1.CreateColonyRequest\x1a .planner.v1.CreateColonyResponse\x12f\n" +
 	"\x13GetColonyByCampaign\x12&.planner.v1.GetColonyByCampaignRequest\x1a'.planner.v1.GetColonyByCampaignResponse\x12Q\n" +
 	"\fUpdateColony\x12\x1f.planner.v1.UpdateColonyRequest\x1a .planner.v1.UpdateColonyResponse\x12Q\n" +
@@ -651,7 +817,7 @@ func file_planner_v1_colony_proto_rawDescGZIP() []byte {
 	return file_planner_v1_colony_proto_rawDescData
 }
 
-var file_planner_v1_colony_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_planner_v1_colony_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_planner_v1_colony_proto_goTypes = []any{
 	(*Colony)(nil),                      // 0: planner.v1.Colony
 	(*CreateColonyRequest)(nil),         // 1: planner.v1.CreateColonyRequest
@@ -660,29 +826,34 @@ var file_planner_v1_colony_proto_goTypes = []any{
 	(*GetColonyByCampaignResponse)(nil), // 4: planner.v1.GetColonyByCampaignResponse
 	(*UpdateColonyRequest)(nil),         // 5: planner.v1.UpdateColonyRequest
 	(*UpdateColonyResponse)(nil),        // 6: planner.v1.UpdateColonyResponse
-	(*RemoveColonyRequest)(nil),         // 7: planner.v1.RemoveColonyRequest
-	(*RemoveColonyResponse)(nil),        // 8: planner.v1.RemoveColonyResponse
-	(*timestamppb.Timestamp)(nil),       // 9: google.protobuf.Timestamp
+	(*AdvanceColonyDayRequest)(nil),     // 7: planner.v1.AdvanceColonyDayRequest
+	(*AdvanceColonyDayResponse)(nil),    // 8: planner.v1.AdvanceColonyDayResponse
+	(*RemoveColonyRequest)(nil),         // 9: planner.v1.RemoveColonyRequest
+	(*RemoveColonyResponse)(nil),        // 10: planner.v1.RemoveColonyResponse
+	(*timestamppb.Timestamp)(nil),       // 11: google.protobuf.Timestamp
 }
 var file_planner_v1_colony_proto_depIdxs = []int32{
-	9, // 0: planner.v1.Colony.created_at:type_name -> google.protobuf.Timestamp
-	9, // 1: planner.v1.Colony.updated_at:type_name -> google.protobuf.Timestamp
-	0, // 2: planner.v1.CreateColonyResponse.colony:type_name -> planner.v1.Colony
-	0, // 3: planner.v1.GetColonyByCampaignResponse.colony:type_name -> planner.v1.Colony
-	0, // 4: planner.v1.UpdateColonyResponse.colony:type_name -> planner.v1.Colony
-	1, // 5: planner.v1.ColonyService.CreateColony:input_type -> planner.v1.CreateColonyRequest
-	3, // 6: planner.v1.ColonyService.GetColonyByCampaign:input_type -> planner.v1.GetColonyByCampaignRequest
-	5, // 7: planner.v1.ColonyService.UpdateColony:input_type -> planner.v1.UpdateColonyRequest
-	7, // 8: planner.v1.ColonyService.RemoveColony:input_type -> planner.v1.RemoveColonyRequest
-	2, // 9: planner.v1.ColonyService.CreateColony:output_type -> planner.v1.CreateColonyResponse
-	4, // 10: planner.v1.ColonyService.GetColonyByCampaign:output_type -> planner.v1.GetColonyByCampaignResponse
-	6, // 11: planner.v1.ColonyService.UpdateColony:output_type -> planner.v1.UpdateColonyResponse
-	8, // 12: planner.v1.ColonyService.RemoveColony:output_type -> planner.v1.RemoveColonyResponse
-	9, // [9:13] is the sub-list for method output_type
-	5, // [5:9] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	11, // 0: planner.v1.Colony.created_at:type_name -> google.protobuf.Timestamp
+	11, // 1: planner.v1.Colony.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 2: planner.v1.CreateColonyResponse.colony:type_name -> planner.v1.Colony
+	0,  // 3: planner.v1.GetColonyByCampaignResponse.colony:type_name -> planner.v1.Colony
+	0,  // 4: planner.v1.UpdateColonyResponse.colony:type_name -> planner.v1.Colony
+	0,  // 5: planner.v1.AdvanceColonyDayResponse.colony:type_name -> planner.v1.Colony
+	7,  // 6: planner.v1.ColonyService.AdvanceColonyDay:input_type -> planner.v1.AdvanceColonyDayRequest
+	1,  // 7: planner.v1.ColonyService.CreateColony:input_type -> planner.v1.CreateColonyRequest
+	3,  // 8: planner.v1.ColonyService.GetColonyByCampaign:input_type -> planner.v1.GetColonyByCampaignRequest
+	5,  // 9: planner.v1.ColonyService.UpdateColony:input_type -> planner.v1.UpdateColonyRequest
+	9,  // 10: planner.v1.ColonyService.RemoveColony:input_type -> planner.v1.RemoveColonyRequest
+	8,  // 11: planner.v1.ColonyService.AdvanceColonyDay:output_type -> planner.v1.AdvanceColonyDayResponse
+	2,  // 12: planner.v1.ColonyService.CreateColony:output_type -> planner.v1.CreateColonyResponse
+	4,  // 13: planner.v1.ColonyService.GetColonyByCampaign:output_type -> planner.v1.GetColonyByCampaignResponse
+	6,  // 14: planner.v1.ColonyService.UpdateColony:output_type -> planner.v1.UpdateColonyResponse
+	10, // 15: planner.v1.ColonyService.RemoveColony:output_type -> planner.v1.RemoveColonyResponse
+	11, // [11:16] is the sub-list for method output_type
+	6,  // [6:11] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_planner_v1_colony_proto_init() }
@@ -690,6 +861,7 @@ func file_planner_v1_colony_proto_init() {
 	if File_planner_v1_colony_proto != nil {
 		return
 	}
+	file_planner_v1_colony_proto_msgTypes[0].OneofWrappers = []any{}
 	file_planner_v1_colony_proto_msgTypes[1].OneofWrappers = []any{}
 	file_planner_v1_colony_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
@@ -698,7 +870,7 @@ func file_planner_v1_colony_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_planner_v1_colony_proto_rawDesc), len(file_planner_v1_colony_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

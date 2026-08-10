@@ -21,6 +21,14 @@ type mockWorkforceStore struct {
 
 func (m *mockWorkforceStore) SeedWorkforce(_ context.Context, _ string) error { return m.err }
 
+func (m *mockStore) RunInTx(_ context.Context, _ func(context.Context, colony.Store) error) error {
+	return m.err
+}
+
+func (m *mockStore) GetColonyByCampaignForUpdate(_ context.Context, _ string) (*model.Colony, error) {
+	return m.one(), m.err
+}
+
 func (m *mockStore) CreateColony(_ context.Context, _ *model.CreateColonyRequest) (*model.Colony, error) {
 	return m.one(), m.err
 }
@@ -97,6 +105,33 @@ func TestUpdateColony_Validation(t *testing.T) {
 	}
 }
 
+func TestAdvanceColonyDay_Validation(t *testing.T) {
+	tests := []struct {
+		name string
+		req  *v1.AdvanceColonyDayRequest
+	}{
+		{"missing id", &v1.AdvanceColonyDayRequest{CampaignId: "campaign-1"}},
+		{"missing campaign id", &v1.AdvanceColonyDayRequest{Id: "colony-1"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := validationServer().AdvanceColonyDay(context.Background(), connect.NewRequest(tt.req))
+			assertCode(t, err, connect.CodeInvalidArgument)
+		})
+	}
+}
+
+func TestAdvanceColonyDay_HappyPath(t *testing.T) {
+	want := testColony()
+	_, err := newServer(&mockStore{colonies: []*model.Colony{want}}).AdvanceColonyDay(context.Background(), connect.NewRequest(&v1.AdvanceColonyDayRequest{
+		Id:         want.ID,
+		CampaignId: want.CampaignID,
+	}))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 func TestRemoveColony_Validation(t *testing.T) {
 	tests := []struct {
 		name string
@@ -165,3 +200,4 @@ func TestRemoveColony_HappyPath(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+

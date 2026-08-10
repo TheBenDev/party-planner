@@ -21,6 +21,24 @@ type Server struct {
 	Log    *slog.Logger
 }
 
+func (s *Server) AdvanceColonyDay(ctx context.Context, req *connect.Request[v1.AdvanceColonyDayRequest]) (*connect.Response[v1.AdvanceColonyDayResponse], error) {
+	if req.Msg.Id == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("id required"))
+	}
+	if req.Msg.CampaignId == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
+	}
+
+	colony, err := s.Colony.AdvanceColonyDay(ctx, req.Msg.Id, req.Msg.CampaignId)
+	if err != nil {
+		return nil, mapError(ctx, s.Log, err, "failed to advance colony day")
+	}
+
+	return connect.NewResponse(&v1.AdvanceColonyDayResponse{
+		Colony: colonyToProto(colony),
+	}), nil
+}
+
 func (s *Server) CreateColony(ctx context.Context, req *connect.Request[v1.CreateColonyRequest]) (*connect.Response[v1.CreateColonyResponse], error) {
 	if req.Msg.CampaignId == "" {
 		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("campaign id required"))
@@ -74,6 +92,9 @@ func (s *Server) UpdateColony(ctx context.Context, req *connect.Request[v1.Updat
 		BuildingMaterials: sqlNullInt32(req.Msg.BuildingMaterials),
 		Gold:              sqlNullInt32(req.Msg.Gold),
 		Morale:            sqlNullInt32(req.Msg.Morale),
+		LifespanDays:      sqlNullInt32(req.Msg.LifespanDays),
+		ShipmentAt:        sqlNullInt32(req.Msg.ShipmentAt),
+		LastShipment:      sqlNullInt32(req.Msg.LastShipment),
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to update colony")
@@ -113,6 +134,9 @@ func colonyToProto(c *model.Colony) *v1.Colony {
 		BuildingMaterials: c.BuildingMaterials,
 		Gold:              c.Gold,
 		Morale:            c.Morale,
+		LifespanDays:      c.LifespanDays,
+		ShipmentAt:        nullInt32ToProto(c.ShipmentAt),
+		LastShipment:      nullInt32ToProto(c.LastShipment),
 		CreatedAt:         timestamppb.New(c.CreatedAt),
 		UpdatedAt:         timestamppb.New(c.UpdatedAt),
 	}
@@ -141,4 +165,11 @@ func sqlNullInt32(i *int32) sql.NullInt32 {
 		return sql.NullInt32{}
 	}
 	return sql.NullInt32{Int32: *i, Valid: true}
+}
+
+func nullInt32ToProto(n sql.NullInt32) *int32 {
+	if !n.Valid {
+		return nil
+	}
+	return &n.Int32
 }

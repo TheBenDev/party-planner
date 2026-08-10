@@ -3,7 +3,9 @@ package colony
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"log/slog"
 
 	model "github.com/BBruington/party-planner/api/internal/models"
 	"github.com/BBruington/party-planner/api/internal/pg"
@@ -20,12 +22,31 @@ func NewDB(conn *sql.DB) *DB {
 	return &DB{conn: conn, raw: conn}
 }
 
-const colonyColumns = `id, campaign_id, colonist_count, food, building_materials, gold, morale, created_at, updated_at`
+// RunInTx executes fn inside a database transaction, rolling back on error.
+func (db *DB) RunInTx(ctx context.Context, fn func(context.Context, Store) error) error {
+	tx, err := db.raw.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("begin tx: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(); err != nil && !errors.Is(err, sql.ErrTxDone) {
+			slog.Error("failed to rollback transaction", "error", err)
+		}
+	}()
+	txDB := &DB{conn: tx, raw: db.raw}
+	if err := fn(ctx, txDB); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
+const colonyColumns = `id, campaign_id, colonist_count, food, building_materials, gold, morale, lifespan_days, shipment_at, last_shipment, created_at, updated_at`
 
 func scanColony(row interface{ Scan(...any) error }) (*model.Colony, error) {
 	var c model.Colony
 	err := row.Scan(
 		&c.ID, &c.CampaignID, &c.ColonistCount, &c.Food, &c.BuildingMaterials, &c.Gold, &c.Morale,
+		&c.LifespanDays, &c.ShipmentAt, &c.LastShipment,
 		&c.CreatedAt, &c.UpdatedAt,
 	)
 	if err != nil {
@@ -60,11 +81,23 @@ func (db *DB) UpdateColony(ctx context.Context, req *model.UpdateColonyRequest) 
 			building_materials = COALESCE($3, building_materials),
 			gold               = COALESCE($4, gold),
 			morale             = COALESCE($5, morale),
+			lifespan_days      = COALESCE($6, lifespan_days),
+			shipment_at        = COALESCE($7, shipment_at),
+			last_shipment      = COALESCE($8, last_shipment),
 			updated_at         = NOW()
-		WHERE id = $6 AND campaign_id = $7
+		WHERE id = $9 AND campaign_id = $10
 		RETURNING `+colonyColumns,
 		req.ColonistCount, req.Food, req.BuildingMaterials, req.Gold, req.Morale,
+		req.LifespanDays, req.ShipmentAt, req.LastShipment,
 		req.ID, req.CampaignID,
+	)
+	return scanColony(row)
+}
+
+func (db *DB) GetColonyByCampaignForUpdate(ctx context.Context, campaignID string) (*model.Colony, error) {
+	row := db.conn.QueryRowContext(ctx,
+		`SELECT `+colonyColumns+` FROM colony WHERE campaign_id = $1 LIMIT 1 FOR UPDATE`,
+		campaignID,
 	)
 	return scanColony(row)
 }

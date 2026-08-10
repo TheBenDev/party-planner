@@ -1,5 +1,7 @@
 import { ORPCError } from "@orpc/server";
 import {
+	AdvanceColonyDayRequestSchema,
+	AdvanceColonyDayResponseSchema,
 	CreateColonyRequestSchema,
 	CreateColonyResponseSchema,
 	GetColonyByCampaignResponseSchema,
@@ -120,6 +122,39 @@ export const updateColonyHandler: Parameters<
 	}
 };
 
+const advanceColonyDayDef = dmProcedure
+	.route({
+		method: "POST",
+		path: "/colony/advance-day",
+		summary: "Advance the colony by one in-game day",
+	})
+	.input(AdvanceColonyDayRequestSchema)
+	.output(AdvanceColonyDayResponseSchema);
+
+export const advanceColonyDayHandler: Parameters<
+	typeof advanceColonyDayDef.handler
+>[0] = async ({ input, context }) => {
+	try {
+		const res = await context.api.colony.advanceColonyDay({
+			campaignId: context.campaignId,
+			id: input.id,
+		});
+		if (!res.colony) {
+			throw new ORPCError("INTERNAL_SERVER_ERROR", {
+				message: "failed to advance colony day",
+			});
+		}
+		return { colony: protoToColony(res.colony) };
+	} catch (err) {
+		handleError(
+			err,
+			"failed to advance colony day",
+			{ colonyId: input.id },
+			context.logger,
+		);
+	}
+};
+
 const removeColonyDef = dmProcedure
 	.route({
 		method: "POST",
@@ -218,6 +253,7 @@ export const upsertColonyWorkforcesHandler: Parameters<
 };
 
 export const colonyRouter = {
+	advanceColonyDay: advanceColonyDayDef.handler(advanceColonyDayHandler),
 	createColony: createColonyDef.handler(createColonyHandler),
 	getColonyByCampaign: getColonyByCampaignDef.handler(
 		getColonyByCampaignHandler,

@@ -33,6 +33,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// ColonyServiceAdvanceColonyDayProcedure is the fully-qualified name of the ColonyService's
+	// AdvanceColonyDay RPC.
+	ColonyServiceAdvanceColonyDayProcedure = "/planner.v1.ColonyService/AdvanceColonyDay"
 	// ColonyServiceCreateColonyProcedure is the fully-qualified name of the ColonyService's
 	// CreateColony RPC.
 	ColonyServiceCreateColonyProcedure = "/planner.v1.ColonyService/CreateColony"
@@ -49,6 +52,7 @@ const (
 
 // ColonyServiceClient is a client for the planner.v1.ColonyService service.
 type ColonyServiceClient interface {
+	AdvanceColonyDay(context.Context, *connect.Request[v1.AdvanceColonyDayRequest]) (*connect.Response[v1.AdvanceColonyDayResponse], error)
 	CreateColony(context.Context, *connect.Request[v1.CreateColonyRequest]) (*connect.Response[v1.CreateColonyResponse], error)
 	GetColonyByCampaign(context.Context, *connect.Request[v1.GetColonyByCampaignRequest]) (*connect.Response[v1.GetColonyByCampaignResponse], error)
 	UpdateColony(context.Context, *connect.Request[v1.UpdateColonyRequest]) (*connect.Response[v1.UpdateColonyResponse], error)
@@ -66,6 +70,12 @@ func NewColonyServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 	baseURL = strings.TrimRight(baseURL, "/")
 	colonyServiceMethods := v1.File_planner_v1_colony_proto.Services().ByName("ColonyService").Methods()
 	return &colonyServiceClient{
+		advanceColonyDay: connect.NewClient[v1.AdvanceColonyDayRequest, v1.AdvanceColonyDayResponse](
+			httpClient,
+			baseURL+ColonyServiceAdvanceColonyDayProcedure,
+			connect.WithSchema(colonyServiceMethods.ByName("AdvanceColonyDay")),
+			connect.WithClientOptions(opts...),
+		),
 		createColony: connect.NewClient[v1.CreateColonyRequest, v1.CreateColonyResponse](
 			httpClient,
 			baseURL+ColonyServiceCreateColonyProcedure,
@@ -95,10 +105,16 @@ func NewColonyServiceClient(httpClient connect.HTTPClient, baseURL string, opts 
 
 // colonyServiceClient implements ColonyServiceClient.
 type colonyServiceClient struct {
+	advanceColonyDay    *connect.Client[v1.AdvanceColonyDayRequest, v1.AdvanceColonyDayResponse]
 	createColony        *connect.Client[v1.CreateColonyRequest, v1.CreateColonyResponse]
 	getColonyByCampaign *connect.Client[v1.GetColonyByCampaignRequest, v1.GetColonyByCampaignResponse]
 	updateColony        *connect.Client[v1.UpdateColonyRequest, v1.UpdateColonyResponse]
 	removeColony        *connect.Client[v1.RemoveColonyRequest, v1.RemoveColonyResponse]
+}
+
+// AdvanceColonyDay calls planner.v1.ColonyService.AdvanceColonyDay.
+func (c *colonyServiceClient) AdvanceColonyDay(ctx context.Context, req *connect.Request[v1.AdvanceColonyDayRequest]) (*connect.Response[v1.AdvanceColonyDayResponse], error) {
+	return c.advanceColonyDay.CallUnary(ctx, req)
 }
 
 // CreateColony calls planner.v1.ColonyService.CreateColony.
@@ -123,6 +139,7 @@ func (c *colonyServiceClient) RemoveColony(ctx context.Context, req *connect.Req
 
 // ColonyServiceHandler is an implementation of the planner.v1.ColonyService service.
 type ColonyServiceHandler interface {
+	AdvanceColonyDay(context.Context, *connect.Request[v1.AdvanceColonyDayRequest]) (*connect.Response[v1.AdvanceColonyDayResponse], error)
 	CreateColony(context.Context, *connect.Request[v1.CreateColonyRequest]) (*connect.Response[v1.CreateColonyResponse], error)
 	GetColonyByCampaign(context.Context, *connect.Request[v1.GetColonyByCampaignRequest]) (*connect.Response[v1.GetColonyByCampaignResponse], error)
 	UpdateColony(context.Context, *connect.Request[v1.UpdateColonyRequest]) (*connect.Response[v1.UpdateColonyResponse], error)
@@ -136,6 +153,12 @@ type ColonyServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewColonyServiceHandler(svc ColonyServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	colonyServiceMethods := v1.File_planner_v1_colony_proto.Services().ByName("ColonyService").Methods()
+	colonyServiceAdvanceColonyDayHandler := connect.NewUnaryHandler(
+		ColonyServiceAdvanceColonyDayProcedure,
+		svc.AdvanceColonyDay,
+		connect.WithSchema(colonyServiceMethods.ByName("AdvanceColonyDay")),
+		connect.WithHandlerOptions(opts...),
+	)
 	colonyServiceCreateColonyHandler := connect.NewUnaryHandler(
 		ColonyServiceCreateColonyProcedure,
 		svc.CreateColony,
@@ -162,6 +185,8 @@ func NewColonyServiceHandler(svc ColonyServiceHandler, opts ...connect.HandlerOp
 	)
 	return "/planner.v1.ColonyService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case ColonyServiceAdvanceColonyDayProcedure:
+			colonyServiceAdvanceColonyDayHandler.ServeHTTP(w, r)
 		case ColonyServiceCreateColonyProcedure:
 			colonyServiceCreateColonyHandler.ServeHTTP(w, r)
 		case ColonyServiceGetColonyByCampaignProcedure:
@@ -178,6 +203,10 @@ func NewColonyServiceHandler(svc ColonyServiceHandler, opts ...connect.HandlerOp
 
 // UnimplementedColonyServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedColonyServiceHandler struct{}
+
+func (UnimplementedColonyServiceHandler) AdvanceColonyDay(context.Context, *connect.Request[v1.AdvanceColonyDayRequest]) (*connect.Response[v1.AdvanceColonyDayResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.ColonyService.AdvanceColonyDay is not implemented"))
+}
 
 func (UnimplementedColonyServiceHandler) CreateColony(context.Context, *connect.Request[v1.CreateColonyRequest]) (*connect.Response[v1.CreateColonyResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("planner.v1.ColonyService.CreateColony is not implemented"))
