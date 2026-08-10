@@ -105,9 +105,13 @@ func TestQuestServiceCreate_FK_InvalidCampaign(t *testing.T) {
 	assertError(t, err, quest.ErrInvalidCampaign)
 }
 
-func TestQuestServiceCreate_FK_InvalidQuestGiver(t *testing.T) {
-	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_quest_giver_id")}).Create(context.Background(), &model.CreateQuestRequest{})
-	assertError(t, err, quest.ErrInvalidQuestGiver)
+func TestQuestServiceCreate_FK_InvalidQuestGiverNpc(t *testing.T) {
+	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_npc_id")}).Create(context.Background(), &model.CreateQuestRequest{})
+	assertError(t, err, quest.ErrInvalidQuestGiverNpc)
+}
+func TestQuestServiceCreate_FK_InvalidQuestGiverPatron(t *testing.T) {
+	_, err := newService(&mockServiceStore{createQuestErr: pgFKViolation("fk_quest_patron_id")}).Create(context.Background(), &model.CreateQuestRequest{})
+	assertError(t, err, quest.ErrInvalidQuestGiverPatron)
 }
 
 // ── GetByID ───────────────────────────────────────────────────────────────────

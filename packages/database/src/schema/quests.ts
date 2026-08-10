@@ -13,6 +13,7 @@ import {
 import { enumToPgEnum } from "../lib/enums";
 import { campaignsTable } from "./campaigns";
 import { nonPlayerCharactersTable } from "./nonPlayerCharacters";
+import { patronsTable } from "./patron";
 
 export const questStatusEnum = pgEnum("quest_status", enumToPgEnum(QuestStatusEnum));
 export const questTypeEnum = pgEnum("quest_type", enumToPgEnum(QuestTypeEnum))
@@ -25,7 +26,8 @@ export const questsTable = pgTable(
 		deletedAt: timestamp("deleted_at", { mode: "date" }),
 		description: varchar("description"),
 		id: uuid("id").primaryKey().defaultRandom(),
-		questGiverId: uuid("quest_giver_id"),
+		npcId: uuid("npc_id"),
+		patronId: uuid("patron_id"),
 		reward: jsonb("reward"),
 		status: questStatusEnum("status").notNull(),
     title: varchar("title").notNull(),
@@ -37,16 +39,22 @@ export const questsTable = pgTable(
 	},
 	(table) => [
 		foreignKey({
-			columns: [table.questGiverId],
+			columns: [table.npcId],
 			foreignColumns: [nonPlayerCharactersTable.id],
-			name: "fk_quest_quest_giver_id",
+			name: "fk_quest_npc_id",
+		}).onDelete("set null"),
+		foreignKey({
+			columns: [table.patronId],
+			foreignColumns: [patronsTable.id],
+			name: "fk_quest_patron_id",
 		}).onDelete("set null"),
 		foreignKey({
 			columns: [table.campaignId],
 			foreignColumns: [campaignsTable.id],
 			name: "fk_quest_campaign_id",
 		}).onDelete("cascade"),
-		index("idx_quest_giver_id").on(table.questGiverId),
+		index("idx_quest_npc_id").on(table.npcId),
+		index("idx_quest_patron_id").on(table.patronId),
 		index("idx_quest_campaign_id").on(table.campaignId),
 	],
 );
@@ -56,8 +64,12 @@ export const questsRelations = relations(questsTable, ({ one }) => ({
 		fields: [questsTable.campaignId],
 		references: [campaignsTable.id],
 	}),
-	questGiver: one(nonPlayerCharactersTable, {
-		fields: [questsTable.questGiverId],
+	npc: one(nonPlayerCharactersTable, {
+		fields: [questsTable.npcId],
 		references: [nonPlayerCharactersTable.id],
+	}),
+	patron: one(patronsTable, {
+		fields: [questsTable.patronId],
+		references: [patronsTable.id],
 	}),
 }));

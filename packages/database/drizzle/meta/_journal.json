@@ -245,6 +245,13 @@
       "when": 1786039204541,
       "tag": "0034_colony_shpments",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1786388764721,
+      "tag": "0035_patron_table",
+      "breakpoints": true
     }
   ],
   "version": "7"

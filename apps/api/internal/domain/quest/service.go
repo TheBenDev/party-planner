@@ -13,11 +13,12 @@ import (
 
 // Domain errors.
 var (
-	ErrNotFound          = errors.New("quest not found")
-	ErrAlreadyExists     = errors.New("quest already exists")
-	ErrInvalidCampaign   = errors.New("campaign does not exist")
-	ErrInvalidQuestGiver = errors.New("quest giver npc does not exist")
-	ErrNoColony          = errors.New("no colony found for campaign")
+	ErrNotFound                = errors.New("quest not found")
+	ErrAlreadyExists           = errors.New("quest already exists")
+	ErrInvalidCampaign         = errors.New("campaign does not exist")
+	ErrInvalidQuestGiverNpc    = errors.New("quest giver npc does not exist")
+	ErrInvalidQuestGiverPatron = errors.New("quest giver patron does not exist")
+	ErrNoColony                = errors.New("no colony found for campaign")
 )
 
 type Store interface {
@@ -130,8 +131,10 @@ func mapPgError(err error) error {
 		switch pg.Constraint(err) {
 		case "fk_quest_campaign_id":
 			return ErrInvalidCampaign
-		case "fk_quest_quest_giver_id":
-			return ErrInvalidQuestGiver
+		case "fk_quest_npc_id":
+			return ErrInvalidQuestGiverNpc
+		case "fk_quest_patron_id":
+			return ErrInvalidQuestGiverPatron
 		}
 	}
 	return err

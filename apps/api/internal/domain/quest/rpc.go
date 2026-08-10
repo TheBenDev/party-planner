@@ -50,13 +50,14 @@ func (s *Server) CreateQuest(ctx context.Context, req *connect.Request[v1.Create
 	}
 
 	quest, err := s.Quest.Create(ctx, &model.CreateQuestRequest{
-		CampaignID:   req.Msg.CampaignId,
-		Title:        req.Msg.Title,
-		Status:       status,
-		Description:  sqlNullString(req.Msg.Description),
-		QuestGiverID: sqlNullString(req.Msg.QuestGiverId),
-		Reward:       protoToQuestReward(req.Msg.Reward),
-		Type:         questType,
+		CampaignID:  req.Msg.CampaignId,
+		Title:       req.Msg.Title,
+		Status:      status,
+		Description: sqlNullString(req.Msg.Description),
+		NpcID:       sqlNullString(req.Msg.NpcId),
+		PatronID:    sqlNullString(req.Msg.PatronId),
+		Reward:      protoToQuestReward(req.Msg.Reward),
+		Type:        questType,
 	})
 	if err != nil {
 		return nil, mapError(ctx, s.Log, err, "failed to create quest")
@@ -300,8 +301,11 @@ func questToProto(quest *model.Quest) *v1.Quest {
 	if quest.Description.Valid {
 		proto.Description = &quest.Description.String
 	}
-	if quest.QuestGiverID.Valid {
-		proto.QuestGiverId = &quest.QuestGiverID.String
+	if quest.NpcID.Valid {
+		proto.NpcId = &quest.NpcID.String
+	}
+	if quest.PatronID.Valid {
+		proto.PatronId = &quest.PatronID.String
 	}
 	if quest.Reward != nil {
 		proto.Reward = questRewardToProto(quest.Reward)
@@ -329,7 +333,9 @@ func mapError(ctx context.Context, log *slog.Logger, err error, fallback string)
 		return connect.NewError(connect.CodeAlreadyExists, err)
 	case errors.Is(err, ErrInvalidCampaign):
 		return connect.NewError(connect.CodeInvalidArgument, err)
-	case errors.Is(err, ErrInvalidQuestGiver):
+	case errors.Is(err, ErrInvalidQuestGiverNpc):
+		return connect.NewError(connect.CodeInvalidArgument, err)
+	case errors.Is(err, ErrInvalidQuestGiverPatron):
 		return connect.NewError(connect.CodeInvalidArgument, err)
 	case errors.Is(err, ErrNoColony):
 		return connect.NewError(connect.CodeFailedPrecondition, err)

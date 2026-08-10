@@ -43,14 +43,14 @@ func (db *DB) RunInTx(ctx context.Context, fn func(context.Context, Store) error
 
 // ── Quest ─────────────────────────────────────────────────────────────────────
 
-const questColumns = `id, campaign_id, title, status, description, quest_giver_id, reward, completed_at, deleted_at, created_at, updated_at, type`
+const questColumns = `id, campaign_id, title, status, description, npc_id, patron_id, reward, completed_at, deleted_at, created_at, updated_at, type`
 
 func scanQuest(row interface{ Scan(...any) error }) (*model.Quest, error) {
 	var q model.Quest
 	var rewardBytes []byte
 	var questType sql.NullString
 	err := row.Scan(
-		&q.ID, &q.CampaignID, &q.Title, &q.Status, &q.Description, &q.QuestGiverID,
+		&q.ID, &q.CampaignID, &q.Title, &q.Status, &q.Description, &q.NpcID, &q.PatronID,
 		&rewardBytes, &q.CompletedAt, &q.DeletedAt, &q.CreatedAt, &q.UpdatedAt, &questType,
 	)
 	if err != nil {
@@ -83,10 +83,10 @@ func (db *DB) CreateQuest(ctx context.Context, req *model.CreateQuestRequest) (*
 		return nil, fmt.Errorf("marshal reward: %w", err)
 	}
 	row := db.conn.QueryRowContext(ctx, `
-		INSERT INTO quest (campaign_id, title, status, description, quest_giver_id, reward, type)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO quest (campaign_id, title, status, description, npc_id, patron_id, reward, type)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING `+questColumns,
-		req.CampaignID, req.Title, req.Status, req.Description, req.QuestGiverID, rewardBytes, req.Type,
+		req.CampaignID, req.Title, req.Status, req.Description, req.NpcID, req.PatronID, rewardBytes, req.Type,
 	)
 	return scanQuest(row)
 }
