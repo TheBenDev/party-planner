@@ -41,28 +41,30 @@ type QuestReward struct {
 }
 
 type Quest struct {
-	ID           string
-	CampaignID   string
-	Title        string
-	Status       QuestStatus
-	Description  sql.NullString
-	QuestGiverID sql.NullString
-	Reward       *QuestReward
-	CompletedAt  sql.NullTime
-	DeletedAt    sql.NullTime
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-	Type         *QuestType
+	ID          string
+	CampaignID  string
+	Title       string
+	Status      QuestStatus
+	Description sql.NullString
+	NpcID       sql.NullString
+	PatronID    sql.NullString
+	Reward      *QuestReward
+	CompletedAt sql.NullTime
+	DeletedAt   sql.NullTime
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Type        *QuestType
 }
 
 type CreateQuestRequest struct {
-	CampaignID   string
-	Title        string
-	Status       QuestStatus
-	Description  sql.NullString
-	QuestGiverID sql.NullString
-	Reward       *QuestReward
-	Type         *QuestType
+	CampaignID  string
+	Title       string
+	Status      QuestStatus
+	Description sql.NullString
+	NpcID       sql.NullString
+	PatronID    sql.NullString
+	Reward      *QuestReward
+	Type        *QuestType
 }
 
 type UpdateQuestRequest struct {

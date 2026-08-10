@@ -9,6 +9,7 @@ export * from "./colony";
 export * from "./colonyWorkforce";
 export * from "./locations";
 export * from "./nonPlayerCharacters";
+export * from "./patron";
 export * from "./quests";
 export * from "./regions";
 export * from "./sessionExceptions";

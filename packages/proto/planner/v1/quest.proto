@@ -54,13 +54,14 @@ message Quest {
   string title = 3;
   QuestStatus status = 4;
   optional string description = 5;
-  optional string quest_giver_id = 6;
+  optional string npc_id = 6;
   optional QuestReward reward = 7;
   optional google.protobuf.Timestamp completed_at = 8;
   optional google.protobuf.Timestamp deleted_at = 9;
   google.protobuf.Timestamp created_at = 10;
   google.protobuf.Timestamp updated_at = 11;
   optional QuestType type = 12;
+  optional string patron_id = 13;
 }
 
 // -----------------------------------------------------------------------------
@@ -72,9 +73,10 @@ message CreateQuestRequest {
   string title = 2;
   QuestStatus status = 3;
   optional string description = 4;
-  optional string quest_giver_id = 5;
+  optional string npc_id = 5;
   optional QuestReward reward = 6;
   optional QuestType type = 7;
+  optional string patron_id = 8;
 }
 
 message CreateQuestResponse {

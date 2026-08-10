@@ -318,13 +318,14 @@ type Quest struct {
 	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
 	Status        QuestStatus            `protobuf:"varint,4,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	QuestGiverId  *string                `protobuf:"bytes,6,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
+	NpcId         *string                `protobuf:"bytes,6,opt,name=npc_id,json=npcId,proto3,oneof" json:"npc_id,omitempty"`
 	Reward        *QuestReward           `protobuf:"bytes,7,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
 	CompletedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=completed_at,json=completedAt,proto3,oneof" json:"completed_at,omitempty"`
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	Type          *QuestType             `protobuf:"varint,12,opt,name=type,proto3,enum=planner.v1.QuestType,oneof" json:"type,omitempty"`
+	PatronId      *string                `protobuf:"bytes,13,opt,name=patron_id,json=patronId,proto3,oneof" json:"patron_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -394,9 +395,9 @@ func (x *Quest) GetDescription() string {
 	return ""
 }
 
-func (x *Quest) GetQuestGiverId() string {
-	if x != nil && x.QuestGiverId != nil {
-		return *x.QuestGiverId
+func (x *Quest) GetNpcId() string {
+	if x != nil && x.NpcId != nil {
+		return *x.NpcId
 	}
 	return ""
 }
@@ -443,15 +444,23 @@ func (x *Quest) GetType() QuestType {
 	return QuestType_QUEST_TYPE_UNSPECIFIED
 }
 
+func (x *Quest) GetPatronId() string {
+	if x != nil && x.PatronId != nil {
+		return *x.PatronId
+	}
+	return ""
+}
+
 type CreateQuestRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	CampaignId    string                 `protobuf:"bytes,1,opt,name=campaign_id,json=campaignId,proto3" json:"campaign_id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
 	Status        QuestStatus            `protobuf:"varint,3,opt,name=status,proto3,enum=planner.v1.QuestStatus" json:"status,omitempty"`
 	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	QuestGiverId  *string                `protobuf:"bytes,5,opt,name=quest_giver_id,json=questGiverId,proto3,oneof" json:"quest_giver_id,omitempty"`
+	NpcId         *string                `protobuf:"bytes,5,opt,name=npc_id,json=npcId,proto3,oneof" json:"npc_id,omitempty"`
 	Reward        *QuestReward           `protobuf:"bytes,6,opt,name=reward,proto3,oneof" json:"reward,omitempty"`
 	Type          *QuestType             `protobuf:"varint,7,opt,name=type,proto3,enum=planner.v1.QuestType,oneof" json:"type,omitempty"`
+	PatronId      *string                `protobuf:"bytes,8,opt,name=patron_id,json=patronId,proto3,oneof" json:"patron_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -514,9 +523,9 @@ func (x *CreateQuestRequest) GetDescription() string {
 	return ""
 }
 
-func (x *CreateQuestRequest) GetQuestGiverId() string {
-	if x != nil && x.QuestGiverId != nil {
-		return *x.QuestGiverId
+func (x *CreateQuestRequest) GetNpcId() string {
+	if x != nil && x.NpcId != nil {
+		return *x.NpcId
 	}
 	return ""
 }
@@ -533,6 +542,13 @@ func (x *CreateQuestRequest) GetType() QuestType {
 		return *x.Type
 	}
 	return QuestType_QUEST_TYPE_UNSPECIFIED
+}
+
+func (x *CreateQuestRequest) GetPatronId() string {
+	if x != nil && x.PatronId != nil {
+		return *x.PatronId
+	}
+	return ""
 }
 
 type CreateQuestResponse struct {
@@ -1109,15 +1125,15 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	"\vQuestReward\x12:\n" +
 	"\x06colony\x18\x01 \x01(\v2\x1d.planner.v1.QuestRewardColonyH\x00R\x06colony\x88\x01\x01\x123\n" +
 	"\x04loot\x18\x02 \x03(\v2\x1f.planner.v1.QuestRewardLootItemR\x04lootB\t\n" +
-	"\a_colony\"\x88\x05\n" +
+	"\a_colony\"\xa1\x05\n" +
 	"\x05Quest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vcampaign_id\x18\x02 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12/\n" +
 	"\x06status\x18\x04 \x01(\x0e2\x17.planner.v1.QuestStatusR\x06status\x12%\n" +
-	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12)\n" +
-	"\x0equest_giver_id\x18\x06 \x01(\tH\x01R\fquestGiverId\x88\x01\x01\x124\n" +
+	"\vdescription\x18\x05 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
+	"\x06npc_id\x18\x06 \x01(\tH\x01R\x05npcId\x88\x01\x01\x124\n" +
 	"\x06reward\x18\a \x01(\v2\x17.planner.v1.QuestRewardH\x02R\x06reward\x88\x01\x01\x12B\n" +
 	"\fcompleted_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x03R\vcompletedAt\x88\x01\x01\x12>\n" +
 	"\n" +
@@ -1127,26 +1143,32 @@ const file_planner_v1_quest_proto_rawDesc = "" +
 	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
 	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12.\n" +
-	"\x04type\x18\f \x01(\x0e2\x15.planner.v1.QuestTypeH\x05R\x04type\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\x11\n" +
-	"\x0f_quest_giver_idB\t\n" +
+	"\x04type\x18\f \x01(\x0e2\x15.planner.v1.QuestTypeH\x05R\x04type\x88\x01\x01\x12 \n" +
+	"\tpatron_id\x18\r \x01(\tH\x06R\bpatronId\x88\x01\x01B\x0e\n" +
+	"\f_descriptionB\t\n" +
+	"\a_npc_idB\t\n" +
 	"\a_rewardB\x0f\n" +
 	"\r_completed_atB\r\n" +
 	"\v_deleted_atB\a\n" +
-	"\x05_type\"\xeb\x02\n" +
+	"\x05_typeB\f\n" +
+	"\n" +
+	"_patron_id\"\x84\x03\n" +
 	"\x12CreateQuestRequest\x12\x1f\n" +
 	"\vcampaign_id\x18\x01 \x01(\tR\n" +
 	"campaignId\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12/\n" +
 	"\x06status\x18\x03 \x01(\x0e2\x17.planner.v1.QuestStatusR\x06status\x12%\n" +
-	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12)\n" +
-	"\x0equest_giver_id\x18\x05 \x01(\tH\x01R\fquestGiverId\x88\x01\x01\x124\n" +
+	"\vdescription\x18\x04 \x01(\tH\x00R\vdescription\x88\x01\x01\x12\x1a\n" +
+	"\x06npc_id\x18\x05 \x01(\tH\x01R\x05npcId\x88\x01\x01\x124\n" +
 	"\x06reward\x18\x06 \x01(\v2\x17.planner.v1.QuestRewardH\x02R\x06reward\x88\x01\x01\x12.\n" +
-	"\x04type\x18\a \x01(\x0e2\x15.planner.v1.QuestTypeH\x03R\x04type\x88\x01\x01B\x0e\n" +
-	"\f_descriptionB\x11\n" +
-	"\x0f_quest_giver_idB\t\n" +
+	"\x04type\x18\a \x01(\x0e2\x15.planner.v1.QuestTypeH\x03R\x04type\x88\x01\x01\x12 \n" +
+	"\tpatron_id\x18\b \x01(\tH\x04R\bpatronId\x88\x01\x01B\x0e\n" +
+	"\f_descriptionB\t\n" +
+	"\a_npc_idB\t\n" +
 	"\a_rewardB\a\n" +
-	"\x05_type\">\n" +
+	"\x05_typeB\f\n" +
+	"\n" +
+	"_patron_id\">\n" +
 	"\x13CreateQuestResponse\x12'\n" +
 	"\x05quest\x18\x01 \x01(\v2\x11.planner.v1.QuestR\x05quest\"B\n" +
 	"\x0fGetQuestRequest\x12\x0e\n" +
