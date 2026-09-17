@@ -3,6 +3,7 @@ import {
 	Activity,
 	Castle,
 	Compass,
+	Hexagon,
 	Map as Location,
 	Settings,
 	ShapesIcon,
@@ -43,6 +44,7 @@ export default function Sidebar() {
 			matchPrefix: true,
 			url: "/campaign/regions",
 		},
+		{ icon: Hexagon, label: "map", url: "/campaign/map" },
 		{ icon: Compass, label: "quests", url: "/campaign/quests" },
 		{ icon: Activity, label: "sessions", url: "/campaign/sessions" },
 	];

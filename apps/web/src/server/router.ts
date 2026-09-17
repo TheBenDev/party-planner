@@ -2,6 +2,7 @@ import { campaignRouter } from "@/features/campaigns/procedures/campaign";
 import { colonyRouter } from "@/features/colony/procedures/colony";
 import { campaignIntegrationRouter } from "@/features/integrations/procedures/campaign-integration";
 import { userIntegrationRouter } from "@/features/integrations/procedures/user-integration";
+import { mapRouter } from "@/features/map/procedures/map";
 import { nonPlayerCharacterRouter } from "@/features/npcs/procedures/non-player-character";
 import { memberRouter } from "@/features/players/procedures/member";
 import { questRouter } from "@/features/quests/procedures/quest";
@@ -20,6 +21,7 @@ const appRouter = {
 	campaignIntegration: campaignIntegrationRouter,
 	colony: colonyRouter,
 	location: locationRouter,
+	map: mapRouter,
 	member: memberRouter,
 	npc: nonPlayerCharacterRouter,
 	quest: questRouter,

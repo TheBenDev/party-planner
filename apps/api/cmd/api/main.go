@@ -27,6 +27,7 @@ import (
 	colonyDomain "github.com/BBruington/party-planner/api/internal/domain/colony"
 	colonyWorkforceDomain "github.com/BBruington/party-planner/api/internal/domain/colony_workforce"
 	locationDomain "github.com/BBruington/party-planner/api/internal/domain/location"
+	mapHexDomain "github.com/BBruington/party-planner/api/internal/domain/map_hex"
 	regionDomain "github.com/BBruington/party-planner/api/internal/domain/region"
 	memberDomain "github.com/BBruington/party-planner/api/internal/domain/member"
 	npcDomain "github.com/BBruington/party-planner/api/internal/domain/npc"
@@ -57,6 +58,7 @@ type appServices struct {
 	Region              *regionDomain.Service
 	User                *userDomain.Service
 	UserIntegration     *userIntegrationDomain.Service
+	MapHex              *mapHexDomain.Service
 }
 
 func main() {
@@ -199,6 +201,7 @@ func buildServices(database *db.DB, cfg *config.Config, botSession *discordgo.Se
 		Region:              &regionDomain.Service{DB: regionDomain.NewDB(database.Raw()), Log: logger.Logger},
 		User:                &userDomain.Service{DB: userDomain.NewDB(database.Raw()), Log: logger.Logger},
 		UserIntegration:     userIntegrationSvc,
+		MapHex:              &mapHexDomain.Service{DB: mapHexDomain.NewDB(database.Raw()), Log: logger.Logger},
 	}, nil
 }
 
@@ -255,6 +258,10 @@ func registerHandlers(mux *http.ServeMux, svcs *appServices, interceptors connec
 	userPath, userHandler := plannerv1connect.NewUserServiceHandler(
 		&userDomain.Server{User: svcs.User, Log: logger.Logger}, interceptors)
 	mux.Handle(userPath, userHandler)
+
+	mapHexPath, mapHexHandler := plannerv1connect.NewMapServiceHandler(
+		&mapHexDomain.Server{Map: svcs.MapHex, Log: logger.Logger}, interceptors)
+	mux.Handle(mapHexPath, mapHexHandler)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
