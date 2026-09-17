@@ -5,6 +5,7 @@ import { CampaignService } from "@/gen/proto/planner/v1/campaign_pb";
 import { ColonyService } from "@/gen/proto/planner/v1/colony_pb";
 import { ColonyWorkforceService } from "@/gen/proto/planner/v1/colony_workforce_pb";
 import { LocationService } from "@/gen/proto/planner/v1/location_pb";
+import { MapService } from "@/gen/proto/planner/v1/map_hex_pb";
 import { MemberService } from "@/gen/proto/planner/v1/member_pb";
 import { NonPlayerCharacterService } from "@/gen/proto/planner/v1/non_player_character_pb";
 import { QuestService } from "@/gen/proto/planner/v1/quest_pb";
@@ -41,6 +42,7 @@ export function createApiClients(accessToken?: string) {
 		colony: createClient(ColonyService, transport),
 		colonyWorkforce: createClient(ColonyWorkforceService, transport),
 		location: createClient(LocationService, transport),
+		map: createClient(MapService, transport),
 		member: createClient(MemberService, transport),
 		npc: createClient(NonPlayerCharacterService, transport),
 		quest: createClient(QuestService, transport),

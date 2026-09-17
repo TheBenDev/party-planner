@@ -8,6 +8,7 @@ export * from "./characters";
 export * from "./colony";
 export * from "./colonyWorkforce";
 export * from "./locations";
+export * from "./mapHexes";
 export * from "./nonPlayerCharacters";
 export * from "./patron";
 export * from "./quests";
