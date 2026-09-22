@@ -252,6 +252,13 @@
       "when": 1786388764721,
       "tag": "0035_patron_table",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1789676446941,
+      "tag": "0036_map_hex",
+      "breakpoints": true
     }
   ],
   "version": "7"

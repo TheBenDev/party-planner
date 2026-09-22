@@ -26,6 +26,7 @@ import { Route as AuthenticatedCampaignSessionsIndexRouteImport } from './routes
 import { Route as AuthenticatedCampaignRegionsIndexRouteImport } from './routes/_authenticated/campaign/regions/index'
 import { Route as AuthenticatedCampaignQuestsIndexRouteImport } from './routes/_authenticated/campaign/quests/index'
 import { Route as AuthenticatedCampaignNpcsIndexRouteImport } from './routes/_authenticated/campaign/npcs/index'
+import { Route as AuthenticatedCampaignMapIndexRouteImport } from './routes/_authenticated/campaign/map/index'
 import { Route as AuthenticatedCampaignIntegrationsIndexRouteImport } from './routes/_authenticated/campaign/integrations/index'
 import { Route as AuthenticatedCampaignCreateIndexRouteImport } from './routes/_authenticated/campaign/create/index'
 import { Route as AuthenticatedSettingsGoogleCalendarCallbackRouteImport } from './routes/_authenticated/settings/google-calendar/callback'
@@ -133,6 +134,12 @@ const AuthenticatedCampaignNpcsIndexRoute =
   AuthenticatedCampaignNpcsIndexRouteImport.update({
     id: '/campaign/npcs/',
     path: '/campaign/npcs/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCampaignMapIndexRoute =
+  AuthenticatedCampaignMapIndexRouteImport.update({
+    id: '/campaign/map/',
+    path: '/campaign/map/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedCampaignIntegrationsIndexRoute =
@@ -257,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
   '/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
+  '/campaign/map/': typeof AuthenticatedCampaignMapIndexRoute
   '/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
   '/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
   '/campaign/regions/': typeof AuthenticatedCampaignRegionsIndexRoute
@@ -292,6 +300,7 @@ export interface FileRoutesByTo {
   '/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
   '/campaign/create': typeof AuthenticatedCampaignCreateIndexRoute
   '/campaign/integrations': typeof AuthenticatedCampaignIntegrationsIndexRoute
+  '/campaign/map': typeof AuthenticatedCampaignMapIndexRoute
   '/campaign/npcs': typeof AuthenticatedCampaignNpcsIndexRoute
   '/campaign/quests': typeof AuthenticatedCampaignQuestsIndexRoute
   '/campaign/regions': typeof AuthenticatedCampaignRegionsIndexRoute
@@ -329,6 +338,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/google-calendar/callback': typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
   '/_authenticated/campaign/create/': typeof AuthenticatedCampaignCreateIndexRoute
   '/_authenticated/campaign/integrations/': typeof AuthenticatedCampaignIntegrationsIndexRoute
+  '/_authenticated/campaign/map/': typeof AuthenticatedCampaignMapIndexRoute
   '/_authenticated/campaign/npcs/': typeof AuthenticatedCampaignNpcsIndexRoute
   '/_authenticated/campaign/quests/': typeof AuthenticatedCampaignQuestsIndexRoute
   '/_authenticated/campaign/regions/': typeof AuthenticatedCampaignRegionsIndexRoute
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/settings/google-calendar/callback'
     | '/campaign/create/'
     | '/campaign/integrations/'
+    | '/campaign/map/'
     | '/campaign/npcs/'
     | '/campaign/quests/'
     | '/campaign/regions/'
@@ -401,6 +412,7 @@ export interface FileRouteTypes {
     | '/settings/google-calendar/callback'
     | '/campaign/create'
     | '/campaign/integrations'
+    | '/campaign/map'
     | '/campaign/npcs'
     | '/campaign/quests'
     | '/campaign/regions'
@@ -437,6 +449,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/google-calendar/callback'
     | '/_authenticated/campaign/create/'
     | '/_authenticated/campaign/integrations/'
+    | '/_authenticated/campaign/map/'
     | '/_authenticated/campaign/npcs/'
     | '/_authenticated/campaign/quests/'
     | '/_authenticated/campaign/regions/'
@@ -590,6 +603,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCampaignNpcsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/campaign/map/': {
+      id: '/_authenticated/campaign/map/'
+      path: '/campaign/map'
+      fullPath: '/campaign/map/'
+      preLoaderRoute: typeof AuthenticatedCampaignMapIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/campaign/integrations/': {
       id: '/_authenticated/campaign/integrations/'
       path: '/campaign/integrations'
@@ -720,6 +740,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedSettingsGoogleCalendarCallbackRoute: typeof AuthenticatedSettingsGoogleCalendarCallbackRoute
   AuthenticatedCampaignCreateIndexRoute: typeof AuthenticatedCampaignCreateIndexRoute
   AuthenticatedCampaignIntegrationsIndexRoute: typeof AuthenticatedCampaignIntegrationsIndexRoute
+  AuthenticatedCampaignMapIndexRoute: typeof AuthenticatedCampaignMapIndexRoute
   AuthenticatedCampaignNpcsIndexRoute: typeof AuthenticatedCampaignNpcsIndexRoute
   AuthenticatedCampaignQuestsIndexRoute: typeof AuthenticatedCampaignQuestsIndexRoute
   AuthenticatedCampaignRegionsIndexRoute: typeof AuthenticatedCampaignRegionsIndexRoute
@@ -751,6 +772,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCampaignCreateIndexRoute: AuthenticatedCampaignCreateIndexRoute,
   AuthenticatedCampaignIntegrationsIndexRoute:
     AuthenticatedCampaignIntegrationsIndexRoute,
+  AuthenticatedCampaignMapIndexRoute: AuthenticatedCampaignMapIndexRoute,
   AuthenticatedCampaignNpcsIndexRoute: AuthenticatedCampaignNpcsIndexRoute,
   AuthenticatedCampaignQuestsIndexRoute: AuthenticatedCampaignQuestsIndexRoute,
   AuthenticatedCampaignRegionsIndexRoute:
