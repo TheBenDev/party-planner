@@ -12,7 +12,7 @@
   "scripts": {
     "build": "nx run-many -t build && cd apps/api && make build",
     "build:packages": "nx run-many -t build --projects packages/*",
-    "dev": "bun run dev:next",
+    "dev": "nx run-many -t dev",
     "format": "nx run-many -t format",
     "gen:proto": "rm -rf apps/api/gen apps/web/src/gen/proto && cd packages/proto && buf generate",
     "lint": "nx run-many -t lint && cd apps/api && make lint",
