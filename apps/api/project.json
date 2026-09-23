@@ -1,0 +1,13 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"name": "@planner/api",
+	"targets": {
+		"dev": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "make dev",
+				"cwd": "apps/api"
+			}
+		}
+	}
+}
