@@ -35,7 +35,7 @@ export function WorkforceCard({
 	const [isEditing, setIsEditing] = useState(false);
 	return (
 		<div className="min-h-[380px] flex flex-col">
-			<div className="flex text-muted-foreground items-center justify-between mb-3">
+			<div className="flex text-muted-foreground items-center justify-between h-6 mb-1">
 				<p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
 					Colonist Roles
 				</p>
