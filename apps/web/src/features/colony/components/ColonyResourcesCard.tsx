@@ -111,25 +111,6 @@ export default function ColonyResourcesCard({
 				</h2>
 				{isDm && (
 					<div className="flex items-center gap-2">
-						{!isEditing && (
-							<Button
-								className="h-6 text-xs"
-								disabled={advanceColonyDay.isPending}
-								onClick={() =>
-									advanceColonyDay.mutate(
-										{ id: data.colony.id },
-										{
-											onError: () => toast.error("Failed to advance day"),
-											onSuccess: () => toast.success("Day advanced"),
-										},
-									)
-								}
-								size="sm"
-								variant="outline"
-							>
-								Advance Day
-							</Button>
-						)}
 						<EditModeButton
 							ariaLabel={
 								isEditing
@@ -155,7 +136,7 @@ export default function ColonyResourcesCard({
 					shipmentAt={data.colony.shipmentAt}
 				/>
 			) : (
-				<div className="border rounded-2xl flex-1 p-6">
+				<div className="border rounded-2xl flex-1 p-6 flex flex-col">
 					<div className="grid grid-cols-3 gap-x-4 gap-y-5">
 						{COLONY_STATS.map((stat) => (
 							<StatTile
@@ -169,6 +150,27 @@ export default function ColonyResourcesCard({
 					{data.colony.shipmentAt && (
 						<div className="my-5">
 							Days until next shipment: {nextShipmentDays(data.colony)}
+						</div>
+					)}
+					{!isEditing && isDm && (
+						<div className="flex mt-auto pt-5">
+							<Button
+								className="bg-advance hover:bg-advance-hover p-5"
+								disabled={advanceColonyDay.isPending}
+								onClick={() =>
+									advanceColonyDay.mutate(
+										{ id: data.colony.id },
+										{
+											onError: () => toast.error("Failed to advance day"),
+											onSuccess: () => toast.success("Day advanced"),
+										},
+									)
+								}
+								size="sm"
+								variant="default"
+							>
+								Advance Day
+							</Button>
 						</div>
 					)}
 				</div>
